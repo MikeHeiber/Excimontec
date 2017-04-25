@@ -1,0 +1,3 @@
+[submodule "KMC_Lattice"]
+	path = KMC_Lattice
+	url = https://github.com/MikeHeiber/KMC_Lattice
