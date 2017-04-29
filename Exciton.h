@@ -17,8 +17,12 @@ class Exciton : public Object{
     public:
         static const string name;
         Exciton(const double time,const int tag_num,const Coords& start_coords) : Object(time,tag_num,start_coords){}
+        void flipSpin(){spin = !spin;}
         string getName(){return name;}
+        bool getSpin(){return spin;}
+        void setSpin(bool spin_state){spin = spin_state;}
     private:
+        bool spin; // false represents triplet state, true represents singlet state
 };
 
 class Exciton_Creation : public Event{
@@ -61,6 +65,18 @@ class Exciton_Recombination : public Event{
 };
 
 class Exciton_Dissociation : public Event{
+    public:
+        static const string name;
+        void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
+            setDestCoords(dest_coords);
+            // No target object
+            // setWaitTime
+        }
+        string getName(){return name;}
+    private:
+};
+
+class Exciton_Intersystem_Crossing : public Event {
     public:
         static const string name;
         void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){

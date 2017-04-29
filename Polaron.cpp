@@ -8,5 +8,5 @@
 // Initialize static class members
 const string Polaron::name = "Polaron";
 const string Polaron_Hop::name = "Polaron Hop";
-const string Electron_Hole_Recombination::name = "Electron-Hole Recombination";
+const string Polaron_Recombination::name = "Polaron Recombination";
 const string Polaron_Extraction::name = "Polaron Extraction";

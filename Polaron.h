@@ -19,7 +19,7 @@ class Polaron : public Object{
         Polaron(const double time,const int tag_num,const Coords& start_coords) : Object(time,tag_num,start_coords){}
         string getName(){return name;}
     private:
-
+        bool charge; // false represents negative charge, true represents positive charge
 };
 
 class Polaron_Hop : public Event{
@@ -35,7 +35,7 @@ class Polaron_Hop : public Event{
 
 };
 
-class Electron_Hole_Recombination : public Event{
+class Polaron_Recombination : public Event{
     public:
         static const string name;
         void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){

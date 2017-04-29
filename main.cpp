@@ -17,7 +17,7 @@ struct Parameters_main{
 };
 
 //Declare Functions
-bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OSC_Sim& params);
+bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
     string version = "v1.0";
@@ -33,7 +33,7 @@ int main(int argc,char *argv[]){
     string parameterfilename;
     string logfilename;
     Parameters_main params_main;
-    Parameters_OSC_Sim params_sim;
+    Parameters_OPV params_opv;
     int nproc = 1;
     int procid = 0;
     int elapsedtime;
@@ -49,7 +49,7 @@ int main(int argc,char *argv[]){
         cout << "Error loading parameter file.  Program will now exit." << endl;
         return 0;
     }
-    success = importParameters(&parameterfile,params_main,params_sim);
+    success = importParameters(&parameterfile,params_main,params_opv);
     parameterfile.close();
     if(!success){
         cout << "Error importing parameters from parameter file.  Program will now exit." << endl;
@@ -66,16 +66,16 @@ int main(int argc,char *argv[]){
     }
     // Setup file output
     cout << procid << ": Creating output files..." << endl;
-    if(params_sim.Enable_logging){
+    if(params_opv.Enable_logging){
         ss << "log" << procid << ".txt";
         logfilename = ss.str();
         logfile.open(ss.str().c_str());
         ss.str("");
     }
-    params_sim.Logfile = &logfile;
+    params_opv.Logfile = &logfile;
     // Initialize Simulation
     cout << procid << ": Initializing simulation " << procid << "..." << endl;
-    OSC_Sim sim(params_sim,procid);
+    OSC_Sim sim(params_opv,procid);
     cout << procid << ": Simulation initialization complete" << endl;
     // Begin Simulation loop
     while(!End_sim){
@@ -91,14 +91,14 @@ int main(int argc,char *argv[]){
             sim.outputStatus();
         }
         // Reset logfile
-        if(params_sim.Enable_logging){
+        if(params_opv.Enable_logging){
             if(sim.getN_events_executed()%10000==0){
                 logfile.close();
                 logfile.open(logfilename.c_str());
             }
         }
     }
-    if(params_sim.Enable_logging){
+    if(params_opv.Enable_logging){
         logfile.close();
     }
     cout << procid << ": Simulation finished." << endl;
@@ -113,7 +113,7 @@ int main(int argc,char *argv[]){
     resultsfile << sim.getTime() << " seconds have been simulated.\n";
     resultsfile << sim.getN_events_executed() << " events have been executed.\n";
     resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
-    if(params_sim.Enable_exciton_diffusion_test){
+    if(params_opv.Enable_exciton_diffusion_test){
         resultsfile << "Exciton diffusion test results:\n";
         resultsfile << "Exciton Diffusion Length is " << sim.calculateDiffusionLength_avg() << " ± " << sim.calculateDiffusionLength_stdev() << " nm\n";
     }
@@ -122,7 +122,7 @@ int main(int argc,char *argv[]){
     // Output overall analysis results from all processors
     if(params_main.Enable_mpi){
         vector<double> diffusion_data;
-        if(params_sim.Enable_exciton_diffusion_test){
+        if(params_opv.Enable_exciton_diffusion_test){
             diffusion_data = calculateAverageVector(sim.getDiffusionData(),procid,nproc);
         }
         if(procid==0){
@@ -131,7 +131,7 @@ int main(int argc,char *argv[]){
             ss.str("");
             analysisfile << "KMC_Lattice_example " << version << " Results Summary:" << endl;
             analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
-            if(params_sim.Enable_exciton_diffusion_test){
+            if(params_opv.Enable_exciton_diffusion_test){
                 analysisfile << "Overall exciton diffusion test results:\n";
                 analysisfile << "Exciton diffusion length is " << vector_avg(diffusion_data) << " ± " << vector_stdev(diffusion_data) << " nm\n";
             }
@@ -145,7 +145,7 @@ int main(int argc,char *argv[]){
     return 0;
 }
 
-bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OSC_Sim& params){
+bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameters_OPV& params){
     string line;
     string var;
     size_t pos;
@@ -232,8 +232,52 @@ bool importParameters(ifstream * inputfile,Parameters_main& params_main,Paramete
     i++;
     params.Recalc_cutoff = atoi(stringvars[i].c_str());
     i++;
-    //Tests
-    //enable_exciton_diffusion_test
+    // Additional General Parameters
+    params.Bias = atof(stringvars[i].c_str());
+    i++;
+    // Film Architecture Parameters
+    if(stringvars[i].compare("true")==0){
+        params.Enable_neat = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_neat = false;
+    }
+    else{
+        cout << "Error enabling neat film architecture." << endl;
+        return false;
+    }
+    i++;
+    if(stringvars[i].compare("true")==0){
+        params.Enable_bilayer = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_bilayer = false;
+    }
+    else{
+        cout << "Error enabling bilayer film architecture." << endl;
+        return false;
+    }
+    i++;
+    params.Thickness_donor = atoi(stringvars[i].c_str());
+    i++;
+    params.Thickness_acceptor = atoi(stringvars[i].c_str());
+    i++;
+    if(stringvars[i].compare("true")==0){
+        params.Enable_random_blend = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_random_blend = false;
+    }
+    else{
+        cout << "Error enabling random blend film architecture." << endl;
+        return false;
+    }
+    i++;
+    params.Acceptor_conc = atof(stringvars[i].c_str());;
+    i++;
+    // Test Parameters
+    params.N_tests = atoi(stringvars[i].c_str());
+    i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_exciton_diffusion_test = true;
     }
@@ -241,20 +285,110 @@ bool importParameters(ifstream * inputfile,Parameters_main& params_main,Paramete
         params.Enable_exciton_diffusion_test = false;
     }
     else{
-        cout << "Error setting exciton diffusion test options" << endl;
+        cout << "Error enabling the exciton diffusion test." << endl;
         return false;
     }
     i++;
-    params.N_tests = atoi(stringvars[i].c_str());
+    if(stringvars[i].compare("true")==0){
+        params.Enable_ToF_test = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_ToF_test = false;
+    }
+    else{
+        cout << "Error enabling the time-of-flight polaron transport test." << endl;
+        return false;
+    }
+    i++;
+    params.ToF_initial_polarons = atoi(stringvars[i].c_str());
+    i++;
+    params.ToF_start_time = atof(stringvars[i].c_str());
+    i++;
+    params.ToF_end_time = atof(stringvars[i].c_str());
+    i++;
+    if(stringvars[i].compare("true")==0){
+        params.Enable_IQE_test = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_IQE_test = false;
+    }
+    else{
+        cout << "Error enabling the internal quantum efficiency test." << endl;
+        return false;
+    }
     i++;
     // Exciton Parameters
-    params.Exciton_generation_rate = atof(stringvars[i].c_str());
+    params.Exciton_generation_rate_donor = atof(stringvars[i].c_str());
     i++;
-    params.Exciton_lifetime = atof(stringvars[i].c_str());
+    params.Exciton_generation_rate_acceptor = atof(stringvars[i].c_str());
     i++;
-    params.R_exciton_hopping = atof(stringvars[i].c_str());
+    params.Exciton_lifetime_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Exciton_lifetime_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.R_exciton_hopping_donor = atof(stringvars[i].c_str());
+    i++;
+    params.R_exciton_hopping_acceptor = atof(stringvars[i].c_str());
     i++;
     params.FRET_cutoff = atoi(stringvars[i].c_str());
+    i++;
+    params.E_exciton_binding_donor = atof(stringvars[i].c_str());
+    i++;
+    params.E_exciton_binding_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.R_exciton_dissociation_donor = atof(stringvars[i].c_str());
+    i++;
+    params.R_exciton_dissociation_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.Exciton_dissociation_cutoff = atoi(stringvars[i].c_str());
+    i++;
+    // Polaron Parameters
+    if(stringvars[i].compare("true")==0){
+        params.Enable_phase_restriction = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_phase_restriction = false;
+    }
+    else{
+        cout << "Error setting polaron phase restriction option." << endl;
+        return false;
+    }
+    i++;
+    params.R_polaron_hopping_donor = atof(stringvars[i].c_str());
+    i++;
+    params.R_polaron_hopping_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.Polaron_localization_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
+    i++;
+    if(stringvars[i].compare("true")==0){
+        params.Enable_miller_abrahams = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_miller_abrahams = false;
+    }
+    else{
+        cout << "Error setting Miller-Abrahams polaron hopping model options" << endl;
+        return false;
+    }
+    i++;
+    if(stringvars[i].compare("true")==0){
+        params.Enable_marcus = true;
+    }
+    else if(stringvars[i].compare("false")==0){
+        params.Enable_marcus = false;
+    }
+    else{
+        cout << "Error setting Marcus polaron hopping model options" << endl;
+        return false;
+    }
+    i++;
+    params.Reorganization_energy_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Reorganization_energy_acceptor = atof(stringvars[i].c_str());
     i++;
     // Energetic Disorder Parameters
     //enable_gaussian_dos
@@ -285,6 +419,13 @@ bool importParameters(ifstream * inputfile,Parameters_main& params_main,Paramete
     i++;
     params.Site_energy_urbach = atof(stringvars[i].c_str());
     i++;
+    // Coulomb Calculation Parameters
+    params.Coulomb_cutoff = atoi(stringvars[i].c_str());
+    i++;
+    params.Dielectric_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Dielectric_acceptor = atof(stringvars[i].c_str());
+    i++;
     // Error checking
     if(!params.Length>0 || !params.Width>0 || !params.Height>0){
         cout << "Error! All lattice dimensions must be greater than zero." << endl;
@@ -302,12 +443,12 @@ bool importParameters(ifstream * inputfile,Parameters_main& params_main,Paramete
         cout << "Error! The event recalculation cutoff radius must not be less than the FRET cutoff radius." << endl;
         return false;
     }
-    if(!params.N_tests>0){
-        cout << "Error! The number of exciton diffusion tests must be greater than zero." << endl;
+    if(params.Recalc_cutoff<params.Polaron_hopping_cutoff){
+        cout << "Error! The event recalculation cutoff radius must not be less than the polaron hopping cutoff radius." << endl;
         return false;
     }
-    if(!params.Exciton_generation_rate>0 || !params.Exciton_lifetime>0 || !params.R_exciton_hopping>0 || !params.FRET_cutoff>0){
-        cout << "Error! All exciton properties must be greater than zero." << endl;
+    if(!params.N_tests>0){
+        cout << "Error! The number of tests must be greater than zero." << endl;
         return false;
     }
     if(params.Enable_gaussian_dos && params.Enable_exponential_dos){

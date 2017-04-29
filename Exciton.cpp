@@ -11,6 +11,7 @@ const string Exciton_Creation::name = "Exciton Creation";
 const string Exciton_Hop::name = "Exciton Hop";
 const string Exciton_Recombination::name = "Exciton Recombination";
 const string Exciton_Dissociation::name = "Exciton Dissociation";
+const string Exciton_Intersystem_Crossing::name = "Exciton Intersystem Crossing";
 const string Exciton_Exciton_Annihilation::name = "Exciton-Exciton Annihilation";
 const string Exciton_Polaron_Annihilation::name = "Exciton-Polaron Annihilation";
 
