@@ -16,7 +16,8 @@ using namespace std;
 class Polaron : public Object{
     public:
         static const string name;
-        Polaron(const double time,const int tag_num,const Coords& start_coords) : Object(time,tag_num,start_coords){}
+        Polaron(const double time,const int tag_num,const Coords& start_coords,const bool polaron_charge) : Object(time,tag_num,start_coords){charge = polaron_charge;}
+        bool getCharge(){return charge;}
         string getName(){return name;}
     private:
         bool charge; // false represents negative charge, true represents positive charge

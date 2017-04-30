@@ -31,7 +31,7 @@ class Exciton_Creation : public Event{
         void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
             // No destination coords.  Destination coords are chosen upon execution.
             // No target object
-            setWaitTime((-1/prefactor)*log((float)rand01()));
+            setWaitTime((-1/prefactor)*log(rand01()));
         }
         string getName(){return name;}
     private:
@@ -45,7 +45,7 @@ class Exciton_Hop : public Event{
         void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/(prefactor*intpow(1/(float)distance,6)*exp(-(float)E_delta/(K_b*temperature))))*log((float)rand01()));
+            setWaitTime((-1/(prefactor*intpow(1/distance,6)*exp(-E_delta/(K_b*temperature))))*log(rand01()));
         }
         string getName(){return name;}
     private:
@@ -58,7 +58,7 @@ class Exciton_Recombination : public Event{
         void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime(-1*prefactor*log((float)rand01()));
+            setWaitTime(-1*prefactor*log(rand01()));
         }
         string getName(){return name;}
     private:

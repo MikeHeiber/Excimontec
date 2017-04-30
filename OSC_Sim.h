@@ -59,10 +59,16 @@ struct Parameters_OPV : Parameters_Simulation{
     double Reorganization_energy_donor;
     double Reorganization_energy_acceptor;
     // Additional Lattice Parameters
+    double Homo_donor;
+    double Lumo_donor;
+    double Homo_acceptor;
+    double Lumo_acceptor;
     bool Enable_gaussian_dos;
-    double Site_energy_stdev; // eV
+    double Energy_stdev_donor; // eV
+    double Energy_stdev_acceptor; // eV
     bool Enable_exponential_dos;
-    double Site_energy_urbach;
+    double Energy_urbach_donor; // eV
+    double Energy_urbach_acceptor; // eV
     // Coulomb Calculation Parameters
     int Coulomb_cutoff; // nm
     double Dielectric_donor;
@@ -71,12 +77,12 @@ struct Parameters_OPV : Parameters_Simulation{
 
 class Site_OSC : public Site{
     public:
-        float getEnergy(){return *energy_it;}
+        double getEnergy(){return *energy_it;}
         short getType(){return type;}
-        void setEnergyIt(const vector<float>::iterator it){energy_it = it;}
+        void setEnergyIt(const vector<double>::iterator it){energy_it = it;}
         void setType(const short site_type){type = site_type;}
     private:
-        vector<float>::iterator energy_it;
+        vector<double>::iterator energy_it;
         short type; //  type 1 represent donor, type 2 represents acceptor
 };
 
@@ -137,10 +143,16 @@ class OSC_Sim : public Simulation{
         double Reorganization_energy_donor;
         double Reorganization_energy_acceptor;
         // Additional Lattice Parameters
+        double Homo_donor;
+        double Lumo_donor;
+        double Homo_acceptor;
+        double Lumo_acceptor;
         bool Enable_gaussian_dos;
-        double Site_energy_stdev; // eV
+        double Energy_stdev_donor; // eV
+        double Energy_stdev_acceptor; // eV
         bool Enable_exponential_dos;
-        double Site_energy_urbach;
+        double Energy_urbach_donor;
+        double Energy_urbach_acceptor;
         // Coulomb Calculation Parameters
         int Coulomb_cutoff; // nm
         double Dielectric_donor;
@@ -168,7 +180,8 @@ class OSC_Sim : public Simulation{
         // Additional Data Structures
         vector<double> Coulomb_table;
         vector<double> E_potential;
-        vector<float> site_energies;
+        vector<double> site_energies_donor;
+        vector<double> site_energies_acceptor;
         vector<double> diffusion_distances;
         vector<double> transit_times;
         Exciton_Creation exciton_creation_event;
@@ -194,6 +207,8 @@ class OSC_Sim : public Simulation{
         int N_electron_surface_recombinations;
         int N_hole_surface_recombinations;
         // Additional Functions
+        double calculateCoulomb(const list<unique_ptr<Object>>::iterator object_it,const Coords& coords);
+        double calculateDistanceToElectrode(const Coords& coords);
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(const list<unique_ptr<Object>>::iterator object_it);
         void calculateObjectListEvents(const vector<list<unique_ptr<Object>>::iterator>& object_it_vec);
@@ -214,10 +229,11 @@ class OSC_Sim : public Simulation{
         bool executePolaronExtraction(const list<unique_ptr<Event>>::iterator event_it);
         void generateToFPolarons();
         list<Exciton>::iterator getExcitonIt(const unique_ptr<Object>& object_ptr);
-        list<Polaron>::iterator getElectronIt(const unique_ptr<Object>& object_ptr);
-        list<Polaron>::iterator getHoleIt(const unique_ptr<Object>& object_ptr);
-        float getSiteEnergy(const Coords& coords);
+        list<Polaron>::iterator getPolaronIt(const unique_ptr<Object>& object_ptr);
+        double getSiteEnergy(const Coords& coords);
+        short getSiteType(const Coords& coords);
         void initializeArchitecture();
+        bool siteContainsHole(const Coords& coords);
 };
 
 #endif //OSC_SIM_H

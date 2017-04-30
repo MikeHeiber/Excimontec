@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -403,7 +404,9 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         return false;
     }
     i++;
-    params.Site_energy_stdev = atof(stringvars[i].c_str());
+    params.Energy_stdev_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Energy_stdev_acceptor = atof(stringvars[i].c_str());
     i++;
     //enable_exponential_dos
     if(stringvars[i].compare("true")==0){
@@ -417,7 +420,9 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         return false;
     }
     i++;
-    params.Site_energy_urbach = atof(stringvars[i].c_str());
+    params.Energy_urbach_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
     i++;
     // Coulomb Calculation Parameters
     params.Coulomb_cutoff = atoi(stringvars[i].c_str());
@@ -455,11 +460,11 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error! The Gaussian and exponential disorder models cannot both be enabled." << endl;
         return false;
     }
-    if(params.Enable_gaussian_dos && params.Site_energy_stdev<0){
+    if(params.Enable_gaussian_dos && (params.Energy_stdev_donor<0 || params.Energy_stdev_acceptor<0)){
         cout << "Error! When using the Gaussian disorder model, the standard deviation cannot be negative." << endl;
         return false;
     }
-    if(params.Enable_exponential_dos && params.Site_energy_urbach<0){
+    if(params.Enable_exponential_dos && (params.Energy_urbach_donor<0 || params.Energy_urbach_acceptor<0)){
         cout << "Error! When using the exponential disorder model, the Urbach energy cannot be negative." << endl;
         return false;
     }
