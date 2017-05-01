@@ -21,6 +21,7 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     N_tests = params.N_tests;
     Enable_exciton_diffusion_test = params.Enable_exciton_diffusion_test;
     Enable_ToF_test = params.Enable_ToF_test;
+    Polaron_type = params.Polaron_type;
     ToF_initial_polarons = params.ToF_initial_polarons;
     ToF_start_time = params.ToF_start_time;
     ToF_end_time = params.ToF_end_time;
@@ -86,18 +87,75 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     sites.assign(getNumSites(),site);
     // Initialize Film Architecture and Site Energies
     initializeArchitecture();
+    // Calculate Coulomb interactions lookup table
+    double avgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
+    int range = ceil((Coulomb_cutoff/getUnitSize())*(Coulomb_cutoff/getUnitSize()));
+    Coulomb_table.assign(range+1,0);
+    for(int i=1;i<(int)Coulomb_table.size();i++){
+        Coulomb_table[i] = ((Coulomb_constant*Elementary_charge)/avgDielectric)/(1e-9*getUnitSize()*sqrt((double)i));
+    }
     // Initialize exciton creation event
     if(Enable_exciton_diffusion_test || Enable_IQE_test){
         Coords dest_coords;
         R_exciton_generation_donor = Exciton_generation_rate_donor*N_donor_sites*intpow(1e-7*getUnitSize(),3);
         R_exciton_generation_acceptor = Exciton_generation_rate_acceptor*N_acceptor_sites*intpow(1e-7*getUnitSize(),3);
         exciton_creation_event.calculateEvent(dest_coords,0,0,getTemperature(),R_exciton_generation_donor+R_exciton_generation_acceptor);
-        unique_ptr<Event> event_ptr = unique_ptr<Event>(&exciton_creation_event);
-        exciton_creation_it = addEvent(event_ptr);
+        exciton_creation_it = addEvent(&exciton_creation_event);
     }
     else if(Enable_ToF_test){
         // Create initial test polarons
         generateToFPolarons();
+    }
+}
+
+double OSC_Sim::calculateCoulomb(const list<unique_ptr<Object>>::iterator object_it,const Coords& coords){
+    bool charge;
+    if((*object_it)->getName().compare(Polaron::name)==0){
+        charge = static_cast<Polaron*>(object_it->get())->getCharge();
+    }
+    else{
+        cout << "Error! Coulomb interactions calculated for an object that is not a Polaron." << endl;
+    }
+    static const double avgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
+    static const double image_interactions = (Elementary_charge/(16*Pi*avgDielectric*Vacuum_permittivity))*1e9;
+    double Energy = 0;
+    double distance;
+    int distance_sq_lat;
+    static const int range = ceil((Coulomb_cutoff/getUnitSize())*(Coulomb_cutoff/getUnitSize()));
+    // Loop through electrons
+    for(auto it=electrons.begin();it!=electrons.end();++it){
+        distance_sq_lat = calculateLatticeDistanceSquared(coords,*it);
+        if(!distance_sq_lat>range){
+            if(!charge && it->getTag()!=(*object_it)->getTag()){
+                Energy += Coulomb_table[distance_sq_lat];
+            }
+            else{
+                Energy -= Coulomb_table[distance_sq_lat];
+            }
+        }
+    }
+    // Loop through holes
+    for(auto it=holes.begin();it!=holes.end();++it){
+        distance_sq_lat = calculateLatticeDistanceSquared(coords,*it);
+        if(!distance_sq_lat>range){
+            if(charge && it->getTag()!=(*object_it)->getTag()){
+                Energy += Coulomb_table[distance_sq_lat];
+            }
+            else{
+                Energy -= Coulomb_table[distance_sq_lat];
+            }
+        }
+    }
+    // Add electrode image charge interactions
+    if(!isZPeriodic()){
+        distance = getUnitSize()*((double)(getHeight()-coords.z)-0.5);
+        if(!(distance-0.0001)>Coulomb_cutoff){
+            Energy -= image_interactions/distance;
+        }
+        distance = getUnitSize()*((double)(coords.z+1)-0.5);
+        if(!(distance-0.0001)>Coulomb_cutoff){
+            Energy -= image_interactions/distance;
+        }
     }
 }
 
@@ -135,7 +193,7 @@ void OSC_Sim::calculateExcitonEvents(const list<unique_ptr<Object>>::iterator ob
     Coords dest_coords;
     double distance,E_delta;
     int index;
-    // Exciton Hopping
+    // Exciton hopping and dissociation
     static const int range = ceil(FRET_cutoff/getUnitSize());
     static const int dim = (2*range+1);
     static vector<Exciton_Hop> hops_temp(dim*dim*dim);
@@ -149,7 +207,7 @@ void OSC_Sim::calculateExcitonEvents(const list<unique_ptr<Object>>::iterator ob
                     continue;
                 }
                 dest_coords = calculateDestinationCoords(object_coords,i,j,k);
-                if((*getSiteIt(dest_coords))->isOccupied()){
+                if(isOccupied(dest_coords)){
                     hops_valid[index] = false;
                     continue;
                 }
@@ -185,12 +243,10 @@ void OSC_Sim::calculateExcitonEvents(const list<unique_ptr<Object>>::iterator ob
         auto hop_list_it = exciton_hop_events.begin();
         advance(hop_list_it,std::distance(excitons.begin(),exciton_it));
         *hop_list_it = *hop_target_it;
-        event_ptr = unique_ptr<Event>(&(*hop_list_it));
-        setEvent(exciton_it->getEventIt(),event_ptr);
+        setEvent(exciton_it->getEventIt(),&(*hop_list_it));
     }
     else{
-        event_ptr = unique_ptr<Event>(&(*recombination_event_it));
-        setEvent(exciton_it->getEventIt(),event_ptr);
+        setEvent(exciton_it->getEventIt(),&(*recombination_event_it));
     }
 }
 
@@ -230,23 +286,33 @@ void OSC_Sim::calculatePolaronEvents(const list<unique_ptr<Object>>::iterator ob
                 }
                 dest_coords = calculateDestinationCoords(object_coords,i,j,k);
                 // If destination site is occupied by a hole Polaron and the main Polaron is an electron, check for a possible recombination event
-                if((*getSiteIt(dest_coords))->isOccupied() && !polaron_it->getCharge() && siteContainsHole(dest_coords)){
+                if(isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)){
                     distance = getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                     if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                         recombinations_temp[index].setObjectIt(object_it);
                         // Total energy change is sum of site energy change, Coulomb potential change, and E_potential change
-                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(calculateCoulomb(object_it,dest_coords)-Coulomb_i)+(E_potential[dest_coords.z]-E_potential[object_coords.z]);
-                        recombinations_temp[index].calculateEvent(dest_coords,distance,E_delta,getTemperature(),0);
+                        E_delta = 0;
+                        if(getSiteType(object_coords)==(short)1){
+                            recombinations_temp[index].calculateEvent(dest_coords,distance,E_delta,getTemperature(),R_polaron_hopping_donor);
+                        }
+                        else if(getSiteType(object_coords)==(short)2){
+                            recombinations_temp[index].calculateEvent(dest_coords,distance,E_delta,getTemperature(),R_polaron_hopping_acceptor);
+                        }
                         events_valid[index] = true;
                     }
                 }
                 // If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
-                else if(!(*getSiteIt(dest_coords))->isOccupied() && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
+                else if(!isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
                     distance = getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                     if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                         hops_temp[index].setObjectIt(object_it);
-                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords));
-                        hops_temp[index].calculateEvent(dest_coords,distance,E_delta,getTemperature(),0);
+                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(calculateCoulomb(object_it,dest_coords)-Coulomb_i)+(E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                        if(getSiteType(object_coords)==(short)1){
+                            hops_temp[index].calculateEvent(dest_coords,distance,E_delta,getTemperature(),R_polaron_hopping_donor);
+                        }
+                        else if(getSiteType(object_coords)==(short)2){
+                            hops_temp[index].calculateEvent(dest_coords,distance,E_delta,getTemperature(),R_polaron_hopping_acceptor);
+                        }
                         events_valid[index] = true;
                     }
                 }
@@ -255,27 +321,35 @@ void OSC_Sim::calculatePolaronEvents(const list<unique_ptr<Object>>::iterator ob
         }
     }
     // Calculate possible extraction event
+    // Electrons are extracted at the bottom of the lattice (z=-1)
+    // Holes are extracted at the top of the lattice (z=Height)
     bool No_extraction_valid = true;
     list<Polaron_Extraction>::iterator extraction_event_it;
-    distance = calculateDistanceToElectrode(object_coords);
-    if(!(distance-0.0001)>Polaron_hopping_cutoff){
-        // If electron, charge is false
-        if(!polaron_it->getCharge()){
+    // If electron, charge is false
+    if(!polaron_it->getCharge()){
+        distance = getUnitSize()*((double)(object_coords.z+1)-0.5);
+        if(!(distance-0.0001)>Polaron_hopping_cutoff){
             extraction_event_it = electron_extraction_events.begin();
             advance(extraction_event_it,std::distance(electrons.begin(),polaron_it));
+            No_extraction_valid = false;
         }
-        // If hole, charge is true
-        else{
+    }
+    // If hole, charge is true
+    else{
+        distance = getUnitSize()*((double)(getHeight()-object_coords.z)-0.5);
+        if(!(distance-0.0001)>Polaron_hopping_cutoff){
             extraction_event_it = hole_extraction_events.begin();
             advance(extraction_event_it,std::distance(holes.begin(),polaron_it));
+            No_extraction_valid = false;
         }
+    }
+    if(!No_extraction_valid){
         if(getSiteType(object_coords)==(short)1){
             extraction_event_it->calculateEvent(object_coords,distance,0,0,R_polaron_hopping_donor);
         }
         else if(getSiteType(object_coords)==(short)2){
             extraction_event_it->calculateEvent(object_coords,distance,0,0,R_polaron_hopping_acceptor);
         }
-        No_extraction_valid = false;
     }
     // Determine the fastest hop event
     bool No_hops_valid = true;
@@ -313,11 +387,10 @@ void OSC_Sim::calculatePolaronEvents(const list<unique_ptr<Object>>::iterator ob
     if(!No_recombinations_valid && (best_time<0 || recombination_target_it->getWaitTime()<best_time)){
         selection = 3;
     }
-    unique_ptr<Event> event_ptr;
     switch(selection){
         // Extraction event is fastest
         case 1:{
-            event_ptr = unique_ptr<Event>(&(*extraction_event_it));
+            setEvent(polaron_it->getEventIt(),&(*extraction_event_it));
             break;
         }
         // Hop event is fastest
@@ -334,7 +407,7 @@ void OSC_Sim::calculatePolaronEvents(const list<unique_ptr<Object>>::iterator ob
                 advance(hop_list_it,std::distance(holes.begin(),polaron_it));
             }
             *hop_list_it = *hop_target_it;
-            event_ptr = unique_ptr<Event>(&(*hop_list_it));
+            setEvent(polaron_it->getEventIt(),&(*hop_list_it));
             break;
         }
         // Recombination event is fastest
@@ -351,7 +424,7 @@ void OSC_Sim::calculatePolaronEvents(const list<unique_ptr<Object>>::iterator ob
                 return;
             }
             *recombination_list_it = *recombination_target_it;
-            event_ptr = unique_ptr<Event>(&(*recombination_list_it));
+            setEvent(polaron_it->getEventIt(),&(*recombination_list_it));
             break;
         }
         // No valid event found
@@ -359,7 +432,6 @@ void OSC_Sim::calculatePolaronEvents(const list<unique_ptr<Object>>::iterator ob
             return;
         }
     }
-    setEvent(polaron_it->getEventIt(),event_ptr);
 }
 
 bool OSC_Sim::checkFinished(){
@@ -370,19 +442,39 @@ bool OSC_Sim::checkFinished(){
     return true;
 }
 
-void OSC_Sim::deleteExciton(const list<Exciton>::iterator exciton_it){
-    // Locate corresponding recombine event
-    auto recombination_list_it = exciton_recombination_events.begin();
-    advance(recombination_list_it,std::distance(excitons.begin(),exciton_it));
-    // Locate corresponding hop event
-    auto hop_list_it = exciton_hop_events.begin();
-    advance(hop_list_it,std::distance(excitons.begin(),exciton_it));
-    // Delete exciton
-    excitons.erase(exciton_it);
-    // Delete exciton recombination event
-    exciton_recombination_events.erase(recombination_list_it);
-    // Delete exciton hop event
-    exciton_hop_events.erase(hop_list_it);
+void OSC_Sim::deleteObject(const list<unique_ptr<Object>>::iterator object_it){
+    if((*object_it)->getName().compare(Exciton::name)==0){
+        auto exciton_it = getExcitonIt(*object_it);
+        // Locate corresponding recombination event
+        auto recombination_list_it = exciton_recombination_events.begin();
+        advance(recombination_list_it,std::distance(excitons.begin(),exciton_it));
+        // Locate corresponding hop event
+        auto hop_list_it = exciton_hop_events.begin();
+        advance(hop_list_it,std::distance(excitons.begin(),exciton_it));
+        // Locate corresponding dissociation event
+        auto dissociation_list_it = exciton_dissociation_events.begin();
+        advance(dissociation_list_it,std::distance(excitons.begin(),exciton_it));
+        // Delete exciton
+        excitons.erase(exciton_it);
+        // Delete exciton recombination event
+        exciton_recombination_events.erase(recombination_list_it);
+        // Delete exciton hop event
+        exciton_hop_events.erase(hop_list_it);
+        // Delete exciton dissociation event
+        exciton_dissociation_events.erase(dissociation_list_it);
+    }
+    else if((*object_it)->getName().compare(Polaron::name)==0){
+        // Electron
+        if(!getObjectCharge(object_it)){
+
+        }
+        // Hole
+        else{
+
+        }
+    }
+    // Remove the object from Simulation
+    removeObject(object_it);
 }
 
 bool OSC_Sim::executeExcitonCreation(const list<unique_ptr<Event>>::iterator event_it){
@@ -393,8 +485,7 @@ bool OSC_Sim::executeExcitonCreation(const list<unique_ptr<Event>>::iterator eve
     // Create the new exciton and add it to the simulation
     Exciton exciton_new(getTime(),N_excitons_created+1,coords_new);
     excitons.push_back(exciton_new);
-    unique_ptr<Object> object_ptr = unique_ptr<Object>(&excitons.back());
-    auto object_it = addObject(object_ptr);
+    auto object_it = addObject(&excitons.back());
     // Add placeholder events to the corresponding lists
     Exciton_Hop hop_event;
     exciton_hop_events.push_back(hop_event);
@@ -413,7 +504,38 @@ bool OSC_Sim::executeExcitonCreation(const list<unique_ptr<Event>>::iterator eve
         logMSG(msg);
     }
     // Find all nearby excitons and calculate their events
-    vector<list<unique_ptr<Object>>::iterator> neighbors = findRecalcNeighbors(coords_new);
+    auto neighbors = findRecalcNeighbors(coords_new);
+    calculateObjectListEvents(neighbors);
+    return true;
+}
+
+bool OSC_Sim::executeExcitonDissociation(const list<unique_ptr<Event>>::iterator event_it){
+    // Get event info
+    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+    Coords coords_dest = (*event_it)->getDestCoords();
+    // Update simulation time
+    incrementTime((*event_it)->getWaitTime());
+    // Delete exciton and its events
+    deleteObject((*event_it)->getObjectIt());
+    // Generate new electron and hole
+    int tag = (N_electrons_created>N_holes_created) ? (N_electrons_created+1) : (N_holes_created+1);
+    if(getSiteType(coords_dest)==(short)2){
+        generateHole(coords_initial,tag);
+        generateElectron(coords_dest,tag);
+    }
+    else{
+        generateElectron(coords_initial,tag);
+        generateHole(coords_dest,tag);
+    }
+    // Update counters
+    N_excitons--;
+    N_excitons_dissociated++;
+    // Find all nearby objects
+    auto neighbors = findRecalcNeighbors(coords_initial);
+    auto neighbors2 = findRecalcNeighbors(coords_dest);
+    neighbors.insert(neighbors.end(),neighbors2.begin(),neighbors2.end());
+    removeObjectItDuplicates(neighbors);
+    // Calculate events for all nearby objects
     calculateObjectListEvents(neighbors);
     return true;
 }
@@ -424,25 +546,12 @@ bool OSC_Sim::executeExcitonHop(const list<unique_ptr<Event>>::iterator event_it
         return false;
     }
     else{
-        // Get event info
-        Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
-        // Update simulation time
-        incrementTime((*event_it)->getWaitTime());
-        // Move the exciton in the Simulation
-        moveObject((*event_it)->getObjectIt(),(*event_it)->getDestCoords());
-        // Log event
         if(loggingEnabled()){
             ostringstream msg;
-            msg << "Exciton " << (*((*event_it)->getObjectIt()))->getTag() << " hopped to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+            msg << "Exciton " << (*((*event_it)->getObjectIt()))->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
             logMSG(msg);
         }
-        // Find all nearby excitons and calculate their events
-        vector<list<unique_ptr<Object>>::iterator> neighbors = findRecalcNeighbors(coords_initial);
-        vector<list<unique_ptr<Object>>::iterator> neighbors2 = findRecalcNeighbors((*event_it)->getDestCoords());
-        neighbors.insert(neighbors.end(),neighbors2.begin(),neighbors2.end());
-        removeObjectItDuplicates(neighbors);
-        calculateObjectListEvents(neighbors);
-        return true;
+        return executeObjectHop(event_it);
     }
 }
 
@@ -457,9 +566,7 @@ bool OSC_Sim::executeExcitonRecombine(const list<unique_ptr<Event>>::iterator ev
         diffusion_distances.push_back((*((*event_it)->getObjectIt()))->calculateDisplacement());
     }
     // delete exciton and its events
-    deleteExciton(getExcitonIt(*((*event_it)->getObjectIt())));
-    // remove the exciton from Simulation
-    removeObject((*event_it)->getObjectIt());
+    deleteObject((*event_it)->getObjectIt());
     // Update exciton counters
     N_excitons--;
     N_excitons_recombined++;
@@ -470,7 +577,7 @@ bool OSC_Sim::executeExcitonRecombine(const list<unique_ptr<Event>>::iterator ev
         logMSG(msg);
     }
     // Find all nearby excitons and calculate their events
-    vector<list<unique_ptr<Object>>::iterator> neighbors = findRecalcNeighbors(coords_initial);
+    auto neighbors = findRecalcNeighbors(coords_initial);
     calculateObjectListEvents(neighbors);
     return true;
 }
@@ -520,6 +627,208 @@ bool OSC_Sim::executeNextEvent(){
     }
 }
 
+bool OSC_Sim::executeObjectHop(const list<unique_ptr<Event>>::iterator event_it){
+    // Get event info
+    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+    // Update simulation time
+    incrementTime((*event_it)->getWaitTime());
+    // Move the exciton in the Simulation
+    moveObject((*event_it)->getObjectIt(),(*event_it)->getDestCoords());
+    // Find all nearby objects
+    auto neighbors = findRecalcNeighbors(coords_initial);
+    auto neighbors2 = findRecalcNeighbors((*event_it)->getDestCoords());
+    neighbors.insert(neighbors.end(),neighbors2.begin(),neighbors2.end());
+    removeObjectItDuplicates(neighbors);
+    // Calculate events for all nearby objects
+    calculateObjectListEvents(neighbors);
+    return true;
+}
+
+bool OSC_Sim::executePolaronExtraction(const list<unique_ptr<Event>>::iterator event_it){
+    // Get event info
+    bool charge = getObjectCharge((*event_it)->getObjectIt());
+    int polaron_tag = (*((*event_it)->getObjectIt()))->getTag();
+    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+    // Update simulation time
+    incrementTime((*event_it)->getWaitTime());
+    // Save transit time
+    if(Enable_ToF_test){
+        transit_times.push_back(getTime()-(*((*event_it)->getObjectIt()))->getCreationTime());
+    }
+    // Delete polaron and its events
+    deleteObject((*event_it)->getObjectIt());
+    // Update polaron counters
+    if(!charge){
+        N_electrons_collected++;
+        N_electrons--;
+    }
+    else{
+        N_holes_collected++;
+        N_holes--;
+    }
+    // Log event
+    if(loggingEnabled()){
+        ostringstream msg;
+        if(!charge){
+            msg << "Electron " << polaron_tag << " was extracted from site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z << "." << endl;
+        }
+        else{
+            msg << "Hole " << polaron_tag << " was extracted from site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z << "." << endl;
+        }
+        logMSG(msg);
+    }
+    // Find all nearby objects and calculate their events
+    auto neighbors = findRecalcNeighbors(coords_initial);
+    calculateObjectListEvents(neighbors);
+    return true;
+}
+
+bool OSC_Sim::executePolaronHop(const list<unique_ptr<Event>>::iterator event_it){
+    if(isOccupied((*event_it)->getDestCoords())){
+        cout << "Polaron hop cannot be executed. Destination site is already occupied." << endl;
+        return false;
+    }
+    else{
+        // Log event
+        if(loggingEnabled()){
+            ostringstream msg;
+            msg << "Polaron " << (*((*event_it)->getObjectIt()))->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+            logMSG(msg);
+        }
+        return executeObjectHop(event_it);
+    }
+}
+
+bool OSC_Sim::executePolaronRecombination(const list<unique_ptr<Event>>::iterator event_it){
+    // Get event info
+    int polaron_tag = (*((*event_it)->getObjectIt()))->getTag();
+    int target_tag = (*((*event_it)->getObjectTargetIt()))->getTag();
+    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+    Coords coords_dest = (*event_it)->getDestCoords();
+    // Update simulation time
+    incrementTime((*event_it)->getWaitTime());
+    // Delete polaron and its events
+    deleteObject((*event_it)->getObjectIt());
+    deleteObject((*event_it)->getObjectTargetIt());
+    // Update polaron counters
+    N_electrons_recombined++;
+    N_holes_recombined++;
+    N_electrons--;
+    N_holes--;
+    if(polaron_tag==target_tag){
+        N_geminate_recombinations++;
+    }
+    else{
+        N_bimolecular_recombinations++;
+    }
+    // Log event
+    if(loggingEnabled()){
+        ostringstream msg;
+        msg << "Electron " << polaron_tag << " at site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z << " recombined with hole " << target_tag << " at site " << coords_dest.x << "," << coords_dest.y << "," << coords_dest.z << "." << endl;
+        logMSG(msg);
+    }
+    // Find all nearby objects
+    auto neighbors = findRecalcNeighbors(coords_initial);
+    auto neighbors2 = findRecalcNeighbors(coords_dest);
+    neighbors.insert(neighbors.end(),neighbors2.begin(),neighbors2.end());
+    removeObjectItDuplicates(neighbors);
+    // Calculate events for all nearby objects
+    calculateObjectListEvents(neighbors);
+    return true;
+}
+
+void OSC_Sim::generateElectron(const Coords& coords,int tag=0){
+    if(tag==0){
+        tag = N_electrons_created+1;
+    }
+    // Create the new electron and add it to the simulation
+    Polaron electron_new(getTime(),tag,coords,false);
+    electrons.push_back(electron_new);
+    auto object_it = addObject(&electrons.back());
+    // Add placeholder events to the corresponding lists
+    Polaron_Hop hop_event;
+    electron_hop_events.push_back(hop_event);
+    Polaron_Recombination recombination_event;
+    recombination_event.setObjectIt(object_it);
+    polaron_recombination_events.push_back(recombination_event);
+    Polaron_Extraction extraction_event;
+    extraction_event.setObjectIt(object_it);
+    electron_extraction_events.push_back(extraction_event);
+    // Update exciton counters
+    N_electrons_created++;
+    N_electrons++;
+    // Log event
+    if(loggingEnabled()){
+        ostringstream msg;
+        msg << "Created electron " << electron_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
+        logMSG(msg);
+    }
+}
+
+void OSC_Sim::generateHole(const Coords& coords,int tag=0){
+    if(tag==0){
+        tag = N_holes_created+1;
+    }
+    // Create the new hole and add it to the simulation
+    Polaron hole_new(getTime(),tag,coords,true);
+    holes.push_back(hole_new);
+    auto object_it = addObject(&holes.back());
+    // Add placeholder events to the corresponding lists
+    Polaron_Hop hop_event;
+    hole_hop_events.push_back(hop_event);
+    Polaron_Extraction extraction_event;
+    extraction_event.setObjectIt(object_it);
+    hole_extraction_events.push_back(extraction_event);
+    // Update exciton counters
+    N_electrons_created++;
+    N_electrons++;
+    // Log event
+    if(loggingEnabled()){
+        ostringstream msg;
+        msg << "Created hole " << hole_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
+        logMSG(msg);
+    }
+}
+
+void OSC_Sim::generateToFPolarons(){
+    int num = 0;
+    Coords coords;
+    // Create electrons at the top plane of the lattice
+    if(!Polaron_type){
+        coords.z = getHeight()-1;
+    }
+    // Create holes at the bottom plane of the lattice
+    else{
+        coords.z = 0;
+    }
+    while(num<ToF_initial_polarons){
+        coords.x = getRandomX();
+        coords.y = getRandomY();
+        // If the site is already occupied, pick a new site
+        if(isOccupied(coords)){
+            continue;
+        }
+        // If phase restriction is enabled, electrons cannot be created on donor sites
+        else if(Enable_phase_restriction && !Polaron_type && getSiteType(coords)==(short)1){
+            continue;
+        }
+        // If phase restriction is enabled, holes cannot be created on acceptor sites
+        else if(Enable_phase_restriction && Polaron_type && getSiteType(coords)==(short)2){
+            continue;
+        }
+        else if(!Polaron_type){
+            generateElectron(coords);
+            num++;
+        }
+        else{
+            generateHole(coords);
+            num++;
+        }
+    }
+    auto object_its = getAllObjectIts();
+    calculateObjectListEvents(object_its);
+}
+
 vector<double> OSC_Sim::getDiffusionData(){
     return diffusion_distances;
 }
@@ -538,6 +847,12 @@ int OSC_Sim::getN_excitons_created(){
 
 int OSC_Sim::getN_excitons_recombined(){
     return N_excitons_recombined;
+}
+
+bool OSC_Sim::getObjectCharge(const list<unique_ptr<Object>>::iterator object_it){
+    if((*object_it)->getName().compare(Polaron::name)==0){
+        return static_cast<Polaron*>(object_it->get())->getCharge();
+    }
 }
 
 list<Polaron>::iterator OSC_Sim::getPolaronIt(const unique_ptr<Object>& object_ptr){
@@ -570,7 +885,6 @@ short OSC_Sim::getSiteType(const Coords& coords){
 }
 
 void OSC_Sim::initializeArchitecture(){
-    // Initialize energetic disorder
     N_donor_sites = 0;
     N_acceptor_sites = 0;
     if(Enable_neat){
@@ -654,8 +968,7 @@ void OSC_Sim::initializeArchitecture(){
                 cout << "Error! Undefined site type detected while assigning site energies." << endl;
             }
         }
-        site_ptr = unique_ptr<Site>(&sites[i]);
-        addSite(site_ptr);
+        addSite(&sites[i]);
     }
 }
 

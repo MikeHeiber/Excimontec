@@ -30,6 +30,7 @@ struct Parameters_OPV : Parameters_Simulation{
     int N_tests;
     bool Enable_exciton_diffusion_test;
     bool Enable_ToF_test;
+    bool Polaron_type;
     int ToF_initial_polarons;
     double ToF_start_time;
     double ToF_end_time;
@@ -114,6 +115,7 @@ class OSC_Sim : public Simulation{
         int N_tests;
         bool Enable_exciton_diffusion_test;
         bool Enable_ToF_test;
+        bool Polaron_type;
         int ToF_initial_polarons;
         double ToF_start_time;
         double ToF_end_time;
@@ -208,13 +210,11 @@ class OSC_Sim : public Simulation{
         int N_hole_surface_recombinations;
         // Additional Functions
         double calculateCoulomb(const list<unique_ptr<Object>>::iterator object_it,const Coords& coords);
-        double calculateDistanceToElectrode(const Coords& coords);
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(const list<unique_ptr<Object>>::iterator object_it);
         void calculateObjectListEvents(const vector<list<unique_ptr<Object>>::iterator>& object_it_vec);
         void calculatePolaronEvents(const list<unique_ptr<Object>>::iterator object_it);
-        void deleteExciton(const list<Exciton>::iterator exciton_it);
-        void deletePolaron(const list<Polaron>::iterator polaron_it);
+        void deleteObject(const list<unique_ptr<Object>>::iterator object_it);
         // Exciton Event Execution Functions
         bool executeExcitonCreation(const list<unique_ptr<Event>>::iterator event_it);
         bool executeExcitonHop(const list<unique_ptr<Event>>::iterator event_it);
@@ -223,12 +223,17 @@ class OSC_Sim : public Simulation{
         bool executeExcitonIntersystemCrossing(const list<unique_ptr<Event>>::iterator event_it);
         bool executeExcitonExcitonAnnihilation(const list<unique_ptr<Event>>::iterator event_it);
         bool executeExcitonPolaronAnnihilation(const list<unique_ptr<Event>>::iterator event_it);
+        // General Event Functions
+        bool executeObjectHop(const list<unique_ptr<Event>>::iterator event_it);
         // Polaron Event Execution Functions
         bool executePolaronHop(const list<unique_ptr<Event>>::iterator event_it);
         bool executePolaronRecombination(const list<unique_ptr<Event>>::iterator event_it);
         bool executePolaronExtraction(const list<unique_ptr<Event>>::iterator event_it);
+        void generateElectron(const Coords& coords,int tag);
+        void generateHole(const Coords& coords,int tag);
         void generateToFPolarons();
         list<Exciton>::iterator getExcitonIt(const unique_ptr<Object>& object_ptr);
+        bool getObjectCharge(const list<unique_ptr<Object>>::iterator object_it);
         list<Polaron>::iterator getPolaronIt(const unique_ptr<Object>& object_ptr);
         double getSiteEnergy(const Coords& coords);
         short getSiteType(const Coords& coords);

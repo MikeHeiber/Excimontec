@@ -21,7 +21,7 @@ struct Parameters_main{
 bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
-    string version = "v1.0";
+    string version = "v1.0-beta";
     // Parameters
     bool End_sim = false;
     // File declaration
@@ -298,6 +298,17 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     }
     else{
         cout << "Error enabling the time-of-flight polaron transport test." << endl;
+        return false;
+    }
+    i++;
+    if(stringvars[i].compare("electron")==0){
+        params.Polaron_type = false;
+    }
+    else if(stringvars[i].compare("hole")==0){
+        params.Polaron_type = true;
+    }
+    else{
+        cout << "Error setting polaron type for the time-of-flight test." << endl;
         return false;
     }
     i++;
