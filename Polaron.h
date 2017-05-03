@@ -17,8 +17,8 @@ class Polaron : public Object{
     public:
         static const string name;
         Polaron(const double time,const int tag_num,const Coords& start_coords,const bool polaron_charge) : Object(time,tag_num,start_coords){charge = polaron_charge;}
-        bool getCharge(){return charge;}
-        string getName(){return name;}
+        bool getCharge() const{return charge;}
+        string getName() const{return name;}
     private:
         bool charge; // false represents negative charge, true represents positive charge
 };
@@ -26,12 +26,12 @@ class Polaron : public Object{
 class Polaron_Hop : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
+        void calculateEvent(const Coords& dest_coords,const double rate){
             setDestCoords(dest_coords);
             // No target object
-            // setWaitTime
+            setWaitTime((-1/rate)*log(rand01()));
         }
-        string getName(){return name;}
+        string getName() const{return name;}
     private:
 
 };
@@ -39,12 +39,11 @@ class Polaron_Hop : public Event{
 class Polaron_Recombination : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
+        void calculateEvent(const Coords& dest_coords,const double rate){
             setDestCoords(dest_coords);
-            // No target object
-            // setWaitTime
+            setWaitTime((-1/rate)*log(rand01()));
         }
-        string getName(){return name;}
+        string getName() const{return name;}
     private:
 
 };
@@ -52,12 +51,12 @@ class Polaron_Recombination : public Event{
 class Polaron_Extraction : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double distance,const double E_delta,const int temperature, const double prefactor){
+        void calculateEvent(const Coords& dest_coords,const double rate){
             setDestCoords(dest_coords);
             // No target object
-            // setWaitTime
+            setWaitTime((-1/rate)*log(rand01()));
         }
-        string getName(){return name;}
+        string getName() const{return name;}
     private:
 };
 

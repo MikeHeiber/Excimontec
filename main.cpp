@@ -21,7 +21,7 @@ struct Parameters_main{
 bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
-    string version = "v1.0-beta";
+    string version = "v0.1-alpha";
     // Parameters
     bool End_sim = false;
     // File declaration
@@ -78,6 +78,15 @@ int main(int argc,char *argv[]){
     cout << procid << ": Initializing simulation " << procid << "..." << endl;
     OSC_Sim sim(params_opv,procid);
     cout << procid << ": Simulation initialization complete" << endl;
+    if(params_opv.Enable_exciton_diffusion_test){
+        cout << procid << ": Starting exciton diffusion test..." << endl;
+    }
+    else if(params_opv.Enable_ToF_test){
+        cout << procid << ": Starting time-of-flight charge transport test..." << endl;
+    }
+    else if(params_opv.Enable_IQE_test){
+        cout << procid << ": Starting internal quantum efficiency test..." << endl;
+    }
     // Begin Simulation loop
     while(!End_sim){
         success = sim.executeNextEvent();
@@ -109,14 +118,32 @@ int main(int argc,char *argv[]){
     ss << "results" << procid << ".txt";
     resultsfile.open(ss.str().c_str());
     ss.str("");
-    resultsfile << "KMC_Lattice_example " << version << " Results:\n";
+    resultsfile << "Excimontec " << version << " Results:\n";
     resultsfile << "Calculation time elapsed is " << (double)elapsedtime/60 << " minutes.\n";
     resultsfile << sim.getTime() << " seconds have been simulated.\n";
     resultsfile << sim.getN_events_executed() << " events have been executed.\n";
-    resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
     if(params_opv.Enable_exciton_diffusion_test){
+        resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
         resultsfile << "Exciton diffusion test results:\n";
-        resultsfile << "Exciton Diffusion Length is " << sim.calculateDiffusionLength_avg() << " ± " << sim.calculateDiffusionLength_stdev() << " nm\n";
+        resultsfile << "Exciton Diffusion Length is " << sim.calculateDiffusionLength_avg() << " ± " << sim.calculateDiffusionLength_stdev() << " nm.\n";
+    }
+    else if(params_opv.Enable_ToF_test){
+        resultsfile << "Time-of-flight test results:\n";
+        if(!params_opv.ToF_polaron_type){
+            resultsfile << sim.getN_electrons_collected() << " of " << sim.getN_electrons_created() << " electrons have been collected.\n";
+        }
+        else {
+            resultsfile << sim.getN_holes_collected() << " of " << sim.getN_holes_created() << " holes have been collected.\n";
+        }
+        resultsfile << "Transit time is " << sim.calculateTransitTime_avg() << " ± " << sim.calculateTransitTime_stdev() << " s.\n";
+        resultsfile << "Charge carrier mobility is " << sim.calculateMobility_avg() << " ± " << sim.calculateMobility_stdev() << " cm^2 V^-1 s^-1.\n";
+    }
+    else if(params_opv.Enable_IQE_test){
+        resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
+        resultsfile << 100*(double)sim.getN_excitons_dissociated()/(double)sim.getN_excitons_created() << "% of excitons have dissociated.\n";
+        resultsfile << 100*(double)sim.getN_geminate_recombinations()/(double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to geminate recombination.\n";
+        resultsfile << 100*(double)sim.getN_bimolecular_recombinations()/(double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to bimolecular recombination.\n";
+        resultsfile << 100*(double)(sim.getN_electrons_collected()+sim.getN_holes_collected())/(2*(double)sim.getN_excitons_dissociated()) << "% of photogenerated charges were extracted.\n";
     }
     resultsfile << endl;
     resultsfile.close();
@@ -130,7 +157,7 @@ int main(int argc,char *argv[]){
             ss << "analysis_summary.txt";
             analysisfile.open(ss.str().c_str());
             ss.str("");
-            analysisfile << "KMC_Lattice_example " << version << " Results Summary:" << endl;
+            analysisfile << "Excimontec " << version << " Results Summary:" << endl;
             analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
             if(params_opv.Enable_exciton_diffusion_test){
                 analysisfile << "Overall exciton diffusion test results:\n";
@@ -302,10 +329,10 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     }
     i++;
     if(stringvars[i].compare("electron")==0){
-        params.Polaron_type = false;
+        params.ToF_polaron_type = false;
     }
     else if(stringvars[i].compare("hole")==0){
-        params.Polaron_type = true;
+        params.ToF_polaron_type = true;
     }
     else{
         cout << "Error setting polaron type for the time-of-flight test." << endl;
@@ -314,9 +341,9 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.ToF_initial_polarons = atoi(stringvars[i].c_str());
     i++;
-    params.ToF_start_time = atof(stringvars[i].c_str());
+    params.ToF_transient_start = atof(stringvars[i].c_str());
     i++;
-    params.ToF_end_time = atof(stringvars[i].c_str());
+    params.ToF_transient_end = atof(stringvars[i].c_str());
     i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_IQE_test = true;
@@ -374,8 +401,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
     i++;
-    params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
-    i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_miller_abrahams = true;
     }
@@ -398,11 +423,23 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         return false;
     }
     i++;
-    params.Reorganization_energy_donor = atof(stringvars[i].c_str());
+    params.Reorganization_donor = atof(stringvars[i].c_str());
     i++;
-    params.Reorganization_energy_acceptor = atof(stringvars[i].c_str());
+    params.Reorganization_acceptor = atof(stringvars[i].c_str());
     i++;
-    // Energetic Disorder Parameters
+    params.R_polaron_recombination = atof(stringvars[i].c_str());
+    i++;
+    params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
+    i++;
+    // Lattice Parameters
+    params.Homo_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Lumo_donor = atof(stringvars[i].c_str());
+    i++;
+    params.Homo_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.Lumo_acceptor = atof(stringvars[i].c_str());
+    i++;
     //enable_gaussian_dos
     if(stringvars[i].compare("true")==0){
         params.Enable_gaussian_dos = true;
@@ -436,11 +473,11 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
     i++;
     // Coulomb Calculation Parameters
-    params.Coulomb_cutoff = atoi(stringvars[i].c_str());
-    i++;
     params.Dielectric_donor = atof(stringvars[i].c_str());
     i++;
     params.Dielectric_acceptor = atof(stringvars[i].c_str());
+    i++;
+    params.Coulomb_cutoff = atoi(stringvars[i].c_str());
     i++;
     // Error checking
     if(!params.Length>0 || !params.Width>0 || !params.Height>0){

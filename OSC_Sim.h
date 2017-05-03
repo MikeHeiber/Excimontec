@@ -30,10 +30,10 @@ struct Parameters_OPV : Parameters_Simulation{
     int N_tests;
     bool Enable_exciton_diffusion_test;
     bool Enable_ToF_test;
-    bool Polaron_type;
+    bool ToF_polaron_type;
     int ToF_initial_polarons;
-    double ToF_start_time;
-    double ToF_end_time;
+    double ToF_transient_start;
+    double ToF_transient_end;
     bool Enable_IQE_test;
     // Exciton Parameters
     double Exciton_generation_rate_donor;
@@ -54,11 +54,12 @@ struct Parameters_OPV : Parameters_Simulation{
     double R_polaron_hopping_acceptor;
     double Polaron_localization_donor; // nm^-1
     double Polaron_localization_acceptor; // nm^-1
-    int Polaron_hopping_cutoff; // nm
     bool Enable_miller_abrahams;
     bool Enable_marcus;
-    double Reorganization_energy_donor;
-    double Reorganization_energy_acceptor;
+    double Reorganization_donor;
+    double Reorganization_acceptor;
+    double R_polaron_recombination;
+    int Polaron_hopping_cutoff; // nm
     // Additional Lattice Parameters
     double Homo_donor;
     double Lumo_donor;
@@ -71,9 +72,9 @@ struct Parameters_OPV : Parameters_Simulation{
     double Energy_urbach_donor; // eV
     double Energy_urbach_acceptor; // eV
     // Coulomb Calculation Parameters
-    int Coulomb_cutoff; // nm
     double Dielectric_donor;
     double Dielectric_acceptor;
+    int Coulomb_cutoff; // nm
 };
 
 class Site_OSC : public Site{
@@ -93,11 +94,25 @@ class OSC_Sim : public Simulation{
         OSC_Sim(const Parameters_OPV& params,const int id);
         double calculateDiffusionLength_avg();
         double calculateDiffusionLength_stdev();
+        double calculateTransitTime_avg();
+        double calculateTransitTime_stdev();
+        double calculateMobility_avg();
+        double calculateMobility_stdev();
         bool checkFinished();
         bool executeNextEvent();
         vector<double> getDiffusionData();
+        vector<double> getTransitTimeData();
         int getN_excitons_created();
+        int getN_excitons_dissociated();
         int getN_excitons_recombined();
+        int getN_electrons_created();
+        int getN_electrons_collected();
+        int getN_electrons_recombined();
+        int getN_holes_created();
+        int getN_holes_collected();
+        int getN_holes_recombined();
+        int getN_geminate_recombinations();
+        int getN_bimolecular_recombinations();
         void outputStatus();
     protected:
 
@@ -115,10 +130,10 @@ class OSC_Sim : public Simulation{
         int N_tests;
         bool Enable_exciton_diffusion_test;
         bool Enable_ToF_test;
-        bool Polaron_type;
+        bool ToF_polaron_type;
         int ToF_initial_polarons;
-        double ToF_start_time;
-        double ToF_end_time;
+        double ToF_transient_start;
+        double ToF_transient_end;
         bool Enable_IQE_test;
         // Exciton Parameters
         double Exciton_generation_rate_donor;
@@ -139,11 +154,12 @@ class OSC_Sim : public Simulation{
         double R_polaron_hopping_acceptor;
         double Polaron_localization_donor; // nm^-1
         double Polaron_localization_acceptor; // nm^-1
-        int Polaron_hopping_cutoff; // nm
         bool Enable_miller_abrahams;
         bool Enable_marcus;
-        double Reorganization_energy_donor;
-        double Reorganization_energy_acceptor;
+        double Reorganization_donor;
+        double Reorganization_acceptor;
+        double R_polaron_recombination;
+        int Polaron_hopping_cutoff; // nm
         // Additional Lattice Parameters
         double Homo_donor;
         double Lumo_donor;
@@ -156,9 +172,9 @@ class OSC_Sim : public Simulation{
         double Energy_urbach_donor;
         double Energy_urbach_acceptor;
         // Coulomb Calculation Parameters
-        int Coulomb_cutoff; // nm
         double Dielectric_donor;
         double Dielectric_acceptor;
+        int Coulomb_cutoff; // nm
         // Additional Output Files
         //
         // Derived Parameters
@@ -210,6 +226,7 @@ class OSC_Sim : public Simulation{
         int N_hole_surface_recombinations;
         // Additional Functions
         double calculateCoulomb(const list<unique_ptr<Object>>::iterator object_it,const Coords& coords);
+        double calculateCoulomb(const bool charge,const Coords& coords);
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(const list<unique_ptr<Object>>::iterator object_it);
         void calculateObjectListEvents(const vector<list<unique_ptr<Object>>::iterator>& object_it_vec);
