@@ -5,7 +5,7 @@
 
 #include "KMC_Lattice/Utils.h"
 #include "OSC_Sim.h"
-#include "mpi.h"
+#include <mpi.h>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -128,7 +128,7 @@ int main(int argc,char *argv[]){
         resultsfile << "Exciton Diffusion Length is " << sim.calculateDiffusionLength_avg() << " ± " << sim.calculateDiffusionLength_stdev() << " nm.\n";
     }
     else if(params_opv.Enable_ToF_test){
-        resultsfile << "Time-of-flight test results:\n";
+        resultsfile << "Time-of-flight charge transport test results:\n";
         if(!params_opv.ToF_polaron_type){
             resultsfile << sim.getN_electrons_collected() << " of " << sim.getN_electrons_created() << " electrons have been collected.\n";
         }
@@ -149,20 +149,59 @@ int main(int argc,char *argv[]){
     resultsfile.close();
     // Output overall analysis results from all processors
     if(params_main.Enable_mpi){
-        vector<double> diffusion_data;
-        if(params_opv.Enable_exciton_diffusion_test){
-            diffusion_data = calculateAverageVector(sim.getDiffusionData(),procid,nproc);
-        }
         if(procid==0){
             ss << "analysis_summary.txt";
             analysisfile.open(ss.str().c_str());
             ss.str("");
             analysisfile << "Excimontec " << version << " Results Summary:" << endl;
-            analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
-            if(params_opv.Enable_exciton_diffusion_test){
+        }
+        if(params_opv.Enable_exciton_diffusion_test){
+            vector<double> diffusion_data;
+            diffusion_data = MPI_gatherData(sim.getDiffusionData(),procid,nproc);
+            if(procid==0){
+                analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
                 analysisfile << "Overall exciton diffusion test results:\n";
-                analysisfile << "Exciton diffusion length is " << vector_avg(diffusion_data) << " ± " << vector_stdev(diffusion_data) << " nm\n";
+                analysisfile << "Exciton diffusion length is " << vector_avg(diffusion_data) << " ± " << vector_stdev(diffusion_data) << " nm.\n";
             }
+
+        }
+        else if(params_opv.Enable_ToF_test){
+            vector<double> transit_times = MPI_gatherData(sim.getTransitTimeData(),procid,nproc);
+            vector<int> counts = MPI_calculateVectorSum(sim.getToFTransientCounts(),procid,nproc);
+            vector<double> energies = MPI_calculateVectorSum(sim.getToFTransientEnergies(),procid,nproc);
+            vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities(),procid,nproc);
+            vector<double> times = sim.getToFTransientTimes();
+            if(procid==0){
+                vector<double> mobilities = transit_times;
+                for(int i=0;i<(int)mobilities.size();i++){
+                    mobilities[i] = intpow(1e-7*params_opv.Height*params_opv.Unit_size,2)/(fabs(params_opv.Bias)*transit_times[i]);
+                }
+                ofstream transientfile;
+                ss << "ToF_average_transients.txt";
+                transientfile.open(ss.str().c_str());
+                ss.str("");
+                for(int i=0;i<(int)velocities.size();i++){
+                    if(counts[i]!=0){
+                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3)) << "," << params_opv.Height*params_opv.Unit_size*1e-7*1e-7*velocities[i]/(fabs(params_opv.Bias)*counts[i]) << "," << energies[i]/counts[i] << endl;
+                    }
+                    else{
+                        transientfile << times[i] << "," << 0 << "," << 0 << "," << 0 << endl;
+                    }
+                }
+                transientfile.close();
+                // Analysis Output
+                if(!params_opv.ToF_polaron_type){
+                    analysisfile << nproc*sim.getN_electrons_collected() << " total electrons collected." << endl;
+                }
+                else{
+                    analysisfile << nproc*sim.getN_holes_collected() << " total holes collected." << endl;
+                }
+                analysisfile << "Overall time-of-flight charge transport test results:\n";
+                analysisfile << "Transit time is " << vector_avg(transit_times) << " ± " << vector_stdev(transit_times) << " s.\n";
+                analysisfile << "Charge carrier mobility is " << vector_avg(mobilities) << " ± " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
+            }
+        }
+        if(procid==0){
             analysisfile.close();
         }
     }
@@ -187,6 +226,8 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         }
     }
     int i = 0;
+    int N_tests_enabled = 0;
+    int N_architectures_enabled = 0;
     // General Parameters
     //enable_mpi
     if(stringvars[i].compare("true")==0){
@@ -266,6 +307,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     // Film Architecture Parameters
     if(stringvars[i].compare("true")==0){
         params.Enable_neat = true;
+        N_architectures_enabled++;
     }
     else if(stringvars[i].compare("false")==0){
         params.Enable_neat = false;
@@ -277,6 +319,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_bilayer = true;
+        N_architectures_enabled++;
     }
     else if(stringvars[i].compare("false")==0){
         params.Enable_bilayer = false;
@@ -292,6 +335,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_random_blend = true;
+        N_architectures_enabled++;
     }
     else if(stringvars[i].compare("false")==0){
         params.Enable_random_blend = false;
@@ -308,6 +352,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_exciton_diffusion_test = true;
+        N_tests_enabled++;
     }
     else if(stringvars[i].compare("false")==0){
         params.Enable_exciton_diffusion_test = false;
@@ -319,6 +364,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_ToF_test = true;
+        N_tests_enabled++;
     }
     else if(stringvars[i].compare("false")==0){
         params.Enable_ToF_test = false;
@@ -345,8 +391,11 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.ToF_transient_end = atof(stringvars[i].c_str());
     i++;
+    params.ToF_pnts_per_decade = atoi(stringvars[i].c_str());
+    i++;
     if(stringvars[i].compare("true")==0){
         params.Enable_IQE_test = true;
+        N_tests_enabled++;
     }
     else if(stringvars[i].compare("false")==0){
         params.Enable_IQE_test = false;
@@ -500,8 +549,40 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error! The event recalculation cutoff radius must not be less than the polaron hopping cutoff radius." << endl;
         return false;
     }
+    if(params.Recalc_cutoff<params.Exciton_dissociation_cutoff){
+        cout << "Error! The event recalculation cutoff radius must not be less than the exciton dissociation cutoff radius." << endl;
+        return false;
+    }
+    if(params.Enable_ToF_test && params.Enable_periodic_z){
+        cout << "Error! The z-direction periodic boundary must be disabled in order to run the time-of-flight charge transport test." << endl;
+        return false;
+    }
+    if(params.Enable_IQE_test && params.Enable_periodic_z){
+        cout << "Error! The z-direction periodic boundary must be disabled in order to run the internal quantum efficiency test." << endl;
+        return false;
+    }
     if(!params.N_tests>0){
         cout << "Error! The number of tests must be greater than zero." << endl;
+        return false;
+    }
+    if(N_tests_enabled>1){
+        cout << "Error! Only one test can be enabled." << endl;
+        return false;
+    }
+    if(params.Enable_bilayer && params.Thickness_donor+params.Thickness_acceptor!=params.Height){
+        cout << "Error! When using the bilayer film architecture, the sum of the donor and the acceptor thicknesses must equal the lattice height." << endl;
+        return false;
+    }
+    if(N_architectures_enabled>1){
+        cout << "Error! Only one film architecture can be enabled." << endl;
+        return false;
+    }
+    if(params.Enable_miller_abrahams && params.Enable_marcus){
+        cout << "Error! The Miller-Abrahams and the Marcus polaron hopping models cannot both be enabled." << endl;
+        return false;
+    }
+    if(!params.Enable_miller_abrahams && !params.Enable_marcus){
+        cout << "Error! Either the Miller-Abrahams or the Marcus polaron hopping model must be enabled." << endl;
         return false;
     }
     if(params.Enable_gaussian_dos && params.Enable_exponential_dos){
