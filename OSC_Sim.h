@@ -95,6 +95,7 @@ class OSC_Sim : public Simulation{
         OSC_Sim(const Parameters_OPV& params,const int id);
         double calculateDiffusionLength_avg();
         double calculateDiffusionLength_stdev();
+        vector<double> calculateTransitTimeDist(const vector<double>& data,const int counts);
         double calculateTransitTime_avg();
         double calculateTransitTime_stdev();
         double calculateMobility_avg();
@@ -183,7 +184,8 @@ class OSC_Sim : public Simulation{
         int Coulomb_cutoff; // nm
         // Additional Output Files
         //
-        // Derived Parameters
+        // Additional Parameters
+        bool Error_found;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
         // Site Data Structure
@@ -208,6 +210,7 @@ class OSC_Sim : public Simulation{
         vector<double> site_energies_acceptor;
         vector<double> diffusion_distances;
         list<int> ToF_start_positions;
+        list<int> ToF_index_prev;
         list<double> ToF_start_times;
         list<double> ToF_start_energies;
         vector<double> transient_times;

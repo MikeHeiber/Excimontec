@@ -28,10 +28,10 @@ class Exciton : public Object{
 class Exciton_Creation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             // No destination coords.  Destination coords are chosen upon execution.
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -42,10 +42,10 @@ class Exciton_Creation : public Event{
 class Exciton_Hop : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -55,10 +55,10 @@ class Exciton_Hop : public Event{
 class Exciton_Recombination : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             // No destination site
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -67,10 +67,10 @@ class Exciton_Recombination : public Event{
 class Exciton_Dissociation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -79,10 +79,10 @@ class Exciton_Dissociation : public Event{
 class Exciton_Intersystem_Crossing : public Event {
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             // No destination coords
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -91,10 +91,10 @@ class Exciton_Intersystem_Crossing : public Event {
 class Exciton_Exciton_Annihilation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -103,10 +103,10 @@ class Exciton_Exciton_Annihilation : public Event{
 class Exciton_Polaron_Annihilation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:

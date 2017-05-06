@@ -26,10 +26,10 @@ class Polaron : public Object{
 class Polaron_Hop : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -39,9 +39,9 @@ class Polaron_Hop : public Event{
 class Polaron_Recombination : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
@@ -51,10 +51,10 @@ class Polaron_Recombination : public Event{
 class Polaron_Extraction : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate){
+        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
             setDestCoords(dest_coords);
             // No target object
-            setWaitTime((-1/rate)*log(rand01()));
+            setExecutionTime(current_time+(-1/rate)*log(rand01()));
         }
         string getName() const{return name;}
     private:
