@@ -329,8 +329,8 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                     dissociations_temp[index].setObjectIt(object_it);
                     // Exciton is starting from a donor site
                     if(getSiteType(object_coords)==(short)1){
-                        Coulomb_final = calculateCoulomb(true,object_coords)+calculateCoulomb(false,dest_coords)+Coulomb_table[i*i+j*j+k*k];
-                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))-(Lumo_acceptor-Lumo_donor)+(Coulomb_final-E_exciton_binding_donor)+(E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                        Coulomb_final = calculateCoulomb(true,object_coords)+calculateCoulomb(false,dest_coords)-Coulomb_table[i*i+j*j+k*k];
+                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))-(Lumo_acceptor-Lumo_donor)+(Coulomb_final+E_exciton_binding_donor)+(E_potential[dest_coords.z]-E_potential[object_coords.z]);
                         if(Enable_miller_abrahams){
                             rate = R_exciton_dissociation_donor*exp(-2*Polaron_localization_donor*distance);
                             if(E_delta>0){
@@ -343,8 +343,8 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                     }
                     // Exciton is starting from an acceptor site
                     else{
-                        Coulomb_final = calculateCoulomb(false,object_coords)+calculateCoulomb(true,dest_coords)+Coulomb_table[i*i+j*j+k*k];
-                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(Homo_donor-Homo_acceptor)+(Coulomb_final-E_exciton_binding_donor)-(E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                        Coulomb_final = calculateCoulomb(false,object_coords)+calculateCoulomb(true,dest_coords)-Coulomb_table[i*i+j*j+k*k];
+                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(Homo_donor-Homo_acceptor)+(Coulomb_final+E_exciton_binding_donor)-(E_potential[dest_coords.z]-E_potential[object_coords.z]);
                         if(Enable_miller_abrahams){
                             rate = R_exciton_dissociation_acceptor*exp(-2*Polaron_localization_acceptor*distance);
                             if(E_delta>0){
