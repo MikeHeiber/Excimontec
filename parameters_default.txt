@@ -1,0 +1,81 @@
+## OPV Parameters for Excimontec v0.1-alpha
+--------------------------------------------------------------
+## Computation Parameters
+true //Enable_mpi
+--------------------------------------------------------------
+## Simulation Parameters
+false //Enable_logging
+true //Enable_periodic_x
+true //Enable_periodic_y
+false //Enable_periodic_z
+50 //Length
+50 //Width
+100 //Height
+1.0 //Unit_size (nm)
+300 //Temperature (K)
+3 //Recalc_cutoff (nm) (must not be less than any of the event cutoffs)
+-1.0 //Bias (V)
+--------------------------------------------------------------
+## Device Architecture Parameters
+true //Enable_neat (uses donor properties)
+false //Enable_bilayer
+25 //Thickness_donor
+25 //Thickness_acceptor
+false //Enable_random_blend
+0.5 //Acceptor_conc
+--------------------------------------------------------------
+## Test Parameters
+1000 //N_tests
+false //Enable_exciton_diffusion_test
+true //Enable_ToF_test
+hole //ToF_polaron_type (electron or hole)
+1 //ToF_initial_polarons
+1e-10 //ToF_transient_start (s)
+1e-5 //ToF_transient_end (s)
+20 //ToF_pnts_per_decade
+false //Enable_IQE_test
+--------------------------------------------------------------
+## Exciton Parameters
+1e22 //Exciton_generation_rate_donor (cm^-3)
+1e22 //Exciton_generation_rate_acceptor (cm^-3)
+500e-12 //Exciton_lifetime_donor (s)
+500e-12 //Exciton_lifetime_acceptor (s)
+1e12 //R_exciton_hopping_donor (s^-1)
+1e12 //R_exciton_hopping_acceptor (s^-1)
+3 //FRET_cutoff (nm)
+0.5 //E_exciton_binding_donor (eV)
+0.5 //E_exciton_binding_acceptor (eV)
+1e14 //R_exciton_dissociation_donor (s^-1)
+1e14 //R_exciton_dissociation_acceptor (s^-1)
+3 //Exciton_dissociation_cutoff (nm)
+--------------------------------------------------------------
+## Polaron Parameters
+true //Enable_phase_restriction
+1e12 //R_polaron_hopping_donor (s^-1)
+1e12 //R_polaron_hopping_acceptor (s^-1)
+2.0 //Polaron_localization_donor (nm^-1)
+2.0 //Polaron_localization_acceptor (nm^-1)
+true //Enable_miller_abrahams
+false //Enable_marcus
+0.2 //Reorganization_donor (eV)
+0.2 //Reorganization_acceptor (eV)
+1e11 //R_polaron_recombination (s^-1)
+3 //Polaron_hopping_cutoff (nm)
+--------------------------------------------------------------
+## Lattice Site Parameters
+5.0 //Homo_donor (eV)
+3.0 //Lumo_donor (eV)
+6.0 //Homo_acceptor (eV)
+4.0 //Lumo_acceptor (eV)
+true //Enable_gaussian_dos
+0.05 //Energy_stdev_donor (eV)
+0.05 //Energy_stdev_acceptor (eV)
+false //Enable_exponential_dos
+0.03 //Energy_urbach_donor (eV)
+0.03 //Energy_urbach_acceptor (eV)
+--------------------------------------------------------------
+## Coulomb Interaction Parameters
+3.5 //Dielectric_donor
+3.5 //Dielectric_acceptor
+15 //Coulomb_cutoff (nm)
+--------------------------------------------------------------
