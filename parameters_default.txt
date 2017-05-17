@@ -1,10 +1,10 @@
-## OPV Parameters for Excimontec v0.1-alpha
+## OPV Parameters for Excimontec v0.2-alpha
 --------------------------------------------------------------
 ## Computation Parameters
 true //Enable_mpi
 --------------------------------------------------------------
 ## Simulation Parameters
-false //Enable_logging
+false //Enable_logging (for debugging)
 true //Enable_periodic_x
 true //Enable_periodic_y
 false //Enable_periodic_z
@@ -23,6 +23,12 @@ false //Enable_bilayer
 25 //Thickness_acceptor
 false //Enable_random_blend
 0.5 //Acceptor_conc
+false //Enable_import_morphology_single
+morphology0.txt //Morphology_filename
+false //Enable_import_morphology_set
+morphology#.txt //Morphology_set_format
+1 //N_test_morphologies
+1 //N_morphology_set_size
 --------------------------------------------------------------
 ## Test Parameters
 1000 //N_tests
@@ -34,6 +40,7 @@ hole //ToF_polaron_type (electron or hole)
 1e-5 //ToF_transient_end (s)
 20 //ToF_pnts_per_decade
 false //Enable_IQE_test
+1e-4 //IQE_time_cutoff (s) (simulation time)
 --------------------------------------------------------------
 ## Exciton Parameters
 1e22 //Exciton_generation_rate_donor (cm^-3)

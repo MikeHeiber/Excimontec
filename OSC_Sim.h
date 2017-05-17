@@ -26,6 +26,8 @@ struct Parameters_OPV : Parameters_Simulation{
     int Thickness_acceptor; // sites
     bool Enable_random_blend;
     double Acceptor_conc;
+    bool Enable_import_morphology;
+    ifstream* Morphology_file;
     // Test Parameters
     int N_tests;
     bool Enable_exciton_diffusion_test;
@@ -36,6 +38,7 @@ struct Parameters_OPV : Parameters_Simulation{
     double ToF_transient_end;
     int ToF_pnts_per_decade;
     bool Enable_IQE_test;
+    double IQE_time_cutoff;
     // Exciton Parameters
     double Exciton_generation_rate_donor;
     double Exciton_generation_rate_acceptor;
@@ -132,6 +135,8 @@ class OSC_Sim : public Simulation{
         int Thickness_acceptor; // sites
         bool Enable_random_blend;
         double Acceptor_conc;
+        bool Enable_import_morphology;
+        ifstream* Morphology_file;
         // Test Parameters
         int N_tests;
         bool Enable_exciton_diffusion_test;
@@ -142,6 +147,7 @@ class OSC_Sim : public Simulation{
         double ToF_transient_end;
         int ToF_pnts_per_decade;
         bool Enable_IQE_test;
+        double IQE_time_cutoff;
         // Exciton Parameters
         double Exciton_generation_rate_donor;
         double Exciton_generation_rate_acceptor;
@@ -185,6 +191,7 @@ class OSC_Sim : public Simulation{
         // Additional Output Files
         //
         // Additional Parameters
+        bool isLightOn;
         bool Error_found;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
@@ -247,6 +254,7 @@ class OSC_Sim : public Simulation{
         void calculateExcitonEvents(const list<Object*>::iterator object_it);
         void calculateObjectListEvents(const vector<list<Object*>::iterator>& object_it_vec);
         void calculatePolaronEvents(const list<Object*>::iterator object_it);
+        bool createImportedMorphology();
         void deleteObject(const list<Object*>::iterator object_it);
         // Exciton Event Execution Functions
         bool executeExcitonCreation(const list<Event*>::iterator event_it);

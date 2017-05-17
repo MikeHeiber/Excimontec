@@ -17,6 +17,8 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     Thickness_acceptor = params.Thickness_acceptor;
     Enable_random_blend = params.Enable_random_blend;
     Acceptor_conc = params.Acceptor_conc;
+    Enable_import_morphology = params.Enable_import_morphology;
+    Morphology_file = params.Morphology_file;
     // Test Parameters
     N_tests = params.N_tests;
     Enable_exciton_diffusion_test = params.Enable_exciton_diffusion_test;
@@ -27,6 +29,7 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     ToF_transient_end = params.ToF_transient_end;
     ToF_pnts_per_decade = params.ToF_pnts_per_decade;
     Enable_IQE_test = params.Enable_IQE_test;
+    IQE_time_cutoff = params.IQE_time_cutoff;
     // Exciton Parameters
     Exciton_generation_rate_donor = params.Exciton_generation_rate_donor;
     Exciton_generation_rate_acceptor = params.Exciton_generation_rate_acceptor;
@@ -92,6 +95,7 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     // Initialize Sites
     Site_OSC site;
     site.clearOccupancy();
+    site.setType(0);
     sites.assign(getNumSites(),site);
     // Initialize Film Architecture and Site Energies
     initializeArchitecture();
@@ -109,6 +113,7 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     }
     // Initialize exciton creation event
     if(Enable_exciton_diffusion_test || Enable_IQE_test){
+        isLightOn = true;
         R_exciton_generation_donor = Exciton_generation_rate_donor*N_donor_sites*intpow(1e-7*getUnitSize(),3);
         R_exciton_generation_acceptor = Exciton_generation_rate_acceptor*N_acceptor_sites*intpow(1e-7*getUnitSize(),3);
         exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor+R_exciton_generation_acceptor,getTime());
@@ -116,6 +121,7 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     }
     else if(Enable_ToF_test){
         // Initialize data structures
+        isLightOn = false;
         double step_size = 1.0/(double)ToF_pnts_per_decade;
         int num_steps = floor((log10(ToF_transient_end)-log10(ToF_transient_start))/step_size);
         transient_times.assign(num_steps,0);
@@ -689,15 +695,88 @@ bool OSC_Sim::checkFinished(){
         return (N_electrons_collected==N_tests || N_holes_collected==N_tests || N_electrons_created>2*N_tests || N_holes_created>2*N_tests);
     }
     if(Enable_IQE_test){
-        if(N_excitons_created==N_tests){
+        if(isLightOn && N_excitons_created==N_tests){
             removeEvent(&exciton_creation_event);
+            isLightOn = false;
         }
         if(N_excitons_created==N_tests && N_excitons==0 && N_electrons==0 && N_holes==0){
+            return true;
+        }
+        if(getTime()>IQE_time_cutoff){
             return true;
         }
         return false;
     }
     cout << getId() << ": Error checking simulation finish conditions.  The simulation will now end." << endl;
+    return true;
+}
+
+bool OSC_Sim::createImportedMorphology(){
+    string file_info;
+    string line;
+    stringstream ss;
+    Coords coords;
+    short type = 0;
+    int length,width,height;
+    int site_count = 0;
+    // Get input morphology file information
+    getline(*Morphology_file,line);
+    file_info = line;
+    // Parse file info
+    if(file_info.substr(0,9).compare("Ising_OPV")!=0){
+        cout << getId() << ": Error! Morphology file format not recognized." << endl;
+        Error_found = true;
+        return false;
+    }
+    getline(*Morphology_file,line);
+    length = atoi(line.c_str());
+    getline(*Morphology_file,line);
+    width = atoi(line.c_str());
+    getline(*Morphology_file,line);
+    height = atoi(line.c_str());
+    if(getLength()!=length || getWidth()!=width || getHeight()!=height){
+        cout << getId() << ": Error! Morphology lattice dimensions do not match the lattice dimensions defined in the parameter file." << endl;
+        Error_found = true;
+        return false;
+    }
+    // Skip 3 lines (domain size1, domain size2, blend ratio)
+    getline(*Morphology_file,line);
+    getline(*Morphology_file,line);
+    getline(*Morphology_file,line);
+    // Begin parsing morphology site data
+    for(int x=0;x<getLength();x++){
+        for(int y=0;y<getWidth();y++){
+            for(int z=0;z<getHeight();z++){
+                if(site_count==0){
+                    if(!(*Morphology_file).good()){
+                        cout << "Error parsing file.  End of file reached before expected." << endl;
+                        Error_found = true;
+                        return false;
+                    }
+                    getline(*Morphology_file,line);
+                    type = (short)atoi(line.substr(0,1).c_str());
+                    site_count = atoi(line.substr(1).c_str());
+                }
+                coords.setXYZ(x,y,z);
+                sites[getSiteIndex(coords)].setType(type);
+                if(type==(short)1){
+                    N_donor_sites++;
+                }
+                else if(type==(short)2){
+                    N_acceptor_sites++;
+                }
+                site_count--;
+            }
+        }
+    }
+    // Check for unassigned sites
+    for(auto it=sites.begin();it!=sites.end();++it){
+        if(it->getType()==(short)0){
+            cout << getId() << ": Error! Unassigned site found after morphology import. Check the morphology file for errors." << endl;
+            Error_found = true;
+            return false;
+        }
+    }
     return true;
 }
 
@@ -1254,6 +1333,7 @@ vector<double> OSC_Sim::getTransitTimeData(){
 }
 
 void OSC_Sim::initializeArchitecture(){
+    bool success;
     N_donor_sites = 0;
     N_acceptor_sites = 0;
     if(Enable_neat){
@@ -1268,9 +1348,7 @@ void OSC_Sim::initializeArchitecture(){
         for(int x=0;x<getLength();x++){
             for(int y=0;y<getWidth();y++){
                 for(int z=0;z<getHeight();z++){
-                    coords.x = x;
-                    coords.y = y;
-                    coords.z = z;
+                    coords.setXYZ(x,y,z);
                     if(z<Thickness_acceptor){
                         sites[getSiteIndex(coords)].setType(2);
                         N_acceptor_sites++;
@@ -1294,6 +1372,12 @@ void OSC_Sim::initializeArchitecture(){
         shuffle(site_types.begin(),site_types.end(),gen);
         for(int i=0;i<(int)sites.size();i++){
             sites[i].setType(site_types[i]);
+        }
+    }
+    else if(Enable_import_morphology){
+        success = createImportedMorphology();
+        if(!success){
+            return;
         }
     }
     if(Enable_gaussian_dos){

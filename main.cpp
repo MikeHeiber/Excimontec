@@ -16,6 +16,12 @@ using namespace std;
 
 struct Parameters_main{
     bool Enable_mpi;
+    bool Enable_import_morphology_single;
+    string Morphology_filename;
+    bool Enable_import_morphology_set;
+    string Morphology_set_format;
+    int N_test_morphologies;
+    int N_morphology_set_size;
 };
 
 //Declare Functions
@@ -27,6 +33,7 @@ int main(int argc,char *argv[]){
     bool End_sim = false;
     // File declaration
     ifstream parameterfile;
+    ifstream morphologyfile;
     ofstream logfile;
     ofstream resultsfile;
     ofstream analysisfile;
@@ -47,7 +54,7 @@ int main(int argc,char *argv[]){
     cout << "Loading input parameters from file... " << endl;
     parameterfilename = argv[1];
     parameterfile.open(parameterfilename.c_str(),ifstream::in);
-    if(!parameterfile){
+    if(!parameterfile.good()){
         cout << "Error loading parameter file.  Program will now exit." << endl;
         return 0;
     }
@@ -65,6 +72,51 @@ int main(int argc,char *argv[]){
         nproc = MPI::COMM_WORLD.Get_size();
         procid = MPI::COMM_WORLD.Get_rank();
         cout << "MPI initialization complete!" << endl;
+    }
+    // Morphology set import handling
+    if(params_main.Enable_mpi && params_main.Enable_import_morphology_set && params_main.N_test_morphologies!=nproc){
+        cout << "Error! The number of requested processors should equal the number of morphologies tested." << endl;
+        cout << "You have requested " << nproc << " processors for " << params_main.N_test_morphologies << " morphologies." << endl;
+        return 0;
+    }
+    if(params_main.Enable_import_morphology_set && params_main.Enable_mpi){
+        int* selected_morphologies = (int *)malloc(sizeof(int)*params_main.N_test_morphologies);
+        if(procid==0){
+            vector<int> morphology_set;
+            int selection;
+            for(int i=0;i<params_main.N_morphology_set_size;i++){
+                morphology_set.push_back(i);
+            }
+            default_random_engine gen(time(0));
+            for(int i=0;i<params_main.N_test_morphologies;i++){
+                uniform_int_distribution<int> dist(0,morphology_set.size()-1);
+                auto randn = bind(dist,gen);
+                selection = randn();
+                selected_morphologies[i] = morphology_set[selection];
+                morphology_set.erase(morphology_set.begin()+selection);
+            }
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Bcast(selected_morphologies,params_main.N_test_morphologies,MPI_INT,0,MPI_COMM_WORLD);
+        // Parse input morphology set file format
+        int pos = params_main.Morphology_set_format.find("#");
+        string prefix = params_main.Morphology_set_format.substr(0,pos);
+        string suffix = params_main.Morphology_set_format.substr(pos+1);
+        cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
+        ss << prefix << selected_morphologies[procid] << suffix;
+        cout << procid << ": " << ss.str() << " selected." << endl;
+        params_main.Morphology_filename = ss.str();
+    }
+    if(params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set){
+        params_opv.Enable_import_morphology = true;
+        morphologyfile.open(params_main.Morphology_filename.c_str(),ifstream::in);
+        if(morphologyfile.good()){
+            params_opv.Morphology_file = &morphologyfile;
+        }
+        else{
+            cout << procid << ": Error opening morphology file for importing." << endl;
+            return 0;
+        }
     }
     // Setup file output
     cout << procid << ": Creating output files..." << endl;
@@ -269,6 +321,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     string var;
     size_t pos;
     vector<string> stringvars;
+    bool error_status = false;
     while(inputfile->good()){
         getline(*inputfile,line);
         if((line.substr(0,2)).compare("--")!=0 && (line.substr(0,2)).compare("##")!=0){
@@ -282,61 +335,36 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     int N_architectures_enabled = 0;
     // General Parameters
     //enable_mpi
-    if(stringvars[i].compare("true")==0){
-        params_main.Enable_mpi = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params_main.Enable_mpi = false;
-    }
-    else{
+    params_main.Enable_mpi = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting mpi options" << endl;
         return false;
     }
     i++;
     //enable_logging
-    if(stringvars[i].compare("true")==0){
-        params.Enable_logging = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_logging = false;
-    }
-    else{
+    params.Enable_logging = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting logging options" << endl;
         return false;
     }
     i++;
     //enable_periodic_x
-    if(stringvars[i].compare("true")==0){
-        params.Enable_periodic_x = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_periodic_x = false;
-    }
-    else{
+    params.Enable_periodic_x = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting x-periodic boundary options" << endl;
         return false;
     }
     i++;
     //enable_periodic_y
-    if(stringvars[i].compare("true")==0){
-        params.Enable_periodic_y = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_periodic_y = false;
-    }
-    else{
+    params.Enable_periodic_y = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting y-periodic boundary options" << endl;
         return false;
     }
     i++;
     //enable_periodic_z
-    if(stringvars[i].compare("true")==0){
-        params.Enable_periodic_z = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_periodic_z = false;
-    }
-    else{
+    params.Enable_periodic_z = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting z-periodic boundary options" << endl;
         return false;
     }
@@ -357,73 +385,84 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Bias = atof(stringvars[i].c_str());
     i++;
     // Film Architecture Parameters
-    if(stringvars[i].compare("true")==0){
-        params.Enable_neat = true;
-        N_architectures_enabled++;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_neat = false;
-    }
-    else{
+    params.Enable_neat = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error enabling neat film architecture." << endl;
         return false;
     }
-    i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_bilayer = true;
+    if(params.Enable_neat){
         N_architectures_enabled++;
     }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_bilayer = false;
-    }
-    else{
+    i++;
+    params.Enable_bilayer = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error enabling bilayer film architecture." << endl;
         return false;
+    }
+    if(params.Enable_bilayer){
+        N_architectures_enabled++;
     }
     i++;
     params.Thickness_donor = atoi(stringvars[i].c_str());
     i++;
     params.Thickness_acceptor = atoi(stringvars[i].c_str());
     i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_random_blend = true;
-        N_architectures_enabled++;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_random_blend = false;
-    }
-    else{
+    params.Enable_random_blend = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error enabling random blend film architecture." << endl;
         return false;
+    }
+    if(params.Enable_random_blend){
+        N_architectures_enabled++;
     }
     i++;
     params.Acceptor_conc = atof(stringvars[i].c_str());;
     i++;
+    params_main.Enable_import_morphology_single = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
+        cout << "Error enabling morphology import." << endl;
+        return false;
+    }
+    if(params_main.Enable_import_morphology_single){
+        N_architectures_enabled++;
+    }
+    i++;
+    params_main.Morphology_filename = stringvars[i];
+    i++;
+    params_main.Enable_import_morphology_set = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
+        cout << "Error enabling morphology set import." << endl;
+        return false;
+    }
+    if(params_main.Enable_import_morphology_set){
+        N_architectures_enabled++;
+    }
+    i++;
+    params_main.Morphology_set_format = stringvars[i];
+    i++;
+    params_main.N_test_morphologies = atoi(stringvars[i].c_str());
+    i++;
+    params_main.N_morphology_set_size = atoi(stringvars[i].c_str());
+    i++;
     // Test Parameters
     params.N_tests = atoi(stringvars[i].c_str());
     i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_exciton_diffusion_test = true;
-        N_tests_enabled++;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_exciton_diffusion_test = false;
-    }
-    else{
+    params.Enable_exciton_diffusion_test = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error enabling the exciton diffusion test." << endl;
         return false;
     }
-    i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_ToF_test = true;
+    if(params.Enable_exciton_diffusion_test){
         N_tests_enabled++;
     }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_ToF_test = false;
-    }
-    else{
+    i++;
+    params.Enable_ToF_test = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error enabling the time-of-flight polaron transport test." << endl;
         return false;
+    }
+    if(params.Enable_ToF_test){
+        N_tests_enabled++;
     }
     i++;
     if(stringvars[i].compare("electron")==0){
@@ -445,17 +484,16 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.ToF_pnts_per_decade = atoi(stringvars[i].c_str());
     i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_IQE_test = true;
-        N_tests_enabled++;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_IQE_test = false;
-    }
-    else{
+    params.Enable_IQE_test = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error enabling the internal quantum efficiency test." << endl;
         return false;
     }
+    if(params.Enable_IQE_test){
+        N_tests_enabled++;
+    }
+    i++;
+    params.IQE_time_cutoff = atof(stringvars[i].c_str());
     i++;
     // Exciton Parameters
     params.Exciton_generation_rate_donor = atof(stringvars[i].c_str());
@@ -483,13 +521,8 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Exciton_dissociation_cutoff = atoi(stringvars[i].c_str());
     i++;
     // Polaron Parameters
-    if(stringvars[i].compare("true")==0){
-        params.Enable_phase_restriction = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_phase_restriction = false;
-    }
-    else{
+    params.Enable_phase_restriction = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting polaron phase restriction option." << endl;
         return false;
     }
@@ -502,24 +535,14 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
     i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_miller_abrahams = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_miller_abrahams = false;
-    }
-    else{
+    params.Enable_miller_abrahams = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting Miller-Abrahams polaron hopping model options" << endl;
         return false;
     }
     i++;
-    if(stringvars[i].compare("true")==0){
-        params.Enable_marcus = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_marcus = false;
-    }
-    else{
+    params.Enable_marcus = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting Marcus polaron hopping model options" << endl;
         return false;
     }
@@ -542,13 +565,8 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Lumo_acceptor = atof(stringvars[i].c_str());
     i++;
     //enable_gaussian_dos
-    if(stringvars[i].compare("true")==0){
-        params.Enable_gaussian_dos = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_gaussian_dos = false;
-    }
-    else{
+    params.Enable_gaussian_dos = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting Gaussian DOS options" << endl;
         return false;
     }
@@ -558,13 +576,8 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Energy_stdev_acceptor = atof(stringvars[i].c_str());
     i++;
     //enable_exponential_dos
-    if(stringvars[i].compare("true")==0){
-        params.Enable_exponential_dos = true;
-    }
-    else if(stringvars[i].compare("false")==0){
-        params.Enable_exponential_dos = false;
-    }
-    else{
+    params.Enable_exponential_dos = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
         cout << "Error setting Exponential DOS options" << endl;
         return false;
     }
@@ -635,6 +648,10 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     }
     if(params.Enable_bilayer && params.Thickness_donor+params.Thickness_acceptor!=params.Height){
         cout << "Error! When using the bilayer film architecture, the sum of the donor and the acceptor thicknesses must equal the lattice height." << endl;
+        return false;
+    }
+    if(params_main.Enable_import_morphology_set && !params_main.Enable_mpi){
+        cout << "Error! MPI must be enabled in order to import a morphology set." << endl;
         return false;
     }
     if(N_architectures_enabled>1){
