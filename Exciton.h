@@ -28,11 +28,6 @@ class Exciton : public Object{
 class Exciton_Creation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            // No destination coords.  Destination coords are chosen upon execution.
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
-        }
         string getName() const{return name;}
     private:
 
@@ -40,12 +35,15 @@ class Exciton_Creation : public Event{
 };
 
 class Exciton_Hop : public Event{
+    using Event::calculateExecutionTime;
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            setDestCoords(dest_coords);
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
+        void calculateExecutionTime(const double prefactor,const double distance,const double E_delta,const double temp,const double current_time){
+            double rate = prefactor*intpow(1/distance,6);
+            if(E_delta>0){
+                rate *= exp(-E_delta/(K_b*temp));
+            }
+            calculateExecutionTime(rate,current_time);
         }
         string getName() const{return name;}
     private:
@@ -55,22 +53,26 @@ class Exciton_Hop : public Event{
 class Exciton_Recombination : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            // No destination site
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
-        }
         string getName() const{return name;}
     private:
 };
 
 class Exciton_Dissociation : public Event{
+    using Event::calculateExecutionTime;
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            setDestCoords(dest_coords);
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
+        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,const double temperature,const double current_time){
+            // Calculates dissociation using the Miller-Abrahams model
+            double rate = prefactor*exp(-2*localization*distance);
+            if(E_delta>0){
+                rate *= exp(-E_delta/(K_b*temperature));
+            }
+            calculateExecutionTime(rate,current_time);
+        }
+        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,const double reorganization,const double temperature,const double current_time){
+            // Calculates dissociation using the Marcus model
+            double rate = (prefactor/sqrt(4*Pi*reorganization*K_b*temperature))*exp(-2*localization*distance)*exp(-intpow(reorganization+E_delta,2)/(4*reorganization*K_b*temperature));
+            calculateExecutionTime(rate,current_time);
         }
         string getName() const{return name;}
     private:
@@ -79,11 +81,6 @@ class Exciton_Dissociation : public Event{
 class Exciton_Intersystem_Crossing : public Event {
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            // No destination coords
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
-        }
         string getName() const{return name;}
     private:
 };
@@ -91,11 +88,6 @@ class Exciton_Intersystem_Crossing : public Event {
 class Exciton_Exciton_Annihilation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            setDestCoords(dest_coords);
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
-        }
         string getName() const{return name;}
     private:
 };
@@ -103,11 +95,6 @@ class Exciton_Exciton_Annihilation : public Event{
 class Exciton_Polaron_Annihilation : public Event{
     public:
         static const string name;
-        void calculateEvent(const Coords& dest_coords,const double rate,const double current_time){
-            setDestCoords(dest_coords);
-            // No target object
-            setExecutionTime(current_time+(-1/rate)*log(rand01()));
-        }
         string getName() const{return name;}
     private:
 };

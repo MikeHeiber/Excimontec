@@ -22,7 +22,7 @@ struct Parameters_main{
 bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
-    string version = "v0.1-alpha";
+    string version = "v0.2-alpha";
     // Parameters
     bool End_sim = false;
     // File declaration
