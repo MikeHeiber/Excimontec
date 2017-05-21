@@ -26,6 +26,8 @@ struct Parameters_OPV : Parameters_Simulation{
     int Thickness_acceptor; // sites
     bool Enable_random_blend;
     double Acceptor_conc;
+    bool Enable_import_morphology;
+    ifstream* Morphology_file;
     // Test Parameters
     int N_tests;
     bool Enable_exciton_diffusion_test;
@@ -36,6 +38,13 @@ struct Parameters_OPV : Parameters_Simulation{
     double ToF_transient_end;
     int ToF_pnts_per_decade;
     bool Enable_IQE_test;
+    double IQE_time_cutoff;
+    bool Enable_dynamics_test;
+    bool Enable_dynamics_extraction;
+    double Dynamics_initial_exciton_conc;
+    double Dynamics_transient_start;
+    double Dynamics_transient_end;
+    int Dynamics_pnts_per_decade;
     // Exciton Parameters
     double Exciton_generation_rate_donor;
     double Exciton_generation_rate_acceptor;
@@ -61,6 +70,8 @@ struct Parameters_OPV : Parameters_Simulation{
     double Reorganization_acceptor;
     double R_polaron_recombination;
     int Polaron_hopping_cutoff; // nm
+    bool Enable_gaussian_polaron_delocalization;
+    double Polaron_delocalization_length;
     // Additional Lattice Parameters
     double Homo_donor;
     double Lumo_donor;
@@ -103,12 +114,17 @@ class OSC_Sim : public Simulation{
         bool checkFinished();
         bool executeNextEvent();
         vector<double> getDiffusionData();
+        vector<int> getDynamicsTransientExcitons();
+        vector<int> getDynamicsTransientElectrons();
+        vector<int> getDynamicsTransientHoles();
+        vector<double> getDynamicsTransientTimes();
         vector<int> getToFTransientCounts();
         vector<double> getToFTransientEnergies();
         vector<double> getToFTransientTimes();
         vector<double> getToFTransientVelocities();
         vector<double> getTransitTimeData();
         int getN_excitons_created();
+        int getN_excitons_created(const short site_type);
         int getN_excitons_dissociated();
         int getN_excitons_recombined();
         int getN_electrons_created();
@@ -132,6 +148,8 @@ class OSC_Sim : public Simulation{
         int Thickness_acceptor; // sites
         bool Enable_random_blend;
         double Acceptor_conc;
+        bool Enable_import_morphology;
+        ifstream* Morphology_file;
         // Test Parameters
         int N_tests;
         bool Enable_exciton_diffusion_test;
@@ -142,6 +160,13 @@ class OSC_Sim : public Simulation{
         double ToF_transient_end;
         int ToF_pnts_per_decade;
         bool Enable_IQE_test;
+        double IQE_time_cutoff;
+        bool Enable_dynamics_test;
+        bool Enable_dynamics_extraction;
+        double Dynamics_initial_exciton_conc;
+        double Dynamics_transient_start;
+        double Dynamics_transient_end;
+        int Dynamics_pnts_per_decade;
         // Exciton Parameters
         double Exciton_generation_rate_donor;
         double Exciton_generation_rate_acceptor;
@@ -167,6 +192,8 @@ class OSC_Sim : public Simulation{
         double Reorganization_acceptor;
         double R_polaron_recombination;
         int Polaron_hopping_cutoff; // nm
+        bool Enable_gaussian_polaron_delocalization;
+        double Polaron_delocalization_length;
         // Additional Lattice Parameters
         double Homo_donor;
         double Lumo_donor;
@@ -185,6 +212,7 @@ class OSC_Sim : public Simulation{
         // Additional Output Files
         //
         // Additional Parameters
+        bool isLightOn;
         bool Error_found;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
@@ -218,12 +246,17 @@ class OSC_Sim : public Simulation{
         vector<double> transient_velocities;
         vector<double> transient_energies;
         vector<double> transit_times;
+        vector<int> transient_excitons;
+        vector<int> transient_electrons;
+        vector<int> transient_holes;
         Exciton_Creation exciton_creation_event;
         list<Event*>::iterator exciton_creation_it;
         // Additional Counters
         int N_donor_sites;
         int N_acceptor_sites;
         int N_excitons_created;
+        int N_excitons_created_donor;
+        int N_excitons_created_acceptor;
         int N_excitons_recombined;
         int N_excitons_dissociated;
         int N_excitons_quenched;
@@ -247,6 +280,7 @@ class OSC_Sim : public Simulation{
         void calculateExcitonEvents(const list<Object*>::iterator object_it);
         void calculateObjectListEvents(const vector<list<Object*>::iterator>& object_it_vec);
         void calculatePolaronEvents(const list<Object*>::iterator object_it);
+        bool createImportedMorphology();
         void deleteObject(const list<Object*>::iterator object_it);
         // Exciton Event Execution Functions
         bool executeExcitonCreation(const list<Event*>::iterator event_it);
@@ -262,8 +296,10 @@ class OSC_Sim : public Simulation{
         bool executePolaronHop(const list<Event*>::iterator event_it);
         bool executePolaronRecombination(const list<Event*>::iterator event_it);
         bool executePolaronExtraction(const list<Event*>::iterator event_it);
+        void generateExciton(const Coords& coords);
         void generateElectron(const Coords& coords,int tag);
         void generateHole(const Coords& coords,int tag);
+        void generateDynamicsExcitons();
         void generateToFPolarons();
         list<Exciton>::iterator getExcitonIt(const Object* object_ptr);
         bool getObjectCharge(const list<Object*>::iterator object_it);
@@ -272,6 +308,7 @@ class OSC_Sim : public Simulation{
         short getSiteType(const Coords& coords);
         void initializeArchitecture();
         bool siteContainsHole(const Coords& coords);
+        void updateDynamicsData();
         void updateToFData(const list<Object*>::iterator object_it);
 };
 

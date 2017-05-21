@@ -17,6 +17,8 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     Thickness_acceptor = params.Thickness_acceptor;
     Enable_random_blend = params.Enable_random_blend;
     Acceptor_conc = params.Acceptor_conc;
+    Enable_import_morphology = params.Enable_import_morphology;
+    Morphology_file = params.Morphology_file;
     // Test Parameters
     N_tests = params.N_tests;
     Enable_exciton_diffusion_test = params.Enable_exciton_diffusion_test;
@@ -27,6 +29,13 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     ToF_transient_end = params.ToF_transient_end;
     ToF_pnts_per_decade = params.ToF_pnts_per_decade;
     Enable_IQE_test = params.Enable_IQE_test;
+    IQE_time_cutoff = params.IQE_time_cutoff;
+    Enable_dynamics_test = params.Enable_dynamics_test;
+    Enable_dynamics_extraction = params.Enable_dynamics_extraction;
+    Dynamics_initial_exciton_conc = params.Dynamics_initial_exciton_conc;
+    Dynamics_transient_start = params.Dynamics_transient_start;
+    Dynamics_transient_end = params.Dynamics_transient_end;
+    Dynamics_pnts_per_decade = params.Dynamics_pnts_per_decade;
     // Exciton Parameters
     Exciton_generation_rate_donor = params.Exciton_generation_rate_donor;
     Exciton_generation_rate_acceptor = params.Exciton_generation_rate_acceptor;
@@ -52,6 +61,8 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     Reorganization_acceptor = params.Reorganization_acceptor;
     R_polaron_recombination = params.R_polaron_recombination;
     Polaron_hopping_cutoff = params.Polaron_hopping_cutoff;
+    Enable_gaussian_polaron_delocalization = params.Enable_gaussian_polaron_delocalization;
+    Polaron_delocalization_length = params.Polaron_delocalization_length;
     // Additional Lattice Parameters
     Homo_donor = params.Homo_donor;
     Lumo_donor = params.Lumo_donor;
@@ -74,6 +85,8 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     // Initialize counters
     N_excitons = 0;
     N_excitons_created = 0;
+    N_excitons_created_donor = 0;
+    N_excitons_created_acceptor = 0;
     N_excitons_recombined = 0;
     N_excitons_dissociated = 0;
     N_excitons_quenched = 0;
@@ -92,6 +105,7 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     // Initialize Sites
     Site_OSC site;
     site.clearOccupancy();
+    site.setType(0);
     sites.assign(getNumSites(),site);
     // Initialize Film Architecture and Site Energies
     initializeArchitecture();
@@ -101,6 +115,9 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     Coulomb_table.assign(range+1,0);
     for(int i=1;i<(int)Coulomb_table.size();i++){
         Coulomb_table[i] = ((Coulomb_constant*Elementary_charge)/avgDielectric)/(1e-9*getUnitSize()*sqrt((double)i));
+        if(Enable_gaussian_polaron_delocalization){
+            Coulomb_table[i] *= erf((getUnitSize()*sqrt((double)i))/(Polaron_delocalization_length*sqrt(2)));
+        }
     }
     // Initialize electrical potential vector
     E_potential.assign(getHeight(),0);
@@ -108,15 +125,31 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
         E_potential[i] = (Bias*getHeight()/(getHeight()+1))-(Bias/(getHeight()+1))*i;
     }
     // Initialize exciton creation event
+    R_exciton_generation_donor = Exciton_generation_rate_donor*N_donor_sites*intpow(1e-7*getUnitSize(),3);
+    R_exciton_generation_acceptor = Exciton_generation_rate_acceptor*N_acceptor_sites*intpow(1e-7*getUnitSize(),3);
     if(Enable_exciton_diffusion_test || Enable_IQE_test){
-        Coords dest_coords;
-        R_exciton_generation_donor = Exciton_generation_rate_donor*N_donor_sites*intpow(1e-7*getUnitSize(),3);
-        R_exciton_generation_acceptor = Exciton_generation_rate_acceptor*N_acceptor_sites*intpow(1e-7*getUnitSize(),3);
-        exciton_creation_event.calculateEvent(dest_coords,R_exciton_generation_donor+R_exciton_generation_acceptor,getTime());
+        isLightOn = true;
+        exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor+R_exciton_generation_acceptor,getTime());
         exciton_creation_it = addEvent(&exciton_creation_event);
+    }
+    else if(Enable_dynamics_test){
+        // Initialize data structures
+        isLightOn = false;
+        double step_size = 1.0/(double)Dynamics_pnts_per_decade;
+        int num_steps = floor((log10(Dynamics_transient_end)-log10(Dynamics_transient_start))/step_size);
+        transient_times.assign(num_steps,0);
+        for(int i=0;i<(int)transient_times.size();i++){
+            transient_times[i] = pow(10,log10(Dynamics_transient_start)+i*step_size);
+        }
+        transient_excitons.assign(num_steps,0);
+        transient_electrons.assign(num_steps,0);
+        transient_holes.assign(num_steps,0);
+        // Create initial test excitons
+        generateDynamicsExcitons();
     }
     else if(Enable_ToF_test){
         // Initialize data structures
+        isLightOn = false;
         double step_size = 1.0/(double)ToF_pnts_per_decade;
         int num_steps = floor((log10(ToF_transient_end)-log10(ToF_transient_start))/step_size);
         transient_times.assign(num_steps,0);
@@ -173,11 +206,11 @@ double OSC_Sim::calculateCoulomb(const list<Object*>::iterator object_it,const C
     // Add electrode image charge interactions
     if(!isZPeriodic()){
         distance = getUnitSize()*((double)(getHeight()-coords.z)-0.5);
-        if(!(distance-0.0001)>Coulomb_cutoff){
+        if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
         distance = getUnitSize()*((double)(coords.z+1)-0.5);
-        if(!(distance-0.0001)>Coulomb_cutoff){
+        if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
     }
@@ -218,11 +251,11 @@ double OSC_Sim::calculateCoulomb(const bool charge,const Coords& coords){
     // Add electrode image charge interactions
     if(!isZPeriodic()){
         distance = getUnitSize()*((double)(getHeight()-coords.z)-0.5);
-        if(!(distance-0.0001)>Coulomb_cutoff){
+        if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
         distance = getUnitSize()*((double)(coords.z+1)-0.5);
-        if(!(distance-0.0001)>Coulomb_cutoff){
+        if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
     }
@@ -275,6 +308,15 @@ double OSC_Sim::calculateTransitTime_stdev(){
 }
 
 Coords OSC_Sim::calculateExcitonCreationCoords(){
+    static uniform_real_distribution<double> dist(0.0,R_exciton_generation_donor+R_exciton_generation_acceptor);
+    double num = dist(gen);
+    short type_target;
+    if(num<R_exciton_generation_donor){
+        type_target = 1;
+    }
+    else{
+        type_target = 2;
+    }
     Coords dest_coords;
     int N_tries = 0;
     while(N_tries<1000000){
@@ -283,7 +325,7 @@ Coords OSC_Sim::calculateExcitonCreationCoords(){
             *Logfile << "Attempting to create exciton at " << dest_coords.x << "," << dest_coords.y << "," << dest_coords.z << "." << endl;
         }
         N_tries++;
-        if(!isOccupied(dest_coords)){
+        if(!isOccupied(dest_coords) && getSiteType(dest_coords)==type_target){
             return dest_coords;
         }
     }
@@ -327,18 +369,16 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                 // Dissociation event
                 if(getSiteType(object_coords)!=getSiteType(dest_coords) && !((distance-0.0001)>Exciton_dissociation_cutoff)){
                     dissociations_temp[index].setObjectIt(object_it);
+                    dissociations_temp[index].setDestCoords(dest_coords);
                     // Exciton is starting from a donor site
                     if(getSiteType(object_coords)==(short)1){
                         Coulomb_final = calculateCoulomb(true,object_coords)+calculateCoulomb(false,dest_coords)-Coulomb_table[i*i+j*j+k*k];
                         E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))-(Lumo_acceptor-Lumo_donor)+(Coulomb_final+E_exciton_binding_donor)+(E_potential[dest_coords.z]-E_potential[object_coords.z]);
                         if(Enable_miller_abrahams){
-                            rate = R_exciton_dissociation_donor*exp(-2*Polaron_localization_donor*distance);
-                            if(E_delta>0){
-                                rate *= exp(-E_delta/(K_b*getTemperature()));
-                            }
+                            dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor,Polaron_localization_donor,distance,E_delta,getTemperature(),getTime());
                         }
                         else{
-                            rate = (R_exciton_dissociation_donor/sqrt(4*Pi*Reorganization_donor*K_b*getTemperature()))*exp(-2*Polaron_localization_donor*distance)*exp(-intpow(Reorganization_donor+E_delta,2)/(4*Reorganization_donor*K_b*getTemperature()));
+                            dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor,Polaron_localization_donor,distance,E_delta,Reorganization_donor,getTemperature(),getTime());
                         }
                     }
                     // Exciton is starting from an acceptor site
@@ -346,16 +386,12 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                         Coulomb_final = calculateCoulomb(false,object_coords)+calculateCoulomb(true,dest_coords)-Coulomb_table[i*i+j*j+k*k];
                         E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(Homo_donor-Homo_acceptor)+(Coulomb_final+E_exciton_binding_donor)-(E_potential[dest_coords.z]-E_potential[object_coords.z]);
                         if(Enable_miller_abrahams){
-                            rate = R_exciton_dissociation_acceptor*exp(-2*Polaron_localization_acceptor*distance);
-                            if(E_delta>0){
-                                rate *= exp(-E_delta/(K_b*getTemperature()));
-                            }
+                            dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor,Polaron_localization_acceptor,distance,E_delta,getTemperature(),getTime());
                         }
                         else{
-                            rate = (R_exciton_dissociation_acceptor/sqrt(4*Pi*Reorganization_acceptor*K_b*getTemperature()))*exp(-2*Polaron_localization_acceptor*distance)*exp(-intpow(Reorganization_acceptor+E_delta,2)/(4*Reorganization_acceptor*K_b*getTemperature()));
+                            dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor,Polaron_localization_acceptor,distance,E_delta,Reorganization_acceptor,getTemperature(),getTime());
                         }
                     }
-                    dissociations_temp[index].calculateEvent(dest_coords,rate,getTime());
                     dissociations_valid[index] = true;
                 }
                 else{
@@ -364,17 +400,14 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                 // Hop event
                 if(getSiteType(object_coords)==getSiteType(dest_coords) && !((distance-0.0001)>FRET_cutoff)){
                     hops_temp[index].setObjectIt(object_it);
+                    hops_temp[index].setDestCoords(dest_coords);
                     E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords));
                     if(getSiteType(object_coords)==(short)1){
-                        rate = R_exciton_hopping_donor*intpow(1/distance,6);
+                        hops_temp[index].calculateExecutionTime(R_exciton_hopping_donor,distance,E_delta,getTemperature(),getTime());
                     }
                     else{
-                        rate = R_exciton_hopping_acceptor*intpow(1/distance,6);
+                        hops_temp[index].calculateExecutionTime(R_exciton_hopping_acceptor,distance,E_delta,getTemperature(),getTime());
                     }
-                    if(E_delta>0){
-                        rate *= exp(-E_delta/(K_b*getTemperature()));
-                    }
-                    hops_temp[index].calculateEvent(dest_coords,rate,getTime());
                     hops_valid[index] = true;
                 }
                 else{
@@ -392,7 +425,7 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
     else if(getSiteType(object_coords)==(short)2){
         rate = 1/Exciton_lifetime_acceptor;
     }
-    recombination_event_it->calculateEvent(object_coords,rate,getTime());
+    recombination_event_it->calculateExecutionTime(rate,getTime());
     // Determine the fastest valid hop event
     bool No_hops_valid = true;
     auto hop_target_it = hops_temp.end();
@@ -445,6 +478,8 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
         }
         // No valid event found
         default:{
+            cout << getId() << ": Error! No valid events could be calculated." << endl;
+            Error_found = true;
             return;
         }
     }
@@ -478,7 +513,7 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
         }
     }
     Coords dest_coords;
-    double distance,E_delta,rate;
+    double distance,E_delta;
     int index;
     double Coulomb_i = calculateCoulomb(object_it,object_coords);
     // Calculate Polaron hopping and recombination events
@@ -505,12 +540,12 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
                     if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                         recombinations_temp[index].setObjectIt(object_it);
                         if(getSiteType(object_coords)==(short)1){
-                            rate = R_polaron_recombination*exp(-2*Polaron_localization_donor*distance);
+                            recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_donor,distance,0,getTemperature(),getTime());
                         }
                         else if(getSiteType(object_coords)==(short)2){
-                            rate = R_polaron_recombination*exp(-2*Polaron_localization_acceptor*distance);
+                            recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_acceptor,distance,0,getTemperature(),getTime());
                         }
-                        recombinations_temp[index].calculateEvent(dest_coords,rate,getTime());
+                        recombinations_temp[index].setDestCoords(dest_coords);
                         recombinations_temp[index].setObjectTargetIt((*getSiteIt(dest_coords))->getObjectIt());
                         recombinations_valid[index] = true;
                     }
@@ -521,6 +556,7 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
                     distance = getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                     if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                         hops_temp[index].setObjectIt(object_it);
+                        hops_temp[index].setDestCoords(dest_coords);
                         E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(calculateCoulomb(object_it,dest_coords)-Coulomb_i);
                         if(!getObjectCharge(object_it)){
                             E_delta += (E_potential[dest_coords.z]-E_potential[object_coords.z]);
@@ -538,13 +574,10 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
                                 }
                             }
                             if(Enable_miller_abrahams){
-                                rate = R_polaron_hopping_donor*exp(-2*Polaron_localization_donor*distance);
-                                if(E_delta>0){
-                                    rate *= exp(-E_delta/(K_b*getTemperature()));
-                                }
+                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distance,E_delta,getTemperature(),getTime());
                             }
                             else{
-                                rate = (R_polaron_hopping_donor/sqrt(4*Pi*Reorganization_donor*K_b*getTemperature()))*exp(-2*Polaron_localization_donor*distance)*exp(-intpow(Reorganization_donor+E_delta,2)/(4*Reorganization_donor*K_b*getTemperature()));
+                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distance,E_delta,Reorganization_donor,getTemperature(),getTime());
                             }
                         }
                         else if(getSiteType(object_coords)==(short)2){
@@ -557,16 +590,12 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
                                 }
                             }
                             if(Enable_miller_abrahams){
-                                rate = R_polaron_hopping_acceptor*exp(-2*Polaron_localization_acceptor*distance);
-                                if(E_delta>0){
-                                    rate *= exp(-E_delta/(K_b*getTemperature()));
-                                }
+                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distance,E_delta,getTemperature(),getTime());
                             }
                             else{
-                                rate = (R_polaron_hopping_acceptor/sqrt(4*Pi*Reorganization_acceptor*K_b*getTemperature()))*exp(-2*Polaron_localization_acceptor*distance)*exp(-intpow(Reorganization_acceptor+E_delta,2)/(4*Reorganization_acceptor*K_b*getTemperature()));
+                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distance,E_delta,Reorganization_acceptor,getTemperature(),getTime());
                             }
                         }
-                        hops_temp[index].calculateEvent(dest_coords,rate,getTime());
                         hops_valid[index] = true;
                     }
                 }
@@ -578,32 +607,33 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
     // Holes are extracted at the top of the lattice (z=Height)
     bool No_extraction_valid = true;
     list<Polaron_Extraction>::iterator extraction_event_it;
-    // If electron, charge is false
-    if(!polaron_it->getCharge()){
-        distance = getUnitSize()*((double)(object_coords.z+1)-0.5);
-        if(!((distance-0.0001)>Polaron_hopping_cutoff)){
-            extraction_event_it = electron_extraction_events.begin();
-            advance(extraction_event_it,std::distance(electrons.begin(),polaron_it));
-            No_extraction_valid = false;
+    if(!Enable_dynamics_test || Enable_dynamics_extraction){
+        // If electron, charge is false
+        if(!polaron_it->getCharge()){
+            distance = getUnitSize()*((double)(object_coords.z+1)-0.5);
+            if(!((distance-0.0001)>Polaron_hopping_cutoff)){
+                extraction_event_it = electron_extraction_events.begin();
+                advance(extraction_event_it,std::distance(electrons.begin(),polaron_it));
+                No_extraction_valid = false;
+            }
         }
-    }
-    // If hole, charge is true
-    else{
-        distance = getUnitSize()*((double)(getHeight()-object_coords.z)-0.5);
-        if(!((distance-0.0001)>Polaron_hopping_cutoff)){
-            extraction_event_it = hole_extraction_events.begin();
-            advance(extraction_event_it,std::distance(holes.begin(),polaron_it));
-            No_extraction_valid = false;
+        // If hole, charge is true
+        else{
+            distance = getUnitSize()*((double)(getHeight()-object_coords.z)-0.5);
+            if(!((distance-0.0001)>Polaron_hopping_cutoff)){
+                extraction_event_it = hole_extraction_events.begin();
+                advance(extraction_event_it,std::distance(holes.begin(),polaron_it));
+                No_extraction_valid = false;
+            }
         }
-    }
-    if(!No_extraction_valid){
-        if(getSiteType(object_coords)==(short)1){
-            rate = R_polaron_hopping_donor*exp(-2*Polaron_localization_donor*distance);
+        if(!No_extraction_valid){
+            if(getSiteType(object_coords)==(short)1){
+                extraction_event_it->calculateExecutionTime(R_polaron_hopping_donor,distance,Polaron_localization_donor,0,getTemperature(),getTime());
+            }
+            else if(getSiteType(object_coords)==(short)2){
+                extraction_event_it->calculateExecutionTime(R_polaron_hopping_acceptor,distance,Polaron_localization_acceptor,0,getTemperature(),getTime());
+            }
         }
-        else if(getSiteType(object_coords)==(short)2){
-            rate = R_polaron_hopping_acceptor*exp(-2*Polaron_localization_acceptor*distance);
-        }
-        extraction_event_it->calculateEvent(object_coords,rate,getTime());
     }
     // Determine the fastest hop event
     bool No_hops_valid = true;
@@ -625,8 +655,7 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
     }
     // If no valid event is found, return
     if(No_extraction_valid && No_hops_valid && No_recombinations_valid){
-        cout << getId() << ": Error! No valid events found." << endl;
-        Error_found = true;
+        setEvent(polaron_it->getEventIt(),nullptr);
         return;
     }
     // Determine the fastest valid event
@@ -686,6 +715,8 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
         }
         // No valid event found
         default:{
+            cout << getId() << ": Error! No valid events could be calculated." << endl;
+            Error_found = true;
             return;
         }
     }
@@ -699,19 +730,98 @@ bool OSC_Sim::checkFinished(){
     if(Enable_exciton_diffusion_test){
         return (N_excitons_recombined==N_tests);
     }
+    if(Enable_dynamics_test){
+        if(getTime()>Dynamics_transient_end || (N_excitons==0 && N_electrons==0 && N_holes==0)){
+            return true;
+        }
+        return false;
+    }
     if(Enable_ToF_test){
         return (N_electrons_collected==N_tests || N_holes_collected==N_tests || N_electrons_created>2*N_tests || N_holes_created>2*N_tests);
     }
     if(Enable_IQE_test){
-        if(N_excitons_created==N_tests){
+        if(isLightOn && N_excitons_created==N_tests){
             removeEvent(&exciton_creation_event);
+            isLightOn = false;
         }
         if(N_excitons_created==N_tests && N_excitons==0 && N_electrons==0 && N_holes==0){
+            return true;
+        }
+        if(getTime()>IQE_time_cutoff){
             return true;
         }
         return false;
     }
     cout << getId() << ": Error checking simulation finish conditions.  The simulation will now end." << endl;
+    return true;
+}
+
+bool OSC_Sim::createImportedMorphology(){
+    string file_info;
+    string line;
+    stringstream ss;
+    Coords coords;
+    short type = 0;
+    int length,width,height;
+    int site_count = 0;
+    // Get input morphology file information
+    getline(*Morphology_file,line);
+    file_info = line;
+    // Parse file info
+    if(file_info.compare("Ising_OPV v3.2 - compressed format")!=0){
+        cout << getId() << ": Error! Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 are currently supported." << endl;
+        Error_found = true;
+        return false;
+    }
+    getline(*Morphology_file,line);
+    length = atoi(line.c_str());
+    getline(*Morphology_file,line);
+    width = atoi(line.c_str());
+    getline(*Morphology_file,line);
+    height = atoi(line.c_str());
+    if(getLength()!=length || getWidth()!=width || getHeight()!=height){
+        cout << getId() << ": Error! Morphology lattice dimensions do not match the lattice dimensions defined in the parameter file." << endl;
+        Error_found = true;
+        return false;
+    }
+    // Skip 3 lines (domain size1, domain size2, blend ratio)
+    getline(*Morphology_file,line);
+    getline(*Morphology_file,line);
+    getline(*Morphology_file,line);
+    // Begin parsing morphology site data
+    for(int x=0;x<getLength();x++){
+        for(int y=0;y<getWidth();y++){
+            for(int z=0;z<getHeight();z++){
+                if(site_count==0){
+                    if(!(*Morphology_file).good()){
+                        cout << "Error parsing file.  End of file reached before expected." << endl;
+                        Error_found = true;
+                        return false;
+                    }
+                    getline(*Morphology_file,line);
+                    type = (short)atoi(line.substr(0,1).c_str());
+                    site_count = atoi(line.substr(1).c_str());
+                }
+                coords.setXYZ(x,y,z);
+                sites[getSiteIndex(coords)].setType(type);
+                if(type==(short)1){
+                    N_donor_sites++;
+                }
+                else if(type==(short)2){
+                    N_acceptor_sites++;
+                }
+                site_count--;
+            }
+        }
+    }
+    // Check for unassigned sites
+    for(auto it=sites.begin();it!=sites.end();++it){
+        if(it->getType()==(short)0){
+            cout << getId() << ": Error! Unassigned site found after morphology import. Check the morphology file for errors." << endl;
+            Error_found = true;
+            return false;
+        }
+    }
     return true;
 }
 
@@ -783,31 +893,12 @@ void OSC_Sim::deleteObject(const list<Object*>::iterator object_it){
 bool OSC_Sim::executeExcitonCreation(const list<Event*>::iterator event_it){
     // Determine coordinates for the new exciton
     const Coords coords_new = calculateExcitonCreationCoords();
-    // Create the new exciton and add it to the simulation
-    Exciton exciton_new(getTime(),N_excitons_created+1,coords_new);
-    excitons.push_back(exciton_new);
-    auto object_it = addObject(&excitons.back());
-    // Add placeholder events to the corresponding lists
-    Exciton_Hop hop_event;
-    exciton_hop_events.push_back(hop_event);
-    Exciton_Recombination recombination_event;
-    recombination_event.setObjectIt(object_it);
-    exciton_recombination_events.push_back(recombination_event);
-    Exciton_Dissociation dissociation_event;
-    exciton_dissociation_events.push_back(dissociation_event);
-    // Update exciton counters
-    N_excitons_created++;
-    N_excitons++;
-    // Log event
-    if(loggingEnabled()){
-        *Logfile << "Created exciton " << exciton_new.getTag() << " at site " << coords_new.x << "," << coords_new.y << "," << coords_new.z << "." << endl;
-    }
+    generateExciton(coords_new);
     // Find all nearby excitons and calculate their events
     auto neighbors = findRecalcNeighbors(coords_new);
     calculateObjectListEvents(neighbors);
     // Calculate next exciton creation event
-    Coords dest_coords;
-    exciton_creation_event.calculateEvent(dest_coords,R_exciton_generation_donor+R_exciton_generation_acceptor,getTime());
+    exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor+R_exciton_generation_acceptor,getTime());
     return true;
 }
 
@@ -879,12 +970,21 @@ bool OSC_Sim::executeExcitonRecombine(const list<Event*>::iterator event_it){
 
 bool OSC_Sim::executeNextEvent(){
     auto event_it = chooseNextEvent();
+    if(*event_it==nullptr){
+        cout << getId() << ": Error! The simulation has no events to execute." << endl;
+        Error_found = true;
+        return false;
+    }
     string event_name = (*event_it)->getName();
     if(loggingEnabled()){
         *Logfile << "Executing " << event_name << " event" << endl;
     }
     // Update simulation time
     updateTime((*event_it)->getExecutionTime());
+    // Update dynamics data
+    if(Enable_dynamics_test){
+        updateDynamicsData();
+    }
     // Execute the chosen event
     if(event_name.compare(Exciton_Creation::name)==0){
         return executeExcitonCreation(event_it);
@@ -1058,6 +1158,34 @@ bool OSC_Sim::executePolaronRecombination(const list<Event*>::iterator event_it)
     return true;
 }
 
+void OSC_Sim::generateExciton(const Coords& coords){
+    // Create the new exciton and add it to the simulation
+    Exciton exciton_new(getTime(),N_excitons_created+1,coords);
+    excitons.push_back(exciton_new);
+    auto object_it = addObject(&excitons.back());
+    // Add placeholder events to the corresponding lists
+    Exciton_Hop hop_event;
+    exciton_hop_events.push_back(hop_event);
+    Exciton_Recombination recombination_event;
+    recombination_event.setObjectIt(object_it);
+    exciton_recombination_events.push_back(recombination_event);
+    Exciton_Dissociation dissociation_event;
+    exciton_dissociation_events.push_back(dissociation_event);
+    // Update exciton counters
+    if(getSiteType(coords)==(short)1){
+        N_excitons_created_donor++;
+    }
+    else{
+        N_excitons_created_acceptor++;
+    }
+    N_excitons_created++;
+    N_excitons++;
+    // Log event
+    if(loggingEnabled()){
+        *Logfile << "Created exciton " << exciton_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
+    }
+}
+
 void OSC_Sim::generateElectron(const Coords& coords,int tag=0){
     if(tag==0){
         tag = N_electrons_created+1;
@@ -1105,6 +1233,20 @@ void OSC_Sim::generateHole(const Coords& coords,int tag=0){
     if(loggingEnabled()){
         *Logfile << "Created hole " << hole_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
     }
+}
+
+void OSC_Sim::generateDynamicsExcitons(){
+    int num = 0;
+    Coords coords;
+    int initial_excitons = ceil(Dynamics_initial_exciton_conc*intpow(1e-7*getUnitSize(),3)*getLength()*getWidth()*getHeight());
+    cout << getId() << ": Generating " << initial_excitons << " initial excitons." << endl;
+    while(num<initial_excitons){
+        coords = calculateExcitonCreationCoords();
+        generateExciton(coords);
+        num++;
+    }
+    auto object_its = getAllObjectIts();
+    calculateObjectListEvents(object_its);
 }
 
 void OSC_Sim::generateToFPolarons(){
@@ -1156,6 +1298,22 @@ vector<double> OSC_Sim::getDiffusionData(){
     return diffusion_distances;
 }
 
+vector<int> OSC_Sim::getDynamicsTransientExcitons(){
+    return transient_excitons;
+}
+
+vector<int> OSC_Sim::getDynamicsTransientElectrons(){
+    return transient_electrons;
+}
+
+vector<int> OSC_Sim::getDynamicsTransientHoles(){
+    return transient_holes;
+}
+
+vector<double> OSC_Sim::getDynamicsTransientTimes(){
+    return transient_times;
+}
+
 list<Exciton>::iterator OSC_Sim::getExcitonIt(const Object* object_ptr){
     for(auto it=excitons.begin();it!=excitons.end();++it){
         if(object_ptr->getTag()==it->getTag()){
@@ -1182,6 +1340,15 @@ int OSC_Sim::getN_electrons_recombined(){
 
 int OSC_Sim::getN_excitons_created(){
     return N_excitons_created;
+}
+
+int OSC_Sim::getN_excitons_created(const short site_type){
+    if(site_type==(short)1){
+        return N_excitons_created_donor;
+    }
+    else{
+        return N_excitons_created_acceptor;
+    }
 }
 
 int OSC_Sim::getN_excitons_dissociated(){
@@ -1264,6 +1431,7 @@ vector<double> OSC_Sim::getTransitTimeData(){
 }
 
 void OSC_Sim::initializeArchitecture(){
+    bool success;
     N_donor_sites = 0;
     N_acceptor_sites = 0;
     if(Enable_neat){
@@ -1278,9 +1446,7 @@ void OSC_Sim::initializeArchitecture(){
         for(int x=0;x<getLength();x++){
             for(int y=0;y<getWidth();y++){
                 for(int z=0;z<getHeight();z++){
-                    coords.x = x;
-                    coords.y = y;
-                    coords.z = z;
+                    coords.setXYZ(x,y,z);
                     if(z<Thickness_acceptor){
                         sites[getSiteIndex(coords)].setType(2);
                         N_acceptor_sites++;
@@ -1304,6 +1470,12 @@ void OSC_Sim::initializeArchitecture(){
         shuffle(site_types.begin(),site_types.end(),gen);
         for(int i=0;i<(int)sites.size();i++){
             sites[i].setType(site_types[i]);
+        }
+    }
+    else if(Enable_import_morphology){
+        success = createImportedMorphology();
+        if(!success){
+            return;
         }
     }
     if(Enable_gaussian_dos){
@@ -1380,7 +1552,7 @@ void OSC_Sim::outputStatus(){
             cout << getId() << ": Exciton " << it->getTag() << " is at " << it->getCoords().x << "," << it->getCoords().y << "," << it->getCoords().z << ".\n";
         }
     }
-    if(Enable_IQE_test){
+    if(Enable_IQE_test || Enable_dynamics_test){
         cout << getId() << ": " << N_excitons_created << " excitons have been created and " << getN_events_executed() << " events have been executed.\n";
         cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
         for(auto it=excitons.begin();it!=excitons.end();++it){
@@ -1404,6 +1576,30 @@ bool OSC_Sim::siteContainsHole(const Coords& coords){
         return static_cast<Polaron*>(*object_it)->getCharge();
     }
     return false;
+}
+
+void OSC_Sim::updateDynamicsData(){
+    static const double step_size = 1.0/(double)Dynamics_pnts_per_decade;
+    static int index_prev = -1;
+    // Only start dynamics transient calculations if the time elapsed since exciton creation is larger than the transient start time
+    if(getTime()>Dynamics_transient_start){
+        // If enough time has passed, output next timestep data
+        if(getTime()>transient_times[index_prev+1]){
+            int index = floor((log10(getTime())-log10(Dynamics_transient_start))/step_size);
+            while(index!=0 && index_prev<index-1 && index_prev+1<(int)transient_times.size()){
+                transient_excitons[index_prev+1] = N_excitons;
+                transient_electrons[index_prev+1] = N_electrons;
+                transient_holes[index_prev+1] = N_holes;
+                index_prev++;
+            }
+            if(index<(int)transient_times.size()){
+                transient_excitons[index] = N_excitons;
+                transient_electrons[index] = N_electrons;
+                transient_holes[index] = N_holes;
+                index_prev = index;
+            }
+        }
+    }
 }
 
 void OSC_Sim::updateToFData(const list<Object*>::iterator object_it){
@@ -1451,7 +1647,7 @@ void OSC_Sim::updateToFData(const list<Object*>::iterator object_it){
             }
             if(index<(int)transient_times.size()){
                 transient_counts[index]++;
-                transient_velocities[index] += (getUnitSize()*abs((*object_it)->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
+                transient_velocities[index] += (1e-7*getUnitSize()*abs((*object_it)->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
                 transient_energies[index] += getSiteEnergy((*object_it)->getCoords());
                 *start_time_it = getTime();
                 *start_position_it = (*object_it)->getCoords().z;
