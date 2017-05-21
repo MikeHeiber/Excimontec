@@ -17,18 +17,18 @@ false //Enable_periodic_z
 -1.0 //Bias (V)
 --------------------------------------------------------------
 ## Device Architecture Parameters
-true //Enable_neat (uses donor properties)
+false //Enable_neat (uses donor properties)
 false //Enable_bilayer
 25 //Thickness_donor
 25 //Thickness_acceptor
-false //Enable_random_blend
+true //Enable_random_blend
 0.5 //Acceptor_conc
 false //Enable_import_morphology_single
-morphology0.txt //Morphology_filename
+morphology_0_compressed.txt //Morphology_filename
 false //Enable_import_morphology_set
-morphology#.txt //Morphology_set_format
-1 //N_test_morphologies
-1 //N_morphology_set_size
+morphology_#_compressed.txt //Morphology_set_format
+4 //N_test_morphologies
+4 //N_morphology_set_size
 --------------------------------------------------------------
 ## Test Parameters
 1000 //N_tests
@@ -37,14 +37,20 @@ true //Enable_ToF_test
 hole //ToF_polaron_type (electron or hole)
 1 //ToF_initial_polarons
 1e-10 //ToF_transient_start (s)
-1e-5 //ToF_transient_end (s)
+1e-4 //ToF_transient_end (s)
 20 //ToF_pnts_per_decade
 false //Enable_IQE_test
 1e-4 //IQE_time_cutoff (s) (simulation time)
+false //Enable_dynamics_test
+false //Enable_dynamics_extraction
+1e16 //Dynamics_initial_exciton_conc (cm^-3)
+1e-13 //Dynamics_transient_start (s)
+1e-5 //Dynamics_transient_end (s)
+20 //Dynamics_pnts_per_decade
 --------------------------------------------------------------
 ## Exciton Parameters
-1e22 //Exciton_generation_rate_donor (cm^-3)
-1e22 //Exciton_generation_rate_acceptor (cm^-3)
+1e22 //Exciton_generation_rate_donor (cm^-3 s^-1)
+1e22 //Exciton_generation_rate_acceptor (cm^-3 s^-1)
 500e-12 //Exciton_lifetime_donor (s)
 500e-12 //Exciton_lifetime_acceptor (s)
 1e12 //R_exciton_hopping_donor (s^-1)
@@ -66,8 +72,10 @@ true //Enable_miller_abrahams
 false //Enable_marcus
 0.2 //Reorganization_donor (eV)
 0.2 //Reorganization_acceptor (eV)
-1e11 //R_polaron_recombination (s^-1)
+1e12 //R_polaron_recombination (s^-1)
 3 //Polaron_hopping_cutoff (nm)
+false //Enable_gaussian_polaron_delocalization
+1.0 //Polaron_delocalization_length (nm)
 --------------------------------------------------------------
 ## Lattice Site Parameters
 5.0 //Homo_donor (eV)

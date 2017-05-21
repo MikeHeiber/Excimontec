@@ -106,6 +106,7 @@ int main(int argc,char *argv[]){
         ss << prefix << selected_morphologies[procid] << suffix;
         cout << procid << ": " << ss.str() << " selected." << endl;
         params_main.Morphology_filename = ss.str();
+        ss.str("");
     }
     if(params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set){
         params_opv.Enable_import_morphology = true;
@@ -133,6 +134,9 @@ int main(int argc,char *argv[]){
     cout << procid << ": Simulation initialization complete" << endl;
     if(params_opv.Enable_exciton_diffusion_test){
         cout << procid << ": Starting exciton diffusion test..." << endl;
+    }
+    else if(params_opv.Enable_dynamics_test){
+        cout << procid << ": Starting dynamics test..." << endl;
     }
     else if(params_opv.Enable_ToF_test){
         cout << procid << ": Starting time-of-flight charge transport test..." << endl;
@@ -191,13 +195,23 @@ int main(int argc,char *argv[]){
         resultsfile << "Transit time is " << sim.calculateTransitTime_avg() << " ± " << sim.calculateTransitTime_stdev() << " s.\n";
         resultsfile << "Charge carrier mobility is " << sim.calculateMobility_avg() << " ± " << sim.calculateMobility_stdev() << " cm^2 V^-1 s^-1.\n";
     }
-    else if(params_opv.Enable_IQE_test){
+    if(params_opv.Enable_dynamics_test){
+        resultsfile << "Dynamics test results:\n";
+        resultsfile << sim.getN_excitons_created() << " initial excitons were created.\n";
+    }
+    if(params_opv.Enable_IQE_test){
         resultsfile << "Internal quantum efficiency test results:\n";
         resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
+    }
+    if(params_opv.Enable_IQE_test || params_opv.Enable_dynamics_test){
+        resultsfile << sim.getN_excitons_created((short)1) << " excitons were created on donor sites.\n";
+        resultsfile << sim.getN_excitons_created((short)2) << " excitons were created on acceptor sites.\n";
         resultsfile << 100*(double)sim.getN_excitons_dissociated()/(double)sim.getN_excitons_created() << "% of excitons have dissociated.\n";
         resultsfile << 100*(double)sim.getN_geminate_recombinations()/(double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to geminate recombination.\n";
         resultsfile << 100*(double)sim.getN_bimolecular_recombinations()/(double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to bimolecular recombination.\n";
         resultsfile << 100*(double)(sim.getN_electrons_collected()+sim.getN_holes_collected())/(2*(double)sim.getN_excitons_dissociated()) << "% of photogenerated charges were extracted.\n";
+    }
+    if(params_opv.Enable_IQE_test){
         resultsfile << "IQE = " << 100*(double)(sim.getN_electrons_collected()+sim.getN_holes_collected())/(2*(double)sim.getN_excitons_created()) << "%." << endl;
     }
     resultsfile << endl;
@@ -224,14 +238,14 @@ int main(int argc,char *argv[]){
             }
 
         }
-        else if(params_opv.Enable_ToF_test){
+        if(params_opv.Enable_ToF_test){
             vector<double> transit_times = MPI_gatherVectors(sim.getTransitTimeData(),procid,nproc);
             int transit_attempts = ((sim.getN_electrons_collected()>sim.getN_holes_collected()) ? sim.getN_electrons_created() : (sim.getN_holes_created()));
             int transit_attempts_total;
             MPI_Reduce(&transit_attempts,&transit_attempts_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
-            vector<int> counts = MPI_calculateVectorSum(sim.getToFTransientCounts(),procid,nproc);
-            vector<double> energies = MPI_calculateVectorSum(sim.getToFTransientEnergies(),procid,nproc);
-            vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities(),procid,nproc);
+            vector<int> counts = MPI_calculateVectorSum(sim.getToFTransientCounts(),procid);
+            vector<double> energies = MPI_calculateVectorSum(sim.getToFTransientEnergies(),procid);
+            vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities(),procid);
             vector<double> times = sim.getToFTransientTimes();
             if(procid==0){
                 vector<double> mobilities = transit_times;
@@ -244,9 +258,10 @@ int main(int argc,char *argv[]){
                 transientfile.open(ss.str().c_str());
                 ss.str("");
                 transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV)" << endl;
+                double volume = params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3);
                 for(int i=0;i<(int)velocities.size();i++){
                     if(counts[i]!=0){
-                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3)) << "," << params_opv.Height*params_opv.Unit_size*1e-7*1e-7*velocities[i]/(fabs(params_opv.Bias)*counts[i]) << "," << energies[i]/counts[i] << endl;
+                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(nproc*volume) << "," << params_opv.Height*params_opv.Unit_size*1e-7*velocities[i]/(fabs(params_opv.Bias)*counts[i]) << "," << energies[i]/counts[i] << endl;
                     }
                     else{
                         transientfile << times[i] << "," << 0 << "," << 0 << "," << 0 << endl;
@@ -276,10 +291,34 @@ int main(int argc,char *argv[]){
                 analysisfile << "Charge carrier mobility is " << vector_avg(mobilities) << " ± " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
             }
         }
-        else if(params_opv.Enable_IQE_test){
+        if(params_opv.Enable_dynamics_test){
+            vector<double> times = sim.getDynamicsTransientTimes();
+            vector<int> excitons_total = MPI_calculateVectorSum(sim.getDynamicsTransientExcitons(),procid);
+            vector<int> electrons_total = MPI_calculateVectorSum(sim.getDynamicsTransientElectrons(),procid);
+            vector<int> holes_total = MPI_calculateVectorSum(sim.getDynamicsTransientHoles(),procid);
+            if(procid==0){
+                ofstream transientfile;
+                ss << "dynamics_average_transients.txt";
+                transientfile.open(ss.str().c_str());
+                ss.str("");
+                transientfile << "Time (s),Exciton Density (cm^-3),Electron Density (cm^-3),Hole Density (cm^-3)" << endl;
+                double volume_total = nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3);
+                for(int i=0;i<(int)times.size();i++){
+                    transientfile << times[i] << "," << excitons_total[i]/volume_total << "," << electrons_total[i]/volume_total << "," << holes_total[i]/volume_total << endl;
+                }
+                transientfile.close();
+            }
+        }
+        if(params_opv.Enable_dynamics_test || params_opv.Enable_IQE_test){
             int excitons_created = sim.getN_excitons_created();
             int excitons_created_total;
             MPI_Reduce(&excitons_created,&excitons_created_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
+            int excitons_created_donor = sim.getN_excitons_created((short)1);
+            int excitons_created_donor_total;
+            MPI_Reduce(&excitons_created_donor,&excitons_created_donor_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
+            int excitons_created_acceptor = sim.getN_excitons_created((short)2);
+            int excitons_created_acceptor_total;
+            MPI_Reduce(&excitons_created_acceptor,&excitons_created_acceptor_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
             int excitons_dissociated = sim.getN_excitons_dissociated();
             int excitons_dissociated_total;
             MPI_Reduce(&excitons_dissociated,&excitons_dissociated_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
@@ -295,13 +334,22 @@ int main(int argc,char *argv[]){
             int holes_collected = sim.getN_holes_collected();
             int holes_collected_total;
             MPI_Reduce(&holes_collected,&holes_collected_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
-            if(procid==0){
+            if(procid==0 && params_opv.Enable_dynamics_test){
+                analysisfile << "Overall dynamics test results:\n";
+            }
+            if(procid==0 && params_opv.Enable_IQE_test){
                 analysisfile << "Overall internal quantum efficiency test results:\n";
+            }
+            if(procid==0){
                 analysisfile << excitons_created_total << " total excitons have been created.\n";
+                analysisfile << excitons_created_donor_total << " excitons were created on donor sites.\n";
+                analysisfile << excitons_created_acceptor_total << " excitons were created on acceptor sites.\n";
                 analysisfile << 100*(double)excitons_dissociated_total/(double)excitons_created_total << "% of total excitons have dissociated.\n";
                 analysisfile << 100*(double)geminate_recombinations_total/(double)excitons_dissociated_total << "% of total photogenerated charges were lost to geminate recombination.\n";
                 analysisfile << 100*(double)bimolecular_recombinations_total/(double)excitons_dissociated_total << "% of total photogenerated charges were lost to bimolecular recombination.\n";
                 analysisfile << 100*(double)(electrons_collected_total+holes_collected_total)/(2*(double)excitons_dissociated_total) << "% of total photogenerated charges were extracted.\n";
+            }
+            if(procid==0 && params_opv.Enable_IQE_test){
                 analysisfile << "IQE = " << 100*(double)(electrons_collected_total+holes_collected_total)/(2*(double)excitons_created_total) << "%." << endl;
             }
         }
@@ -495,6 +543,29 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.IQE_time_cutoff = atof(stringvars[i].c_str());
     i++;
+    params.Enable_dynamics_test = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
+        cout << "Error enabling the dynamics test." << endl;
+        return false;
+    }
+    if(params.Enable_dynamics_test){
+        N_tests_enabled++;
+    }
+    i++;
+    params.Enable_dynamics_extraction = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
+        cout << "Error setting dynamics test extraction option." << endl;
+        return false;
+    }
+    i++;
+    params.Dynamics_initial_exciton_conc = atof(stringvars[i].c_str());
+    i++;
+    params.Dynamics_transient_start = atof(stringvars[i].c_str());
+    i++;
+    params.Dynamics_transient_end = atof(stringvars[i].c_str());
+    i++;
+    params.Dynamics_pnts_per_decade = atoi(stringvars[i].c_str());
+    i++;
     // Exciton Parameters
     params.Exciton_generation_rate_donor = atof(stringvars[i].c_str());
     i++;
@@ -555,6 +626,14 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
     i++;
+    params.Enable_gaussian_polaron_delocalization = importBooleanParam(stringvars[i],error_status);
+    if(error_status){
+        cout << "Error setting Gaussian polaron delocalization option." << endl;
+        return false;
+    }
+    i++;
+    params.Polaron_delocalization_length = atof(stringvars[i].c_str());
+    i++;
     // Lattice Parameters
     params.Homo_donor = atof(stringvars[i].c_str());
     i++;
@@ -598,7 +677,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error! All lattice dimensions must be greater than zero." << endl;
         return false;
     }
-    if(!params.Unit_size>0){
+    if(!(params.Unit_size>0)){
         cout << "Error! The lattice unit size must be greater than zero." << endl;
         return false;
     }
