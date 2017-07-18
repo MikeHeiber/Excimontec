@@ -103,7 +103,9 @@ class Site_OSC : public Site{
 class OSC_Sim : public Simulation{
     public:
         // Functions
-        OSC_Sim(const Parameters_OPV& params,const int id);
+		OSC_Sim();
+		virtual ~OSC_Sim();
+        void init(const Parameters_OPV& params,const int id);
         double calculateDiffusionLength_avg();
         double calculateDiffusionLength_stdev();
         vector<double> calculateTransitTimeDist(const vector<double>& data,const int counts);

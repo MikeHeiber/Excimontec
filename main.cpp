@@ -3,7 +3,6 @@
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
-#include "KMC_Lattice/Utils.h"
 #include "OSC_Sim.h"
 #include <mpi.h>
 #include <fstream>
@@ -11,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include <functional>
 
 using namespace std;
 
@@ -68,9 +68,9 @@ int main(int argc,char *argv[]){
     // Initialize mpi options
     if(params_main.Enable_mpi){
         cout << "Initializing MPI options... ";
-        MPI::Init(argc,argv);
-        nproc = MPI::COMM_WORLD.Get_size();
-        procid = MPI::COMM_WORLD.Get_rank();
+        MPI_Init(&argc,&argv);
+        MPI_Comm_size(MPI_COMM_WORLD,&nproc);
+        MPI_Comm_rank(MPI_COMM_WORLD,&procid);
         cout << "MPI initialization complete!" << endl;
     }
     // Morphology set import handling
@@ -130,7 +130,8 @@ int main(int argc,char *argv[]){
     params_opv.Logfile = &logfile;
     // Initialize Simulation
     cout << procid << ": Initializing simulation " << procid << "..." << endl;
-    OSC_Sim sim(params_opv,procid);
+	OSC_Sim sim;
+	sim.init(params_opv, procid);
     cout << procid << ": Simulation initialization complete" << endl;
     if(params_opv.Enable_exciton_diffusion_test){
         cout << procid << ": Starting exciton diffusion test..." << endl;

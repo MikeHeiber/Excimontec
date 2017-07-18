@@ -5,9 +5,17 @@
 
 #include "OSC_Sim.h"
 
-OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
+OSC_Sim::OSC_Sim() {
+
+}
+
+OSC_Sim::~OSC_Sim() {
+
+}
+
+void OSC_Sim::init(const Parameters_OPV& params,const int id){
     // Set parameters of Simulation base class
-    initializeSimulation(params,id);
+    Simulation::init(params,id);
     // Set Additional General Parameters
     Bias = params.Bias;
     // Morphology Parameters
@@ -106,27 +114,27 @@ OSC_Sim::OSC_Sim(const Parameters_OPV& params,const int id){
     Site_OSC site;
     site.clearOccupancy();
     site.setType(0);
-    sites.assign(getNumSites(),site);
+    sites.assign(lattice.getNumSites(),site);
     // Initialize Film Architecture and Site Energies
     initializeArchitecture();
     // Calculate Coulomb interactions lookup table
     double avgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
-    int range = ceil((Coulomb_cutoff/getUnitSize())*(Coulomb_cutoff/getUnitSize()));
+    int range = ceil((Coulomb_cutoff/lattice.getUnitSize())*(Coulomb_cutoff/lattice.getUnitSize()));
     Coulomb_table.assign(range+1,0);
     for(int i=1;i<(int)Coulomb_table.size();i++){
-        Coulomb_table[i] = ((Coulomb_constant*Elementary_charge)/avgDielectric)/(1e-9*getUnitSize()*sqrt((double)i));
+        Coulomb_table[i] = ((Coulomb_constant*Elementary_charge)/avgDielectric)/(1e-9*lattice.getUnitSize()*sqrt((double)i));
         if(Enable_gaussian_polaron_delocalization){
-            Coulomb_table[i] *= erf((getUnitSize()*sqrt((double)i))/(Polaron_delocalization_length*sqrt(2)));
+            Coulomb_table[i] *= erf((lattice.getUnitSize()*sqrt((double)i))/(Polaron_delocalization_length*sqrt(2)));
         }
     }
     // Initialize electrical potential vector
-    E_potential.assign(getHeight(),0);
-    for(int i=0;i<getHeight();i++){
-        E_potential[i] = (Bias*getHeight()/(getHeight()+1))-(Bias/(getHeight()+1))*i;
+    E_potential.assign(lattice.getHeight(),0);
+    for(int i=0;i<lattice.getHeight();i++){
+        E_potential[i] = (Bias*lattice.getHeight()/(lattice.getHeight()+1))-(Bias/(lattice.getHeight()+1))*i;
     }
     // Initialize exciton creation event
-    R_exciton_generation_donor = Exciton_generation_rate_donor*N_donor_sites*intpow(1e-7*getUnitSize(),3);
-    R_exciton_generation_acceptor = Exciton_generation_rate_acceptor*N_acceptor_sites*intpow(1e-7*getUnitSize(),3);
+    R_exciton_generation_donor = Exciton_generation_rate_donor*N_donor_sites*intpow(1e-7*lattice.getUnitSize(),3);
+    R_exciton_generation_acceptor = Exciton_generation_rate_acceptor*N_acceptor_sites*intpow(1e-7*lattice.getUnitSize(),3);
     if(Enable_exciton_diffusion_test || Enable_IQE_test){
         isLightOn = true;
         exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor+R_exciton_generation_acceptor,getTime());
@@ -178,10 +186,10 @@ double OSC_Sim::calculateCoulomb(const list<Object*>::iterator object_it,const C
     double Energy = 0;
     double distance;
     int distance_sq_lat;
-    static const int range = ceil((Coulomb_cutoff/getUnitSize())*(Coulomb_cutoff/getUnitSize()));
+    static const int range = ceil((Coulomb_cutoff/ lattice.getUnitSize())*(Coulomb_cutoff/ lattice.getUnitSize()));
     // Loop through electrons
     for(auto it=electrons.begin();it!=electrons.end();++it){
-        distance_sq_lat = calculateLatticeDistanceSquared(coords,*it);
+        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!distance_sq_lat>range){
             if(!charge && it->getTag()!=(*object_it)->getTag()){
                 Energy += Coulomb_table[distance_sq_lat];
@@ -193,7 +201,7 @@ double OSC_Sim::calculateCoulomb(const list<Object*>::iterator object_it,const C
     }
     // Loop through holes
     for(auto it=holes.begin();it!=holes.end();++it){
-        distance_sq_lat = calculateLatticeDistanceSquared(coords,*it);
+        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!distance_sq_lat>range){
             if(charge && it->getTag()!=(*object_it)->getTag()){
                 Energy += Coulomb_table[distance_sq_lat];
@@ -204,12 +212,12 @@ double OSC_Sim::calculateCoulomb(const list<Object*>::iterator object_it,const C
         }
     }
     // Add electrode image charge interactions
-    if(!isZPeriodic()){
-        distance = getUnitSize()*((double)(getHeight()-coords.z)-0.5);
+    if(!lattice.isZPeriodic()){
+        distance = lattice.getUnitSize()*((double)(lattice.getHeight()-coords.z)-0.5);
         if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
-        distance = getUnitSize()*((double)(coords.z+1)-0.5);
+        distance = lattice.getUnitSize()*((double)(coords.z+1)-0.5);
         if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
@@ -223,10 +231,10 @@ double OSC_Sim::calculateCoulomb(const bool charge,const Coords& coords){
     double Energy = 0;
     double distance;
     int distance_sq_lat;
-    static const int range = ceil((Coulomb_cutoff/getUnitSize())*(Coulomb_cutoff/getUnitSize()));
+    static const int range = ceil((Coulomb_cutoff/ lattice.getUnitSize())*(Coulomb_cutoff/ lattice.getUnitSize()));
     // Loop through electrons
     for(auto it=electrons.begin();it!=electrons.end();++it){
-        distance_sq_lat = calculateLatticeDistanceSquared(coords,*it);
+        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!distance_sq_lat>range){
             if(!charge){
                 Energy += Coulomb_table[distance_sq_lat];
@@ -238,7 +246,7 @@ double OSC_Sim::calculateCoulomb(const bool charge,const Coords& coords){
     }
     // Loop through holes
     for(auto it=holes.begin();it!=holes.end();++it){
-        distance_sq_lat = calculateLatticeDistanceSquared(coords,*it);
+        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!distance_sq_lat>range){
             if(charge){
                 Energy += Coulomb_table[distance_sq_lat];
@@ -249,12 +257,12 @@ double OSC_Sim::calculateCoulomb(const bool charge,const Coords& coords){
         }
     }
     // Add electrode image charge interactions
-    if(!isZPeriodic()){
-        distance = getUnitSize()*((double)(getHeight()-coords.z)-0.5);
+    if(!lattice.isZPeriodic()){
+        distance = lattice.getUnitSize()*((double)(lattice.getHeight()-coords.z)-0.5);
         if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
-        distance = getUnitSize()*((double)(coords.z+1)-0.5);
+        distance = lattice.getUnitSize()*((double)(coords.z+1)-0.5);
         if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
         }
@@ -273,7 +281,7 @@ double OSC_Sim::calculateDiffusionLength_stdev(){
 double OSC_Sim::calculateMobility_avg(){
     auto mobilities = transit_times;
     for(int i=0;i<(int)mobilities.size();i++){
-        mobilities[i] = intpow(1e-7*getUnitSize()*getHeight(),2)/(fabs(Bias)*transit_times[i]);
+        mobilities[i] = intpow(1e-7*lattice.getUnitSize()*lattice.getHeight(),2)/(fabs(Bias)*transit_times[i]);
     }
     return vector_avg(mobilities);
 }
@@ -281,7 +289,7 @@ double OSC_Sim::calculateMobility_avg(){
 double OSC_Sim::calculateMobility_stdev(){
     auto mobilities = transit_times;
     for(int i=0;i<(int)mobilities.size();i++){
-        mobilities[i] = intpow(1e-7*getUnitSize()*getHeight(),2)/(fabs(Bias)*transit_times[i]);
+        mobilities[i] = intpow(1e-7*lattice.getUnitSize()*lattice.getHeight(),2)/(fabs(Bias)*transit_times[i]);
     }
     return vector_stdev(mobilities);
 }
@@ -320,12 +328,12 @@ Coords OSC_Sim::calculateExcitonCreationCoords(){
     Coords dest_coords;
     int N_tries = 0;
     while(N_tries<1000000){
-        dest_coords = getRandomCoords();
+        dest_coords = lattice.getRandomCoords();
         if(loggingEnabled()){
             *Logfile << "Attempting to create exciton at " << dest_coords.x << "," << dest_coords.y << "," << dest_coords.z << "." << endl;
         }
         N_tries++;
-        if(!isOccupied(dest_coords) && getSiteType(dest_coords)==type_target){
+        if(!lattice.isOccupied(dest_coords) && getSiteType(dest_coords)==type_target){
             return dest_coords;
         }
     }
@@ -344,7 +352,7 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
     double distance,E_delta,Coulomb_final,rate;
     int index;
     // Exciton hopping and dissociation
-    static const int range = ceil( ((FRET_cutoff>Exciton_dissociation_cutoff) ? (FRET_cutoff):(Exciton_dissociation_cutoff))/getUnitSize());
+    static const int range = ceil( ((FRET_cutoff>Exciton_dissociation_cutoff) ? (FRET_cutoff):(Exciton_dissociation_cutoff))/ lattice.getUnitSize());
     static const int dim = (2*range+1);
     static vector<Exciton_Hop> hops_temp(dim*dim*dim);
     static vector<Exciton_Dissociation> dissociations_temp(dim*dim*dim);
@@ -359,13 +367,13 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                     dissociations_valid[index] = false;
                     continue;
                 }
-                dest_coords = calculateDestinationCoords(object_coords,i,j,k);
-                if(isOccupied(dest_coords)){
+                dest_coords = lattice.calculateDestinationCoords(object_coords,i,j,k);
+                if(lattice.isOccupied(dest_coords)){
                     hops_valid[index] = false;
                     dissociations_valid[index] = false;
                     continue;
                 }
-                distance = getUnitSize()*sqrt((double)(i*i+j*j+k*k));
+                distance = lattice.getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                 // Dissociation event
                 if(getSiteType(object_coords)!=getSiteType(dest_coords) && !((distance-0.0001)>Exciton_dissociation_cutoff)){
                     dissociations_temp[index].setObjectIt(object_it);
@@ -517,7 +525,7 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
     int index;
     double Coulomb_i = calculateCoulomb(object_it,object_coords);
     // Calculate Polaron hopping and recombination events
-    static const int range = ceil(Polaron_hopping_cutoff/getUnitSize());
+    static const int range = ceil(Polaron_hopping_cutoff/ lattice.getUnitSize());
     static const int dim = (2*range+1);
     static vector<Polaron_Hop> hops_temp(dim*dim*dim);
     static vector<Polaron_Recombination> recombinations_temp(dim*dim*dim);
@@ -532,11 +540,11 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
                 if(!checkMoveEventValidity(object_coords,i,j,k)){
                     continue;
                 }
-                dest_coords = calculateDestinationCoords(object_coords,i,j,k);
+                dest_coords = lattice.calculateDestinationCoords(object_coords,i,j,k);
                 // Recombination events
                 // If destination site is occupied by a hole Polaron and the main Polaron is an electron, check for a possible recombination event
-                if(isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)){
-                    distance = getUnitSize()*sqrt((double)(i*i+j*j+k*k));
+                if(lattice.isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)){
+                    distance = lattice.getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                     if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                         recombinations_temp[index].setObjectIt(object_it);
                         if(getSiteType(object_coords)==(short)1){
@@ -546,14 +554,14 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
                             recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_acceptor,distance,0,getTemperature(),getTime());
                         }
                         recombinations_temp[index].setDestCoords(dest_coords);
-                        recombinations_temp[index].setObjectTargetIt((*getSiteIt(dest_coords))->getObjectIt());
+                        recombinations_temp[index].setObjectTargetIt((*lattice.getSiteIt(dest_coords))->getObjectIt());
                         recombinations_valid[index] = true;
                     }
                 }
                 // Hop events
                 // If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
-                else if(!isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
-                    distance = getUnitSize()*sqrt((double)(i*i+j*j+k*k));
+                else if(!lattice.isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
+                    distance = lattice.getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                     if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                         hops_temp[index].setObjectIt(object_it);
                         hops_temp[index].setDestCoords(dest_coords);
@@ -610,7 +618,7 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
     if(!Enable_dynamics_test || Enable_dynamics_extraction){
         // If electron, charge is false
         if(!polaron_it->getCharge()){
-            distance = getUnitSize()*((double)(object_coords.z+1)-0.5);
+            distance = lattice.getUnitSize()*((double)(object_coords.z+1)-0.5);
             if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                 extraction_event_it = electron_extraction_events.begin();
                 advance(extraction_event_it,std::distance(electrons.begin(),polaron_it));
@@ -619,7 +627,7 @@ void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
         }
         // If hole, charge is true
         else{
-            distance = getUnitSize()*((double)(getHeight()-object_coords.z)-0.5);
+            distance = lattice.getUnitSize()*((double)(lattice.getHeight()-object_coords.z)-0.5);
             if(!((distance-0.0001)>Polaron_hopping_cutoff)){
                 extraction_event_it = hole_extraction_events.begin();
                 advance(extraction_event_it,std::distance(holes.begin(),polaron_it));
@@ -779,7 +787,7 @@ bool OSC_Sim::createImportedMorphology(){
     width = atoi(line.c_str());
     getline(*Morphology_file,line);
     height = atoi(line.c_str());
-    if(getLength()!=length || getWidth()!=width || getHeight()!=height){
+    if(lattice.getLength()!=length || lattice.getWidth()!=width || lattice.getHeight()!=height){
         cout << getId() << ": Error! Morphology lattice dimensions do not match the lattice dimensions defined in the parameter file." << endl;
         Error_found = true;
         return false;
@@ -789,9 +797,9 @@ bool OSC_Sim::createImportedMorphology(){
     getline(*Morphology_file,line);
     getline(*Morphology_file,line);
     // Begin parsing morphology site data
-    for(int x=0;x<getLength();x++){
-        for(int y=0;y<getWidth();y++){
-            for(int z=0;z<getHeight();z++){
+    for(int x=0;x<lattice.getLength();x++){
+        for(int y=0;y<lattice.getWidth();y++){
+            for(int z=0;z<lattice.getHeight();z++){
                 if(site_count==0){
                     if(!(*Morphology_file).good()){
                         cout << "Error parsing file.  End of file reached before expected." << endl;
@@ -803,7 +811,7 @@ bool OSC_Sim::createImportedMorphology(){
                     site_count = atoi(line.substr(1).c_str());
                 }
                 coords.setXYZ(x,y,z);
-                sites[getSiteIndex(coords)].setType(type);
+                sites[lattice.getSiteIndex(coords)].setType(type);
                 if(type==(short)1){
                     N_donor_sites++;
                 }
@@ -932,7 +940,7 @@ bool OSC_Sim::executeExcitonDissociation(const list<Event*>::iterator event_it){
 }
 
 bool OSC_Sim::executeExcitonHop(const list<Event*>::iterator event_it){
-    if(isOccupied((*event_it)->getDestCoords())){
+    if(lattice.isOccupied((*event_it)->getDestCoords())){
         cout << getId() << ": Error! Exciton hop cannot be executed. Destination site is already occupied." << endl;
         Error_found = true;
         return false;
@@ -1103,7 +1111,7 @@ bool OSC_Sim::executePolaronExtraction(const list<Event*>::iterator event_it){
 }
 
 bool OSC_Sim::executePolaronHop(const list<Event*>::iterator event_it){
-    if(isOccupied((*event_it)->getDestCoords())){
+    if(lattice.isOccupied((*event_it)->getDestCoords())){
         cout << getId() << ": Error! Polaron hop cannot be executed. Destination site is already occupied." << endl;
         Error_found = true;
         return false;
@@ -1238,7 +1246,7 @@ void OSC_Sim::generateHole(const Coords& coords,int tag=0){
 void OSC_Sim::generateDynamicsExcitons(){
     int num = 0;
     Coords coords;
-    int initial_excitons = ceil(Dynamics_initial_exciton_conc*intpow(1e-7*getUnitSize(),3)*getLength()*getWidth()*getHeight());
+    int initial_excitons = ceil(Dynamics_initial_exciton_conc*intpow(1e-7*lattice.getUnitSize(),3)*lattice.getLength()*lattice.getWidth()*lattice.getHeight());
     cout << getId() << ": Generating " << initial_excitons << " initial excitons." << endl;
     while(num<initial_excitons){
         coords = calculateExcitonCreationCoords();
@@ -1254,7 +1262,7 @@ void OSC_Sim::generateToFPolarons(){
     Coords coords;
     // Create electrons at the top plane of the lattice
     if(!ToF_polaron_type){
-        coords.z = getHeight()-1;
+        coords.z = lattice.getHeight()-1;
     }
     // Create holes at the bottom plane of the lattice
     else{
@@ -1266,10 +1274,10 @@ void OSC_Sim::generateToFPolarons(){
     ToF_index_prev.assign(ToF_initial_polarons,0);
     auto energy_it = ToF_start_energies.begin();
     while(num<ToF_initial_polarons){
-        coords.x = getRandomX();
-        coords.y = getRandomY();
+        coords.x = lattice.getRandomX();
+        coords.y = lattice.getRandomY();
         // If the site is already occupied, pick a new site
-        if(isOccupied(coords)){
+        if(lattice.isOccupied(coords)){
             continue;
         }
         // If phase restriction is enabled, electrons cannot be created on donor sites
@@ -1403,11 +1411,11 @@ list<Polaron>::iterator OSC_Sim::getPolaronIt(Object* object_ptr){
 }
 
 double OSC_Sim::getSiteEnergy(const Coords& coords){
-    return sites[getSiteIndex(coords)].getEnergy();
+    return sites[lattice.getSiteIndex(coords)].getEnergy();
 }
 
 short OSC_Sim::getSiteType(const Coords& coords){
-    return static_cast<Site_OSC*>(*getSiteIt(coords))->getType();
+    return static_cast<Site_OSC*>(*lattice.getSiteIt(coords))->getType();
 }
 
 vector<int> OSC_Sim::getToFTransientCounts(){
@@ -1426,105 +1434,109 @@ vector<double> OSC_Sim::getToFTransientVelocities(){
     return transient_velocities;
 }
 
-vector<double> OSC_Sim::getTransitTimeData(){
-    return transit_times;
+vector<double> OSC_Sim::getTransitTimeData() {
+	return transit_times;
 }
 
-void OSC_Sim::initializeArchitecture(){
-    bool success;
-    N_donor_sites = 0;
-    N_acceptor_sites = 0;
-    if(Enable_neat){
-        N_donor_sites = getNumSites();
-        N_acceptor_sites = 0;
-        for(auto it=sites.begin();it!=sites.end();++it){
-            it->setType(1);
-        }
-    }
-    else if(Enable_bilayer){
-        Coords coords;
-        for(int x=0;x<getLength();x++){
-            for(int y=0;y<getWidth();y++){
-                for(int z=0;z<getHeight();z++){
-                    coords.setXYZ(x,y,z);
-                    if(z<Thickness_acceptor){
-                        sites[getSiteIndex(coords)].setType(2);
-                        N_acceptor_sites++;
-                    }
-                    else{
-                        sites[getSiteIndex(coords)].setType(1);
-                        N_donor_sites++;
-                    }
-                }
-            }
-        }
-    }
-    else if(Enable_random_blend){
-        vector<short> site_types;
-        site_types.assign(getNumSites(),1);
-        for(int i=0;i<(int)getNumSites()*Acceptor_conc;i++){
-            site_types[i] = 2;
-            N_acceptor_sites++;
-        }
-        N_donor_sites = getNumSites()-N_acceptor_sites;
-        shuffle(site_types.begin(),site_types.end(),gen);
-        for(int i=0;i<(int)sites.size();i++){
-            sites[i].setType(site_types[i]);
-        }
-    }
-    else if(Enable_import_morphology){
-        success = createImportedMorphology();
-        if(!success){
-            return;
-        }
-    }
-    if(Enable_gaussian_dos){
-        site_energies_donor.assign(N_donor_sites,0);
-        site_energies_acceptor.assign(N_acceptor_sites,0);
-        createGaussianDOSVector(site_energies_donor,0,Energy_stdev_donor,gen);
-        createGaussianDOSVector(site_energies_acceptor,0,Energy_stdev_acceptor,gen);
-    }
-    else if(Enable_exponential_dos){
-        site_energies_donor.assign(N_donor_sites,0);
-        site_energies_acceptor.assign(N_acceptor_sites,0);
-        createExponentialDOSVector(site_energies_donor,0,Energy_urbach_donor,gen);
-        createExponentialDOSVector(site_energies_acceptor,0,Energy_urbach_acceptor,gen);
-    }
-    else{
-        site_energies_donor.push_back(0);
-        site_energies_acceptor.push_back(0);
-    }
-    int donor_count = 0;
-    int acceptor_count = 0;
-    for(int i=0;i<getNumSites();i++){
-        if(Enable_gaussian_dos || Enable_exponential_dos){
-            if(sites[i].getType()==(short)1){
-                sites[i].setEnergyIt(site_energies_donor.begin()+donor_count);
-                donor_count++;
-            }
-            else if(sites[i].getType()==(short)2){
-                sites[i].setEnergyIt(site_energies_acceptor.begin()+acceptor_count);
-                acceptor_count++;
-            }
-            else{
-                cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
-                Error_found = true;
-            }
-        }
-        else{
-            if(sites[i].getType()==(short)1){
-                sites[i].setEnergyIt(site_energies_donor.begin());
-            }
-            else if(sites[i].getType()==(short)2){
-                sites[i].setEnergyIt(site_energies_acceptor.begin());
-            }
-            else{
-                cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
-                Error_found = true;
-            }
-        }
-        addSite(&sites[i]);
-    }
+void OSC_Sim::initializeArchitecture() {
+	bool success;
+	N_donor_sites = 0;
+	N_acceptor_sites = 0;
+	if (Enable_neat) {
+		N_donor_sites = lattice.getNumSites();
+		N_acceptor_sites = 0;
+		for (auto it = sites.begin(); it != sites.end(); ++it) {
+			it->setType(1);
+		}
+	}
+	else if (Enable_bilayer) {
+		Coords coords;
+		for (int x = 0; x < lattice.getLength(); x++) {
+			for (int y = 0; y < lattice.getWidth(); y++) {
+				for (int z = 0; z < lattice.getHeight(); z++) {
+					coords.setXYZ(x, y, z);
+					if (z < Thickness_acceptor) {
+						sites[lattice.getSiteIndex(coords)].setType(2);
+						N_acceptor_sites++;
+					}
+					else {
+						sites[lattice.getSiteIndex(coords)].setType(1);
+						N_donor_sites++;
+					}
+				}
+			}
+		}
+	}
+	else if (Enable_random_blend) {
+		vector<short> site_types;
+		site_types.assign(lattice.getNumSites(), 1);
+		for (int i = 0; i < (int)lattice.getNumSites()*Acceptor_conc; i++) {
+			site_types[i] = 2;
+			N_acceptor_sites++;
+		}
+		N_donor_sites = lattice.getNumSites() - N_acceptor_sites;
+		shuffle(site_types.begin(), site_types.end(), gen);
+		for (int i = 0; i < (int)sites.size(); i++) {
+			sites[i].setType(site_types[i]);
+		}
+	}
+	else if (Enable_import_morphology) {
+		success = createImportedMorphology();
+		if (!success) {
+			return;
+		}
+	}
+	if (Enable_gaussian_dos) {
+		site_energies_donor.assign(N_donor_sites, 0);
+		site_energies_acceptor.assign(N_acceptor_sites, 0);
+		createGaussianDOSVector(site_energies_donor, 0, Energy_stdev_donor, gen);
+		createGaussianDOSVector(site_energies_acceptor, 0, Energy_stdev_acceptor, gen);
+	}
+	else if (Enable_exponential_dos) {
+		site_energies_donor.assign(N_donor_sites, 0);
+		site_energies_acceptor.assign(N_acceptor_sites, 0);
+		createExponentialDOSVector(site_energies_donor, 0, Energy_urbach_donor, gen);
+		createExponentialDOSVector(site_energies_acceptor, 0, Energy_urbach_acceptor, gen);
+	}
+	else {
+		site_energies_donor.push_back(0);
+		site_energies_acceptor.push_back(0);
+	}
+	int donor_count = 0;
+	int acceptor_count = 0;
+	for (int i = 0; i < lattice.getNumSites(); i++) {
+		if (Enable_gaussian_dos || Enable_exponential_dos) {
+			if (sites[i].getType() == (short)1) {
+				sites[i].setEnergyIt(site_energies_donor.begin() + donor_count);
+				donor_count++;
+			}
+			else if (sites[i].getType() == (short)2) {
+				sites[i].setEnergyIt(site_energies_acceptor.begin() + acceptor_count);
+				acceptor_count++;
+			}
+			else {
+				cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
+				Error_found = true;
+			}
+		}
+		else {
+			if (sites[i].getType() == (short)1) {
+				sites[i].setEnergyIt(site_energies_donor.begin());
+			}
+			else if (sites[i].getType() == (short)2) {
+				sites[i].setEnergyIt(site_energies_acceptor.begin());
+			}
+			else {
+				cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
+				Error_found = true;
+			}
+		}
+	}
+	vector<Site*> site_ptrs((int)sites.size());
+	for (int i = 0; i < (int)sites.size(); i++){
+		site_ptrs[i] = &sites[i];
+	}
+	lattice.setSitePointers(site_ptrs);
 }
 
 void OSC_Sim::outputStatus(){
@@ -1571,7 +1583,7 @@ void OSC_Sim::outputStatus(){
 }
 
 bool OSC_Sim::siteContainsHole(const Coords& coords){
-    auto object_it = (*getSiteIt(coords))->getObjectIt();
+    auto object_it = (*lattice.getSiteIt(coords))->getObjectIt();
     if((*object_it)->getName().compare(Polaron::name)==0){
         return static_cast<Polaron*>(*object_it)->getCharge();
     }
@@ -1647,7 +1659,7 @@ void OSC_Sim::updateToFData(const list<Object*>::iterator object_it){
             }
             if(index<(int)transient_times.size()){
                 transient_counts[index]++;
-                transient_velocities[index] += (1e-7*getUnitSize()*abs((*object_it)->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
+                transient_velocities[index] += (1e-7*lattice.getUnitSize()*abs((*object_it)->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
                 transient_energies[index] += getSiteEnergy((*object_it)->getCoords());
                 *start_time_it = getTime();
                 *start_position_it = (*object_it)->getCoords().z;
