@@ -172,7 +172,7 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it,const 
     for(auto it=electrons.begin();it!=electrons.end();++it){
         distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!distance_sq_lat>range){
-            if(!charge && it->getTag()!=(*object_it)->getTag()){
+            if(!charge && it->getTag()!=polaron_it->getTag()){
                 Energy += Coulomb_table[distance_sq_lat];
             }
             else{
@@ -184,7 +184,7 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it,const 
     for(auto it=holes.begin();it!=holes.end();++it){
         distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!distance_sq_lat>range){
-            if(charge && it->getTag()!=(*object_it)->getTag()){
+            if(charge && it->getTag()!=polaron_it->getTag()){
                 Energy += Coulomb_table[distance_sq_lat];
             }
             else{
@@ -502,9 +502,9 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
         }
     }
     Coords dest_coords;
-    double distance,E_delta;
+    double E_delta;
     int index;
-    double Coulomb_i = calculateCoulomb(object_it,object_coords);
+    double Coulomb_i = calculateCoulomb(polaron_it,object_coords);
     // Calculate Polaron hopping and recombination events
     static const int range = ceil(Polaron_hopping_cutoff/ lattice.getUnitSize());
     static const int dim = (2*range+1);
@@ -512,82 +512,105 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
     static vector<Polaron_Recombination> recombinations_temp(dim*dim*dim);
     static vector<bool> hops_valid(dim*dim*dim,false);
     static vector<bool> recombinations_valid(dim*dim*dim,false);
+	static vector<double> distances(dim*dim*dim, 0.0);
+	static vector<bool> isInRange(dim*dim*dim, false);
+	static bool isInitialized = false;
+	if (!isInitialized) {
+		for (int i = -range; i <= range; i++) {
+			for (int j = -range; j <= range; j++) {
+				for (int k = -range; k <= range; k++) {
+					index = (i + range)*dim*dim + (j + range)*dim + (k + range);
+					distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j*j + k*k));
+					if (!((distances[index] - 0.0001) > Polaron_hopping_cutoff)) {
+						isInRange[index] = true;
+					}
+				}
+			}
+		}
+		isInitialized = true;
+	}
     for(int i=-range;i<=range;i++){
         for(int j=-range;j<=range;j++){
             for(int k=-range;k<=range;k++){
-                index = (i+range)*dim*dim+(j+range)*dim+(k+range);
-                hops_valid[index] = false;
-                recombinations_valid[index] = false;
-                if(!checkMoveEventValidity(object_coords,i,j,k)){
-                    continue;
-                }
-                dest_coords = lattice.calculateDestinationCoords(object_coords,i,j,k);
+				index = (i + range)*dim*dim + (j + range)*dim + (k + range);
+				if (!isInRange[index]) {
+					hops_valid[index] = false;
+					recombinations_valid[index] = false;
+					continue;
+				}
+				if (!checkMoveEventValidity(object_coords, i, j, k)) {
+					hops_valid[index] = false;
+					recombinations_valid[index] = false;
+					continue;
+				}
+                lattice.calculateDestinationCoords(object_coords,i,j,k,dest_coords);
                 // Recombination events
                 // If destination site is occupied by a hole Polaron and the main Polaron is an electron, check for a possible recombination event
                 if(lattice.isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)){
-                    distance = lattice.getUnitSize()*sqrt((double)(i*i+j*j+k*k));
-                    if(!((distance-0.0001)>Polaron_hopping_cutoff)){
-                        recombinations_temp[index].setObjectIt(object_it);
-                        if(getSiteType(object_coords)==(short)1){
-                            recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_donor,distance,0,getTemperature(),getTime());
-                        }
-                        else if(getSiteType(object_coords)==(short)2){
-                            recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_acceptor,distance,0,getTemperature(),getTime());
-                        }
-                        recombinations_temp[index].setDestCoords(dest_coords);
-                        recombinations_temp[index].setObjectTargetIt((*lattice.getSiteIt(dest_coords))->getObjectIt());
-                        recombinations_valid[index] = true;
+                    if(getSiteType(object_coords)==(short)1){
+                        recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_donor,distances[index],0,this);
                     }
+                    else if(getSiteType(object_coords)==(short)2){
+                        recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_acceptor,distances[index],0,this);
+                    }
+					recombinations_temp[index].setObjectPtr(object_ptr);
+                    recombinations_temp[index].setDestCoords(dest_coords);
+                    recombinations_temp[index].setObjectTargetPtr((*lattice.getSiteIt(dest_coords))->getObjectPtr());
+                    recombinations_valid[index] = true;
                 }
+				else {
+					recombinations_valid[index] = false;
+				}
                 // Hop events
                 // If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
-                else if(!lattice.isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
-                    distance = lattice.getUnitSize()*sqrt((double)(i*i+j*j+k*k));
-                    if(!((distance-0.0001)>Polaron_hopping_cutoff)){
-                        hops_temp[index].setObjectIt(object_it);
-                        hops_temp[index].setDestCoords(dest_coords);
-                        E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(calculateCoulomb(object_it,dest_coords)-Coulomb_i);
-                        if(!getObjectCharge(object_it)){
-                            E_delta += (E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                if(!lattice.isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
+                    E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(calculateCoulomb(polaron_it,dest_coords)-Coulomb_i);
+                    if(!polaron_it->getCharge()){
+                        E_delta += (E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                    }
+                    else{
+                        E_delta -= (E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                    }
+                    if(getSiteType(object_coords)==(short)1){
+                        if(getSiteType(dest_coords)==(short)2){
+                            if(!polaron_it->getCharge()){
+                                E_delta -= (Lumo_acceptor-Lumo_donor);
+                            }
+                            else{
+                                E_delta -= (Homo_acceptor-Homo_donor);
+                            }
+                        }
+                        if(Enable_miller_abrahams){
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_delta,this);
                         }
                         else{
-                            E_delta -= (E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_delta,Reorganization_donor,this);
                         }
-                        if(getSiteType(object_coords)==(short)1){
-                            if(getSiteType(dest_coords)==(short)2){
-                                if(!getObjectCharge(object_it)){
-                                    E_delta -= (Lumo_acceptor-Lumo_donor);
-                                }
-                                else{
-                                    E_delta -= (Homo_acceptor-Homo_donor);
-                                }
-                            }
-                            if(Enable_miller_abrahams){
-                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distance,E_delta,getTemperature(),getTime());
-                            }
-                            else{
-                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distance,E_delta,Reorganization_donor,getTemperature(),getTime());
-                            }
-                        }
-                        else if(getSiteType(object_coords)==(short)2){
-                            if(getSiteType(dest_coords)==(short)1){
-                                if(!getObjectCharge(object_it)){
-                                    E_delta -= (Lumo_donor-Lumo_acceptor);
-                                }
-                                else{
-                                    E_delta -= (Homo_donor-Homo_acceptor);
-                                }
-                            }
-                            if(Enable_miller_abrahams){
-                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distance,E_delta,getTemperature(),getTime());
-                            }
-                            else{
-                                hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distance,E_delta,Reorganization_acceptor,getTemperature(),getTime());
-                            }
-                        }
-                        hops_valid[index] = true;
                     }
+                    else if(getSiteType(object_coords)==(short)2){
+                        if(getSiteType(dest_coords)==(short)1){
+                            if(!polaron_it->getCharge()){
+                                E_delta -= (Lumo_donor-Lumo_acceptor);
+                            }
+                            else{
+                                E_delta -= (Homo_donor-Homo_acceptor);
+                            }
+                        }
+                        if(Enable_miller_abrahams){
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_delta,this);
+                        }
+                        else{
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_delta,Reorganization_acceptor,this);
+                        }
+                    }
+					hops_temp[index].setObjectPtr(object_ptr);
+					hops_temp[index].setDestCoords(dest_coords);
+					hops_temp[index].setObjectTargetPtr(nullptr);
+                    hops_valid[index] = true;
                 }
+				else {
+					hops_valid[index] = false;
+				}
             }
         }
     }
@@ -597,6 +620,7 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
     bool No_extraction_valid = true;
     list<Polaron_Extraction>::iterator extraction_event_it;
     if(!Enable_dynamics_test || Enable_dynamics_extraction){
+		double distance;
         // If electron, charge is false
         if(!polaron_it->getCharge()){
             distance = lattice.getUnitSize()*((double)(object_coords.z+1)-0.5);
@@ -617,30 +641,34 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
         }
         if(!No_extraction_valid){
             if(getSiteType(object_coords)==(short)1){
-                extraction_event_it->calculateExecutionTime(R_polaron_hopping_donor,distance_ext,Polaron_localization_donor,0,this);
+                extraction_event_it->calculateExecutionTime(R_polaron_hopping_donor,distance,Polaron_localization_donor,0,this);
             }
             else if(getSiteType(object_coords)==(short)2){
-                extraction_event_it->calculateExecutionTime(R_polaron_hopping_acceptor,distance_ext,Polaron_localization_acceptor,0,this);
+                extraction_event_it->calculateExecutionTime(R_polaron_hopping_acceptor,distance,Polaron_localization_acceptor,0,this);
             }
         }
     }
     // Determine the fastest hop event
     bool No_hops_valid = true;
     auto hop_target_it = hops_temp.end();
+	int n = 0;
     for(auto it=hops_temp.begin();it!=hops_temp.end();++it){
-        if(hops_valid[std::distance(hops_temp.begin(),it)] && (hop_target_it==hops_temp.end() || it->getExecutionTime()<hop_target_it->getExecutionTime())){
+        if(hops_valid[n] && (hop_target_it==hops_temp.end() || it->getExecutionTime()<hop_target_it->getExecutionTime())){
             hop_target_it = it;
             No_hops_valid = false;
         }
+		n++;
     }
     // Determine the fastest recombination event
     bool No_recombinations_valid = true;
     auto recombination_target_it = recombinations_temp.end();
+	n = 0;
     for(auto it=recombinations_temp.begin();it!=recombinations_temp.end();++it){
-        if(recombinations_valid[std::distance(recombinations_temp.begin(),it)] && (recombination_target_it==recombinations_temp.end() || it->getExecutionTime()<recombination_target_it->getExecutionTime())){
+        if(recombinations_valid[n] && (recombination_target_it==recombinations_temp.end() || it->getExecutionTime()<recombination_target_it->getExecutionTime())){
             recombination_target_it = it;
             No_recombinations_valid = false;
         }
+		n++;
     }
     // If no valid event is found, return
     if(No_extraction_valid && No_hops_valid && No_recombinations_valid){
