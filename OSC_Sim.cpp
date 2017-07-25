@@ -323,8 +323,8 @@ Coords OSC_Sim::calculateExcitonCreationCoords(){
     return dest_coords;
 }
 
-void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
-    const auto exciton_it = getExcitonIt(*object_it);
+void OSC_Sim::calculateExcitonEvents(Object* object_ptr){
+    const auto exciton_it = getExcitonIt(object_ptr);
     const Coords object_coords = exciton_it->getCoords();
     if(isLoggingEnabled()){
         *Logfile << "Calculating events for exciton " << exciton_it->getTag() << " at site " << object_coords.x << "," << object_coords.y << "," << object_coords.z << "." << endl;
@@ -357,7 +357,7 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                 distance = lattice.getUnitSize()*sqrt((double)(i*i+j*j+k*k));
                 // Dissociation event
                 if(getSiteType(object_coords)!=getSiteType(dest_coords) && !((distance-0.0001)>Exciton_dissociation_cutoff)){
-                    dissociations_temp[index].setObjectIt(object_it);
+                    dissociations_temp[index].setObjectPtr(object_ptr);
                     dissociations_temp[index].setDestCoords(dest_coords);
                     // Exciton is starting from a donor site
                     if(getSiteType(object_coords)==(short)1){
@@ -388,7 +388,7 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
                 }
                 // Hop event
                 if(getSiteType(object_coords)==getSiteType(dest_coords) && !((distance-0.0001)>FRET_cutoff)){
-                    hops_temp[index].setObjectIt(object_it);
+                    hops_temp[index].setObjectPtr(object_ptr);
                     hops_temp[index].setDestCoords(dest_coords);
                     E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords));
                     if(getSiteType(object_coords)==(short)1){
@@ -474,24 +474,24 @@ void OSC_Sim::calculateExcitonEvents(const list<Object*>::iterator object_it){
     }
 }
 
-void OSC_Sim::calculateObjectListEvents(const vector<list<Object*>::iterator>& object_it_vec){
-    if(loggingEnabled()){
-        *Logfile << "Calculating events for " << object_it_vec.size() << " objects:" << endl;
+void OSC_Sim::calculateObjectListEvents(const vector<Object*>& object_ptr_vec){
+    if(isLoggingEnabled()){
+        *Logfile << "Calculating events for " << object_ptr_vec.size() << " objects:" << endl;
     }
-    for(auto it=object_it_vec.begin();it!=object_it_vec.end();++it){
+    for(auto it=object_ptr_vec.begin();it!=object_ptr_vec.end();++it){
         // If object is exciton
-        if((**it)->getName().compare(Exciton::name)==0){
+        if((*it)->getName().compare(Exciton::name)==0){
             calculateExcitonEvents(*it);
         }
         // If object is polaron
-        else if((**it)->getName().compare(Polaron::name)==0){
+        else if((*it)->getName().compare(Polaron::name)==0){
             calculatePolaronEvents(*it);
         }
     }
 }
 
-void OSC_Sim::calculatePolaronEvents(const list<Object*>::iterator object_it){
-    const auto polaron_it = getPolaronIt(*object_it);
+void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
+    const auto polaron_it = getPolaronIt(object_ptr);
     const Coords object_coords = polaron_it->getCoords();
     if(isLoggingEnabled()){
         if(!polaron_it->getCharge()){
@@ -1009,11 +1009,11 @@ bool OSC_Sim::createImportedMorphology(){
     return true;
 }
 
-void OSC_Sim::deleteObject(const list<Object*>::iterator object_it){
-    if((*object_it)->getName().compare(Exciton::name)==0){
-        auto exciton_it = getExcitonIt(*object_it);
+void OSC_Sim::deleteObject(Object* object_ptr){
+    if(object_ptr->getName().compare(Exciton::name)==0){
+        auto exciton_it = getExcitonIt(object_ptr);
         // Remove the object from Simulation
-        removeObject(object_it);
+        removeObject(object_ptr);
         // Locate corresponding recombination event
         auto recombination_list_it = exciton_recombination_events.begin();
         advance(recombination_list_it,std::distance(excitons.begin(),exciton_it));
@@ -1032,10 +1032,10 @@ void OSC_Sim::deleteObject(const list<Object*>::iterator object_it){
         // Delete exciton dissociation event
         exciton_dissociation_events.erase(dissociation_list_it);
     }
-    else if((*object_it)->getName().compare(Polaron::name)==0){
-        auto polaron_it = getPolaronIt(*object_it);
+    else if(object_ptr->getName().compare(Polaron::name)==0){
+        auto polaron_it = getPolaronIt(object_ptr);
         // Remove the object from Simulation
-        removeObject(object_it);
+        removeObject(object_ptr);
         // Electron
         if(!(polaron_it->getCharge())){
             // Locate corresponding recombination event
@@ -1088,10 +1088,10 @@ bool OSC_Sim::executeExcitonCreation(const list<Event*>::iterator event_it){
 
 bool OSC_Sim::executeExcitonDissociation(const list<Event*>::iterator event_it){
     // Get event info
-    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+    Coords coords_initial = (((*event_it)->getObjectPtr()))->getCoords();
     Coords coords_dest = (*event_it)->getDestCoords();
     // Delete exciton and its events
-    deleteObject((*event_it)->getObjectIt());
+    deleteObject((*event_it)->getObjectPtr());
     // Generate new electron and hole
     int tag = (N_electrons_created>N_holes_created) ? (N_electrons_created+1) : (N_holes_created+1);
     if(getSiteType(coords_dest)==(short)2){
@@ -1122,8 +1122,8 @@ bool OSC_Sim::executeExcitonHop(const list<Event*>::iterator event_it){
         return false;
     }
     else{
-        if(loggingEnabled()){
-            *Logfile << "Exciton " << (*((*event_it)->getObjectIt()))->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+        if(isLoggingEnabled()){
+            *Logfile << "Exciton " << ((*event_it)->getObjectPtr())->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
         }
         return executeObjectHop(event_it);
     }
@@ -1131,14 +1131,14 @@ bool OSC_Sim::executeExcitonHop(const list<Event*>::iterator event_it){
 
 bool OSC_Sim::executeExcitonRecombine(const list<Event*>::iterator event_it){
     // Get event info
-    int exciton_tag = (*((*event_it)->getObjectIt()))->getTag();
-    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+    int exciton_tag = ((*event_it)->getObjectPtr())->getTag();
+    Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
     // Output diffusion distance
     if(Enable_exciton_diffusion_test){
-        diffusion_distances.push_back((*((*event_it)->getObjectIt()))->calculateDisplacement());
+        diffusion_distances.push_back(((*event_it)->getObjectPtr())->calculateDisplacement());
     }
     // delete exciton and its events
-    deleteObject((*event_it)->getObjectIt());
+    deleteObject((*event_it)->getObjectPtr());
     // Update exciton counters
     N_excitons--;
     N_excitons_recombined++;
@@ -1210,25 +1210,26 @@ bool OSC_Sim::executeNextEvent(){
 
 bool OSC_Sim::executeObjectHop(const list<Event*>::iterator event_it){
     // Get event info
-    auto object_it = (*event_it)->getObjectIt();
-    Coords coords_initial = (*object_it)->getCoords();
+    auto object_ptr = (*event_it)->getObjectPtr();
+    Coords coords_initial = object_ptr->getCoords();
     Coords coords_dest = (*event_it)->getDestCoords();
     // Move the object in the Simulation
-    moveObject((*event_it)->getObjectIt(),coords_dest);
+    moveObject((*event_it)->getObjectPtr(),coords_dest);
     // Perform ToF test analysis
     if(Enable_ToF_test){
-        updateToFData(object_it);
+		auto polaron_it = getPolaronIt(object_ptr);
+        updateToFData(object_ptr);
         // Check ToF time limit
-        if((getTime()-(*object_it)->getCreationTime())>ToF_transient_end){
+        if((getTime()-object_ptr->getCreationTime())>ToF_transient_end){
             // Update polaron counters
-            if(!getObjectCharge(object_it)){
+            if(!polaron_it->getCharge()){
                 N_electrons--;
             }
             else{
                 N_holes--;
             }
             // Delete polaron and its events
-            deleteObject(object_it);
+            deleteObject(object_ptr);
         }
     }
     // Check if new ToF polarons need to be created
@@ -1248,15 +1249,16 @@ bool OSC_Sim::executeObjectHop(const list<Event*>::iterator event_it){
 
 bool OSC_Sim::executePolaronExtraction(const list<Event*>::iterator event_it){
     // Get event info
-    bool charge = getObjectCharge((*event_it)->getObjectIt());
-    int polaron_tag = (*((*event_it)->getObjectIt()))->getTag();
-    Coords coords_initial = (*((*event_it)->getObjectIt()))->getCoords();
+	auto polaron_it = getPolaronIt((*event_it)->getObjectPtr());
+	bool charge = polaron_it->getCharge();
+    int polaron_tag = ((*event_it)->getObjectPtr())->getTag();
+    Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
     // Save transit time
     if(Enable_ToF_test){
-        transit_times.push_back(getTime()-(*((*event_it)->getObjectIt()))->getCreationTime());
+        transit_times.push_back(getTime()-((*event_it)->getObjectPtr())->getCreationTime());
     }
     // Delete polaron and its events
-    deleteObject((*event_it)->getObjectIt());
+    deleteObject((*event_it)->getObjectPtr());
     // Update polaron counters
     if(!charge){
         N_electrons_collected++;
@@ -1293,14 +1295,14 @@ bool OSC_Sim::executePolaronHop(const list<Event*>::iterator event_it){
         return false;
     }
     else{
-        auto object_it = (*event_it)->getObjectIt();
+        auto polaron_it = getPolaronIt((*event_it)->getObjectPtr());
         // Log event
-        if(loggingEnabled()){
-            if(!getObjectCharge(object_it)){
-                *Logfile << "Electron " << (*object_it)->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+        if(isLoggingEnabled()){
+            if(!polaron_it->getCharge()){
+                *Logfile << "Electron " << polaron_it->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
             }
             else{
-                *Logfile << "Hole " << (*object_it)->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+                *Logfile << "Hole " << polaron_it->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
             }
         }
         return executeObjectHop(event_it);
@@ -1309,14 +1311,14 @@ bool OSC_Sim::executePolaronHop(const list<Event*>::iterator event_it){
 
 bool OSC_Sim::executePolaronRecombination(const list<Event*>::iterator event_it){
     // Get event info
-    auto object_it = (*event_it)->getObjectIt();
-    int polaron_tag = (*object_it)->getTag();
-    int target_tag = (*((*event_it)->getObjectTargetIt()))->getTag();
-    Coords coords_initial = (*object_it)->getCoords();
+    auto object_ptr = (*event_it)->getObjectPtr();
+    int polaron_tag = object_ptr->getTag();
+    int target_tag = ((*event_it)->getObjectTargetPtr())->getTag();
+    Coords coords_initial = object_ptr->getCoords();
     Coords coords_dest = (*event_it)->getDestCoords();
     // Delete polarons and their events
-    deleteObject((*event_it)->getObjectTargetIt());
-    deleteObject(object_it);
+    deleteObject((*event_it)->getObjectTargetPtr());
+    deleteObject(object_ptr);
     // Update polaron counters
     N_electrons_recombined++;
     N_holes_recombined++;
@@ -1346,12 +1348,12 @@ void OSC_Sim::generateExciton(const Coords& coords){
     // Create the new exciton and add it to the simulation
     Exciton exciton_new(getTime(),N_excitons_created+1,coords);
     excitons.push_back(exciton_new);
-    auto object_it = addObject(&excitons.back());
+    auto object_ptr = addObject(&excitons.back());
     // Add placeholder events to the corresponding lists
     Exciton_Hop hop_event;
     exciton_hop_events.push_back(hop_event);
     Exciton_Recombination recombination_event;
-    recombination_event.setObjectIt(object_it);
+    recombination_event.setObjectPtr(object_ptr);
     exciton_recombination_events.push_back(recombination_event);
     Exciton_Dissociation dissociation_event;
     exciton_dissociation_events.push_back(dissociation_event);
@@ -1377,15 +1379,15 @@ void OSC_Sim::generateElectron(const Coords& coords,int tag=0){
     // Create the new electron and add it to the simulation
     Polaron electron_new(getTime(),tag,coords,false);
     electrons.push_back(electron_new);
-    auto object_it = addObject(&electrons.back());
+    auto object_ptr = addObject(&electrons.back());
     // Add placeholder events to the corresponding lists
     Polaron_Hop hop_event;
     electron_hop_events.push_back(hop_event);
     Polaron_Recombination recombination_event;
-    recombination_event.setObjectIt(object_it);
+    recombination_event.setObjectPtr(object_ptr);
     polaron_recombination_events.push_back(recombination_event);
     Polaron_Extraction extraction_event;
-    extraction_event.setObjectIt(object_it);
+    extraction_event.setObjectPtr(object_ptr);
     electron_extraction_events.push_back(extraction_event);
     // Update exciton counters
     N_electrons_created++;
@@ -1403,12 +1405,12 @@ void OSC_Sim::generateHole(const Coords& coords,int tag=0){
     // Create the new hole and add it to the simulation
     Polaron hole_new(getTime(),tag,coords,true);
     holes.push_back(hole_new);
-    auto object_it = addObject(&holes.back());
+    auto object_ptr = addObject(&holes.back());
     // Add placeholder events to the corresponding lists
     Polaron_Hop hop_event;
     hole_hop_events.push_back(hop_event);
     Polaron_Extraction extraction_event;
-    extraction_event.setObjectIt(object_it);
+    extraction_event.setObjectPtr(object_ptr);
     hole_extraction_events.push_back(extraction_event);
     // Update exciton counters
     N_holes_created++;
@@ -1559,7 +1561,7 @@ int OSC_Sim::getN_holes_recombined() const {
     return N_holes_recombined;
 }
 
-list<Polaron>::iterator OSC_Sim::getPolaronIt(Object* object_ptr){
+list<Polaron>::iterator OSC_Sim::getPolaronIt(const Object* object_ptr){
     if(object_ptr->getName().compare(Polaron::name)==0){
         // electrons
         if(!(static_cast<const Polaron*>(object_ptr)->getCharge())){
@@ -1753,9 +1755,9 @@ void OSC_Sim::outputStatus(){
 }
 
 bool OSC_Sim::siteContainsHole(const Coords& coords){
-    auto object_it = (*lattice.getSiteIt(coords))->getObjectIt();
-    if((*object_it)->getName().compare(Polaron::name)==0){
-        return static_cast<Polaron*>(*object_it)->getCharge();
+    auto object_ptr = (*lattice.getSiteIt(coords))->getObjectPtr();
+    if(object_ptr->getName().compare(Polaron::name)==0){
+        return static_cast<Polaron*>(object_ptr)->getCharge();
     }
     return false;
 }
@@ -1784,12 +1786,12 @@ void OSC_Sim::updateDynamicsData(){
     }
 }
 
-void OSC_Sim::updateToFData(const list<Object*>::iterator object_it){
+void OSC_Sim::updateToFData(const Object* object_ptr){
     static const double step_size = 1.0/(double)ToF_pnts_per_decade;
     // Only start ToF transient calculations if the time elapsed since polaron creation is larger than the ToF transient start time
-    if((getTime()-(*object_it)->getCreationTime())>ToF_transient_start){
+    if((getTime()-object_ptr->getCreationTime())>ToF_transient_start){
         // Get polaron and previous timestep info
-        auto polaron_it = getPolaronIt(*object_it);
+        auto polaron_it = getPolaronIt(object_ptr);
         auto start_time_it = ToF_start_times.begin();
         if(!polaron_it->getCharge()){
             advance(start_time_it,distance(electrons.begin(),polaron_it));
@@ -1798,8 +1800,8 @@ void OSC_Sim::updateToFData(const list<Object*>::iterator object_it){
             advance(start_time_it,distance(holes.begin(),polaron_it));
         }
         // If enough time has passed, output next timestep data
-        if(log10(getTime()-(*object_it)->getCreationTime())-log10(*start_time_it-(*object_it)->getCreationTime())>step_size){
-            int index = floor((log10(getTime()-(*object_it)->getCreationTime())-log10(ToF_transient_start))/step_size);
+        if(log10(getTime()-object_ptr->getCreationTime())-log10(*start_time_it-object_ptr->getCreationTime())>step_size){
+            int index = floor((log10(getTime()-object_ptr->getCreationTime())-log10(ToF_transient_start))/step_size);
             // Get polaron site energy for previous timestep
             auto start_energy_it = ToF_start_energies.begin();
             auto index_prev_it = ToF_index_prev.begin();
@@ -1829,11 +1831,11 @@ void OSC_Sim::updateToFData(const list<Object*>::iterator object_it){
             }
             if(index<(int)transient_times.size()){
                 transient_counts[index]++;
-                transient_velocities[index] += (1e-7*lattice.getUnitSize()*abs((*object_it)->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
-                transient_energies[index] += getSiteEnergy((*object_it)->getCoords());
+                transient_velocities[index] += (1e-7*lattice.getUnitSize()*abs(object_ptr->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
+                transient_energies[index] += getSiteEnergy(object_ptr->getCoords());
                 *start_time_it = getTime();
-                *start_position_it = (*object_it)->getCoords().z;
-                *start_energy_it = getSiteEnergy((*object_it)->getCoords());
+                *start_position_it = object_ptr->getCoords().z;
+                *start_energy_it = getSiteEnergy(object_ptr->getCoords());
                 *index_prev_it = index;
             }
         }

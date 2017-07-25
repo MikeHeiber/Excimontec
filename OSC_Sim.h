@@ -278,11 +278,11 @@ class OSC_Sim : public Simulation{
         double calculateCoulomb(const list<Polaron>::iterator,const Coords& coords);
         double calculateCoulomb(const bool charge,const Coords& coords);
         Coords calculateExcitonCreationCoords();
-        void calculateExcitonEvents(const list<Object*>::iterator object_it);
-        void calculateObjectListEvents(const vector<list<Object*>::iterator>& object_it_vec);
-        void calculatePolaronEvents(const list<Object*>::iterator object_it);
+        void calculateExcitonEvents(Object* object_ptr);
+        void calculateObjectListEvents(const vector<Object*>& object_ptr_vec);
+        void calculatePolaronEvents(Object* object_ptr);
         bool createImportedMorphology();
-        void deleteObject(const list<Object*>::iterator object_it);
+        void deleteObject(Object* object_ptr);
         // Exciton Event Execution Functions
         bool executeExcitonCreation(const list<Event*>::iterator event_it);
         bool executeExcitonHop(const list<Event*>::iterator event_it);
@@ -303,13 +303,13 @@ class OSC_Sim : public Simulation{
         void generateDynamicsExcitons();
         void generateToFPolarons();
         list<Exciton>::iterator getExcitonIt(const Object* object_ptr);
-        list<Polaron>::iterator getPolaronIt(Object* object_ptr);
-        double getSiteEnergy(const Coords& coords);
-        short getSiteType(const Coords& coords);
+        list<Polaron>::iterator getPolaronIt(const Object* object_ptr);
+        double getSiteEnergy(const Coords& coords) const;
+        short getSiteType(const Coords& coords) const;
         void initializeArchitecture();
         bool siteContainsHole(const Coords& coords);
         void updateDynamicsData();
-        void updateToFData(const list<Object*>::iterator object_it);
+        void updateToFData(const Object* object_ptr);
 };
 
 #endif //OSC_SIM_H
