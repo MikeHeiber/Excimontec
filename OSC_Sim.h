@@ -6,10 +6,8 @@
 #ifndef OSC_SIM_H
 #define OSC_SIM_H
 
-#include "KMC_Lattice/Utils.h"
 #include "KMC_Lattice/Simulation.h"
-#include "KMC_Lattice/Object.h"
-#include "KMC_Lattice/Event.h"
+#include "KMC_Lattice/Site.h"
 #include "Exciton.h"
 #include "Polaron.h"
 #include <algorithm>
@@ -91,8 +89,8 @@ struct Parameters_OPV : Parameters_Simulation{
 
 class Site_OSC : public Site{
     public:
-        double getEnergy(){return *energy_it;}
-        short getType(){return type;}
+        double getEnergy() const{return *energy_it;}
+        short getType() const{return type;}
         void setEnergyIt(const vector<double>::iterator it){energy_it = it;}
         void setType(const short site_type){type = site_type;}
     private:
@@ -105,7 +103,7 @@ class OSC_Sim : public Simulation{
         // Functions
 		OSC_Sim();
 		virtual ~OSC_Sim();
-        void init(const Parameters_OPV& params,const int id);
+        bool init(const Parameters_OPV& params,const int id);
         double calculateDiffusionLength_avg();
         double calculateDiffusionLength_stdev();
         vector<double> calculateTransitTimeDist(const vector<double>& data,const int counts);
@@ -114,29 +112,30 @@ class OSC_Sim : public Simulation{
         double calculateMobility_avg();
         double calculateMobility_stdev();
         bool checkFinished();
+		bool checkParameters(const Parameters_OPV& params) const;
         bool executeNextEvent();
-        vector<double> getDiffusionData();
-        vector<int> getDynamicsTransientExcitons();
-        vector<int> getDynamicsTransientElectrons();
-        vector<int> getDynamicsTransientHoles();
-        vector<double> getDynamicsTransientTimes();
-        vector<int> getToFTransientCounts();
-        vector<double> getToFTransientEnergies();
-        vector<double> getToFTransientTimes();
-        vector<double> getToFTransientVelocities();
-        vector<double> getTransitTimeData();
-        int getN_excitons_created();
-        int getN_excitons_created(const short site_type);
-        int getN_excitons_dissociated();
-        int getN_excitons_recombined();
-        int getN_electrons_created();
-        int getN_electrons_collected();
-        int getN_electrons_recombined();
-        int getN_holes_created();
-        int getN_holes_collected();
-        int getN_holes_recombined();
-        int getN_geminate_recombinations();
-        int getN_bimolecular_recombinations();
+        vector<double> getDiffusionData() const;
+        vector<int> getDynamicsTransientExcitons() const;
+        vector<int> getDynamicsTransientElectrons() const;
+        vector<int> getDynamicsTransientHoles() const;
+        vector<double> getDynamicsTransientTimes() const;
+        vector<int> getToFTransientCounts() const;
+        vector<double> getToFTransientEnergies() const;
+        vector<double> getToFTransientTimes() const;
+        vector<double> getToFTransientVelocities() const;
+        vector<double> getTransitTimeData() const;
+        int getN_excitons_created() const;
+        int getN_excitons_created(const short site_type) const;
+        int getN_excitons_dissociated() const;
+        int getN_excitons_recombined() const;
+        int getN_electrons_created() const;
+        int getN_electrons_collected() const;
+        int getN_electrons_recombined() const;
+        int getN_holes_created() const;
+        int getN_holes_collected() const;
+        int getN_holes_recombined() const;
+        int getN_geminate_recombinations() const;
+        int getN_bimolecular_recombinations() const;
         void outputStatus();
     protected:
 
@@ -215,7 +214,7 @@ class OSC_Sim : public Simulation{
         //
         // Additional Parameters
         bool isLightOn;
-        bool Error_found;
+        bool Error_found = false;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
         // Site Data Structure
@@ -256,27 +255,27 @@ class OSC_Sim : public Simulation{
         // Additional Counters
         int N_donor_sites;
         int N_acceptor_sites;
-        int N_excitons_created;
-        int N_excitons_created_donor;
-        int N_excitons_created_acceptor;
-        int N_excitons_recombined;
-        int N_excitons_dissociated;
-        int N_excitons_quenched;
-        int N_excitons;
-        int N_electrons_created;
-        int N_electrons_recombined;
-        int N_electrons_collected;
-        int N_electrons;
-        int N_holes_created;
-        int N_holes_recombined;
-        int N_holes_collected;
-        int N_holes;
-        int N_geminate_recombinations;
-        int N_bimolecular_recombinations;
-        int N_electron_surface_recombinations;
-        int N_hole_surface_recombinations;
+        int N_excitons_created = 0;
+        int N_excitons_created_donor = 0;
+        int N_excitons_created_acceptor = 0;
+        int N_excitons_recombined = 0;
+        int N_excitons_dissociated = 0;
+        int N_excitons_quenched = 0;
+        int N_excitons = 0;
+        int N_electrons_created = 0;
+        int N_electrons_recombined = 0;
+        int N_electrons_collected = 0;
+        int N_electrons = 0;
+        int N_holes_created = 0;
+        int N_holes_recombined = 0;
+        int N_holes_collected = 0;
+        int N_holes = 0;
+        int N_geminate_recombinations = 0;
+        int N_bimolecular_recombinations = 0;
+        int N_electron_surface_recombinations = 0;
+        int N_hole_surface_recombinations = 0;
         // Additional Functions
-        double calculateCoulomb(const list<Object*>::iterator object_it,const Coords& coords);
+        double calculateCoulomb(const list<Polaron>::iterator,const Coords& coords);
         double calculateCoulomb(const bool charge,const Coords& coords);
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(const list<Object*>::iterator object_it);
@@ -304,7 +303,6 @@ class OSC_Sim : public Simulation{
         void generateDynamicsExcitons();
         void generateToFPolarons();
         list<Exciton>::iterator getExcitonIt(const Object* object_ptr);
-        bool getObjectCharge(const list<Object*>::iterator object_it);
         list<Polaron>::iterator getPolaronIt(Object* object_ptr);
         double getSiteEnergy(const Coords& coords);
         short getSiteType(const Coords& coords);
