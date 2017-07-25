@@ -380,8 +380,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         }
     }
     int i = 0;
-    int N_tests_enabled = 0;
-    int N_architectures_enabled = 0;
     // General Parameters
     //enable_mpi
     params_main.Enable_mpi = importBooleanParam(stringvars[i],error_status);
@@ -439,17 +437,11 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error enabling neat film architecture." << endl;
         return false;
     }
-    if(params.Enable_neat){
-        N_architectures_enabled++;
-    }
     i++;
     params.Enable_bilayer = importBooleanParam(stringvars[i],error_status);
     if(error_status){
         cout << "Error enabling bilayer film architecture." << endl;
         return false;
-    }
-    if(params.Enable_bilayer){
-        N_architectures_enabled++;
     }
     i++;
     params.Thickness_donor = atoi(stringvars[i].c_str());
@@ -461,9 +453,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error enabling random blend film architecture." << endl;
         return false;
     }
-    if(params.Enable_random_blend){
-        N_architectures_enabled++;
-    }
     i++;
     params.Acceptor_conc = atof(stringvars[i].c_str());;
     i++;
@@ -472,9 +461,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error enabling morphology import." << endl;
         return false;
     }
-    if(params_main.Enable_import_morphology_single){
-        N_architectures_enabled++;
-    }
     i++;
     params_main.Morphology_filename = stringvars[i];
     i++;
@@ -482,9 +468,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     if(error_status){
         cout << "Error enabling morphology set import." << endl;
         return false;
-    }
-    if(params_main.Enable_import_morphology_set){
-        N_architectures_enabled++;
     }
     i++;
     params_main.Morphology_set_format = stringvars[i];
@@ -501,17 +484,11 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error enabling the exciton diffusion test." << endl;
         return false;
     }
-    if(params.Enable_exciton_diffusion_test){
-        N_tests_enabled++;
-    }
     i++;
     params.Enable_ToF_test = importBooleanParam(stringvars[i],error_status);
     if(error_status){
         cout << "Error enabling the time-of-flight polaron transport test." << endl;
         return false;
-    }
-    if(params.Enable_ToF_test){
-        N_tests_enabled++;
     }
     i++;
     if(stringvars[i].compare("electron")==0){
@@ -538,9 +515,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
         cout << "Error enabling the internal quantum efficiency test." << endl;
         return false;
     }
-    if(params.Enable_IQE_test){
-        N_tests_enabled++;
-    }
     i++;
     params.IQE_time_cutoff = atof(stringvars[i].c_str());
     i++;
@@ -548,9 +522,6 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     if(error_status){
         cout << "Error enabling the dynamics test." << endl;
         return false;
-    }
-    if(params.Enable_dynamics_test){
-        N_tests_enabled++;
     }
     i++;
     params.Enable_dynamics_extraction = importBooleanParam(stringvars[i],error_status);
@@ -674,88 +645,8 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Coulomb_cutoff = atoi(stringvars[i].c_str());
     i++;
     // Error checking
-    if(!params.Length>0 || !params.Width>0 || !params.Height>0){
-        cout << "Error! All lattice dimensions must be greater than zero." << endl;
-        return false;
-    }
-    if(!(params.Unit_size>0)){
-        cout << "Error! The lattice unit size must be greater than zero." << endl;
-        return false;
-    }
-    if(!params.Temperature>0){
-        cout << "Error! The temperature must be greater than zero." << endl;
-        return false;
-    }
-    if(params.Recalc_cutoff<params.FRET_cutoff){
-        cout << "Error! The event recalculation cutoff radius must not be less than the FRET cutoff radius." << endl;
-        return false;
-    }
-    if(params.Recalc_cutoff<params.Polaron_hopping_cutoff){
-        cout << "Error! The event recalculation cutoff radius must not be less than the polaron hopping cutoff radius." << endl;
-        return false;
-    }
-    if(params.Recalc_cutoff<params.Exciton_dissociation_cutoff){
-        cout << "Error! The event recalculation cutoff radius must not be less than the exciton dissociation cutoff radius." << endl;
-        return false;
-    }
-    if(params.Enable_ToF_test && params.Enable_bilayer){
-        cout << "Error! The bilayer film architecture cannot be used with the time-of-flight charge transport test." << endl;
-        return false;
-    }
-    if(params.Enable_ToF_test && params.Enable_periodic_z){
-        cout << "Error! The z-direction periodic boundary must be disabled in order to run the time-of-flight charge transport test." << endl;
-        return false;
-    }
-    if(params.Enable_IQE_test && params.Enable_periodic_z){
-        cout << "Error! The z-direction periodic boundary must be disabled in order to run the internal quantum efficiency test." << endl;
-        return false;
-    }
-    if(params.Enable_neat && params.Enable_IQE_test){
-        cout << "Error! The neat film architecture cannot be used with the internal quantum efficiency test." << endl;
-        return false;
-    }
-    if(!params.N_tests>0){
-        cout << "Error! The number of tests must be greater than zero." << endl;
-        return false;
-    }
-    if(N_tests_enabled>1){
-        cout << "Error! Only one test can be enabled." << endl;
-        return false;
-    }
-    if(N_tests_enabled==0){
-        cout << "Error! One of the tests must be enabled." << endl;
-        return false;
-    }
-    if(params.Enable_bilayer && params.Thickness_donor+params.Thickness_acceptor!=params.Height){
-        cout << "Error! When using the bilayer film architecture, the sum of the donor and the acceptor thicknesses must equal the lattice height." << endl;
-        return false;
-    }
     if(params_main.Enable_import_morphology_set && !params_main.Enable_mpi){
         cout << "Error! MPI must be enabled in order to import a morphology set." << endl;
-        return false;
-    }
-    if(N_architectures_enabled>1){
-        cout << "Error! Only one film architecture can be enabled." << endl;
-        return false;
-    }
-    if(params.Enable_miller_abrahams && params.Enable_marcus){
-        cout << "Error! The Miller-Abrahams and the Marcus polaron hopping models cannot both be enabled." << endl;
-        return false;
-    }
-    if(!params.Enable_miller_abrahams && !params.Enable_marcus){
-        cout << "Error! Either the Miller-Abrahams or the Marcus polaron hopping model must be enabled." << endl;
-        return false;
-    }
-    if(params.Enable_gaussian_dos && params.Enable_exponential_dos){
-        cout << "Error! The Gaussian and exponential disorder models cannot both be enabled." << endl;
-        return false;
-    }
-    if(params.Enable_gaussian_dos && (params.Energy_stdev_donor<0 || params.Energy_stdev_acceptor<0)){
-        cout << "Error! When using the Gaussian disorder model, the standard deviation cannot be negative." << endl;
-        return false;
-    }
-    if(params.Enable_exponential_dos && (params.Energy_urbach_donor<0 || params.Energy_urbach_acceptor<0)){
-        cout << "Error! When using the exponential disorder model, the Urbach energy cannot be negative." << endl;
         return false;
     }
     return true;

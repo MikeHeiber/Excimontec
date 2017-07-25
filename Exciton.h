@@ -9,6 +9,7 @@
 #include "KMC_Lattice/Utils.h"
 #include "KMC_Lattice/Object.h"
 #include "KMC_Lattice/Event.h"
+#include "KMC_Lattice/Simulation.h"
 #include <string>
 
 using namespace std;
@@ -35,15 +36,14 @@ class Exciton_Creation : public Event{
 };
 
 class Exciton_Hop : public Event{
-    using Event::calculateExecutionTime;
     public:
         static const string name;
-        void calculateExecutionTime(const double prefactor,const double distance,const double E_delta,const double temp,const double current_time){
+        void calculateExecutionTime(const double prefactor,const double distance,const double E_delta,Simulation* sim_ptr){
             double rate = prefactor*intpow(1/distance,6);
             if(E_delta>0){
-                rate *= exp(-E_delta/(K_b*temp));
+                rate *= exp(-E_delta/(K_b*sim_ptr->getTemp()));
             }
-            calculateExecutionTime(rate,current_time);
+            Event::calculateExecutionTime(rate,sim_ptr);
         }
         string getName() const{return name;}
     private:
@@ -58,21 +58,20 @@ class Exciton_Recombination : public Event{
 };
 
 class Exciton_Dissociation : public Event{
-    using Event::calculateExecutionTime;
     public:
         static const string name;
-        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,const double temperature,const double current_time){
+        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,Simulation* sim_ptr){
             // Calculates dissociation using the Miller-Abrahams model
-            double rate = prefactor*exp(-2*localization*distance);
+            double rate = prefactor*exp(-2.0*localization*distance);
             if(E_delta>0){
-                rate *= exp(-E_delta/(K_b*temperature));
+                rate *= exp(-E_delta/(K_b*sim_ptr->getTemp()));
             }
-            calculateExecutionTime(rate,current_time);
+            Event::calculateExecutionTime(rate,sim_ptr);
         }
-        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,const double reorganization,const double temperature,const double current_time){
+        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,const double reorganization,Simulation* sim_ptr){
             // Calculates dissociation using the Marcus model
-            double rate = (prefactor/sqrt(4*Pi*reorganization*K_b*temperature))*exp(-2*localization*distance)*exp(-intpow(reorganization+E_delta,2)/(4*reorganization*K_b*temperature));
-            calculateExecutionTime(rate,current_time);
+            double rate = (prefactor/sqrt(4.0*Pi*reorganization*K_b*sim_ptr->getTemp()))*exp(-2.0*localization*distance)*exp(-intpow(reorganization+E_delta,2)/(4.0*reorganization*K_b*sim_ptr->getTemp()));
+            Event::calculateExecutionTime(rate,sim_ptr);
         }
         string getName() const{return name;}
     private:
