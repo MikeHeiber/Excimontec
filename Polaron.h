@@ -12,6 +12,7 @@
 #include <string>
 
 using namespace std;
+using namespace Utils;
 
 class Polaron : public Object{
     public:

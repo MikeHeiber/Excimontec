@@ -13,6 +13,7 @@
 #include <string>
 
 using namespace std;
+using namespace Utils;
 
 class Exciton : public Object{
     public:
@@ -31,23 +32,29 @@ class Exciton_Creation : public Event{
         static const string name;
         string getName() const{return name;}
     private:
-
-
 };
 
 class Exciton_Hop : public Event{
     public:
         static const string name;
+		// Singlet FRET hop
         void calculateExecutionTime(const double prefactor,const double distance,const double E_delta,Simulation* sim_ptr){
-            double rate = prefactor*intpow(1/distance,6);
-            if(E_delta>0){
-                rate *= exp(-E_delta/(K_b*sim_ptr->getTemp()));
-            }
+			double rate = prefactor*intpow(1.0 / distance, 6);
+			if (E_delta > 0) {
+				rate *= exp(-E_delta / (K_b*sim_ptr->getTemp()));
+			}
             Event::calculateExecutionTime(rate,sim_ptr);
         }
+		// Triplet Dexter hop
+		void calculateExecutionTime(const double prefactor, const double localization, const double distance, const double E_delta, Simulation* sim_ptr) {
+			double rate = prefactor*exp(-2.0*localization*distance);
+			if (E_delta>0) {
+				rate *= exp(-E_delta / (K_b*sim_ptr->getTemp()));
+			}
+			Event::calculateExecutionTime(rate, sim_ptr);
+		}
         string getName() const{return name;}
     private:
-
 };
 
 class Exciton_Recombination : public Event{
@@ -80,21 +87,40 @@ class Exciton_Dissociation : public Event{
 class Exciton_Intersystem_Crossing : public Event {
     public:
         static const string name;
+		void calculateExecutionTime(const double prefactor, const double E_delta, Simulation* sim_ptr) {
+			double rate = prefactor;
+			if (E_delta>0) {
+				rate *= exp(-E_delta / (K_b*sim_ptr->getTemp()));
+			}
+			Event::calculateExecutionTime(rate, sim_ptr);
+		}
         string getName() const{return name;}
     private:
 };
 
 class Exciton_Exciton_Annihilation : public Event{
     public:
-        static const string name;
-        string getName() const{return name;}
+		static const string name;
+		void calculateExecutionTime(const double prefactor, const double distance, Simulation* sim_ptr) {
+			Event::calculateExecutionTime(prefactor*intpow(1.0 / distance, 6), sim_ptr);
+		}
+		void calculateExecutionTime(const double prefactor, const double localization, const double distance, Simulation* sim_ptr) {
+			Event::calculateExecutionTime(prefactor*exp(-2.0*localization*distance), sim_ptr);
+		}
+		string getName() const { return name; }
     private:
 };
 
 class Exciton_Polaron_Annihilation : public Event{
     public:
-        static const string name;
-        string getName() const{return name;}
+		static const string name;
+		void calculateExecutionTime(const double prefactor, const double distance, Simulation* sim_ptr) {
+			Event::calculateExecutionTime(prefactor*intpow(1.0 / distance, 6), sim_ptr);
+		}
+		void calculateExecutionTime(const double prefactor, const double localization, const double distance, Simulation* sim_ptr) {
+			Event::calculateExecutionTime(prefactor*exp(-2.0*localization*distance), sim_ptr);
+		}
+		string getName() const { return name; }
     private:
 };
 

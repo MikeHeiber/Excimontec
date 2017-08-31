@@ -28,7 +28,7 @@ struct Parameters_main{
 bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
-    string version = "v0.2-alpha";
+    string version = "v0.3-alpha";
     // Parameters
     bool End_sim = false;
     // File declaration
@@ -87,9 +87,9 @@ int main(int argc,char *argv[]){
             for(int i=0;i<params_main.N_morphology_set_size;i++){
                 morphology_set.push_back(i);
             }
-            default_random_engine gen(time(0));
+            default_random_engine gen((int)time(0));
             for(int i=0;i<params_main.N_test_morphologies;i++){
-                uniform_int_distribution<int> dist(0,morphology_set.size()-1);
+                uniform_int_distribution<int> dist(0,(int)morphology_set.size()-1);
                 auto randn = bind(dist,gen);
                 selection = randn();
                 selected_morphologies[i] = morphology_set[selection];
@@ -99,7 +99,7 @@ int main(int argc,char *argv[]){
         MPI_Barrier(MPI_COMM_WORLD);
         MPI_Bcast(selected_morphologies,params_main.N_test_morphologies,MPI_INT,0,MPI_COMM_WORLD);
         // Parse input morphology set file format
-        int pos = params_main.Morphology_set_format.find("#");
+        int pos = (int)params_main.Morphology_set_format.find("#");
         string prefix = params_main.Morphology_set_format.substr(0,pos);
         string suffix = params_main.Morphology_set_format.substr(pos+1);
         cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
@@ -131,7 +131,11 @@ int main(int argc,char *argv[]){
     // Initialize Simulation
     cout << procid << ": Initializing simulation " << procid << "..." << endl;
 	OSC_Sim sim;
-	sim.init(params_opv, procid);
+	success = sim.init(params_opv, procid);
+	if (!success) {
+		cout << procid << ": Initialization failed, simulation will now terminate." << endl;
+		return 0;
+	}
     cout << procid << ": Simulation initialization complete" << endl;
     if(params_opv.Enable_exciton_diffusion_test){
         cout << procid << ": Starting exciton diffusion test..." << endl;
@@ -171,7 +175,7 @@ int main(int argc,char *argv[]){
     }
     cout << procid << ": Simulation finished." << endl;
     time_end = time(NULL);
-    elapsedtime = difftime(time_end,time_start);
+    elapsedtime = (int)difftime(time_end,time_start);
     // Output simulation results for each processor
     ss << "results" << procid << ".txt";
     resultsfile.open(ss.str().c_str());
@@ -231,7 +235,7 @@ int main(int argc,char *argv[]){
         }
         if(params_opv.Enable_exciton_diffusion_test){
             vector<double> diffusion_data;
-            diffusion_data = MPI_gatherVectors(sim.getDiffusionData(),procid,nproc);
+            diffusion_data = MPI_gatherVectors(sim.getDiffusionData());
             if(procid==0){
                 analysisfile << "Overall exciton diffusion test results:\n";
                 analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
@@ -240,19 +244,16 @@ int main(int argc,char *argv[]){
 
         }
         if(params_opv.Enable_ToF_test){
-            vector<double> transit_times = MPI_gatherVectors(sim.getTransitTimeData(),procid,nproc);
+            vector<double> transit_times = MPI_gatherVectors(sim.getTransitTimeData());
             int transit_attempts = ((sim.getN_electrons_collected()>sim.getN_holes_collected()) ? sim.getN_electrons_created() : (sim.getN_holes_created()));
             int transit_attempts_total;
             MPI_Reduce(&transit_attempts,&transit_attempts_total,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
-            vector<int> counts = MPI_calculateVectorSum(sim.getToFTransientCounts(),procid);
-            vector<double> energies = MPI_calculateVectorSum(sim.getToFTransientEnergies(),procid);
-            vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities(),procid);
+            vector<int> counts = MPI_calculateVectorSum(sim.getToFTransientCounts());
+            vector<double> energies = MPI_calculateVectorSum(sim.getToFTransientEnergies());
+            vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities());
             vector<double> times = sim.getToFTransientTimes();
             if(procid==0){
-                vector<double> mobilities = transit_times;
-                for(int i=0;i<(int)mobilities.size();i++){
-                    mobilities[i] = intpow(1e-7*params_opv.Height*params_opv.Unit_size,2)/(fabs(params_opv.Bias)*transit_times[i]);
-                }
+                vector<double> mobilities = sim.calculateMobilities(transit_times);
                 // ToF transient output
                 ofstream transientfile;
                 ss << "ToF_average_transients.txt";
@@ -294,9 +295,9 @@ int main(int argc,char *argv[]){
         }
         if(params_opv.Enable_dynamics_test){
             vector<double> times = sim.getDynamicsTransientTimes();
-            vector<int> excitons_total = MPI_calculateVectorSum(sim.getDynamicsTransientExcitons(),procid);
-            vector<int> electrons_total = MPI_calculateVectorSum(sim.getDynamicsTransientElectrons(),procid);
-            vector<int> holes_total = MPI_calculateVectorSum(sim.getDynamicsTransientHoles(),procid);
+            vector<int> excitons_total = MPI_calculateVectorSum(sim.getDynamicsTransientExcitons());
+            vector<int> electrons_total = MPI_calculateVectorSum(sim.getDynamicsTransientElectrons());
+            vector<int> holes_total = MPI_calculateVectorSum(sim.getDynamicsTransientHoles());
             if(procid==0){
                 ofstream transientfile;
                 ss << "dynamics_average_transients.txt";
@@ -543,14 +544,40 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.Exciton_generation_rate_acceptor = atof(stringvars[i].c_str());
     i++;
-    params.Exciton_lifetime_donor = atof(stringvars[i].c_str());
+    params.Singlet_lifetime_donor = atof(stringvars[i].c_str());
     i++;
-    params.Exciton_lifetime_acceptor = atof(stringvars[i].c_str());
+    params.Singlet_lifetime_acceptor = atof(stringvars[i].c_str());
     i++;
-    params.R_exciton_hopping_donor = atof(stringvars[i].c_str());
+	params.Triplet_lifetime_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Triplet_lifetime_acceptor = atof(stringvars[i].c_str());
+	i++;
+    params.R_singlet_hopping_donor = atof(stringvars[i].c_str());
     i++;
-    params.R_exciton_hopping_acceptor = atof(stringvars[i].c_str());
+    params.R_singlet_hopping_acceptor = atof(stringvars[i].c_str());
     i++;
+	params.R_triplet_hopping_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_triplet_hopping_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Triplet_localization_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Triplet_localization_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Enable_FRET_triplet_annihilation = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting FRET triplet annihilation option." << endl;
+		return false;
+	}
+	i++;
+	params.R_exciton_exciton_annihilation_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_exciton_annihilation_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_polaron_annihilation_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_polaron_annihilation_acceptor = atof(stringvars[i].c_str());
+	i++;
     params.FRET_cutoff = atoi(stringvars[i].c_str());
     i++;
     params.E_exciton_binding_donor = atof(stringvars[i].c_str());
@@ -563,6 +590,18 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.Exciton_dissociation_cutoff = atoi(stringvars[i].c_str());
     i++;
+	params.R_exciton_isc_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_isc_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_risc_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_risc_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.E_exciton_ST_donor = atof(stringvars[i].c_str());
+	i++;
+	params.E_exciton_ST_acceptor = atof(stringvars[i].c_str());
+	i++;
     // Polaron Parameters
     params.Enable_phase_restriction = importBooleanParam(stringvars[i],error_status);
     if(error_status){
@@ -637,6 +676,31 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
     i++;
+	//enable_correlated_disorder
+	params.Enable_correlated_disorder = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Correlated Disorder options" << endl;
+		return false;
+	}
+	i++;
+	params.Disorder_correlation_length = atof(stringvars[i].c_str());
+	i++;
+	//enable_gaussian_kernel
+	params.Enable_gaussian_kernel = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
+		return false;
+	}
+	i++;
+	//enable_power_kernel
+	params.Enable_power_kernel = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
+		return false;
+	}
+	i++;
+	params.Power_kernel_exponent = atoi(stringvars[i].c_str());
+	i++;
     // Coulomb Calculation Parameters
     params.Dielectric_donor = atof(stringvars[i].c_str());
     i++;
