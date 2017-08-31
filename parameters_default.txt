@@ -1,4 +1,4 @@
-## OPV Parameters for Excimontec v0.2-alpha
+## OPV Parameters for Excimontec v0.3-alpha
 --------------------------------------------------------------
 ## Computation Parameters
 true //Enable_mpi
@@ -51,16 +51,33 @@ false //Enable_dynamics_extraction
 ## Exciton Parameters
 1e22 //Exciton_generation_rate_donor (cm^-3 s^-1)
 1e22 //Exciton_generation_rate_acceptor (cm^-3 s^-1)
-500e-12 //Exciton_lifetime_donor (s)
-500e-12 //Exciton_lifetime_acceptor (s)
-1e12 //R_exciton_hopping_donor (s^-1)
-1e12 //R_exciton_hopping_acceptor (s^-1)
+500e-12 //Singlet_lifetime_donor (s)
+500e-12 //Singlet_lifetime_acceptor (s)
+1e-6 //Triplet_lifetime_donor (s)
+1e-6 //Triplet_lifetime_acceptor (s)
+1e12 //R_singlet_hopping_donor (s^-1)
+1e12 //R_singlet_hopping_acceptor (s^-1)
+1e12 //R_triplet_hopping_donor (s^-1)
+1e12 //R_triplet_hopping_acceptor (s^-1)
+2.0 //Triplet_localization_donor (nm^-1)
+2.0 //Triplet_localization_acceptor (nm^-1)
+false //Enable_FRET_triplet_annihilation
+1e12 //R_exciton_exciton_annihilation_donor (s^-1)
+1e12 //R_exciton_exciton_annihilation_acceptor (s^-1)
+1e12 //R_exciton_polaron_annihilation_donor (s^-1)
+1e12 //R_exciton_polaron_annihilation_acceptor (s^-1)
 3 //FRET_cutoff (nm)
 0.5 //E_exciton_binding_donor (eV)
 0.5 //E_exciton_binding_acceptor (eV)
 1e14 //R_exciton_dissociation_donor (s^-1)
 1e14 //R_exciton_dissociation_acceptor (s^-1)
 3 //Exciton_dissociation_cutoff (nm)
+1e7 //R_exciton_isc_donor (s^-1)
+1e7 //R_exciton_isc_acceptor (s^-1)
+1e7 //R_exciton_risc_donor (s^-1)
+1e7 //R_exciton_risc_acceptor (s^-1)
+0.7 //E_exciton_ST_donor (eV)
+0.7 //E_exciton_ST_acceptor (eV)
 --------------------------------------------------------------
 ## Polaron Parameters
 true //Enable_phase_restriction
@@ -88,6 +105,11 @@ true //Enable_gaussian_dos
 false //Enable_exponential_dos
 0.03 //Energy_urbach_donor (eV)
 0.03 //Energy_urbach_acceptor (eV)
+false //Enable_correlated_disorder
+2.0 //Disorder_correlation_length (nm) (1.0-3.0, used by all kernels)
+false //Enable_gaussian_kernel
+false //Enable_power_kernel
+-1 //Power_kernel_exponent (integer: -1 or -2)
 --------------------------------------------------------------
 ## Coulomb Interaction Parameters
 3.5 //Dielectric_donor
