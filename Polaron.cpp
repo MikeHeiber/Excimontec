@@ -5,6 +5,9 @@
 
 #include "Polaron.h"
 
+using namespace std;
+using namespace Utils;
+
 // Initialize static class members
 const string Polaron::name = "Polaron";
 const string Polaron_Hop::name = "Polaron Hop";

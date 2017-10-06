@@ -5,6 +5,9 @@
 
 #include "OSC_Sim.h"
 
+using namespace std;
+using namespace Utils;
+
 OSC_Sim::OSC_Sim() {
 
 }
@@ -19,6 +22,7 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
 		Error_found = true;
 		return false;
 	}
+	bool success;
     // Set parameters of Simulation base class
     Simulation::init(params,id);
     // Set Additional General Parameters
@@ -119,7 +123,11 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
     Site_OSC site;
     sites.assign(lattice.getNumSites(),site);
     // Initialize Film Architecture
-    initializeArchitecture();
+    success = initializeArchitecture();
+	if (!success) {
+		Error_found = true;
+		return false;
+	}
 	// Assign energies to each site in the sites vector
 	reassignSiteEnergies();
     // Initialize Coulomb interactions lookup table
@@ -173,9 +181,15 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
         transient_counts.assign(num_steps,0);
         transient_velocities.assign(num_steps,0);
         transient_energies.assign(num_steps,0);
+		Electron_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
+		Hole_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
         // Create initial test polarons
         generateToFPolarons();
     }
+	if (Enable_IQE_test) {
+		Electron_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
+		Hole_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
+	}
 	if (Error_found) {
 		return false;
 	}
@@ -403,7 +417,8 @@ void OSC_Sim::calculateExcitonEvents(Object* object_ptr){
         *Logfile << "Calculating events for exciton " << exciton_it->getTag() << " at site " << object_coords.x << "," << object_coords.y << "," << object_coords.z << "." << endl;
     }
     Coords dest_coords;
-    double E_delta,Coulomb_final,rate;
+	double E_delta, Coulomb_final;
+	double rate = 0;
     int index;
     static const int range = (int)ceil( ((FRET_cutoff>Exciton_dissociation_cutoff) ? (FRET_cutoff):(Exciton_dissociation_cutoff))/ lattice.getUnitSize());
     static const int dim = (2*range+1);
@@ -571,6 +586,7 @@ void OSC_Sim::calculateExcitonEvents(Object* object_ptr){
 								hops_temp[index].calculateExecutionTime(R_singlet_hopping_acceptor, distances[index], E_delta, this);
 							}
 						}
+						// Dexter hopping
 						else {
 							if (getSiteType(object_coords) == (short)1) {
 								hops_temp[index].calculateExecutionTime(R_triplet_hopping_donor, Triplet_localization_donor, distances[index], E_delta, this);
@@ -768,6 +784,16 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
             *Logfile << "Calculating events for hole " << polaron_it->getTag() << " at site " << object_coords.x << "," << object_coords.y << "," << object_coords.z << "." << endl;
         }
     }
+	if (Enable_phase_restriction && !polaron_it->getCharge() && getSiteType(object_coords)==(short)1) {
+		cout << "Error! Electron is on a donor site and should not be with phase restriction enabled." << endl;
+		Error_found = true;
+		return;
+	}
+	if (Enable_phase_restriction && polaron_it->getCharge() && getSiteType(object_coords) == (short)2) {
+		cout << "Error! Hole is on an acceptor site and should not be with phase restriction enabled." << endl;
+		Error_found = true;
+		return;
+	}
     Coords dest_coords;
     double E_delta;
     int index;
@@ -1023,7 +1049,7 @@ bool OSC_Sim::checkFinished() const{
         return false;
     }
     if(Enable_ToF_test){
-        return (N_electrons_collected==N_tests || N_holes_collected==N_tests || N_electrons_created>2*N_tests || N_holes_created>2*N_tests);
+        return ((N_electrons==0 && N_electrons_collected>=N_tests) || (N_holes==0 && N_holes_collected>=N_tests) || N_electrons_created>2*N_tests || N_holes_created>2*N_tests);
     }
     if(Enable_IQE_test){
         if(N_excitons_created==N_tests && N_excitons==0 && N_electrons==0 && N_holes==0){
@@ -1295,7 +1321,7 @@ return false;
 void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 	int range;
 	double stdev, percent_diff;
-	double distance_max;
+	double distance_max = 0;
 	double scale_factor = 1;
 	double Unit_size = lattice.getUnitSize();
 	if (Enable_gaussian_kernel) {
@@ -1413,12 +1439,20 @@ bool OSC_Sim::createImportedMorphology(){
     short type = 0;
     int length,width,height;
     int site_count = 0;
+	bool isV3 = false;
+	bool isV4 = false;
     // Get input morphology file information
     getline(*Morphology_file,line);
     file_info = line;
     // Parse file info
-    if(file_info.compare("Ising_OPV v3.2 - compressed format")!=0){
-        cout << getId() << ": Error! Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 are currently supported." << endl;
+	if (file_info.find("Ising_OPV v3.2 - compressed format") != string::npos) {
+		isV3 = true;
+	}
+	else if (file_info.find("Ising_OPV v4.0") != string::npos && file_info.find("compressed")!=string::npos && file_info.find("uncompressed") == string::npos) {
+		isV4 = true;
+	}
+    else {
+        cout << getId() << ": Error! Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 and v4.0 are currently supported." << endl;
         Error_found = true;
         return false;
     }
@@ -1433,36 +1467,51 @@ bool OSC_Sim::createImportedMorphology(){
         Error_found = true;
         return false;
     }
-    // Skip 3 lines (domain size1, domain size2, blend ratio)
-    getline(*Morphology_file,line);
-    getline(*Morphology_file,line);
-    getline(*Morphology_file,line);
+	if (isV3) {
+		// Skip 3 lines (domain size1, domain size2, blend ratio)
+		getline(*Morphology_file, line);
+		getline(*Morphology_file, line);
+		getline(*Morphology_file, line);
+	}
+	else if (isV4) {
+		// skip boundary conditions
+		getline(*Morphology_file, line);
+		getline(*Morphology_file, line);
+		getline(*Morphology_file, line);
+		// number of site types
+		getline(*Morphology_file, line);
+		int N_types = atoi(line.c_str());
+		// skip domain size and mix fraction lines
+		for (int i = 0; i < 2 * N_types; i++) {
+			getline(*Morphology_file, line);
+		}
+	}
     // Begin parsing morphology site data
-    for(int x=0;x<lattice.getLength();x++){
-        for(int y=0;y<lattice.getWidth();y++){
-            for(int z=0;z<lattice.getHeight();z++){
-                if(site_count==0){
-                    if(!(*Morphology_file).good()){
-                        cout << "Error parsing file.  End of file reached before expected." << endl;
-                        Error_found = true;
-                        return false;
-                    }
-                    getline(*Morphology_file,line);
-                    type = (short)atoi(line.substr(0,1).c_str());
-                    site_count = atoi(line.substr(1).c_str());
-                }
-                coords.setXYZ(x,y,z);
-                sites[lattice.getSiteIndex(coords)].setType(type);
-                if(type==(short)1){
-                    N_donor_sites++;
-                }
-                else if(type==(short)2){
-                    N_acceptor_sites++;
-                }
-                site_count--;
-            }
-        }
-    }
+	for (int x = 0; x < lattice.getLength(); x++) {
+		for (int y = 0; y < lattice.getWidth(); y++) {
+			for (int z = 0; z < lattice.getHeight(); z++) {
+				if (site_count == 0) {
+					if (!(*Morphology_file).good()) {
+						cout << "Error parsing file.  End of file reached before expected." << endl;
+						Error_found = true;
+						return false;
+					}
+					getline(*Morphology_file, line);
+					type = (short)atoi(line.substr(0, 1).c_str());
+					site_count = atoi(line.substr(1).c_str());
+				}
+				coords.setXYZ(x, y, z);
+				sites[lattice.getSiteIndex(coords)].setType(type);
+				if (type == (short)1) {
+					N_donor_sites++;
+				}
+				else if (type == (short)2) {
+					N_acceptor_sites++;
+				}
+				site_count--;
+			}
+		}
+	}
     // Check for unassigned sites
     for(auto it=sites.begin();it!=sites.end();++it){
         if(it->getType()==(short)0){
@@ -1554,7 +1603,7 @@ void OSC_Sim::deleteObject(Object* object_ptr){
     }
 }
 
-bool OSC_Sim::executeExcitonCreation(const list<Event*>::iterator event_it){
+bool OSC_Sim::executeExcitonCreation(){
     // Determine coordinates for the new exciton
     const Coords coords_new = calculateExcitonCreationCoords();
     generateExciton(coords_new);
@@ -1654,18 +1703,18 @@ bool OSC_Sim::executeExcitonPolaronAnnihilation(const list<Event*>::iterator eve
 	return true;
 }
 
-bool OSC_Sim::executeExcitonHop(const list<Event*>::iterator event_it){
-    if(lattice.isOccupied((*event_it)->getDestCoords())){
-        cout << getId() << ": Error! Exciton hop cannot be executed. Destination site is already occupied." << endl;
-        Error_found = true;
-        return false;
-    }
-    else{
-        if(isLoggingEnabled()){
-            *Logfile << "Exciton " << ((*event_it)->getObjectPtr())->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
-        }
-        return executeObjectHop(event_it);
-    }
+bool OSC_Sim::executeExcitonHop(const list<Event*>::iterator event_it) {
+	if (lattice.isOccupied((*event_it)->getDestCoords())) {
+		cout << getId() << ": Error! Exciton hop cannot be executed. Destination site is already occupied." << endl;
+		Error_found = true;
+		return false;
+	}
+	else {
+		if (isLoggingEnabled()) {
+			*Logfile << "Exciton " << ((*event_it)->getObjectPtr())->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+		}
+		return executeObjectHop(event_it);
+	}
 }
 
 bool OSC_Sim::executeExcitonIntersystemCrossing(const list<Event*>::iterator event_it) {
@@ -1698,34 +1747,52 @@ bool OSC_Sim::executeExcitonIntersystemCrossing(const list<Event*>::iterator eve
 	return true;
 }
 
-bool OSC_Sim::executeExcitonRecombine(const list<Event*>::iterator event_it){
-    // Get event info
-    int exciton_tag = ((*event_it)->getObjectPtr())->getTag();
-    Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
-    // Output diffusion distance
-    if(Enable_exciton_diffusion_test){
-        diffusion_distances.push_back(((*event_it)->getObjectPtr())->calculateDisplacement());
-    }
-    // delete exciton and its events
-    deleteObject((*event_it)->getObjectPtr());
-    // Update exciton counters
-    N_excitons--;
-    N_excitons_recombined++;
-    // Log event
-    if(isLoggingEnabled()){
-        *Logfile << "Exciton " << exciton_tag << " recombined at site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z << "." << endl;
-    }
-    // Find all nearby excitons and calculate their events
-    auto neighbors = findRecalcNeighbors(coords_initial);
-    calculateObjectListEvents(neighbors);
-    return true;
+bool OSC_Sim::executeExcitonRecombine(const list<Event*>::iterator event_it) {
+	// Get event info
+	int exciton_tag = ((*event_it)->getObjectPtr())->getTag();
+	Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
+	// Output diffusion distance
+	if (Enable_exciton_diffusion_test) {
+		diffusion_distances.push_back(((*event_it)->getObjectPtr())->calculateDisplacement());
+	}
+	// delete exciton and its events
+	deleteObject((*event_it)->getObjectPtr());
+	// Update exciton counters
+	N_excitons--;
+	N_excitons_recombined++;
+	// Log event
+	if (isLoggingEnabled()) {
+		*Logfile << "Exciton " << exciton_tag << " recombined at site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z << "." << endl;
+	}
+	// Find all nearby excitons and calculate their events
+	auto neighbors = findRecalcNeighbors(coords_initial);
+	calculateObjectListEvents(neighbors);
+	return true;
 }
 
-bool OSC_Sim::executeNextEvent(){
+bool OSC_Sim::executeNextEvent() {
 	if (Enable_IQE_test) {
 		if (isLightOn && N_excitons_created == N_tests) {
 			removeEvent(&exciton_creation_event);
 			isLightOn = false;
+		}
+	}
+	if (Enable_ToF_test) {
+		// If none of the polarons can move
+		if (getN_events() == 0) {
+			// Remove any remaining polarons
+			while ((int)electrons.size() > 0) {
+				N_electrons--;
+				deleteObject(&electrons.front());
+			}
+			while ((int)holes.size()>0) {
+				N_holes--;
+				deleteObject(&holes.front());
+			}
+			// Generate the next round of polarons if needed
+			if (!checkFinished()) {
+				generateToFPolarons();
+			}
 		}
 	}
     auto event_it = chooseNextEvent();
@@ -1746,7 +1813,7 @@ bool OSC_Sim::executeNextEvent(){
     }
     // Execute the chosen event
     if(event_name.compare(Exciton_Creation::name)==0){
-        return executeExcitonCreation(event_it);
+        return executeExcitonCreation();
     }
     else if(event_name.compare(Exciton_Hop::name)==0){
         return executeExcitonHop(event_it);
@@ -1828,10 +1895,18 @@ bool OSC_Sim::executePolaronExtraction(const list<Event*>::iterator event_it){
 	bool charge = polaron_it->getCharge();
     int polaron_tag = ((*event_it)->getObjectPtr())->getTag();
     Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
-    // Save transit time
+    // Save transit time and extraction location info
     if(Enable_ToF_test){
         transit_times.push_back(getTime()-((*event_it)->getObjectPtr())->getCreationTime());
     }
+	if (Enable_ToF_test || Enable_IQE_test) {
+		if (!charge) {
+			Electron_extraction_data[lattice.getWidth()*coords_initial.x + coords_initial.y]++;
+		}
+		else {
+			Hole_extraction_data[lattice.getWidth()*coords_initial.x + coords_initial.y]++;
+		}
+	}
     // Delete polaron and its events
     deleteObject((*event_it)->getObjectPtr());
     // Update polaron counters
@@ -2023,6 +2098,10 @@ void OSC_Sim::generateDynamicsExcitons(){
 void OSC_Sim::generateToFPolarons(){
     int num = 0;
     Coords coords;
+	// Reassign site energies
+	if (N_electrons_collected > 0 || N_holes_collected > 0) {
+		reassignSiteEnergies();
+	}
     // Create electrons at the top plane of the lattice
     if(!ToF_polaron_type){
         coords.z = lattice.getHeight()-1;
@@ -2199,6 +2278,32 @@ short OSC_Sim::getSiteType(const Coords& coords) const {
     return sites[lattice.getSiteIndex(coords)].getType();
 }
 
+vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
+	vector<string> output_data(lattice.getLength()*lattice.getWidth()+1);
+	stringstream ss;
+	int x, y;
+	output_data[0] = "X-Position,Y-Position,Extraction Probability";
+	if (!charge) {
+		for (int i = 1; i < (int)Electron_extraction_data.size(); i++) {
+			x = i / lattice.getWidth();
+			y = i % lattice.getWidth();
+			ss << x << "," << y << "," << (double)Electron_extraction_data[i] / (double)(N_electrons_collected);
+			output_data[i] = ss.str();
+			ss.str("");
+		}
+	}
+	else {
+		for (int i = 1; i < (int)Hole_extraction_data.size(); i++) {
+			x = i / lattice.getWidth();
+			y = i % lattice.getWidth();
+			ss << x << "," << y << "," << (double)Hole_extraction_data[i] / (double)(N_holes_collected);
+			output_data[i] = ss.str();
+			ss.str("");
+		}
+	}
+	return output_data;
+}
+
 vector<int> OSC_Sim::getToFTransientCounts() const {
     return transient_counts;
 }
@@ -2219,7 +2324,7 @@ vector<double> OSC_Sim::getTransitTimeData() const {
 	return transit_times;
 }
 
-void OSC_Sim::initializeArchitecture() {
+bool OSC_Sim::initializeArchitecture() {
 	bool success;
 	N_donor_sites = 0;
 	N_acceptor_sites = 0;
@@ -2264,7 +2369,7 @@ void OSC_Sim::initializeArchitecture() {
 	else if (Enable_import_morphology) {
 		success = createImportedMorphology();
 		if (!success) {
-			return;
+			return false;
 		}
 	}
 	// Send the site pointers to the Lattice object
@@ -2273,6 +2378,7 @@ void OSC_Sim::initializeArchitecture() {
 		site_ptrs[i] = &sites[i];
 	}
 	lattice.setSitePointers(site_ptrs);
+	return true;
 }
 
 void OSC_Sim::outputStatus(){
@@ -2368,7 +2474,7 @@ void OSC_Sim::reassignSiteEnergies() {
 	if (Enable_correlated_disorder) {
 		createCorrelatedDOS(Disorder_correlation_length);
 	}
-	outputVectorToFile(site_energies_donor, "DOS_data.txt");
+	//outputVectorToFile(site_energies_donor, "DOS_data.txt");
 }
 
 bool OSC_Sim::siteContainsHole(const Coords& coords){
