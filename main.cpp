@@ -130,6 +130,9 @@ int main(int argc,char *argv[]){
             return 0;
         }
     }
+	else {
+		params_opv.Enable_import_morphology = false;
+	}
     // Setup file output
     cout << procid << ": Creating output files..." << endl;
     if(params_opv.Enable_logging){
@@ -184,9 +187,9 @@ int main(int argc,char *argv[]){
     if(params_opv.Enable_logging){
         logfile.close();
     }
-    cout << procid << ": Simulation finished." << endl;
-    time_end = time(NULL);
-    elapsedtime = (int)difftime(time_end,time_start);
+	cout << procid << ": Simulation finished." << endl;
+	time_end = time(NULL);
+	elapsedtime = (int)difftime(time_end, time_start);
 	// Output results
 	if (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test) {
 		if (params_opv.Enable_ToF_test) {
@@ -274,9 +277,11 @@ int main(int argc,char *argv[]){
                 analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
                 analysisfile << "Exciton diffusion length is " << vector_avg(diffusion_data) << " ± " << vector_stdev(diffusion_data) << " nm.\n";
             }
-
         }
         if(params_opv.Enable_ToF_test){
+			int N_transient_cycles = sim.getN_transient_cycles();
+			int N_transient_cycles_sum;
+			MPI_Reduce(&N_transient_cycles, &N_transient_cycles_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
             vector<double> transit_times = MPI_gatherVectors(sim.getTransitTimeData());
             int transit_attempts = ((sim.getN_electrons_collected()>sim.getN_holes_collected()) ? sim.getN_electrons_created() : (sim.getN_holes_created()));
             int transit_attempts_total;
@@ -286,17 +291,26 @@ int main(int argc,char *argv[]){
             vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities());
             vector<double> times = sim.getToFTransientTimes();
             if(procid==0){
+				// ToF mian results output
                 vector<double> mobilities = sim.calculateMobilities(transit_times);
+				double electric_field = fabs(params_opv.Bias) / (1e-7*params_opv.Height*params_opv.Unit_size);
+				ofstream tof_resultsfile;
+				ss << "ToF_results.txt";
+				tof_resultsfile.open(ss.str().c_str());
+				ss.str("");
+				tof_resultsfile << "Electric Field (V/cm),Mean Transit Time (s),Mean Mobility (cm^2 V^-1 s^-1)" << endl;
+				tof_resultsfile << electric_field << "," << vector_avg(transit_times) << "," << vector_avg(mobilities) << endl;
+				tof_resultsfile.close();
                 // ToF transient output
                 ofstream transientfile;
                 ss << "ToF_average_transients.txt";
                 transientfile.open(ss.str().c_str());
                 ss.str("");
-                transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV)" << endl;
-                double volume = params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3);
+                transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
+                double total_volume = nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3);
                 for(int i=0;i<(int)velocities.size();i++){
                     if(counts[i]!=0){
-                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(nproc*volume) << "," << params_opv.Height*params_opv.Unit_size*1e-7*velocities[i]/(fabs(params_opv.Bias)*counts[i]) << "," << energies[i]/counts[i] << endl;
+                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(N_transient_cycles_sum*total_volume) << "," << (velocities[i]/counts[i])/electric_field << "," << energies[i]/counts[i] << "," << counts[i]/(N_transient_cycles_sum*total_volume) << endl;
                     }
                     else{
                         transientfile << times[i] << "," << 0 << "," << 0 << "," << 0 << endl;

@@ -176,7 +176,7 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
         int num_steps = (int)floor((log10(ToF_transient_end)-log10(ToF_transient_start))/step_size);
         transient_times.assign(num_steps,0);
         for(int i=0;i<(int)transient_times.size();i++){
-            transient_times[i] = pow(10,log10(ToF_transient_start)+(i+0.5)*step_size);
+            transient_times[i] = pow(10,log10(ToF_transient_start)+i*step_size);
         }
         transient_counts.assign(num_steps,0);
         transient_velocities.assign(num_steps,0);
@@ -208,9 +208,12 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it,const 
     static const int range = (int)ceil((Coulomb_cutoff/ lattice.getUnitSize())*(Coulomb_cutoff/ lattice.getUnitSize()));
     // Loop through electrons
     for(auto it=electrons.begin();it!=electrons.end();++it){
+		if (!charge && it->getTag() == polaron_it->getTag()) {
+			continue;
+		}
         distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!(distance_sq_lat>range)){
-            if(!charge && it->getTag()!=polaron_it->getTag()){
+            if(!charge){
                 Energy += Coulomb_table[distance_sq_lat];
             }
             else{
@@ -220,9 +223,12 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it,const 
     }
     // Loop through holes
     for(auto it=holes.begin();it!=holes.end();++it){
+		if (charge && it->getTag() == polaron_it->getTag()) {
+			continue;
+		}
         distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,it->getCoords());
         if(!(distance_sq_lat>range)){
-            if(charge && it->getTag()!=polaron_it->getTag()){
+            if(charge){
                 Energy += Coulomb_table[distance_sq_lat];
             }
             else{
@@ -231,7 +237,7 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it,const 
         }
     }
     // Add electrode image charge interactions
-    if(!lattice.isZPeriodic()){
+    if(!lattice.isZPeriodic() && !Enable_ToF_test){
         distance = lattice.getUnitSize()*((double)(lattice.getHeight()-coords.z)-0.5);
         if(!((distance-0.0001)>Coulomb_cutoff)){
             Energy -= image_interactions/distance;
@@ -795,8 +801,9 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
 		return;
 	}
     Coords dest_coords;
-    double E_delta;
+    //double E_delta;
     int index;
+	double E_site_i = getSiteEnergy(object_coords);
     double Coulomb_i = calculateCoulomb(polaron_it,object_coords);
     static const int range = (int)ceil(Polaron_hopping_cutoff/ lattice.getUnitSize());
     static const int dim = (2*range+1);
@@ -807,6 +814,7 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
 	// pre-calculate a distances vector that contains the distances to nearby sites used for event execution time calculations
 	// pre-calculate a isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
 	static vector<double> distances(dim*dim*dim, 0.0);
+	static vector<double> E_deltas(dim*dim*dim, 0.0);
 	static vector<bool> isInRange(dim*dim*dim, false);
 	static bool isInitialized = false;
 	if (!isInitialized) {
@@ -859,43 +867,44 @@ void OSC_Sim::calculatePolaronEvents(Object* object_ptr){
                 // Hop events
                 // If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
                 if(!lattice.isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
-                    E_delta = (getSiteEnergy(dest_coords)-getSiteEnergy(object_coords))+(calculateCoulomb(polaron_it,dest_coords)-Coulomb_i);
+					E_deltas[index] = (getSiteEnergy(dest_coords) - E_site_i);
+					E_deltas[index] += (calculateCoulomb(polaron_it,dest_coords)-Coulomb_i);
                     if(!polaron_it->getCharge()){
-                        E_delta += (E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                        E_deltas[index] += (E_potential[dest_coords.z]-E_potential[object_coords.z]);
                     }
                     else{
-                        E_delta -= (E_potential[dest_coords.z]-E_potential[object_coords.z]);
+                        E_deltas[index] -= (E_potential[dest_coords.z]-E_potential[object_coords.z]);
                     }
                     if(getSiteType(object_coords)==(short)1){
                         if(getSiteType(dest_coords)==(short)2){
                             if(!polaron_it->getCharge()){
-                                E_delta -= (Lumo_acceptor-Lumo_donor);
+                                E_deltas[index] -= (Lumo_acceptor-Lumo_donor);
                             }
                             else{
-                                E_delta -= (Homo_acceptor-Homo_donor);
+                                E_deltas[index] -= (Homo_acceptor-Homo_donor);
                             }
                         }
                         if(Enable_miller_abrahams){
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_delta,this);
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_deltas[index],this);
                         }
                         else{
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_delta,Reorganization_donor,this);
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_deltas[index],Reorganization_donor,this);
                         }
                     }
                     else if(getSiteType(object_coords)==(short)2){
                         if(getSiteType(dest_coords)==(short)1){
                             if(!polaron_it->getCharge()){
-                                E_delta -= (Lumo_donor-Lumo_acceptor);
+                                E_deltas[index] -= (Lumo_donor-Lumo_acceptor);
                             }
                             else{
-                                E_delta -= (Homo_donor-Homo_acceptor);
+                                E_deltas[index] -= (Homo_donor-Homo_acceptor);
                             }
                         }
                         if(Enable_miller_abrahams){
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_delta,this);
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_deltas[index],this);
                         }
                         else{
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_delta,Reorganization_acceptor,this);
+                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_deltas[index],Reorganization_acceptor,this);
                         }
                     }
 					hops_temp[index].setObjectPtr(object_ptr);
@@ -1105,14 +1114,18 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const{
 	// Random Blend
 	// Import morphology
 	int N_architectures_enabled = 0;
-	if (params.Enable_neat)
+	if (params.Enable_neat) {
 		N_architectures_enabled++;
-	if (params.Enable_bilayer)
+	}
+	if (params.Enable_bilayer) {
 		N_architectures_enabled++;
-	if (params.Enable_random_blend)
+	}
+	if (params.Enable_random_blend) {
 		N_architectures_enabled++;
-	if (params.Enable_import_morphology)
+	}
+	if (params.Enable_import_morphology) {
 		N_architectures_enabled++;
+	}
 	if (N_architectures_enabled == 0) {
 		cout << "Error! A film architecture must be enabled." << endl;
 		return false;
@@ -1778,21 +1791,26 @@ bool OSC_Sim::executeNextEvent() {
 		}
 	}
 	if (Enable_ToF_test) {
-		// If none of the polarons can move
-		if (getN_events() == 0) {
+		// Perform ToF test analysis
+		updateToFData();
+		// If none of the polarons can move or have reached the transient cutoff
+		if (getN_events() == 0 || (getTime() - ToF_creation_time) > ToF_transient_end) {
 			// Remove any remaining polarons
 			while ((int)electrons.size() > 0) {
 				N_electrons--;
 				deleteObject(&electrons.front());
 			}
-			while ((int)holes.size()>0) {
+			while ((int)holes.size() > 0) {
 				N_holes--;
 				deleteObject(&holes.front());
 			}
-			// Generate the next round of polarons if needed
-			if (!checkFinished()) {
-				generateToFPolarons();
-			}
+		}
+		// Check if new ToF polarons need to be created
+		if (N_holes == 0 && N_electrons == 0 && !checkFinished()) {
+			generateToFPolarons();
+		}
+		if (checkFinished()) {
+			return true;
 		}
 	}
     auto event_it = chooseNextEvent();
@@ -1850,43 +1868,20 @@ bool OSC_Sim::executeNextEvent() {
     }
 }
 
-bool OSC_Sim::executeObjectHop(const list<Event*>::iterator event_it){
-    // Get event info
-    auto object_ptr = (*event_it)->getObjectPtr();
-    Coords coords_initial = object_ptr->getCoords();
-    Coords coords_dest = (*event_it)->getDestCoords();
-    // Move the object in the Simulation
-    moveObject((*event_it)->getObjectPtr(),coords_dest);
-    // Perform ToF test analysis
-    if(Enable_ToF_test){
-		auto polaron_it = getPolaronIt(object_ptr);
-        updateToFData(object_ptr);
-        // Check ToF time limit
-        if((getTime()-object_ptr->getCreationTime())>ToF_transient_end){
-            // Update polaron counters
-            if(!polaron_it->getCharge()){
-                N_electrons--;
-            }
-            else{
-                N_holes--;
-            }
-            // Delete polaron and its events
-            deleteObject(object_ptr);
-        }
-    }
-    // Check if new ToF polarons need to be created
-    if(Enable_ToF_test && N_holes==0 && N_electrons==0 && !checkFinished()){
-        generateToFPolarons();
-    }
-    // Find all nearby objects and calculate their events
-    else{
-        auto neighbors = findRecalcNeighbors(coords_initial);
-        auto neighbors2 = findRecalcNeighbors(coords_dest);
-        neighbors.insert(neighbors.end(),neighbors2.begin(),neighbors2.end());
-        removeDuplicates(neighbors);
-        calculateObjectListEvents(neighbors);
-    }
-    return true;
+bool OSC_Sim::executeObjectHop(const list<Event*>::iterator event_it) {
+	// Get event info
+	auto object_ptr = (*event_it)->getObjectPtr();
+	Coords coords_initial = object_ptr->getCoords();
+	Coords coords_dest = (*event_it)->getDestCoords();
+	// Move the object in the Simulation
+	moveObject((*event_it)->getObjectPtr(), coords_dest);
+	// Find all nearby objects and calculate their events
+	auto neighbors = findRecalcNeighbors(coords_initial);
+	auto neighbors2 = findRecalcNeighbors(coords_dest);
+	neighbors.insert(neighbors.end(), neighbors2.begin(), neighbors2.end());
+	removeDuplicates(neighbors);
+	calculateObjectListEvents(neighbors);
+	return true;
 }
 
 bool OSC_Sim::executePolaronExtraction(const list<Event*>::iterator event_it){
@@ -1955,6 +1950,7 @@ bool OSC_Sim::executePolaronHop(const list<Event*>::iterator event_it){
                 *Logfile << "Hole " << polaron_it->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
             }
         }
+		//cout << getSiteEnergy((*event_it)->getDestCoords()) << endl;
         return executeObjectHop(event_it);
     }
 }
@@ -2091,12 +2087,12 @@ void OSC_Sim::generateDynamicsExcitons(){
         generateExciton(coords);
         num++;
     }
+	N_transient_cycles++;
     auto object_its = getAllObjectPtrs();
     calculateObjectListEvents(object_its);
 }
 
 void OSC_Sim::generateToFPolarons(){
-    int num = 0;
     Coords coords;
 	// Reassign site energies
 	if (N_electrons_collected > 0 || N_holes_collected > 0) {
@@ -2110,11 +2106,13 @@ void OSC_Sim::generateToFPolarons(){
     else{
         coords.z = 0;
     }
-    ToF_start_times.assign(ToF_initial_polarons,getTime());
-    ToF_start_positions.assign(ToF_initial_polarons,coords.z);
-    ToF_start_energies.assign(ToF_initial_polarons,0);
-    ToF_index_prev.assign(ToF_initial_polarons,0);
-    auto energy_it = ToF_start_energies.begin();
+	ToF_polaron_tags.assign(ToF_initial_polarons, -1);
+    ToF_positions_prev.assign(ToF_initial_polarons,coords.z);
+	ToF_times_prev.assign(ToF_initial_polarons, getTime());
+    ToF_energies_prev.assign(ToF_initial_polarons,0);
+	ToF_creation_time = getTime();
+	ToF_index_prev = -1;
+	int num = 0;
     while(num<ToF_initial_polarons){
         coords.x = lattice.generateRandomX();
         coords.y = lattice.generateRandomY();
@@ -2132,14 +2130,38 @@ void OSC_Sim::generateToFPolarons(){
         }
         else if(!ToF_polaron_type){
             generateElectron(coords);
+			ToF_polaron_tags[num] = electrons.back().getTag();
         }
         else{
             generateHole(coords);
+			ToF_polaron_tags[num] = holes.back().getTag();
         }
-        *energy_it = getSiteEnergy(coords);
-        energy_it++;
+		ToF_energies_prev[num] = getSiteEnergy(coords);
+		// donor
+		if (getSiteType(coords) == (short)1) {
+			//electron
+			if (!ToF_polaron_type) {
+				ToF_energies_prev[num] += -Lumo_donor;
+			}
+			//hole
+			else {
+				ToF_energies_prev[num] += -Homo_donor;
+			}
+		}
+		// acceptor
+		else {
+			//electron
+			if (!ToF_polaron_type) {
+				ToF_energies_prev[num] += -Lumo_acceptor;
+			}
+			//hole
+			else {
+				ToF_energies_prev[num] += -Homo_acceptor;
+			}
+		}
         num++;
     }
+	N_transient_cycles++;
     auto object_its = getAllObjectPtrs();
     calculateObjectListEvents(object_its);
 }
@@ -2209,77 +2231,88 @@ int OSC_Sim::getN_excitons_created(const short site_type) const {
 }
 
 int OSC_Sim::getN_excitons_dissociated() const {
-    return N_excitons_dissociated;
+return N_excitons_dissociated;
 }
 
 int OSC_Sim::getN_excitons_recombined() const {
-    return N_excitons_recombined;
+	return N_excitons_recombined;
 }
 
 int OSC_Sim::getN_geminate_recombinations() const {
-    return N_geminate_recombinations;
+	return N_geminate_recombinations;
 }
 
 int OSC_Sim::getN_holes_collected() const {
-    return N_holes_collected;
+	return N_holes_collected;
 }
 
 int OSC_Sim::getN_holes_created() const {
-    return N_holes_created;
+	return N_holes_created;
 }
 
 int OSC_Sim::getN_holes_recombined() const {
-    return N_holes_recombined;
+	return N_holes_recombined;
 }
 
-list<Polaron>::iterator OSC_Sim::getPolaronIt(const Object* object_ptr){
-    if(object_ptr->getName().compare(Polaron::name)==0){
-        // electrons
-        if(!(static_cast<const Polaron*>(object_ptr)->getCharge())){
-            for(auto it=electrons.begin();it!=electrons.end();++it){
-                if(object_ptr->getTag()==it->getTag()){
-                    return it;
-                }
-            }
-        }
-        // holes
-        else{
-            for(auto it=holes.begin();it!=holes.end();++it){
-                if(object_ptr->getTag()==it->getTag()){
-                    return it;
-                }
-            }
-        }
-    }
+int OSC_Sim::getN_transient_cycles() const {
+	return N_transient_cycles;
+}
+
+list<Polaron>::iterator OSC_Sim::getPolaronIt(const Object* object_ptr) {
+	if (object_ptr->getName().compare(Polaron::name) == 0) {
+		// electrons
+		if (!(static_cast<const Polaron*>(object_ptr)->getCharge())) {
+			for (auto it = electrons.begin(); it != electrons.end(); ++it) {
+				if (object_ptr->getTag() == it->getTag()) {
+					return it;
+				}
+			}
+		}
+		// holes
+		else {
+			for (auto it = holes.begin(); it != holes.end(); ++it) {
+				if (object_ptr->getTag() == it->getTag()) {
+					return it;
+				}
+			}
+		}
+	}
 	cout << "Error! Polaron iterator could not be located." << endl;
 	Error_found = true;
 	return electrons.end();
 }
 
 vector<double> OSC_Sim::getSiteEnergies(const short site_type) const {
-	if (site_type == 1) {
-		return site_energies_donor;
+	vector<double> energies;
+	for(int i = 0; i < lattice.getNumSites(); i++) {
+		if (sites[i].getType() == site_type) {
+			energies.push_back(sites[i].getEnergy());
+		}
 	}
-	else if (site_type == 2) {
-		return site_energies_acceptor;
-	}
-	else {
-		vector<double> empty_vec(0);
-		cout << "Error! Invalid site type specified while getting the site energies." << endl;
-		return empty_vec;
-	}
+	return energies;
+	//if (site_type == 1) {
+	//	return site_energies_donor;
+	//}
+	//else if (site_type == 2) {
+	//	return site_energies_acceptor;
+	//}
+	//else {
+	//	vector<double> empty_vec(0);
+	//	cout << "Error! Invalid site type specified while getting the site energies." << endl;
+	//	return empty_vec;
+	//}
 }
 
 double OSC_Sim::getSiteEnergy(const Coords& coords) const {
-    return sites[lattice.getSiteIndex(coords)].getEnergy();
+	return sites[lattice.getSiteIndex(coords)].getEnergy();
 }
 
 short OSC_Sim::getSiteType(const Coords& coords) const {
-    return sites[lattice.getSiteIndex(coords)].getType();
+	return sites[lattice.getSiteIndex(coords)].getType();
 }
 
 vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
-	vector<string> output_data(lattice.getLength()*lattice.getWidth()+1);
+	vector<string> output_data(lattice.getLength()*lattice.getWidth() + 1);
 	stringstream ss;
 	int x, y;
 	output_data[0] = "X-Position,Y-Position,Extraction Probability";
@@ -2305,11 +2338,11 @@ vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
 }
 
 vector<int> OSC_Sim::getToFTransientCounts() const {
-    return transient_counts;
+	return transient_counts;
 }
 
 vector<double> OSC_Sim::getToFTransientEnergies() const {
-    return transient_energies;
+	return transient_energies;
 }
 
 vector<double> OSC_Sim::getToFTransientTimes() const {
@@ -2487,7 +2520,7 @@ bool OSC_Sim::siteContainsHole(const Coords& coords){
 
 void OSC_Sim::updateDynamicsData(){
     static const double step_size = 1.0/(double)Dynamics_pnts_per_decade;
-    static int index_prev = -1;
+	static int index_prev = -1;
     // Only start dynamics transient calculations if the time elapsed since exciton creation is larger than the transient start time
     if(getTime()>Dynamics_transient_start){
         // If enough time has passed, output next timestep data
@@ -2509,59 +2542,67 @@ void OSC_Sim::updateDynamicsData(){
     }
 }
 
-void OSC_Sim::updateToFData(const Object* object_ptr){
-    static const double step_size = 1.0/(double)ToF_pnts_per_decade;
-    // Only start ToF transient calculations if the time elapsed since polaron creation is larger than the ToF transient start time
-    if((getTime()-object_ptr->getCreationTime())>ToF_transient_start){
-        // Get polaron and previous timestep info
-        auto polaron_it = getPolaronIt(object_ptr);
-        auto start_time_it = ToF_start_times.begin();
-        if(!polaron_it->getCharge()){
-            advance(start_time_it,distance(electrons.begin(),polaron_it));
-        }
-        else{
-            advance(start_time_it,distance(holes.begin(),polaron_it));
-        }
-        // If enough time has passed, output next timestep data
-        if(log10(getTime()-object_ptr->getCreationTime())-log10(*start_time_it-object_ptr->getCreationTime())>step_size){
-            int index = (int)floor((log10(getTime()-object_ptr->getCreationTime())-log10(ToF_transient_start))/step_size);
-            // Get polaron site energy for previous timestep
-            auto start_energy_it = ToF_start_energies.begin();
-            auto index_prev_it = ToF_index_prev.begin();
-            if(!polaron_it->getCharge()){
-                advance(start_energy_it,distance(electrons.begin(),polaron_it));
-                advance(index_prev_it,distance(electrons.begin(),polaron_it));
-            }
-            else{
-                advance(start_energy_it,distance(holes.begin(),polaron_it));
-                advance(index_prev_it,distance(holes.begin(),polaron_it));
-            }
-            int index_prev = *index_prev_it;
-            while(index!=0 && index_prev<index-1 && index_prev+1<(int)transient_times.size()){
-                transient_counts[index_prev+1]++;
-                // transient_velocities[index_prev+1] += 0;
-                transient_energies[index_prev+1] += *start_energy_it;
-                *start_time_it += pow(10,log10(*start_time_it)+step_size);
-                index_prev++;
-            }
-            // Get polaron position for previous timestep
-            auto start_position_it = ToF_start_positions.begin();
-            if(!polaron_it->getCharge()){
-                advance(start_position_it,distance(electrons.begin(),polaron_it));
-            }
-            else{
-                advance(start_position_it,distance(holes.begin(),polaron_it));
-            }
-            if(index<(int)transient_times.size()){
-                transient_counts[index]++;
-                transient_velocities[index] += (1e-7*lattice.getUnitSize()*abs(object_ptr->getCoords().z - *start_position_it))/(getTime()- *start_time_it);
-                transient_energies[index] += getSiteEnergy(object_ptr->getCoords());
-                *start_time_it = getTime();
-                *start_position_it = object_ptr->getCoords().z;
-                *start_energy_it = getSiteEnergy(object_ptr->getCoords());
-                *index_prev_it = index;
-            }
-        }
-
-    }
+void OSC_Sim::updateToFData() {
+	static const double step_size = 1.0 / (double)ToF_pnts_per_decade;
+	// Only start ToF transient calculations if enough time has elapsed since the last updated
+	if ((getTime() - ToF_creation_time) > transient_times[ToF_index_prev + 1]) {
+		list<Polaron> polarons;
+		// electrons
+		if (!ToF_polaron_type) {
+			polarons = electrons;
+		}
+		// holes
+		else {
+			polarons = holes;
+		}
+		int index = (int)floor((log10(getTime() - ToF_creation_time) - log10(ToF_transient_start)) / step_size);
+		if (index >= (int)transient_times.size()) {
+			return;
+		}
+		while (index != 0 && ToF_index_prev < index - 1 && ToF_index_prev + 1 < (int)transient_times.size()) {
+			for (auto polaron_it = polarons.begin(); polaron_it != polarons.end(); ++polaron_it) {
+				int index_tof = distance(ToF_polaron_tags.begin(), find(ToF_polaron_tags.begin(), ToF_polaron_tags.end(), polaron_it->getTag()));
+				transient_counts[ToF_index_prev + 1]++;
+				// transient_velocities[index_prev+1] += 0;
+				transient_energies[ToF_index_prev + 1] += ToF_energies_prev[index_tof];
+			}
+			ToF_index_prev++;
+		}
+		for (auto polaron_it = polarons.begin(); polaron_it != polarons.end(); ++polaron_it) {
+			// Get polaron site energy and position for previous timestep
+			int index_tof = distance(ToF_polaron_tags.begin(), find(ToF_polaron_tags.begin(), ToF_polaron_tags.end(), polaron_it->getTag()));
+			transient_counts[index]++;
+			double velocity = (1e-7*lattice.getUnitSize()*(polaron_it->getCoords().z - ToF_positions_prev[index_tof])) / (getTime() - ToF_times_prev[index_tof]);
+			transient_velocities[index] += velocity;
+			// donor
+			if (getSiteType(polaron_it->getCoords()) == (short)1) {
+				//electron
+				if (!ToF_polaron_type) {
+					transient_energies[index] += -Lumo_donor + getSiteEnergy(polaron_it->getCoords());
+					ToF_energies_prev[index_tof] = -Lumo_donor + getSiteEnergy(polaron_it->getCoords());
+				}
+				//hole
+				else {
+					transient_energies[index] += -Homo_donor + getSiteEnergy(polaron_it->getCoords());
+					ToF_energies_prev[index_tof] = -Homo_donor + getSiteEnergy(polaron_it->getCoords());
+				}
+			}
+			// acceptor
+			else {
+				//electron
+				if (!ToF_polaron_type) {
+					transient_energies[index] += -Lumo_acceptor + getSiteEnergy(polaron_it->getCoords());
+					ToF_energies_prev[index_tof] = -Lumo_acceptor + getSiteEnergy(polaron_it->getCoords());
+				}
+				//hole
+				else {
+					transient_energies[index] += -Homo_acceptor + getSiteEnergy(polaron_it->getCoords());
+					ToF_energies_prev[index_tof] = -Homo_acceptor + getSiteEnergy(polaron_it->getCoords());
+				}
+			}
+			ToF_positions_prev[index_tof] = polaron_it->getCoords().z;
+			ToF_times_prev[index_tof] = getTime();
+		}
+		ToF_index_prev = index;
+	}
 }

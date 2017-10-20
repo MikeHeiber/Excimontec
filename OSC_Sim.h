@@ -163,6 +163,7 @@ class OSC_Sim : public Simulation{
         int getN_holes_recombined() const;
         int getN_geminate_recombinations() const;
         int getN_bimolecular_recombinations() const;
+		int getN_transient_cycles() const;
         void outputStatus();
 		void reassignSiteEnergies();
     protected:
@@ -266,6 +267,8 @@ class OSC_Sim : public Simulation{
         bool isLightOn;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
+		double ToF_creation_time;
+		int ToF_index_prev;
         // Site Data Structure
 		std::vector<Site_OSC> sites;
         // Object Data Structures
@@ -291,10 +294,10 @@ class OSC_Sim : public Simulation{
 		std::vector<double> site_energies_acceptor;
 		std::vector<std::pair<double, double>> DOS_correlation_data;
 		std::vector<double> diffusion_distances;
-		std::list<int> ToF_start_positions;
-		std::list<int> ToF_index_prev;
-		std::list<double> ToF_start_times;
-		std::list<double> ToF_start_energies;
+		std::vector<int> ToF_polaron_tags;
+		std::vector<int> ToF_positions_prev;
+		std::vector<double> ToF_times_prev;
+		std::vector<double> ToF_energies_prev;
 		std::vector<int> Electron_extraction_data;
 		std::vector<int> Hole_extraction_data;
 		std::vector<double> transient_times;
@@ -333,6 +336,7 @@ class OSC_Sim : public Simulation{
         int N_bimolecular_recombinations = 0;
         int N_electron_surface_recombinations = 0;
         int N_hole_surface_recombinations = 0;
+		int N_transient_cycles = 0;
         // Additional Functions
         double calculateCoulomb(const std::list<Polaron>::iterator,const Coords& coords) const;
         double calculateCoulomb(const bool charge,const Coords& coords) const;
@@ -369,7 +373,7 @@ class OSC_Sim : public Simulation{
         bool initializeArchitecture();
         bool siteContainsHole(const Coords& coords);
         void updateDynamicsData();
-        void updateToFData(const Object* object_ptr);
+        void updateToFData();
 };
 
 #endif //OSC_SIM_H
