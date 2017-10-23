@@ -14,7 +14,7 @@ The goal of this project is to develop an open-source lattice KMC simulation sof
 - Choose between Miller-Abrahams or Marcus models for polaron hopping.
 - Charge carrier delocalization can be modeled with a spherical Gaussian delocalization model.
 
-## Current Status:
+## Current Status
 The current version (Excimontec v1.0-beta.1) is built with KMC_Lattice v2.0-beta.1 and allows the user to perform several simulation tests relevant for OPV and OLED devices.  All major planned features that are to be included in v1.0 are now implemented and have undergone preliminary testing.  However, this software tool is still under development, and as such, there may still be bugs that need to be squashed.  Please report any bugs or submit feature requests in the Issues section. 
 
 ## Work Together
