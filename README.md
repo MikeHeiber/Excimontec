@@ -2,7 +2,7 @@
 The goal of this project is to develop an open-source lattice KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more.  The software is being developed in C++11 and optimized for efficient execution on high performance computing clusters using MPI.  This software package uses object-oriented design and extends the [KMC_Lattice](https://github.com/MikeHeiber/KMC_Lattice) framework.
 
 ## Current Status:
-The current version (Excimontec v0.4-alpha) is built with KMC_Lattice v2.0-alpha.5 and allows the user to perform several simulation tests relevant for OPV and OLED devices.  NOTE: This software is still in the alpha phase of development, and as such, there may still be bugs that need to be squashed.  Please report any bugs or submit feature requests in the Issues section.
+The current version (Excimontec v0.4-alpha) is built with KMC_Lattice v2.0-alpha.6 and allows the user to perform several simulation tests relevant for OPV and OLED devices.  NOTE: This software is still in the alpha phase of development, and as such, there may still be bugs that need to be squashed.  Please report any bugs or submit feature requests in the Issues section.
 
 #### Implemented Major Features:
 - Adjustable periodic boundary conditions in all three directions allow users to perform 1D, 2D, or 3D simulations.
