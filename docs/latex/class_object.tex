@@ -1,0 +1,246 @@
+\hypertarget{class_object}{}\section{Object Class Reference}
+\label{class_object}\index{Object@{Object}}
+
+
+This base class contains the basic properties of a K\+MC simulation object and the functions needed to interact with it.  
+
+
+
+
+{\ttfamily \#include $<$Object.\+h$>$}
+
+Inheritance diagram for Object\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_object}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_object_ae8f5483f459e46687bd01e6f9977afd3}\label{class_object_ae8f5483f459e46687bd01e6f9977afd3}} 
+virtual \hyperlink{class_object_ae8f5483f459e46687bd01e6f9977afd3}{$\sim$\+Object} ()
+\begin{DoxyCompactList}\small\item\em Default virtual destructor needed by the base class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_object_a40860402e64d8008fb42329df7097cdb}\label{class_object_a40860402e64d8008fb42329df7097cdb}} 
+\hyperlink{class_object_a40860402e64d8008fb42329df7097cdb}{Object} ()
+\begin{DoxyCompactList}\small\item\em Default constructor that creates an empty \hyperlink{class_object}{Object} object. \end{DoxyCompactList}\item 
+\hyperlink{class_object_aff050a622272cc7667251c7315f09fd7}{Object} (const double time, const int tag\+\_\+num, const \hyperlink{struct_coords}{Coords} \&start\+\_\+coords)
+\begin{DoxyCompactList}\small\item\em Constructor that creates and initializes a usable \hyperlink{class_object}{Object} object. \end{DoxyCompactList}\item 
+double \hyperlink{class_object_a02643ea0804dec3e43f60c788855c03b}{calculate\+Displacement} () const
+\begin{DoxyCompactList}\small\item\em Calculates the displacement of the object from its starting coordinates in lattice units. \end{DoxyCompactList}\item 
+\hyperlink{struct_coords}{Coords} \hyperlink{class_object_a08df08943dc634609fa69b356a37d73f}{get\+Coords} () const
+\begin{DoxyCompactList}\small\item\em Gets the current coordinates of the \hyperlink{class_object}{Object}. \end{DoxyCompactList}\item 
+double \hyperlink{class_object_a6f91c3f8b61cb9c9a8db662ac07d92e9}{get\+Creation\+Time} () const
+\begin{DoxyCompactList}\small\item\em Gets the simulation creation time of the \hyperlink{class_object}{Object}. \end{DoxyCompactList}\item 
+std\+::list$<$ \hyperlink{class_event}{Event} $\ast$ $>$\+::iterator \hyperlink{class_object_aa7c58e0319b7715c8d36f38ca7acf03e}{get\+Event\+It} () const
+\begin{DoxyCompactList}\small\item\em Gets the event list iterator for the event that is associated with the object. \end{DoxyCompactList}\item 
+virtual std\+::string \hyperlink{class_object_ade517616d51cd9ab581ec5afeb37b313}{get\+Name} () const
+\begin{DoxyCompactList}\small\item\em Gets the name of the \hyperlink{class_object}{Object} class. \end{DoxyCompactList}\item 
+int \hyperlink{class_object_aa9653577e8d0ac4b7b86d23d12f8b31b}{get\+Tag} () const
+\begin{DoxyCompactList}\small\item\em Gets the tag id number of the \hyperlink{class_object}{Object}. \end{DoxyCompactList}\item 
+void \hyperlink{class_object_a3d7c877f4aa179d9a56050c5faddc18d}{increment\+DX} (const int num)
+\begin{DoxyCompactList}\small\item\em Increments the dx parameter, which is to be used when the \hyperlink{class_object}{Object} crosses an x-\/direction periodic boundary. \end{DoxyCompactList}\item 
+void \hyperlink{class_object_a9df010818be72d15bad7985bf8a89ba0}{increment\+DY} (const int num)
+\begin{DoxyCompactList}\small\item\em Increments the dy parameter, which is to be used when the \hyperlink{class_object}{Object} crosses a y-\/direction periodic boundary. \end{DoxyCompactList}\item 
+void \hyperlink{class_object_a440b267c478f5d63db1954bdbd543408}{increment\+DZ} (const int num)
+\begin{DoxyCompactList}\small\item\em Increments the dz parameter, which is to be used when the \hyperlink{class_object}{Object} crosses a z-\/direction periodic boundary. \end{DoxyCompactList}\item 
+void \hyperlink{class_object_a34a164e4709e5daaba7a38c3d61ae617}{set\+Coords} (const \hyperlink{struct_coords}{Coords} \&input\+\_\+coords)
+\begin{DoxyCompactList}\small\item\em Sets the coordinates of the \hyperlink{class_object}{Object}. \end{DoxyCompactList}\item 
+void \hyperlink{class_object_ad5025bd84ae91d6426f458f32e582293}{set\+Event\+It} (const std\+::list$<$ \hyperlink{class_event}{Event} $\ast$$>$\+::iterator input\+\_\+it)
+\begin{DoxyCompactList}\small\item\em Sets the iterator that points to a specific entry in the events list within the \hyperlink{class_simulation}{Simulation} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This base class contains the basic properties of a K\+MC simulation object and the functions needed to interact with it. 
+
+This base class is designed to work with the \hyperlink{class_simulation}{Simulation} class to construct a K\+MC simulation. This base class is intended to be extended to create classes that represent specific types of objects. \begin{DoxyCopyright}{Copyright}
+M\+IT License. For more information, see the L\+I\+C\+E\+N\+SE file that accompanies this software package. 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Michael C. Heiber 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2017 
+\end{DoxyDate}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_object_aff050a622272cc7667251c7315f09fd7}\label{class_object_aff050a622272cc7667251c7315f09fd7}} 
+\index{Object@{Object}!Object@{Object}}
+\index{Object@{Object}!Object@{Object}}
+\subsubsection{\texorpdfstring{Object()}{Object()}}
+{\footnotesize\ttfamily Object\+::\+Object (\begin{DoxyParamCaption}\item[{const double}]{time,  }\item[{const int}]{tag\+\_\+num,  }\item[{const \hyperlink{struct_coords}{Coords} \&}]{start\+\_\+coords }\end{DoxyParamCaption})}
+
+
+
+Constructor that creates and initializes a usable \hyperlink{class_object}{Object} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em time} & is the current simulation time. \\
+\hline
+{\em tag\+\_\+num} & is the specified tag ID number that will be used to label the \hyperlink{class_object}{Object}. \\
+\hline
+{\em start\+\_\+coords} & is the \hyperlink{struct_coords}{Coords} struct that defines the starting coordinates of the \hyperlink{class_object}{Object}. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_object_a02643ea0804dec3e43f60c788855c03b}\label{class_object_a02643ea0804dec3e43f60c788855c03b}} 
+\index{Object@{Object}!calculate\+Displacement@{calculate\+Displacement}}
+\index{calculate\+Displacement@{calculate\+Displacement}!Object@{Object}}
+\subsubsection{\texorpdfstring{calculate\+Displacement()}{calculateDisplacement()}}
+{\footnotesize\ttfamily double Object\+::calculate\+Displacement (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Calculates the displacement of the object from its starting coordinates in lattice units. 
+
+The function accounts for when periodic boundaries are crossed to determine the real displacement distance. \mbox{\Hypertarget{class_object_a08df08943dc634609fa69b356a37d73f}\label{class_object_a08df08943dc634609fa69b356a37d73f}} 
+\index{Object@{Object}!get\+Coords@{get\+Coords}}
+\index{get\+Coords@{get\+Coords}!Object@{Object}}
+\subsubsection{\texorpdfstring{get\+Coords()}{getCoords()}}
+{\footnotesize\ttfamily \hyperlink{struct_coords}{Coords} Object\+::get\+Coords (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Gets the current coordinates of the \hyperlink{class_object}{Object}. 
+
+\begin{DoxyReturn}{Returns}
+a \hyperlink{struct_coords}{Coords} struct that represents the coordinates of the object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_object_a6f91c3f8b61cb9c9a8db662ac07d92e9}\label{class_object_a6f91c3f8b61cb9c9a8db662ac07d92e9}} 
+\index{Object@{Object}!get\+Creation\+Time@{get\+Creation\+Time}}
+\index{get\+Creation\+Time@{get\+Creation\+Time}!Object@{Object}}
+\subsubsection{\texorpdfstring{get\+Creation\+Time()}{getCreationTime()}}
+{\footnotesize\ttfamily double Object\+::get\+Creation\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Gets the simulation creation time of the \hyperlink{class_object}{Object}. 
+
+\begin{DoxyReturn}{Returns}
+The simulation time value at which the object was created in units of seconds. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_object_aa7c58e0319b7715c8d36f38ca7acf03e}\label{class_object_aa7c58e0319b7715c8d36f38ca7acf03e}} 
+\index{Object@{Object}!get\+Event\+It@{get\+Event\+It}}
+\index{get\+Event\+It@{get\+Event\+It}!Object@{Object}}
+\subsubsection{\texorpdfstring{get\+Event\+It()}{getEventIt()}}
+{\footnotesize\ttfamily list$<$ \hyperlink{class_event}{Event} $\ast$ $>$\+::iterator Object\+::get\+Event\+It (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Gets the event list iterator for the event that is associated with the object. 
+
+The event list iterator points to an \hyperlink{class_event}{Event} pointer in the events list within the \hyperlink{class_simulation}{Simulation} class, and the \hyperlink{class_event}{Event} pointer points to a specific derived \hyperlink{class_event}{Event} class stored in the derived \hyperlink{class_simulation}{Simulation} class. \mbox{\Hypertarget{class_object_ade517616d51cd9ab581ec5afeb37b313}\label{class_object_ade517616d51cd9ab581ec5afeb37b313}} 
+\index{Object@{Object}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Object@{Object}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily string Object\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Gets the name of the \hyperlink{class_object}{Object} class. 
+
+\begin{DoxyReturn}{Returns}
+\char`\"{}\+Object\char`\"{} when called on the base class. 
+\end{DoxyReturn}
+
+
+Reimplemented in \hyperlink{class_exciton_a4db43bd7ca4136e35f9a50b2a5854728}{Exciton}, and \hyperlink{class_polaron_ab30575f6248183c9dab4d257df2f91fc}{Polaron}.
+
+\mbox{\Hypertarget{class_object_aa9653577e8d0ac4b7b86d23d12f8b31b}\label{class_object_aa9653577e8d0ac4b7b86d23d12f8b31b}} 
+\index{Object@{Object}!get\+Tag@{get\+Tag}}
+\index{get\+Tag@{get\+Tag}!Object@{Object}}
+\subsubsection{\texorpdfstring{get\+Tag()}{getTag()}}
+{\footnotesize\ttfamily int Object\+::get\+Tag (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Gets the tag id number of the \hyperlink{class_object}{Object}. 
+
+\begin{DoxyWarning}{Warning}
+This tag id number may not be unique between objects that are of different derived object classes. 
+\end{DoxyWarning}
+\mbox{\Hypertarget{class_object_a3d7c877f4aa179d9a56050c5faddc18d}\label{class_object_a3d7c877f4aa179d9a56050c5faddc18d}} 
+\index{Object@{Object}!increment\+DX@{increment\+DX}}
+\index{increment\+DX@{increment\+DX}!Object@{Object}}
+\subsubsection{\texorpdfstring{increment\+D\+X()}{incrementDX()}}
+{\footnotesize\ttfamily void Object\+::increment\+DX (\begin{DoxyParamCaption}\item[{const int}]{num }\end{DoxyParamCaption})}
+
+
+
+Increments the dx parameter, which is to be used when the \hyperlink{class_object}{Object} crosses an x-\/direction periodic boundary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num} & is the input increment amount. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_object_a9df010818be72d15bad7985bf8a89ba0}\label{class_object_a9df010818be72d15bad7985bf8a89ba0}} 
+\index{Object@{Object}!increment\+DY@{increment\+DY}}
+\index{increment\+DY@{increment\+DY}!Object@{Object}}
+\subsubsection{\texorpdfstring{increment\+D\+Y()}{incrementDY()}}
+{\footnotesize\ttfamily void Object\+::increment\+DY (\begin{DoxyParamCaption}\item[{const int}]{num }\end{DoxyParamCaption})}
+
+
+
+Increments the dy parameter, which is to be used when the \hyperlink{class_object}{Object} crosses a y-\/direction periodic boundary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num} & is the input increment amount. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_object_a440b267c478f5d63db1954bdbd543408}\label{class_object_a440b267c478f5d63db1954bdbd543408}} 
+\index{Object@{Object}!increment\+DZ@{increment\+DZ}}
+\index{increment\+DZ@{increment\+DZ}!Object@{Object}}
+\subsubsection{\texorpdfstring{increment\+D\+Z()}{incrementDZ()}}
+{\footnotesize\ttfamily void Object\+::increment\+DZ (\begin{DoxyParamCaption}\item[{const int}]{num }\end{DoxyParamCaption})}
+
+
+
+Increments the dz parameter, which is to be used when the \hyperlink{class_object}{Object} crosses a z-\/direction periodic boundary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num} & is the input increment amount. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_object_a34a164e4709e5daaba7a38c3d61ae617}\label{class_object_a34a164e4709e5daaba7a38c3d61ae617}} 
+\index{Object@{Object}!set\+Coords@{set\+Coords}}
+\index{set\+Coords@{set\+Coords}!Object@{Object}}
+\subsubsection{\texorpdfstring{set\+Coords()}{setCoords()}}
+{\footnotesize\ttfamily void Object\+::set\+Coords (\begin{DoxyParamCaption}\item[{const \hyperlink{struct_coords}{Coords} \&}]{input\+\_\+coords }\end{DoxyParamCaption})}
+
+
+
+Sets the coordinates of the \hyperlink{class_object}{Object}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input\+\_\+coords} & is the \hyperlink{struct_coords}{Coords} struct that designates the input coordinates. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_object_ad5025bd84ae91d6426f458f32e582293}\label{class_object_ad5025bd84ae91d6426f458f32e582293}} 
+\index{Object@{Object}!set\+Event\+It@{set\+Event\+It}}
+\index{set\+Event\+It@{set\+Event\+It}!Object@{Object}}
+\subsubsection{\texorpdfstring{set\+Event\+It()}{setEventIt()}}
+{\footnotesize\ttfamily void Object\+::set\+Event\+It (\begin{DoxyParamCaption}\item[{const std\+::list$<$ \hyperlink{class_event}{Event} $\ast$$>$\+::iterator}]{input\+\_\+it }\end{DoxyParamCaption})}
+
+
+
+Sets the iterator that points to a specific entry in the events list within the \hyperlink{class_simulation}{Simulation} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input\+\_\+it} & is the input event list iterator. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+K\+M\+C\+\_\+\+Lattice/Object.\+h\item 
+K\+M\+C\+\_\+\+Lattice/Object.\+cpp\end{DoxyCompactItemize}
