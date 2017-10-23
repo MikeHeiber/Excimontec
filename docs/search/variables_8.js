@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['x',['x',['../struct_coords.html#a59992d986e76375f31828d32c05cd15d',1,'Coords']]]
+  ['iqe_5ftime_5fcutoff',['IQE_time_cutoff',['../struct_parameters___o_p_v.html#a03f47eeffc8a2984c03208ca2f84717d',1,'Parameters_OPV']]]
 ];

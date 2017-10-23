@@ -15,21 +15,25 @@ var NAVTREE =
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
+        [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
-      [ "File List", "files.html", "files" ]
+      [ "File List", "files.html", "files" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"_event_8h_source.html",
-"struct_parameters___o_p_v.html#a388e0f507abb6742efa33b1ca765ee13"
+"_event_8cpp.html",
+"class_site___o_s_c.html#a704a0a9fe1bab69db8343f5225d5888e"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

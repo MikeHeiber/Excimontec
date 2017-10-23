@@ -29,7 +29,9 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
+   &#160;<span id="projectnumber">v1.0-beta.1</span>
    </div>
+   <div id="projectbrief">An open-source lattice KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more</div>
   </td>
  </tr>
  </tbody>
@@ -105,9 +107,8 @@ Inheritance diagram for Simulation:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a80fad3f57dfaf195a36f7bc49bc88279"><td class="memItemLeft" align="right" valign="top"><a id="a80fad3f57dfaf195a36f7bc49bc88279"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a80fad3f57dfaf195a36f7bc49bc88279">~Simulation</a> ()</td></tr>
-<tr class="memdesc:a80fad3f57dfaf195a36f7bc49bc88279"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor needed by the base class. <br /></td></tr>
+<tr class="memitem:a80fad3f57dfaf195a36f7bc49bc88279"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a80fad3f57dfaf195a36f7bc49bc88279">~Simulation</a> ()</td></tr>
+<tr class="memdesc:a80fad3f57dfaf195a36f7bc49bc88279"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor needed by the base class.  <a href="#a80fad3f57dfaf195a36f7bc49bc88279">More...</a><br /></td></tr>
 <tr class="separator:a80fad3f57dfaf195a36f7bc49bc88279"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b224cc5b36bcc8eb29689aff223de41"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a5b224cc5b36bcc8eb29689aff223de41">Simulation</a> ()</td></tr>
 <tr class="memdesc:a5b224cc5b36bcc8eb29689aff223de41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor that creates an empty <a class="el" href="class_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> object.  <a href="#a5b224cc5b36bcc8eb29689aff223de41">More...</a><br /></td></tr>
@@ -124,27 +125,23 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a7d88f18a1ba988d7e77b8be8de5b10d1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a7d88f18a1ba988d7e77b8be8de5b10d1">getN_events</a> () const</td></tr>
 <tr class="memdesc:a7d88f18a1ba988d7e77b8be8de5b10d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of events that are currently in the event list.  <a href="#a7d88f18a1ba988d7e77b8be8de5b10d1">More...</a><br /></td></tr>
 <tr class="separator:a7d88f18a1ba988d7e77b8be8de5b10d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52cb5564151421cbefaca56357738de7"><td class="memItemLeft" align="right" valign="top"><a id="a52cb5564151421cbefaca56357738de7"></a>
-long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a52cb5564151421cbefaca56357738de7">getN_events_executed</a> () const</td></tr>
-<tr class="memdesc:a52cb5564151421cbefaca56357738de7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of events that have been executed in the simulation. <br /></td></tr>
+<tr class="memitem:a52cb5564151421cbefaca56357738de7"><td class="memItemLeft" align="right" valign="top">long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a52cb5564151421cbefaca56357738de7">getN_events_executed</a> () const</td></tr>
+<tr class="memdesc:a52cb5564151421cbefaca56357738de7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of events that have been executed in the simulation.  <a href="#a52cb5564151421cbefaca56357738de7">More...</a><br /></td></tr>
 <tr class="separator:a52cb5564151421cbefaca56357738de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff40f268758bd9a0f390a649fc45c05e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#aff40f268758bd9a0f390a649fc45c05e">getId</a> () const</td></tr>
 <tr class="memdesc:aff40f268758bd9a0f390a649fc45c05e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the processor ID number for the processor that is running the simulation.  <a href="#aff40f268758bd9a0f390a649fc45c05e">More...</a><br /></td></tr>
 <tr class="separator:aff40f268758bd9a0f390a649fc45c05e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac00bce7c792fb67a75395c46c03efe0a"><td class="memItemLeft" align="right" valign="top"><a id="ac00bce7c792fb67a75395c46c03efe0a"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#ac00bce7c792fb67a75395c46c03efe0a">getTemp</a> () const</td></tr>
-<tr class="memdesc:ac00bce7c792fb67a75395c46c03efe0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of the temperature parameter. <br /></td></tr>
+<tr class="memitem:ac00bce7c792fb67a75395c46c03efe0a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#ac00bce7c792fb67a75395c46c03efe0a">getTemp</a> () const</td></tr>
+<tr class="memdesc:ac00bce7c792fb67a75395c46c03efe0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of the temperature parameter.  <a href="#ac00bce7c792fb67a75395c46c03efe0a">More...</a><br /></td></tr>
 <tr class="separator:ac00bce7c792fb67a75395c46c03efe0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a391ac262089c8bda8e76ce930b1db88b"><td class="memItemLeft" align="right" valign="top"><a id="a391ac262089c8bda8e76ce930b1db88b"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a391ac262089c8bda8e76ce930b1db88b">getTime</a> () const</td></tr>
-<tr class="memdesc:a391ac262089c8bda8e76ce930b1db88b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current simulation time in units of seconds. <br /></td></tr>
+<tr class="memitem:a391ac262089c8bda8e76ce930b1db88b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a391ac262089c8bda8e76ce930b1db88b">getTime</a> () const</td></tr>
+<tr class="memdesc:a391ac262089c8bda8e76ce930b1db88b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current simulation time in units of seconds.  <a href="#a391ac262089c8bda8e76ce930b1db88b">More...</a><br /></td></tr>
 <tr class="separator:a391ac262089c8bda8e76ce930b1db88b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7c8a49a4cc506b850891480e0aae512"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#ac7c8a49a4cc506b850891480e0aae512">isLoggingEnabled</a> () const</td></tr>
 <tr class="memdesc:ac7c8a49a4cc506b850891480e0aae512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether or not logging is enabled.  <a href="#ac7c8a49a4cc506b850891480e0aae512">More...</a><br /></td></tr>
 <tr class="separator:ac7c8a49a4cc506b850891480e0aae512"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a938de951b2766c6fb2b00cf9714caffa"><td class="memItemLeft" align="right" valign="top"><a id="a938de951b2766c6fb2b00cf9714caffa"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a938de951b2766c6fb2b00cf9714caffa">rand01</a> ()</td></tr>
-<tr class="memdesc:a938de951b2766c6fb2b00cf9714caffa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a uniform random number from 0 to 1, not including 0. <br /></td></tr>
+<tr class="memitem:a938de951b2766c6fb2b00cf9714caffa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a938de951b2766c6fb2b00cf9714caffa">rand01</a> ()</td></tr>
+<tr class="memdesc:a938de951b2766c6fb2b00cf9714caffa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a uniform random number from 0 to 1, not including 0.  <a href="#a938de951b2766c6fb2b00cf9714caffa">More...</a><br /></td></tr>
 <tr class="separator:a938de951b2766c6fb2b00cf9714caffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a825b9da67da43104137662694655bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a1a825b9da67da43104137662694655bd">setGeneratorSeed</a> (const int seed)</td></tr>
 <tr class="memdesc:a1a825b9da67da43104137662694655bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the random number generator seed.  <a href="#a1a825b9da67da43104137662694655bd">More...</a><br /></td></tr>
@@ -164,9 +161,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:aa6501dc60b4a3981f6ca44cec861364a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_object.html">Object</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#aa6501dc60b4a3981f6ca44cec861364a">findRecalcNeighbors</a> (const <a class="el" href="struct_coords.html">Coords</a> &amp;coords) const</td></tr>
 <tr class="memdesc:aa6501dc60b4a3981f6ca44cec861364a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locates and returns a vector of pointers to all <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects near the input coordinates within the Recalc_cutoff radius.  <a href="#aa6501dc60b4a3981f6ca44cec861364a">More...</a><br /></td></tr>
 <tr class="separator:aa6501dc60b4a3981f6ca44cec861364a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a620684b9ac1fb07344c4c2237ed9f352"><td class="memItemLeft" align="right" valign="top"><a id="a620684b9ac1fb07344c4c2237ed9f352"></a>
-std::vector&lt; <a class="el" href="class_object.html">Object</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a620684b9ac1fb07344c4c2237ed9f352">getAllObjectPtrs</a> () const</td></tr>
-<tr class="memdesc:a620684b9ac1fb07344c4c2237ed9f352"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of pointers to all <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects in the simulation. <br /></td></tr>
+<tr class="memitem:a620684b9ac1fb07344c4c2237ed9f352"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_object.html">Object</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a620684b9ac1fb07344c4c2237ed9f352">getAllObjectPtrs</a> () const</td></tr>
+<tr class="memdesc:a620684b9ac1fb07344c4c2237ed9f352"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of pointers to all <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects in the simulation.  <a href="#a620684b9ac1fb07344c4c2237ed9f352">More...</a><br /></td></tr>
 <tr class="separator:a620684b9ac1fb07344c4c2237ed9f352"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b10f51640088366d0d1278361817e8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a7b10f51640088366d0d1278361817e8d">moveObject</a> (<a class="el" href="class_object.html">Object</a> *object_ptr, const <a class="el" href="struct_coords.html">Coords</a> &amp;dest_coords)</td></tr>
 <tr class="memdesc:a7b10f51640088366d0d1278361817e8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the designated object to the designated destination coordinates.  <a href="#a7b10f51640088366d0d1278361817e8d">More...</a><br /></td></tr>
@@ -186,21 +182,17 @@ std::vector&lt; <a class="el" href="class_object.html">Object</a> * &gt;&#160;</
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a80d697e885e6fa3a0ab688b25b366194"><td class="memItemLeft" align="right" valign="top"><a id="a80d697e885e6fa3a0ab688b25b366194"></a>
-std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a80d697e885e6fa3a0ab688b25b366194">gen</a></td></tr>
-<tr class="memdesc:a80d697e885e6fa3a0ab688b25b366194"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mersenne Twister random number generator. <br /></td></tr>
+<tr class="memitem:a80d697e885e6fa3a0ab688b25b366194"><td class="memItemLeft" align="right" valign="top">std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a80d697e885e6fa3a0ab688b25b366194">gen</a></td></tr>
+<tr class="memdesc:a80d697e885e6fa3a0ab688b25b366194"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mersenne Twister random number generator.  <a href="#a80d697e885e6fa3a0ab688b25b366194">More...</a><br /></td></tr>
 <tr class="separator:a80d697e885e6fa3a0ab688b25b366194"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a741321a0bbc89d51b969abda469e6f96"><td class="memItemLeft" align="right" valign="top"><a id="a741321a0bbc89d51b969abda469e6f96"></a>
-std::ofstream *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a741321a0bbc89d51b969abda469e6f96">Logfile</a></td></tr>
-<tr class="memdesc:a741321a0bbc89d51b969abda469e6f96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an output file stream that is used to print log messages to a logfile when logging is enabled. <br /></td></tr>
+<tr class="memitem:a741321a0bbc89d51b969abda469e6f96"><td class="memItemLeft" align="right" valign="top">std::ofstream *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a741321a0bbc89d51b969abda469e6f96">Logfile</a></td></tr>
+<tr class="memdesc:a741321a0bbc89d51b969abda469e6f96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an output file stream that is used to print log messages to a logfile when logging is enabled.  <a href="#a741321a0bbc89d51b969abda469e6f96">More...</a><br /></td></tr>
 <tr class="separator:a741321a0bbc89d51b969abda469e6f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb2cf4feeb4d8292eeba8f9ef393c6a4"><td class="memItemLeft" align="right" valign="top"><a id="afb2cf4feeb4d8292eeba8f9ef393c6a4"></a>
-<a class="el" href="class_lattice.html">Lattice</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#afb2cf4feeb4d8292eeba8f9ef393c6a4">lattice</a></td></tr>
-<tr class="memdesc:afb2cf4feeb4d8292eeba8f9ef393c6a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a> object represents a three-dimensional lattice, its boundary conditions, and its occupancy. <br /></td></tr>
+<tr class="memitem:afb2cf4feeb4d8292eeba8f9ef393c6a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_lattice.html">Lattice</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#afb2cf4feeb4d8292eeba8f9ef393c6a4">lattice</a></td></tr>
+<tr class="memdesc:afb2cf4feeb4d8292eeba8f9ef393c6a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a> object represents a three-dimensional lattice, its boundary conditions, and its occupancy.  <a href="#afb2cf4feeb4d8292eeba8f9ef393c6a4">More...</a><br /></td></tr>
 <tr class="separator:afb2cf4feeb4d8292eeba8f9ef393c6a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f4615a7898fb83d09be5e7fad92bb47"><td class="memItemLeft" align="right" valign="top"><a id="a7f4615a7898fb83d09be5e7fad92bb47"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a7f4615a7898fb83d09be5e7fad92bb47">Error_found</a> = false</td></tr>
-<tr class="memdesc:a7f4615a7898fb83d09be5e7fad92bb47"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Error_found flag indicates whether or not there has been an error during one of the simulation operations. <br /></td></tr>
+<tr class="memitem:a7f4615a7898fb83d09be5e7fad92bb47"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a7f4615a7898fb83d09be5e7fad92bb47">Error_found</a> = false</td></tr>
+<tr class="memdesc:a7f4615a7898fb83d09be5e7fad92bb47"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Error_found flag indicates whether or not there has been an error during one of the simulation operations.  <a href="#a7f4615a7898fb83d09be5e7fad92bb47">More...</a><br /></td></tr>
 <tr class="separator:a7f4615a7898fb83d09be5e7fad92bb47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -209,6 +201,33 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2017 </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a80fad3f57dfaf195a36f7bc49bc88279"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80fad3f57dfaf195a36f7bc49bc88279">&#9670;&nbsp;</a></span>~Simulation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Simulation::~Simulation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default virtual destructor needed by the base class. </p>
+
+</div>
+</div>
 <a id="a5b224cc5b36bcc8eb29689aff223de41"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5b224cc5b36bcc8eb29689aff223de41">&#9670;&nbsp;</a></span>Simulation()</h2>
 
@@ -426,6 +445,33 @@ false if execution of the next event is unsuccessful. </dd></dl>
 
 </div>
 </div>
+<a id="a620684b9ac1fb07344c4c2237ed9f352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a620684b9ac1fb07344c4c2237ed9f352">&#9670;&nbsp;</a></span>getAllObjectPtrs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt; <a class="el" href="class_object.html">Object</a> * &gt; Simulation::getAllObjectPtrs </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a vector of pointers to all <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects in the simulation. </p>
+
+</div>
+</div>
 <a id="aff40f268758bd9a0f390a649fc45c05e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aff40f268758bd9a0f390a649fc45c05e">&#9670;&nbsp;</a></span>getId()</h2>
 
@@ -463,6 +509,63 @@ false if execution of the next event is unsuccessful. </dd></dl>
 
 <p>Gets the number of events that are currently in the event list. </p>
 <dl class="section return"><dt>Returns</dt><dd>the size of the events list </dd></dl>
+
+</div>
+</div>
+<a id="a52cb5564151421cbefaca56357738de7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52cb5564151421cbefaca56357738de7">&#9670;&nbsp;</a></span>getN_events_executed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long int Simulation::getN_events_executed </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the number of events that have been executed in the simulation. </p>
+
+</div>
+</div>
+<a id="ac00bce7c792fb67a75395c46c03efe0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac00bce7c792fb67a75395c46c03efe0a">&#9670;&nbsp;</a></span>getTemp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Simulation::getTemp </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the value of the temperature parameter. </p>
+
+</div>
+</div>
+<a id="a391ac262089c8bda8e76ce930b1db88b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a391ac262089c8bda8e76ce930b1db88b">&#9670;&nbsp;</a></span>getTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Simulation::getTime </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current simulation time in units of seconds. </p>
 
 </div>
 </div>
@@ -567,6 +670,25 @@ false if logging is disabled. </dd></dl>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a938de951b2766c6fb2b00cf9714caffa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a938de951b2766c6fb2b00cf9714caffa">&#9670;&nbsp;</a></span>rand01()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Simulation::rand01 </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generates a uniform random number from 0 to 1, not including 0. </p>
 
 </div>
 </div>
@@ -738,9 +860,106 @@ false if logging is disabled. </dd></dl>
 
 </div>
 </div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a7f4615a7898fb83d09be5e7fad92bb47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f4615a7898fb83d09be5e7fad92bb47">&#9670;&nbsp;</a></span>Error_found</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Simulation::Error_found = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The Error_found flag indicates whether or not there has been an error during one of the simulation operations. </p>
+
+</div>
+</div>
+<a id="a80d697e885e6fa3a0ab688b25b366194"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80d697e885e6fa3a0ab688b25b366194">&#9670;&nbsp;</a></span>gen</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mt19937 Simulation::gen</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Mersenne Twister random number generator. </p>
+
+</div>
+</div>
+<a id="afb2cf4feeb4d8292eeba8f9ef393c6a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb2cf4feeb4d8292eeba8f9ef393c6a4">&#9670;&nbsp;</a></span>lattice</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_lattice.html">Lattice</a> Simulation::lattice</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a> object represents a three-dimensional lattice, its boundary conditions, and its occupancy. </p>
+
+</div>
+</div>
+<a id="a741321a0bbc89d51b969abda469e6f96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a741321a0bbc89d51b969abda469e6f96">&#9670;&nbsp;</a></span>Logfile</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ofstream* Simulation::Logfile</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pointer to an output file stream that is used to print log messages to a logfile when logging is enabled. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>KMC_Lattice/<a class="el" href="_simulation_8h_source.html">Simulation.h</a></li>
-<li>KMC_Lattice/Simulation.cpp</li>
+<li>KMC_Lattice/<a class="el" href="_simulation_8cpp.html">Simulation.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -29,7 +29,9 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
+   &#160;<span id="projectnumber">v1.0-beta.1</span>
    </div>
+   <div id="projectbrief">An open-source lattice KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more</div>
   </td>
  </tr>
  </tbody>
@@ -112,13 +114,11 @@ Inheritance diagram for Event:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7704ec01ce91e673885792054214b3d2"><td class="memItemLeft" align="right" valign="top"><a id="a7704ec01ce91e673885792054214b3d2"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_event.html#a7704ec01ce91e673885792054214b3d2">~Event</a> ()</td></tr>
-<tr class="memdesc:a7704ec01ce91e673885792054214b3d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor needed by the base class. <br /></td></tr>
+<tr class="memitem:a7704ec01ce91e673885792054214b3d2"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_event.html#a7704ec01ce91e673885792054214b3d2">~Event</a> ()</td></tr>
+<tr class="memdesc:a7704ec01ce91e673885792054214b3d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor needed by the base class.  <a href="#a7704ec01ce91e673885792054214b3d2">More...</a><br /></td></tr>
 <tr class="separator:a7704ec01ce91e673885792054214b3d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a40dd4708297f7031e29b39e039ae10"><td class="memItemLeft" align="right" valign="top"><a id="a5a40dd4708297f7031e29b39e039ae10"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_event.html#a5a40dd4708297f7031e29b39e039ae10">Event</a> ()</td></tr>
-<tr class="memdesc:a5a40dd4708297f7031e29b39e039ae10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor that creates an empty <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> object. <br /></td></tr>
+<tr class="memitem:a5a40dd4708297f7031e29b39e039ae10"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_event.html#a5a40dd4708297f7031e29b39e039ae10">Event</a> ()</td></tr>
+<tr class="memdesc:a5a40dd4708297f7031e29b39e039ae10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor that creates an empty <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> object.  <a href="#a5a40dd4708297f7031e29b39e039ae10">More...</a><br /></td></tr>
 <tr class="separator:a5a40dd4708297f7031e29b39e039ae10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14b3f90f4b4d72ab1d0bf70f9b4cc907"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_event.html#a14b3f90f4b4d72ab1d0bf70f9b4cc907">calculateExecutionTime</a> (const double rate, <a class="el" href="class_simulation.html">Simulation</a> *sim_ptr)</td></tr>
 <tr class="memdesc:a14b3f90f4b4d72ab1d0bf70f9b4cc907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates and sets the execution time of the event.  <a href="#a14b3f90f4b4d72ab1d0bf70f9b4cc907">More...</a><br /></td></tr>
@@ -156,7 +156,54 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <p>This base class is designed to work with the <a class="el" href="class_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> class to construct a KMC simulation. This base class is intended to be extended to create classes that represent specific types of events. </p><dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2017 </dd></dl>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a7704ec01ce91e673885792054214b3d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7704ec01ce91e673885792054214b3d2">&#9670;&nbsp;</a></span>~Event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Event::~Event </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default virtual destructor needed by the base class. </p>
+
+</div>
+</div>
+<a id="a5a40dd4708297f7031e29b39e039ae10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a40dd4708297f7031e29b39e039ae10">&#9670;&nbsp;</a></span>Event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Event::Event </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default constructor that creates an empty <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> object. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a14b3f90f4b4d72ab1d0bf70f9b4cc907"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a14b3f90f4b4d72ab1d0bf70f9b4cc907">&#9670;&nbsp;</a></span>calculateExecutionTime()</h2>
 
@@ -420,7 +467,7 @@ false if the input is negative to indicate an error. </dd></dl>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>KMC_Lattice/<a class="el" href="_event_8h_source.html">Event.h</a></li>
-<li>KMC_Lattice/Event.cpp</li>
+<li>KMC_Lattice/<a class="el" href="_event_8cpp.html">Event.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
