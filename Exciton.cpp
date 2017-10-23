@@ -5,6 +5,9 @@
 
 #include "Exciton.h"
 
+using namespace std;
+using namespace Utils;
+
 // Initialize static class members
 const string Exciton::name = "Exciton";
 const string Exciton_Creation::name = "Exciton Creation";

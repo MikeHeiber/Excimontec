@@ -13,6 +13,7 @@
 #include <functional>
 
 using namespace std;
+using namespace Utils;
 
 struct Parameters_main{
     bool Enable_mpi;
@@ -28,7 +29,7 @@ struct Parameters_main{
 bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
-    string version = "v0.3-alpha";
+    string version = "v0.4-alpha";
     // Parameters
     bool End_sim = false;
     // File declaration
@@ -66,38 +67,48 @@ int main(int argc,char *argv[]){
     }
     cout << "Parameter loading complete!" << endl;
     // Initialize mpi options
-    if(params_main.Enable_mpi){
-        cout << "Initializing MPI options... ";
-        MPI_Init(&argc,&argv);
-        MPI_Comm_size(MPI_COMM_WORLD,&nproc);
-        MPI_Comm_rank(MPI_COMM_WORLD,&procid);
-        cout << "MPI initialization complete!" << endl;
-    }
+	if (params_main.Enable_mpi) {
+		cout << "Initializing MPI options... ";
+		MPI_Init(&argc, &argv);
+		MPI_Comm_size(MPI_COMM_WORLD, &nproc);
+		MPI_Comm_rank(MPI_COMM_WORLD, &procid);
+		cout << procid << ": MPI initialization complete!" << endl;
+	}
     // Morphology set import handling
-    if(params_main.Enable_mpi && params_main.Enable_import_morphology_set && params_main.N_test_morphologies!=nproc){
-        cout << "Error! The number of requested processors should equal the number of morphologies tested." << endl;
+    if(params_main.Enable_mpi && params_main.Enable_import_morphology_set && params_main.N_test_morphologies>nproc){
+        cout << "Error! The number of requested processors cannot be less than the number of morphologies tested." << endl;
         cout << "You have requested " << nproc << " processors for " << params_main.N_test_morphologies << " morphologies." << endl;
         return 0;
     }
-    if(params_main.Enable_import_morphology_set && params_main.Enable_mpi){
-        int* selected_morphologies = (int *)malloc(sizeof(int)*params_main.N_test_morphologies);
-        if(procid==0){
-            vector<int> morphology_set;
-            int selection;
-            for(int i=0;i<params_main.N_morphology_set_size;i++){
-                morphology_set.push_back(i);
-            }
-            default_random_engine gen((int)time(0));
-            for(int i=0;i<params_main.N_test_morphologies;i++){
-                uniform_int_distribution<int> dist(0,(int)morphology_set.size()-1);
-                auto randn = bind(dist,gen);
-                selection = randn();
-                selected_morphologies[i] = morphology_set[selection];
-                morphology_set.erase(morphology_set.begin()+selection);
-            }
-        }
+	if (params_main.Enable_import_morphology_set && params_main.Enable_mpi) {
+		int* selected_morphologies = (int *)malloc(sizeof(int)*nproc);
+		if (procid == 0) {
+			default_random_engine gen((int)time(0));
+			vector<int> morphology_set_original(params_main.N_test_morphologies);
+			vector<int> morphology_set;
+			// Select morphologies from the morphology set
+			for (int n = 0; n < params_main.N_morphology_set_size; n++) {
+				morphology_set.push_back(n);
+			}
+			shuffle(morphology_set.begin(), morphology_set.end(), gen);
+			for (int n = 0; n < params_main.N_test_morphologies; n++) {
+				morphology_set_original[n] = morphology_set[n];
+			}
+			// Assign morphologies to each processor
+			morphology_set.clear();
+			for (int n = 0; n < nproc; n++) {
+				// Fill morphology set when empty and shuffle
+				if ((int)morphology_set.size() == 0) {
+					morphology_set = morphology_set_original;
+					shuffle(morphology_set.begin(), morphology_set.end(), gen);
+				}
+				// Assign morphology from the back of the set and remove it from the set
+				selected_morphologies[n] = morphology_set.back();
+				morphology_set.pop_back();
+			}
+		}
         MPI_Barrier(MPI_COMM_WORLD);
-        MPI_Bcast(selected_morphologies,params_main.N_test_morphologies,MPI_INT,0,MPI_COMM_WORLD);
+        MPI_Bcast(selected_morphologies,nproc,MPI_INT,0,MPI_COMM_WORLD);
         // Parse input morphology set file format
         int pos = (int)params_main.Morphology_set_format.find("#");
         string prefix = params_main.Morphology_set_format.substr(0,pos);
@@ -119,6 +130,9 @@ int main(int argc,char *argv[]){
             return 0;
         }
     }
+	else {
+		params_opv.Enable_import_morphology = false;
+	}
     // Setup file output
     cout << procid << ": Creating output files..." << endl;
     if(params_opv.Enable_logging){
@@ -154,12 +168,12 @@ int main(int argc,char *argv[]){
         success = sim.executeNextEvent();
         if(!success){
             cout << procid << ": Event execution failed, simulation will now terminate." << endl;
-            break;
+			return 0;
         }
         // Check if simulation has finished
         End_sim = sim.checkFinished();
         // Output status
-        if(sim.getN_events_executed()%100000==0){
+        if(sim.getN_events_executed()%1000000==0){
             sim.outputStatus();
         }
         // Reset logfile
@@ -173,10 +187,32 @@ int main(int argc,char *argv[]){
     if(params_opv.Enable_logging){
         logfile.close();
     }
-    cout << procid << ": Simulation finished." << endl;
-    time_end = time(NULL);
-    elapsedtime = (int)difftime(time_end,time_start);
-    // Output simulation results for each processor
+	cout << procid << ": Simulation finished." << endl;
+	time_end = time(NULL);
+	elapsedtime = (int)difftime(time_end, time_start);
+	// Output results
+	if (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test) {
+		if (params_opv.Enable_ToF_test) {
+			ss << "Charge_extraction_map" << procid << ".txt";
+			string filename = ss.str();
+			ss.str("");
+			vector<string> extraction_data = sim.getChargeExtractionMap(params_opv.ToF_polaron_type);
+			outputVectorToFile(extraction_data, filename);
+		}
+		if (params_opv.Enable_IQE_test) {
+			ss << "Electron_extraction_map" << procid << ".txt";
+			string filename = ss.str();
+			ss.str("");
+			vector<string> extraction_data = sim.getChargeExtractionMap(false);
+			outputVectorToFile(extraction_data, filename);
+			ss << "Hole_extraction_map" << procid << ".txt";
+			filename = ss.str();
+			ss.str("");
+			extraction_data = sim.getChargeExtractionMap(true);
+			outputVectorToFile(extraction_data, filename);
+		}
+	}
+    // Output result summary for each processor
     ss << "results" << procid << ".txt";
     resultsfile.open(ss.str().c_str());
     ss.str("");
@@ -241,9 +277,11 @@ int main(int argc,char *argv[]){
                 analysisfile << nproc*sim.getN_excitons_recombined() << " total excitons tested." << endl;
                 analysisfile << "Exciton diffusion length is " << vector_avg(diffusion_data) << " ± " << vector_stdev(diffusion_data) << " nm.\n";
             }
-
         }
         if(params_opv.Enable_ToF_test){
+			int N_transient_cycles = sim.getN_transient_cycles();
+			int N_transient_cycles_sum;
+			MPI_Reduce(&N_transient_cycles, &N_transient_cycles_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
             vector<double> transit_times = MPI_gatherVectors(sim.getTransitTimeData());
             int transit_attempts = ((sim.getN_electrons_collected()>sim.getN_holes_collected()) ? sim.getN_electrons_created() : (sim.getN_holes_created()));
             int transit_attempts_total;
@@ -253,17 +291,26 @@ int main(int argc,char *argv[]){
             vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities());
             vector<double> times = sim.getToFTransientTimes();
             if(procid==0){
+				// ToF mian results output
                 vector<double> mobilities = sim.calculateMobilities(transit_times);
+				double electric_field = fabs(params_opv.Bias) / (1e-7*params_opv.Height*params_opv.Unit_size);
+				ofstream tof_resultsfile;
+				ss << "ToF_results.txt";
+				tof_resultsfile.open(ss.str().c_str());
+				ss.str("");
+				tof_resultsfile << "Electric Field (V/cm),Mean Transit Time (s),Mean Mobility (cm^2 V^-1 s^-1)" << endl;
+				tof_resultsfile << electric_field << "," << vector_avg(transit_times) << "," << vector_avg(mobilities) << endl;
+				tof_resultsfile.close();
                 // ToF transient output
                 ofstream transientfile;
                 ss << "ToF_average_transients.txt";
                 transientfile.open(ss.str().c_str());
                 ss.str("");
-                transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV)" << endl;
-                double volume = params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3);
+                transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
+                double total_volume = nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size,3);
                 for(int i=0;i<(int)velocities.size();i++){
                     if(counts[i]!=0){
-                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(nproc*volume) << "," << params_opv.Height*params_opv.Unit_size*1e-7*velocities[i]/(fabs(params_opv.Bias)*counts[i]) << "," << energies[i]/counts[i] << endl;
+                        transientfile << times[i] << "," << 1000*Elementary_charge*1e-7*velocities[i]/(N_transient_cycles_sum*total_volume) << "," << (velocities[i]/counts[i])/electric_field << "," << energies[i]/counts[i] << "," << counts[i]/(N_transient_cycles_sum*total_volume) << endl;
                     }
                     else{
                         transientfile << times[i] << "," << 0 << "," << 0 << "," << 0 << endl;

@@ -13,9 +13,6 @@
 #include <algorithm>
 #include <numeric>
 
-using namespace std;
-using namespace Utils;
-
 struct Parameters_OPV : Parameters_Simulation{
     // Additional General Parameters
     double Bias;
@@ -27,7 +24,7 @@ struct Parameters_OPV : Parameters_Simulation{
     bool Enable_random_blend;
     double Acceptor_conc;
     bool Enable_import_morphology;
-    ifstream* Morphology_file;
+    std::ifstream* Morphology_file;
     // Test Parameters
     int N_tests;
     bool Enable_exciton_diffusion_test;
@@ -116,10 +113,10 @@ class Site_OSC : public Site{
         double getEnergy() const{return *energy_it;}
         short getType() const{return type;}
 		void setEnergy(const double energy) { *energy_it = energy; }
-        void setEnergyIt(const vector<double>::iterator it){energy_it = it;}
+        void setEnergyIt(const std::vector<double>::iterator it){energy_it = it;}
         void setType(const short site_type){type = site_type;}
     private:
-        vector<double>::iterator energy_it;
+		std::vector<double>::iterator energy_it;
         short type = 0; //  type 1 represent donor, type 2 represents acceptor
 };
 
@@ -131,28 +128,29 @@ class OSC_Sim : public Simulation{
         bool init(const Parameters_OPV& params,const int id);
         double calculateDiffusionLength_avg() const;
         double calculateDiffusionLength_stdev() const;
-		vector<pair<double,double>> calculateDOSCorrelation(const double cutoff_radius);
-        vector<double> calculateTransitTimeDist(const vector<double>& data,const int counts) const;
+		std::vector<std::pair<double,double>> calculateDOSCorrelation(const double cutoff_radius);
+		std::vector<double> calculateTransitTimeDist(const std::vector<double>& data,const int counts) const;
         double calculateTransitTime_avg() const;
         double calculateTransitTime_stdev() const;
-		vector<double> calculateMobilities(const vector<double>& transit_times) const;
+		std::vector<double> calculateMobilities(const std::vector<double>& transit_times) const;
         double calculateMobility_avg() const;
         double calculateMobility_stdev() const;
         bool checkFinished() const;
 		bool checkParameters(const Parameters_OPV& params) const;
         bool executeNextEvent();
-        vector<double> getDiffusionData() const;
-		vector<pair<double, double>> getDOSCorrelationData() const;
-        vector<int> getDynamicsTransientExcitons() const;
-        vector<int> getDynamicsTransientElectrons() const;
-        vector<int> getDynamicsTransientHoles() const;
-        vector<double> getDynamicsTransientTimes() const;
-		vector<double> getSiteEnergies(const short site_type) const;
-        vector<int> getToFTransientCounts() const;
-        vector<double> getToFTransientEnergies() const;
-        vector<double> getToFTransientTimes() const;
-        vector<double> getToFTransientVelocities() const;
-        vector<double> getTransitTimeData() const;
+		std::vector<double> getDiffusionData() const;
+		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
+		std::vector<int> getDynamicsTransientExcitons() const;
+		std::vector<int> getDynamicsTransientElectrons() const;
+		std::vector<int> getDynamicsTransientHoles() const;
+		std::vector<double> getDynamicsTransientTimes() const;
+		std::vector<double> getSiteEnergies(const short site_type) const;
+		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
+		std::vector<int> getToFTransientCounts() const;
+		std::vector<double> getToFTransientEnergies() const;
+		std::vector<double> getToFTransientTimes() const;
+		std::vector<double> getToFTransientVelocities() const;
+		std::vector<double> getTransitTimeData() const;
         int getN_excitons_created() const;
         int getN_excitons_created(const short site_type) const;
         int getN_excitons_dissociated() const;
@@ -165,6 +163,7 @@ class OSC_Sim : public Simulation{
         int getN_holes_recombined() const;
         int getN_geminate_recombinations() const;
         int getN_bimolecular_recombinations() const;
+		int getN_transient_cycles() const;
         void outputStatus();
 		void reassignSiteEnergies();
     protected:
@@ -180,7 +179,7 @@ class OSC_Sim : public Simulation{
         bool Enable_random_blend;
         double Acceptor_conc;
         bool Enable_import_morphology;
-        ifstream* Morphology_file;
+		std::ifstream* Morphology_file;
         // Test Parameters
         int N_tests;
         bool Enable_exciton_diffusion_test;
@@ -268,45 +267,49 @@ class OSC_Sim : public Simulation{
         bool isLightOn;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
+		double ToF_creation_time;
+		int ToF_index_prev;
         // Site Data Structure
-        vector<Site_OSC> sites;
+		std::vector<Site_OSC> sites;
         // Object Data Structures
-        list<Exciton> excitons;
-        list<Polaron> electrons;
-        list<Polaron> holes;
+		std::list<Exciton> excitons;
+		std::list<Polaron> electrons;
+		std::list<Polaron> holes;
         // Event Data Structures
-        list<Exciton_Hop> exciton_hop_events;
-        list<Exciton_Recombination> exciton_recombination_events;
-        list<Exciton_Dissociation> exciton_dissociation_events;
-		list<Exciton_Exciton_Annihilation> exciton_exciton_annihilation_events;
-		list<Exciton_Polaron_Annihilation> exciton_polaron_annihilation_events;
-		list<Exciton_Intersystem_Crossing> exciton_intersystem_crossing_events;
-        list<Polaron_Hop> electron_hop_events;
-        list<Polaron_Hop> hole_hop_events;
-        list<Polaron_Recombination> polaron_recombination_events;
-        list<Polaron_Extraction> electron_extraction_events;
-        list<Polaron_Extraction> hole_extraction_events;
+		std::list<Exciton_Hop> exciton_hop_events;
+		std::list<Exciton_Recombination> exciton_recombination_events;
+		std::list<Exciton_Dissociation> exciton_dissociation_events;
+		std::list<Exciton_Exciton_Annihilation> exciton_exciton_annihilation_events;
+		std::list<Exciton_Polaron_Annihilation> exciton_polaron_annihilation_events;
+		std::list<Exciton_Intersystem_Crossing> exciton_intersystem_crossing_events;
+		std::list<Polaron_Hop> electron_hop_events;
+		std::list<Polaron_Hop> hole_hop_events;
+		std::list<Polaron_Recombination> polaron_recombination_events;
+		std::list<Polaron_Extraction> electron_extraction_events;
+		std::list<Polaron_Extraction> hole_extraction_events;
         // Additional Data Structures
-        vector<double> Coulomb_table;
-        vector<double> E_potential;
-        vector<double> site_energies_donor;
-        vector<double> site_energies_acceptor;
-		vector<pair<double, double>> DOS_correlation_data;
-        vector<double> diffusion_distances;
-        list<int> ToF_start_positions;
-        list<int> ToF_index_prev;
-        list<double> ToF_start_times;
-        list<double> ToF_start_energies;
-        vector<double> transient_times;
-        vector<int> transient_counts;
-        vector<double> transient_velocities;
-        vector<double> transient_energies;
-        vector<double> transit_times;
-        vector<int> transient_excitons;
-        vector<int> transient_electrons;
-        vector<int> transient_holes;
+		std::vector<double> Coulomb_table;
+		std::vector<double> E_potential;
+		std::vector<double> site_energies_donor;
+		std::vector<double> site_energies_acceptor;
+		std::vector<std::pair<double, double>> DOS_correlation_data;
+		std::vector<double> diffusion_distances;
+		std::vector<int> ToF_polaron_tags;
+		std::vector<int> ToF_positions_prev;
+		std::vector<double> ToF_times_prev;
+		std::vector<double> ToF_energies_prev;
+		std::vector<int> Electron_extraction_data;
+		std::vector<int> Hole_extraction_data;
+		std::vector<double> transient_times;
+		std::vector<int> transient_counts;
+		std::vector<double> transient_velocities;
+		std::vector<double> transient_energies;
+		std::vector<double> transit_times;
+		std::vector<int> transient_excitons;
+		std::vector<int> transient_electrons;
+		std::vector<int> transient_holes;
         Exciton_Creation exciton_creation_event;
-        list<Event*>::iterator exciton_creation_it;
+		std::list<Event*>::iterator exciton_creation_it;
         // Additional Counters
         int N_donor_sites;
         int N_acceptor_sites;
@@ -333,43 +336,44 @@ class OSC_Sim : public Simulation{
         int N_bimolecular_recombinations = 0;
         int N_electron_surface_recombinations = 0;
         int N_hole_surface_recombinations = 0;
+		int N_transient_cycles = 0;
         // Additional Functions
-        double calculateCoulomb(const list<Polaron>::iterator,const Coords& coords) const;
+        double calculateCoulomb(const std::list<Polaron>::iterator,const Coords& coords) const;
         double calculateCoulomb(const bool charge,const Coords& coords) const;
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(Object* object_ptr);
-        void calculateObjectListEvents(const vector<Object*>& object_ptr_vec);
+        void calculateObjectListEvents(const std::vector<Object*>& object_ptr_vec);
         void calculatePolaronEvents(Object* object_ptr);
 		void createCorrelatedDOS(const double correlation_length);
         bool createImportedMorphology();
         void deleteObject(Object* object_ptr);
         // Exciton Event Execution Functions
-        bool executeExcitonCreation(const list<Event*>::iterator event_it);
-        bool executeExcitonHop(const list<Event*>::iterator event_it);
-        bool executeExcitonRecombine(const list<Event*>::iterator event_it);
-        bool executeExcitonDissociation(const list<Event*>::iterator event_it);
-        bool executeExcitonIntersystemCrossing(const list<Event*>::iterator event_it);
-        bool executeExcitonExcitonAnnihilation(const list<Event*>::iterator event_it);
-        bool executeExcitonPolaronAnnihilation(const list<Event*>::iterator event_it);
+        bool executeExcitonCreation();
+        bool executeExcitonHop(const std::list<Event*>::iterator event_it);
+        bool executeExcitonRecombine(const std::list<Event*>::iterator event_it);
+        bool executeExcitonDissociation(const std::list<Event*>::iterator event_it);
+        bool executeExcitonIntersystemCrossing(const std::list<Event*>::iterator event_it);
+        bool executeExcitonExcitonAnnihilation(const std::list<Event*>::iterator event_it);
+        bool executeExcitonPolaronAnnihilation(const std::list<Event*>::iterator event_it);
         // General Event Functions
-        bool executeObjectHop(const list<Event*>::iterator event_it);
+        bool executeObjectHop(const std::list<Event*>::iterator event_it);
         // Polaron Event Execution Functions
-        bool executePolaronHop(const list<Event*>::iterator event_it);
-        bool executePolaronRecombination(const list<Event*>::iterator event_it);
-        bool executePolaronExtraction(const list<Event*>::iterator event_it);
+        bool executePolaronHop(const std::list<Event*>::iterator event_it);
+        bool executePolaronRecombination(const std::list<Event*>::iterator event_it);
+        bool executePolaronExtraction(const std::list<Event*>::iterator event_it);
         void generateExciton(const Coords& coords);
         void generateElectron(const Coords& coords,int tag);
         void generateHole(const Coords& coords,int tag);
         void generateDynamicsExcitons();
         void generateToFPolarons();
-        list<Exciton>::iterator getExcitonIt(const Object* object_ptr);
-        list<Polaron>::iterator getPolaronIt(const Object* object_ptr);
+		std::list<Exciton>::iterator getExcitonIt(const Object* object_ptr);
+		std::list<Polaron>::iterator getPolaronIt(const Object* object_ptr);
         double getSiteEnergy(const Coords& coords) const;
         short getSiteType(const Coords& coords) const;
-        void initializeArchitecture();
+        bool initializeArchitecture();
         bool siteContainsHole(const Coords& coords);
         void updateDynamicsData();
-        void updateToFData(const Object* object_ptr);
+        void updateToFData();
 };
 
 #endif //OSC_SIM_H

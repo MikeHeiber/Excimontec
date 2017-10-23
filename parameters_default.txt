@@ -1,4 +1,4 @@
-## OPV Parameters for Excimontec v0.3-alpha
+## OPV Parameters for Excimontec v0.4-alpha
 --------------------------------------------------------------
 ## Computation Parameters
 true //Enable_mpi
@@ -114,5 +114,5 @@ false //Enable_power_kernel
 ## Coulomb Interaction Parameters
 3.5 //Dielectric_donor
 3.5 //Dielectric_acceptor
-15 //Coulomb_cutoff (nm)
+25 //Coulomb_cutoff (nm)
 --------------------------------------------------------------

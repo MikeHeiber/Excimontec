@@ -1,0 +1,496 @@
+\hypertarget{namespace_utils}{}\section{Utils Namespace Reference}
+\label{namespace_utils}\index{Utils@{Utils}}
+
+
+This namespace provides useful constants and utility functions.  
+
+
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::pair$<$ double, double $>$ $>$ \hyperlink{namespace_utils_adcb2e98774b12bc12264034913547a2c}{calculate\+Probability\+Hist} (const std\+::vector$<$ double $>$ \&data, int num\+\_\+bins)
+\begin{DoxyCompactList}\small\item\em Calculates the probability histogram for the input data vector using the input number of bins. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::pair$<$ double, double $>$ $>$ \hyperlink{namespace_utils_a0818230f8ad279ef7ca217f3cba81f76}{calculate\+Probability\+Hist} (const std\+::vector$<$ double $>$ \&data, double bin\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Calculates the probability histogram for the input data vector using the input bin size. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::pair$<$ double, double $>$ $>$ \hyperlink{namespace_utils_a08553f36886a36456e8111585029e467}{calculate\+Probability\+Hist} (const std\+::vector$<$ double $>$ \&data, const double bin\+\_\+size, const int num\+\_\+bins)
+\begin{DoxyCompactList}\small\item\em Calculates the probability histogram for the input data vector using the input bin size and input number of bins. \end{DoxyCompactList}\item 
+void \hyperlink{namespace_utils_af296d2aa8f889f67fe515fc641c5f5fe}{create\+Exponential\+D\+O\+S\+Vector} (std\+::vector$<$ double $>$ \&data, const double mode, const double urbach\+\_\+energy, std\+::mt19937 \&gen)
+\begin{DoxyCompactList}\small\item\em Creates a vector of doubles that has a custom asymmetric distribution with an exponential tail. \end{DoxyCompactList}\item 
+void \hyperlink{namespace_utils_a2ce45ade7d6d4f2995b595da3ebbaaec}{create\+Gaussian\+D\+O\+S\+Vector} (std\+::vector$<$ double $>$ \&data, const double mean, const double stdev, std\+::mt19937 \&gen)
+\begin{DoxyCompactList}\small\item\em Creates a vector of doubles that has a Gaussian distribution. \end{DoxyCompactList}\item 
+bool \hyperlink{namespace_utils_a98a0cc670327fc21e272a07cbf5025ec}{import\+Boolean\+Param} (const std\+::string \&input, bool \&error\+\_\+status)
+\begin{DoxyCompactList}\small\item\em Extracts a boolean value from a string containing \char`\"{}true\char`\"{} or \char`\"{}false\char`\"{}. \end{DoxyCompactList}\item 
+double \hyperlink{namespace_utils_a49411c9d4c7a065dbcf237aa27a84023}{integrate\+Data} (const std\+::vector$<$ std\+::pair$<$ double, double $>$$>$ \&data)
+\begin{DoxyCompactList}\small\item\em Numerically integrates a vector of x-\/y data using the trapezoid rule. \end{DoxyCompactList}\item 
+double \hyperlink{namespace_utils_af68995497777ee14d812c65991a4046f}{interpolate\+Data} (const std\+::vector$<$ std\+::pair$<$ double, double $>$$>$ \&data, const double x\+\_\+val)
+\begin{DoxyCompactList}\small\item\em Linearly interpolates an x-\/y data set to determine the interpolated y-\/value corresponding to an input x-\/value. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \hyperlink{namespace_utils_a71eeb04d74f890da3d27128c37fcff78}{M\+P\+I\+\_\+calculate\+Vector\+Avg} (const std\+::vector$<$ double $>$ \&input\+\_\+vector)
+\begin{DoxyCompactList}\small\item\em Uses M\+PI to calculate the element-\/wise average vector from separate vectors coming from different processors. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \hyperlink{namespace_utils_a0a17d0ad939418dc745bcfd194ce2bc1}{M\+P\+I\+\_\+calculate\+Vector\+Sum} (const std\+::vector$<$ double $>$ \&input\+\_\+vector)
+\begin{DoxyCompactList}\small\item\em Uses M\+PI to calculate the element-\/wise sum vector from separate vectors coming from different processors. \end{DoxyCompactList}\item 
+std\+::vector$<$ int $>$ \hyperlink{namespace_utils_ad7b634b14633046c6da126945d688aaf}{M\+P\+I\+\_\+calculate\+Vector\+Sum} (const std\+::vector$<$ int $>$ \&input\+\_\+vector)
+\begin{DoxyCompactList}\small\item\em Uses M\+PI to calculate the element-\/wise sum vector from separate vectors coming from different processors. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \hyperlink{namespace_utils_aee439dad386e2477d34968311b166c85}{M\+P\+I\+\_\+gather\+Vectors} (const std\+::vector$<$ double $>$ \&input\+\_\+vector)
+\begin{DoxyCompactList}\small\item\em Uses M\+PI to gather vectors from separate processors to build one big vector containing all of the data. \end{DoxyCompactList}\item 
+std\+::string \hyperlink{namespace_utils_af9ceee3373ffe317f07d177cf0dfe056}{remove\+Whitespace} (const std\+::string \&str)
+\begin{DoxyCompactList}\small\item\em Removes leading and trailing spaces surrounding a string. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\double \hyperlink{namespace_utils_aa76a204af4dd4c3eb151691825de2eb2}{array\+\_\+avg} (const T data\mbox{[}$\,$\mbox{]}, const int array\+\_\+size)
+\begin{DoxyCompactList}\small\item\em This template function calculates and returns the average value in double format when given an array of numerical datatypes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\double \hyperlink{namespace_utils_a25d09c704b5ae03f01cf76b6de10aa19}{array\+\_\+stdev} (const T data\mbox{[}$\,$\mbox{]}, const int array\+\_\+size)
+\begin{DoxyCompactList}\small\item\em This template function calculates and returns the standard deviation in double format when given an array of numerical datatypes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename base\+\_\+type $>$ }\\base\+\_\+type \hyperlink{namespace_utils_affd19edaa58a3f8425e1f7b4c9233f8a}{intpow} (const base\+\_\+type base, const int exponent)
+\begin{DoxyCompactList}\small\item\em This template function calculates and returns the results of an integer power operation on a base numerical datatype. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{namespace_utils_ab76081fb0fa0e9e1633b1b2255db4164}{output\+Vector\+To\+File} (std\+::vector$<$ T $>$ \&vec, std\+::string filename)
+\begin{DoxyCompactList}\small\item\em This template function outputs the input data vector to a file with the specified filename. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{namespace_utils_a652ab00e72bce852c2b9798ff3e1a60b}{output\+Vector\+To\+File} (std\+::vector$<$ std\+::pair$<$ T, T $>$$>$ \&vec, std\+::string filename)
+\begin{DoxyCompactList}\small\item\em This template function outputs the input data pair vector to a file with the specified filename. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{namespace_utils_a5f64d00eec0b50ac5bd119652c99d01b}{remove\+Duplicates} (std\+::vector$<$ T $>$ \&vec)
+\begin{DoxyCompactList}\small\item\em This template function efficienctly removes the duplicate entries from an input vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename A $>$ }\\double \hyperlink{namespace_utils_acbc030ce708229ea393215fe13e6377b}{vector\+\_\+avg} (const std\+::vector$<$ T, A $>$ \&data)
+\begin{DoxyCompactList}\small\item\em This template function calculates and returns the average value in double format when given a vector of numerical datatypes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename A $>$ }\\double \hyperlink{namespace_utils_a6bfa9b066d7c0967807d588024c15d4e}{vector\+\_\+stdev} (const std\+::vector$<$ T, A $>$ \&data)
+\begin{DoxyCompactList}\small\item\em This template function calculates and returns the standard deviation in double format when given a vector of numerical datatypes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This namespace provides useful constants and utility functions. 
+
+\begin{DoxyCopyright}{Copyright}
+M\+IT License. For more information, see the L\+I\+C\+E\+N\+SE file that accompanies this software package. 
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Michael C. Heiber 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2017 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespace_utils_aa76a204af4dd4c3eb151691825de2eb2}\label{namespace_utils_aa76a204af4dd4c3eb151691825de2eb2}} 
+\index{Utils@{Utils}!array\+\_\+avg@{array\+\_\+avg}}
+\index{array\+\_\+avg@{array\+\_\+avg}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{array\+\_\+avg()}{array\_avg()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+double Utils\+::array\+\_\+avg (\begin{DoxyParamCaption}\item[{const T}]{data\mbox{[}$\,$\mbox{]},  }\item[{const int}]{array\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+This template function calculates and returns the average value in double format when given an array of numerical datatypes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the array of numerical data. \\
+\hline
+{\em array\+\_\+size} & is the size of the input data array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The average of the data set in double format. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a25d09c704b5ae03f01cf76b6de10aa19}\label{namespace_utils_a25d09c704b5ae03f01cf76b6de10aa19}} 
+\index{Utils@{Utils}!array\+\_\+stdev@{array\+\_\+stdev}}
+\index{array\+\_\+stdev@{array\+\_\+stdev}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{array\+\_\+stdev()}{array\_stdev()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+double Utils\+::array\+\_\+stdev (\begin{DoxyParamCaption}\item[{const T}]{data\mbox{[}$\,$\mbox{]},  }\item[{const int}]{array\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+This template function calculates and returns the standard deviation in double format when given an array of numerical datatypes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the array of numerical data. \\
+\hline
+{\em array\+\_\+size} & is the size of the input data array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The standard deviation of the data set in double format. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_adcb2e98774b12bc12264034913547a2c}\label{namespace_utils_adcb2e98774b12bc12264034913547a2c}} 
+\index{Utils@{Utils}!calculate\+Probability\+Hist@{calculate\+Probability\+Hist}}
+\index{calculate\+Probability\+Hist@{calculate\+Probability\+Hist}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{calculate\+Probability\+Hist()}{calculateProbabilityHist()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::pair$<$ double, double $>$ $>$ Utils\+::calculate\+Probability\+Hist (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{data,  }\item[{int}]{num\+\_\+bins }\end{DoxyParamCaption})}
+
+
+
+Calculates the probability histogram for the input data vector using the input number of bins. 
+
+Linearly spaced bins are automatically created from the minimum value to the maximum value of the data set. The function outputs bin-\/centered x values and probability y values in a x-\/y pair vector. 
+\begin{DoxyParams}{Parameters}
+{\em data} & is the input data vector. \\
+\hline
+{\em num\+\_\+bins} & is the desired number of bins. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector of x-\/y pairs consisting of bin-\/centered x values and probability y values. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a0818230f8ad279ef7ca217f3cba81f76}\label{namespace_utils_a0818230f8ad279ef7ca217f3cba81f76}} 
+\index{Utils@{Utils}!calculate\+Probability\+Hist@{calculate\+Probability\+Hist}}
+\index{calculate\+Probability\+Hist@{calculate\+Probability\+Hist}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{calculate\+Probability\+Hist()}{calculateProbabilityHist()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::pair$<$ double, double $>$ $>$ Utils\+::calculate\+Probability\+Hist (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{data,  }\item[{double}]{bin\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Calculates the probability histogram for the input data vector using the input bin size. 
+
+Linearly spaced bins are automatically created from the minimum value to the maximum value of the data set. with the specified bin spacing. The function outputs bin-\/centered x values and probability y values in a x-\/y pair vector. 
+\begin{DoxyParams}{Parameters}
+{\em data} & is the input data vector. \\
+\hline
+{\em bin\+\_\+size} & is the desired bin size. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector of x-\/y pairs consisting of bin-\/centered x values and probability y values. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a08553f36886a36456e8111585029e467}\label{namespace_utils_a08553f36886a36456e8111585029e467}} 
+\index{Utils@{Utils}!calculate\+Probability\+Hist@{calculate\+Probability\+Hist}}
+\index{calculate\+Probability\+Hist@{calculate\+Probability\+Hist}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{calculate\+Probability\+Hist()}{calculateProbabilityHist()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::pair$<$ double, double $>$ $>$ Utils\+::calculate\+Probability\+Hist (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{data,  }\item[{const double}]{bin\+\_\+size,  }\item[{const int}]{num\+\_\+bins }\end{DoxyParamCaption})}
+
+
+
+Calculates the probability histogram for the input data vector using the input bin size and input number of bins. 
+
+Linearly spaced bins are automatically created starting from the minimum value of the data set. The function outputs bin-\/centered x values and probability y values in a x-\/y pair vector. 
+\begin{DoxyParams}{Parameters}
+{\em data} & is the input data vector. \\
+\hline
+{\em num\+\_\+bins} & is the number of bins that will be created. \\
+\hline
+{\em bin\+\_\+size} & is the input bin size. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector of x-\/y pairs consisting of bin-\/centered x values and probability y values. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_af296d2aa8f889f67fe515fc641c5f5fe}\label{namespace_utils_af296d2aa8f889f67fe515fc641c5f5fe}} 
+\index{Utils@{Utils}!create\+Exponential\+D\+O\+S\+Vector@{create\+Exponential\+D\+O\+S\+Vector}}
+\index{create\+Exponential\+D\+O\+S\+Vector@{create\+Exponential\+D\+O\+S\+Vector}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{create\+Exponential\+D\+O\+S\+Vector()}{createExponentialDOSVector()}}
+{\footnotesize\ttfamily void Utils\+::create\+Exponential\+D\+O\+S\+Vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{data,  }\item[{const double}]{mode,  }\item[{const double}]{urbach\+\_\+energy,  }\item[{std\+::mt19937 \&}]{gen }\end{DoxyParamCaption})}
+
+
+
+Creates a vector of doubles that has a custom asymmetric distribution with an exponential tail. 
+
+The created distribution is Gaussian in the positive direction relative to the mode and exponential in the negative direction. On the Gaussian side, the standard deviation is calculated relative to the urbach energy chosen for the exponential side, so that the distribution function is continuous. 
+\begin{DoxyParams}{Parameters}
+{\em data} & is the data vector where the random numbers will be placed, which must be preallocated to the desired size. \\
+\hline
+{\em mode} & is the value of the peak of the distribution. \\
+\hline
+{\em urbach\+\_\+energy} & is the parameter that detemines the shape of the exponential tail side of the distribution. \\
+\hline
+{\em gen} & is a Mersenne twister random number generator used to randomly draw numbers from the distribution. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespace_utils_a2ce45ade7d6d4f2995b595da3ebbaaec}\label{namespace_utils_a2ce45ade7d6d4f2995b595da3ebbaaec}} 
+\index{Utils@{Utils}!create\+Gaussian\+D\+O\+S\+Vector@{create\+Gaussian\+D\+O\+S\+Vector}}
+\index{create\+Gaussian\+D\+O\+S\+Vector@{create\+Gaussian\+D\+O\+S\+Vector}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{create\+Gaussian\+D\+O\+S\+Vector()}{createGaussianDOSVector()}}
+{\footnotesize\ttfamily void Utils\+::create\+Gaussian\+D\+O\+S\+Vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$ \&}]{data,  }\item[{const double}]{mean,  }\item[{const double}]{stdev,  }\item[{std\+::mt19937 \&}]{gen }\end{DoxyParamCaption})}
+
+
+
+Creates a vector of doubles that has a Gaussian distribution. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the data vector where the numbers will be placed, which must be preallocated to the desired size. \\
+\hline
+{\em mean} & is the position of the peak and center of the distribution. \\
+\hline
+{\em stdev} & is the standard deviation of the distribution, which defines the width of the peak. \\
+\hline
+{\em gen} & is a Mersenne twister random number generator used to randomly draw numbers from the distribution. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespace_utils_a98a0cc670327fc21e272a07cbf5025ec}\label{namespace_utils_a98a0cc670327fc21e272a07cbf5025ec}} 
+\index{Utils@{Utils}!import\+Boolean\+Param@{import\+Boolean\+Param}}
+\index{import\+Boolean\+Param@{import\+Boolean\+Param}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{import\+Boolean\+Param()}{importBooleanParam()}}
+{\footnotesize\ttfamily bool Utils\+::import\+Boolean\+Param (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{input,  }\item[{bool \&}]{error\+\_\+status }\end{DoxyParamCaption})}
+
+
+
+Extracts a boolean value from a string containing \char`\"{}true\char`\"{} or \char`\"{}false\char`\"{}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & is the input string. \\
+\hline
+{\em error\+\_\+status} & is an input boolean that is used to indicate an error with the import process. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the input string is \char`\"{}true\char`\"{}. 
+
+flase if the input string is \char`\"{}flase\char`\"{}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a49411c9d4c7a065dbcf237aa27a84023}\label{namespace_utils_a49411c9d4c7a065dbcf237aa27a84023}} 
+\index{Utils@{Utils}!integrate\+Data@{integrate\+Data}}
+\index{integrate\+Data@{integrate\+Data}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{integrate\+Data()}{integrateData()}}
+{\footnotesize\ttfamily double Utils\+::integrate\+Data (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::pair$<$ double, double $>$$>$ \&}]{data }\end{DoxyParamCaption})}
+
+
+
+Numerically integrates a vector of x-\/y data using the trapezoid rule. 
+
+\begin{DoxyWarning}{Warning}
+The function assumes that the data is sorted by the x values. 
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the data vector containing x-\/y data pairs. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the numerically calculated area. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_af68995497777ee14d812c65991a4046f}\label{namespace_utils_af68995497777ee14d812c65991a4046f}} 
+\index{Utils@{Utils}!interpolate\+Data@{interpolate\+Data}}
+\index{interpolate\+Data@{interpolate\+Data}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{interpolate\+Data()}{interpolateData()}}
+{\footnotesize\ttfamily double Utils\+::interpolate\+Data (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::pair$<$ double, double $>$$>$ \&}]{data,  }\item[{const double}]{x\+\_\+val }\end{DoxyParamCaption})}
+
+
+
+Linearly interpolates an x-\/y data set to determine the interpolated y-\/value corresponding to an input x-\/value. 
+
+\begin{DoxyWarning}{Warning}
+The function assumes that the data is sorted by the x values. 
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the data vector containing x-\/y data pairs. \\
+\hline
+{\em x\+\_\+val} & is the x-\/value that will be interpolated to. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the interpolated y-\/value when the input x-\/value lies within the range of the input data. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_affd19edaa58a3f8425e1f7b4c9233f8a}\label{namespace_utils_affd19edaa58a3f8425e1f7b4c9233f8a}} 
+\index{Utils@{Utils}!intpow@{intpow}}
+\index{intpow@{intpow}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{intpow()}{intpow()}}
+{\footnotesize\ttfamily template$<$typename base\+\_\+type $>$ \\
+base\+\_\+type Utils\+::intpow (\begin{DoxyParamCaption}\item[{const base\+\_\+type}]{base,  }\item[{const int}]{exponent }\end{DoxyParamCaption})}
+
+
+
+This template function calculates and returns the results of an integer power operation on a base numerical datatype. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em base} & is the base of the integer power operation and can be any numerical type. \\
+\hline
+{\em exponent} & is the integer exponent for the integer power operation. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The result of the integer power operation in whichever datatype format was input with the base. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a71eeb04d74f890da3d27128c37fcff78}\label{namespace_utils_a71eeb04d74f890da3d27128c37fcff78}} 
+\index{Utils@{Utils}!M\+P\+I\+\_\+calculate\+Vector\+Avg@{M\+P\+I\+\_\+calculate\+Vector\+Avg}}
+\index{M\+P\+I\+\_\+calculate\+Vector\+Avg@{M\+P\+I\+\_\+calculate\+Vector\+Avg}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{M\+P\+I\+\_\+calculate\+Vector\+Avg()}{MPI\_calculateVectorAvg()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ Utils\+::\+M\+P\+I\+\_\+calculate\+Vector\+Avg (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{input\+\_\+vector }\end{DoxyParamCaption})}
+
+
+
+Uses M\+PI to calculate the element-\/wise average vector from separate vectors coming from different processors. 
+
+Each processor calls this function and sends an input vector. Upon function return, processor 0 receives the average vector and all of the other processors receive an empty vector. 
+\begin{DoxyParams}{Parameters}
+{\em input\+\_\+vector} & is the input data from the processor calling the function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector that is the element-\/wise average of all input vectors from each processor, when called on processor 0. 
+
+An empty vector when called on other processors. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a0a17d0ad939418dc745bcfd194ce2bc1}\label{namespace_utils_a0a17d0ad939418dc745bcfd194ce2bc1}} 
+\index{Utils@{Utils}!M\+P\+I\+\_\+calculate\+Vector\+Sum@{M\+P\+I\+\_\+calculate\+Vector\+Sum}}
+\index{M\+P\+I\+\_\+calculate\+Vector\+Sum@{M\+P\+I\+\_\+calculate\+Vector\+Sum}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{M\+P\+I\+\_\+calculate\+Vector\+Sum()}{MPI\_calculateVectorSum()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ Utils\+::\+M\+P\+I\+\_\+calculate\+Vector\+Sum (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{input\+\_\+vector }\end{DoxyParamCaption})}
+
+
+
+Uses M\+PI to calculate the element-\/wise sum vector from separate vectors coming from different processors. 
+
+Each processor calls this function and sends an input vector. Upon function return, processor 0 receives the sum vector and all of the other processors receive an empty vector. 
+\begin{DoxyParams}{Parameters}
+{\em input\+\_\+vector} & is the input data from the processor calling the function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector that is the element-\/wise sum of all input vectors from each processor, when called on processor 0. 
+
+An empty vector when called on other processors. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_ad7b634b14633046c6da126945d688aaf}\label{namespace_utils_ad7b634b14633046c6da126945d688aaf}} 
+\index{Utils@{Utils}!M\+P\+I\+\_\+calculate\+Vector\+Sum@{M\+P\+I\+\_\+calculate\+Vector\+Sum}}
+\index{M\+P\+I\+\_\+calculate\+Vector\+Sum@{M\+P\+I\+\_\+calculate\+Vector\+Sum}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{M\+P\+I\+\_\+calculate\+Vector\+Sum()}{MPI\_calculateVectorSum()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::vector$<$ int $>$ Utils\+::\+M\+P\+I\+\_\+calculate\+Vector\+Sum (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ int $>$ \&}]{input\+\_\+vector }\end{DoxyParamCaption})}
+
+
+
+Uses M\+PI to calculate the element-\/wise sum vector from separate vectors coming from different processors. 
+
+Each processor calls this function and sends an input vector. Upon function return, processor 0 receives the sum vector and all of the other processors receive an empty vector. 
+\begin{DoxyParams}{Parameters}
+{\em input\+\_\+vector} & is the input data from the processor calling the function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector that is the element-\/wise sum of all input vectors from each processor, when called on processor 0. 
+
+An empty vector when called on other processors. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_aee439dad386e2477d34968311b166c85}\label{namespace_utils_aee439dad386e2477d34968311b166c85}} 
+\index{Utils@{Utils}!M\+P\+I\+\_\+gather\+Vectors@{M\+P\+I\+\_\+gather\+Vectors}}
+\index{M\+P\+I\+\_\+gather\+Vectors@{M\+P\+I\+\_\+gather\+Vectors}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{M\+P\+I\+\_\+gather\+Vectors()}{MPI\_gatherVectors()}}
+{\footnotesize\ttfamily std\+::vector$<$ double $>$ Utils\+::\+M\+P\+I\+\_\+gather\+Vectors (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ double $>$ \&}]{input\+\_\+vector }\end{DoxyParamCaption})}
+
+
+
+Uses M\+PI to gather vectors from separate processors to build one big vector containing all of the data. 
+
+Each processor calls this function and sends an input vector. Upon function return, processor 0 receives the large data vector and all of the othe rprocessors receive an empty vector. 
+\begin{DoxyParams}{Parameters}
+{\em input\+\_\+vector} & is the input data from the processor calling the function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A vector that is a concatenation of all input vectors from each processor, when called on processor 0. 
+
+An empty vector when called on other processors. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_ab76081fb0fa0e9e1633b1b2255db4164}\label{namespace_utils_ab76081fb0fa0e9e1633b1b2255db4164}} 
+\index{Utils@{Utils}!output\+Vector\+To\+File@{output\+Vector\+To\+File}}
+\index{output\+Vector\+To\+File@{output\+Vector\+To\+File}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{output\+Vector\+To\+File()}{outputVectorToFile()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void Utils\+::output\+Vector\+To\+File (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $>$ \&}]{vec,  }\item[{std\+::string}]{filename }\end{DoxyParamCaption})}
+
+
+
+This template function outputs the input data vector to a file with the specified filename. 
+
+\begin{DoxyWarning}{Warning}
+This function may overwrite existing files if not used carefully. 
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em vec} & is the input data vector. \\
+\hline
+{\em filename} & is the input file name. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespace_utils_a652ab00e72bce852c2b9798ff3e1a60b}\label{namespace_utils_a652ab00e72bce852c2b9798ff3e1a60b}} 
+\index{Utils@{Utils}!output\+Vector\+To\+File@{output\+Vector\+To\+File}}
+\index{output\+Vector\+To\+File@{output\+Vector\+To\+File}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{output\+Vector\+To\+File()}{outputVectorToFile()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void Utils\+::output\+Vector\+To\+File (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::pair$<$ T, T $>$$>$ \&}]{vec,  }\item[{std\+::string}]{filename }\end{DoxyParamCaption})}
+
+
+
+This template function outputs the input data pair vector to a file with the specified filename. 
+
+\begin{DoxyWarning}{Warning}
+This function may overwrite existing files if not used carefully. 
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em vec} & is the input data pair vector. \\
+\hline
+{\em filename} & is the input file name. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespace_utils_a5f64d00eec0b50ac5bd119652c99d01b}\label{namespace_utils_a5f64d00eec0b50ac5bd119652c99d01b}} 
+\index{Utils@{Utils}!remove\+Duplicates@{remove\+Duplicates}}
+\index{remove\+Duplicates@{remove\+Duplicates}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{remove\+Duplicates()}{removeDuplicates()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void Utils\+::remove\+Duplicates (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $>$ \&}]{vec }\end{DoxyParamCaption})}
+
+
+
+This template function efficienctly removes the duplicate entries from an input vector. 
+
+This algorithm allow efficient removal of duplicate vector objects when $>$ or $<$ comparison operators do not exist. 
+\begin{DoxyParams}{Parameters}
+{\em vec} & is the input vector to be operated on. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{namespace_utils_af9ceee3373ffe317f07d177cf0dfe056}\label{namespace_utils_af9ceee3373ffe317f07d177cf0dfe056}} 
+\index{Utils@{Utils}!remove\+Whitespace@{remove\+Whitespace}}
+\index{remove\+Whitespace@{remove\+Whitespace}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{remove\+Whitespace()}{removeWhitespace()}}
+{\footnotesize\ttfamily std\+::string Utils\+::remove\+Whitespace (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{str }\end{DoxyParamCaption})}
+
+
+
+Removes leading and trailing spaces surrounding a string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & is the input string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a new string that will have the surrounding spaces removed. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_acbc030ce708229ea393215fe13e6377b}\label{namespace_utils_acbc030ce708229ea393215fe13e6377b}} 
+\index{Utils@{Utils}!vector\+\_\+avg@{vector\+\_\+avg}}
+\index{vector\+\_\+avg@{vector\+\_\+avg}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{vector\+\_\+avg()}{vector\_avg()}}
+{\footnotesize\ttfamily template$<$typename T , typename A $>$ \\
+double Utils\+::vector\+\_\+avg (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ T, A $>$ \&}]{data }\end{DoxyParamCaption})}
+
+
+
+This template function calculates and returns the average value in double format when given a vector of numerical datatypes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the vector of numerical data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The average of the data set in double format. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespace_utils_a6bfa9b066d7c0967807d588024c15d4e}\label{namespace_utils_a6bfa9b066d7c0967807d588024c15d4e}} 
+\index{Utils@{Utils}!vector\+\_\+stdev@{vector\+\_\+stdev}}
+\index{vector\+\_\+stdev@{vector\+\_\+stdev}!Utils@{Utils}}
+\subsubsection{\texorpdfstring{vector\+\_\+stdev()}{vector\_stdev()}}
+{\footnotesize\ttfamily template$<$typename T , typename A $>$ \\
+double Utils\+::vector\+\_\+stdev (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ T, A $>$ \&}]{data }\end{DoxyParamCaption})}
+
+
+
+This template function calculates and returns the standard deviation in double format when given a vector of numerical datatypes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & is the vector of numerical data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The standard deviation of the data set in double format. 
+\end{DoxyReturn}
