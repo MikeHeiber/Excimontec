@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Michael C. Heiber
+// Copyright (c) 2018 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -15,7 +15,7 @@
 
 struct Parameters_OPV : Parameters_Simulation{
     // Additional General Parameters
-    double Bias;
+    double Internal_potential;
     // Morphology Parameters
     bool Enable_neat; // Neat takes on donor properties
     bool Enable_bilayer;
@@ -170,7 +170,7 @@ class OSC_Sim : public Simulation{
 
     private:
         // Additional General Parameters
-        double Bias;
+        double Internal_potential;
         // Morphology Parameters
         bool Enable_neat; // Neat takes on donor properties
         bool Enable_bilayer;
@@ -276,6 +276,8 @@ class OSC_Sim : public Simulation{
 		std::list<Polaron> electrons;
 		std::list<Polaron> holes;
         // Event Data Structures
+		std::list<Exciton_Creation> exciton_creation_events;
+		std::list<Event*>::iterator exciton_creation_it;
 		std::list<Exciton_Hop> exciton_hop_events;
 		std::list<Exciton_Recombination> exciton_recombination_events;
 		std::list<Exciton_Dissociation> exciton_dissociation_events;
@@ -308,8 +310,6 @@ class OSC_Sim : public Simulation{
 		std::vector<int> transient_excitons;
 		std::vector<int> transient_electrons;
 		std::vector<int> transient_holes;
-        Exciton_Creation exciton_creation_event;
-		std::list<Event*>::iterator exciton_creation_it;
         // Additional Counters
         int N_donor_sites;
         int N_acceptor_sites;
@@ -341,16 +341,16 @@ class OSC_Sim : public Simulation{
         double calculateCoulomb(const std::list<Polaron>::iterator,const Coords& coords) const;
         double calculateCoulomb(const bool charge,const Coords& coords) const;
         Coords calculateExcitonCreationCoords();
-        void calculateExcitonEvents(Object* object_ptr);
+        void calculateExcitonEvents(Exciton* exciton_ptr);
         void calculateObjectListEvents(const std::vector<Object*>& object_ptr_vec);
-        void calculatePolaronEvents(Object* object_ptr);
+        void calculatePolaronEvents(Polaron* polaron_ptr);
 		void createCorrelatedDOS(const double correlation_length);
         bool createImportedMorphology();
         void deleteObject(Object* object_ptr);
         // Exciton Event Execution Functions
         bool executeExcitonCreation();
         bool executeExcitonHop(const std::list<Event*>::iterator event_it);
-        bool executeExcitonRecombine(const std::list<Event*>::iterator event_it);
+        bool executeExcitonRecombination(const std::list<Event*>::iterator event_it);
         bool executeExcitonDissociation(const std::list<Event*>::iterator event_it);
         bool executeExcitonIntersystemCrossing(const std::list<Event*>::iterator event_it);
         bool executeExcitonExcitonAnnihilation(const std::list<Event*>::iterator event_it);
@@ -361,7 +361,7 @@ class OSC_Sim : public Simulation{
         bool executePolaronHop(const std::list<Event*>::iterator event_it);
         bool executePolaronRecombination(const std::list<Event*>::iterator event_it);
         bool executePolaronExtraction(const std::list<Event*>::iterator event_it);
-        void generateExciton(const Coords& coords);
+        Coords generateExciton();
         void generateElectron(const Coords& coords,int tag);
         void generateHole(const Coords& coords,int tag);
         void generateDynamicsExcitons();

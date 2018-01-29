@@ -1,4 +1,4 @@
-## OPV Parameters for Excimontec v0.4-alpha
+## OPV Parameters for Excimontec v1.0-beta.2
 --------------------------------------------------------------
 ## Computation Parameters
 true //Enable_mpi
@@ -14,7 +14,7 @@ false //Enable_periodic_z
 1.0 //Unit_size (nm)
 300 //Temperature (K)
 3 //Recalc_cutoff (nm) (must not be less than any of the event cutoffs)
--1.0 //Bias (V)
+-1.0 //Internal_potential (V)
 --------------------------------------------------------------
 ## Device Architecture Parameters
 false //Enable_neat (uses donor properties)
@@ -41,6 +41,7 @@ hole //ToF_polaron_type (electron or hole)
 20 //ToF_pnts_per_decade
 false //Enable_IQE_test
 1e-4 //IQE_time_cutoff (s) (simulation time)
+false //Enable_extraction_map_output
 false //Enable_dynamics_test
 false //Enable_dynamics_extraction
 1e16 //Dynamics_initial_exciton_conc (cm^-3)

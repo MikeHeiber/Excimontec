@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Michael C. Heiber
+// Copyright (c) 2018 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -23,13 +23,14 @@ struct Parameters_main{
     string Morphology_set_format;
     int N_test_morphologies;
     int N_morphology_set_size;
+	bool Enable_extraction_map_output;
 };
 
 //Declare Functions
-bool importParameters(ifstream * inputfile,Parameters_main& params_main,Parameters_OPV& params);
+bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc,char *argv[]){
-    string version = "v0.4-alpha";
+    string version = "v1.0-beta.2";
     // Parameters
     bool End_sim = false;
     // File declaration
@@ -51,7 +52,7 @@ int main(int argc,char *argv[]){
     bool success;
     // Start timer
     time_start = time(NULL);
-    // Import parameters and options from file and command line arguments
+    // Import parameters and options from parameter file and command line arguments
     cout << "Loading input parameters from file... " << endl;
     parameterfilename = argv[1];
     parameterfile.open(parameterfilename.c_str(),ifstream::in);
@@ -59,7 +60,7 @@ int main(int argc,char *argv[]){
         cout << "Error loading parameter file.  Program will now exit." << endl;
         return 0;
     }
-    success = importParameters(&parameterfile,params_main,params_opv);
+    success = importParameters(parameterfile,params_main,params_opv);
     parameterfile.close();
     if(!success){
         cout << "Error importing parameters from parameter file.  Program will now exit." << endl;
@@ -83,14 +84,14 @@ int main(int argc,char *argv[]){
 	if (params_main.Enable_import_morphology_set && params_main.Enable_mpi) {
 		int* selected_morphologies = (int *)malloc(sizeof(int)*nproc);
 		if (procid == 0) {
-			default_random_engine gen((int)time(0));
+			default_random_engine generator((int)time(0));
 			vector<int> morphology_set_original(params_main.N_test_morphologies);
 			vector<int> morphology_set;
 			// Select morphologies from the morphology set
 			for (int n = 0; n < params_main.N_morphology_set_size; n++) {
 				morphology_set.push_back(n);
 			}
-			shuffle(morphology_set.begin(), morphology_set.end(), gen);
+			shuffle(morphology_set.begin(), morphology_set.end(), generator);
 			for (int n = 0; n < params_main.N_test_morphologies; n++) {
 				morphology_set_original[n] = morphology_set[n];
 			}
@@ -100,7 +101,7 @@ int main(int argc,char *argv[]){
 				// Fill morphology set when empty and shuffle
 				if ((int)morphology_set.size() == 0) {
 					morphology_set = morphology_set_original;
-					shuffle(morphology_set.begin(), morphology_set.end(), gen);
+					shuffle(morphology_set.begin(), morphology_set.end(), generator);
 				}
 				// Assign morphology from the back of the set and remove it from the set
 				selected_morphologies[n] = morphology_set.back();
@@ -178,7 +179,7 @@ int main(int argc,char *argv[]){
         }
         // Reset logfile
         if(params_opv.Enable_logging){
-            if(sim.getN_events_executed()%10000==0){
+            if(sim.getN_events_executed()%1000==0){
                 logfile.close();
                 logfile.open(logfilename.c_str());
             }
@@ -191,7 +192,7 @@ int main(int argc,char *argv[]){
 	time_end = time(NULL);
 	elapsedtime = (int)difftime(time_end, time_start);
 	// Output results
-	if (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test) {
+	if (params_main.Enable_extraction_map_output && (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test)) {
 		if (params_opv.Enable_ToF_test) {
 			ss << "Charge_extraction_map" << procid << ".txt";
 			string filename = ss.str();
@@ -293,7 +294,7 @@ int main(int argc,char *argv[]){
             if(procid==0){
 				// ToF mian results output
                 vector<double> mobilities = sim.calculateMobilities(transit_times);
-				double electric_field = fabs(params_opv.Bias) / (1e-7*params_opv.Height*params_opv.Unit_size);
+				double electric_field = fabs(params_opv.Internal_potential) / (1e-7*params_opv.Height*params_opv.Unit_size);
 				ofstream tof_resultsfile;
 				ss << "ToF_results.txt";
 				tof_resultsfile.open(ss.str().c_str());
@@ -413,14 +414,14 @@ int main(int argc,char *argv[]){
     return 0;
 }
 
-bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameters_OPV& params){
+bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameters_OPV& params){
     string line;
     string var;
     size_t pos;
     vector<string> stringvars;
     bool error_status = false;
-    while(inputfile->good()){
-        getline(*inputfile,line);
+    while(inputfile.good()){
+        getline(inputfile,line);
         if((line.substr(0,2)).compare("--")!=0 && (line.substr(0,2)).compare("##")!=0){
             pos = line.find("/",0);
             var = line.substr(0,pos-1);
@@ -477,7 +478,7 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     params.Recalc_cutoff = atoi(stringvars[i].c_str());
     i++;
     // Additional General Parameters
-    params.Bias = atof(stringvars[i].c_str());
+    params.Internal_potential = atof(stringvars[i].c_str());
     i++;
     // Film Architecture Parameters
     params.Enable_neat = importBooleanParam(stringvars[i],error_status);
@@ -566,6 +567,12 @@ bool importParameters(ifstream* inputfile,Parameters_main& params_main,Parameter
     i++;
     params.IQE_time_cutoff = atof(stringvars[i].c_str());
     i++;
+	params_main.Enable_extraction_map_output = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting charge extraction map output settings." << endl;
+		return false;
+	}
+	i++;
     params.Enable_dynamics_test = importBooleanParam(stringvars[i],error_status);
     if(error_status){
         cout << "Error enabling the dynamics test." << endl;
