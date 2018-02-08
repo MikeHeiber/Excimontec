@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fret_5fcutoff',['FRET_cutoff',['../struct_parameters___o_p_v.html#a5fc92d26c86f41eb905da56629d483ef',1,'Parameters_OPV']]]
+  ['generator',['generator',['../class_simulation.html#a4c1d9071749e0fd93e70380cafb28417',1,'Simulation']]]
 ];

@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['unit_5fsize',['Unit_size',['../struct_parameters___lattice.html#a5f9628b968ba4206a7650c774827b1f0',1,'Parameters_Lattice::Unit_size()'],['../struct_parameters___simulation.html#ab5dda6868bc9359d97a614f027734349',1,'Parameters_Simulation::Unit_size()']]],
-  ['updatetime',['updateTime',['../class_simulation.html#a1affa7d0725c3d10663095619dcb9208',1,'Simulation']]],
-  ['utils',['Utils',['../namespace_utils.html',1,'']]],
-  ['utils_2ecpp',['Utils.cpp',['../_utils_8cpp.html',1,'']]],
-  ['utils_2eh',['Utils.h',['../_utils_8h.html',1,'']]]
+  ['vector_5favg',['vector_avg',['../namespace_utils.html#acbc030ce708229ea393215fe13e6377b',1,'Utils']]],
+  ['vector_5fstdev',['vector_stdev',['../namespace_utils.html#a6bfa9b066d7c0967807d588024c15d4e',1,'Utils']]]
 ];

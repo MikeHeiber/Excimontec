@@ -1,5 +1,7 @@
 var class_polaron___extraction =
 [
-    [ "calculateExecutionTime", "class_polaron___extraction.html#afd2c6e23a838dfb3ea788f1ec3fb360a", null ],
-    [ "getName", "class_polaron___extraction.html#a30cc8c9489f69e24feda42c035adc9cf", null ]
+    [ "Polaron_Extraction", "class_polaron___extraction.html#a2ac84785d2265bc1ee0e23a7fbcee03f", null ],
+    [ "Polaron_Extraction", "class_polaron___extraction.html#ad3fd4585a4caf22be10c8730540b23db", null ],
+    [ "calculateExecutionTime", "class_polaron___extraction.html#a1a67c4f94b3ec9f0d36687931c080a6d", null ],
+    [ "getEventType", "class_polaron___extraction.html#a321feea52f3bed67e566e52682208f45", null ]
 ];

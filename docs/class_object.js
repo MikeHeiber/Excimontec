@@ -7,11 +7,12 @@ var class_object =
     [ "getCoords", "class_object.html#a08df08943dc634609fa69b356a37d73f", null ],
     [ "getCreationTime", "class_object.html#a6f91c3f8b61cb9c9a8db662ac07d92e9", null ],
     [ "getEventIt", "class_object.html#aa7c58e0319b7715c8d36f38ca7acf03e", null ],
-    [ "getName", "class_object.html#ade517616d51cd9ab581ec5afeb37b313", null ],
+    [ "getObjectType", "class_object.html#a79449834c55900dd1d96fb7c530e4515", null ],
     [ "getTag", "class_object.html#aa9653577e8d0ac4b7b86d23d12f8b31b", null ],
     [ "incrementDX", "class_object.html#a3d7c877f4aa179d9a56050c5faddc18d", null ],
     [ "incrementDY", "class_object.html#a9df010818be72d15bad7985bf8a89ba0", null ],
     [ "incrementDZ", "class_object.html#a440b267c478f5d63db1954bdbd543408", null ],
+    [ "resetInitialCoords", "class_object.html#a1d1115b941cc6965dddf5510cf49bbee", null ],
     [ "setCoords", "class_object.html#a34a164e4709e5daaba7a38c3d61ae617", null ],
     [ "setEventIt", "class_object.html#ad5025bd84ae91d6426f458f32e582293", null ]
 ];

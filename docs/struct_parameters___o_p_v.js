@@ -1,7 +1,6 @@
 var struct_parameters___o_p_v =
 [
     [ "Acceptor_conc", "struct_parameters___o_p_v.html#a21c46734660f2b2a55dbac798f6ea74b", null ],
-    [ "Bias", "struct_parameters___o_p_v.html#ac88bf3fcfbd5dbd502a05709e47d6540", null ],
     [ "Coulomb_cutoff", "struct_parameters___o_p_v.html#ac5388c27ae33a5c648404cfce065a873", null ],
     [ "Dielectric_acceptor", "struct_parameters___o_p_v.html#a73a3db08abc5bc8b3b6e478cc4373769", null ],
     [ "Dielectric_donor", "struct_parameters___o_p_v.html#a0c61716c4f210645b188a55d89645d04", null ],
@@ -43,6 +42,7 @@ var struct_parameters___o_p_v =
     [ "FRET_cutoff", "struct_parameters___o_p_v.html#a5fc92d26c86f41eb905da56629d483ef", null ],
     [ "Homo_acceptor", "struct_parameters___o_p_v.html#ab0c38a77995655ced34190093ac1143c", null ],
     [ "Homo_donor", "struct_parameters___o_p_v.html#ad46868a18b99d4bcd71dd1d69a51663d", null ],
+    [ "Internal_potential", "struct_parameters___o_p_v.html#ae102e54304cbdcb804e2c78a60093c6e", null ],
     [ "IQE_time_cutoff", "struct_parameters___o_p_v.html#a03f47eeffc8a2984c03208ca2f84717d", null ],
     [ "Lumo_acceptor", "struct_parameters___o_p_v.html#a6fb516e12ab3e48294e13fdde4fb006c", null ],
     [ "Lumo_donor", "struct_parameters___o_p_v.html#a20bbec19017e73934b1cf68909c9171c", null ],
@@ -74,6 +74,8 @@ var struct_parameters___o_p_v =
     [ "Reorganization_donor", "struct_parameters___o_p_v.html#a05158466d7973c098d8b6b5b4b43143c", null ],
     [ "Singlet_lifetime_acceptor", "struct_parameters___o_p_v.html#ab8ebcc4989f4b0fd5bfcd0ae59fb3ee6", null ],
     [ "Singlet_lifetime_donor", "struct_parameters___o_p_v.html#a4d772923d973c80fbd4b8fe18fec9f16", null ],
+    [ "Singlet_localization_acceptor", "struct_parameters___o_p_v.html#abd57d59ec0099983c1f288fb0e4a20b1", null ],
+    [ "Singlet_localization_donor", "struct_parameters___o_p_v.html#a8c027a9085d8bc5bd0a4e8385acd83ce", null ],
     [ "Thickness_acceptor", "struct_parameters___o_p_v.html#afa28203f6b02b27ac415491bf1cb4f8a", null ],
     [ "Thickness_donor", "struct_parameters___o_p_v.html#a4c49f81e20e235e52f943003f0c14fa3", null ],
     [ "ToF_initial_polarons", "struct_parameters___o_p_v.html#aa8d1f06c2e6e94b0b6bbf419d7b838aa", null ],
