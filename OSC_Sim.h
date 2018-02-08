@@ -379,8 +379,8 @@ class OSC_Sim : public Simulation{
         int N_hole_surface_recombinations = 0;
 		int N_transient_cycles = 0;
         // Additional Functions
-        double calculateCoulomb(const std::list<Polaron>::iterator,const Coords& coords) const;
-        double calculateCoulomb(const bool charge,const Coords& coords) const;
+		double calculateCoulomb(const std::list<Polaron>::iterator polaron_it, const Coords& coords) const;
+		double calculateCoulomb(const bool charge, const Coords& coords) const;
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(Exciton* exciton_ptr);
         void calculateObjectListEvents(const std::vector<Object*>& object_ptr_vec);

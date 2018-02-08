@@ -230,101 +230,101 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
 	}
 }
 
-double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it,const Coords& coords) const{
-    static const double avgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
-    static const double image_interactions = (Elementary_charge/(16*Pi*avgDielectric*Vacuum_permittivity))*1e9;
-    double Energy = 0;
-    double distance;
-    int distance_sq_lat;
+double OSC_Sim::calculateCoulomb(const list<Polaron>::iterator polaron_it, const Coords& coords) const {
+	static const double avgDielectric = (Dielectric_donor + Dielectric_acceptor) / 2;
+	static const double image_interactions = (Elementary_charge / (16 * Pi*avgDielectric*Vacuum_permittivity))*1e9;
+	double Energy = 0;
+	double distance;
+	int distance_sq_lat;
 	bool charge = polaron_it->getCharge();
-    static const int range = (int)ceil((Coulomb_cutoff/ lattice.getUnitSize())*(Coulomb_cutoff/ lattice.getUnitSize()));
-    // Loop through electrons
-    for (auto const &item : electrons){
+	static const int range = (int)ceil((Coulomb_cutoff / lattice.getUnitSize())*(Coulomb_cutoff / lattice.getUnitSize()));
+	// Loop through electrons
+	for (auto const &item : electrons) {
 		if (!charge && item.getTag() == polaron_it->getTag()) {
 			continue;
 		}
-        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,item.getCoords());
-        if(!(distance_sq_lat>range)){
-            if(!charge){
-                Energy += Coulomb_table[distance_sq_lat];
-            }
-            else{
-                Energy -= Coulomb_table[distance_sq_lat];
-            }
-        }
-    }
-    // Loop through holes
-    for (auto const &item : holes){
+		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
+		if (!(distance_sq_lat > range)) {
+			if (!charge) {
+				Energy += Coulomb_table[distance_sq_lat];
+			}
+			else {
+				Energy -= Coulomb_table[distance_sq_lat];
+			}
+		}
+	}
+	// Loop through holes
+	for (auto const &item : holes) {
 		if (charge && item.getTag() == polaron_it->getTag()) {
 			continue;
 		}
-        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,item.getCoords());
-        if(!(distance_sq_lat>range)){
-            if(charge){
-                Energy += Coulomb_table[distance_sq_lat];
-            }
-            else{
-                Energy -= Coulomb_table[distance_sq_lat];
-            }
-        }
-    }
-    // Add electrode image charge interactions
-    if(!lattice.isZPeriodic() && !Enable_ToF_test){
-        distance = lattice.getUnitSize()*((double)(lattice.getHeight()-coords.z)-0.5);
-        if(!((distance-0.0001)>Coulomb_cutoff)){
-            Energy -= image_interactions/distance;
-        }
-        distance = lattice.getUnitSize()*((double)(coords.z+1)-0.5);
-        if(!((distance-0.0001)>Coulomb_cutoff)){
-            Energy -= image_interactions/distance;
-        }
-    }
-    return Energy;
+		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
+		if (!(distance_sq_lat > range)) {
+			if (charge) {
+				Energy += Coulomb_table[distance_sq_lat];
+			}
+			else {
+				Energy -= Coulomb_table[distance_sq_lat];
+			}
+		}
+	}
+	// Add electrode image charge interactions
+	if (!lattice.isZPeriodic() && !Enable_ToF_test) {
+		distance = lattice.getUnitSize()*((double)(lattice.getHeight() - coords.z) - 0.5);
+		if (!((distance - 0.0001) > Coulomb_cutoff)) {
+			Energy -= image_interactions / distance;
+		}
+		distance = lattice.getUnitSize()*((double)(coords.z + 1) - 0.5);
+		if (!((distance - 0.0001) > Coulomb_cutoff)) {
+			Energy -= image_interactions / distance;
+		}
+	}
+	return Energy;
 }
 
-double OSC_Sim::calculateCoulomb(const bool charge,const Coords& coords) const{
-    static const double avgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
-    static const double image_interactions = (Elementary_charge/(16*Pi*avgDielectric*Vacuum_permittivity))*1e9;
-    double Energy = 0;
-    double distance;
-    int distance_sq_lat;
-    static const int range = (int)ceil((Coulomb_cutoff/ lattice.getUnitSize())*(Coulomb_cutoff/ lattice.getUnitSize()));
-    // Loop through electrons
-    for (auto const &item : electrons){
-        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,item.getCoords());
-        if(!(distance_sq_lat>range)){
-            if(!charge){
-                Energy += Coulomb_table[distance_sq_lat];
-            }
-            else{
-                Energy -= Coulomb_table[distance_sq_lat];
-            }
-        }
-    }
-    // Loop through holes
-    for (auto const &item : holes){
-        distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords,item.getCoords());
-        if(!(distance_sq_lat>range)){
-            if(charge){
-                Energy += Coulomb_table[distance_sq_lat];
-            }
-            else{
-                Energy -= Coulomb_table[distance_sq_lat];
-            }
-        }
-    }
-    // Add electrode image charge interactions
-    if(!lattice.isZPeriodic()){
-        distance = lattice.getUnitSize()*((double)(lattice.getHeight()-coords.z)-0.5);
-        if(!((distance-0.0001)>Coulomb_cutoff)){
-            Energy -= image_interactions/distance;
-        }
-        distance = lattice.getUnitSize()*((double)(coords.z+1)-0.5);
-        if(!((distance-0.0001)>Coulomb_cutoff)){
-            Energy -= image_interactions/distance;
-        }
-    }
-    return Energy;
+double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const {
+	static const double avgDielectric = (Dielectric_donor + Dielectric_acceptor) / 2;
+	static const double image_interactions = (Elementary_charge / (16 * Pi*avgDielectric*Vacuum_permittivity))*1e9;
+	double Energy = 0;
+	double distance;
+	int distance_sq_lat;
+	static const int range = (int)ceil((Coulomb_cutoff / lattice.getUnitSize())*(Coulomb_cutoff / lattice.getUnitSize()));
+	// Loop through electrons
+	for (auto const &item : electrons) {
+		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
+		if (!(distance_sq_lat > range)) {
+			if (!charge) {
+				Energy += Coulomb_table[distance_sq_lat];
+			}
+			else {
+				Energy -= Coulomb_table[distance_sq_lat];
+			}
+		}
+	}
+	// Loop through holes
+	for (auto const &item : holes) {
+		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
+		if (!(distance_sq_lat > range)) {
+			if (charge) {
+				Energy += Coulomb_table[distance_sq_lat];
+			}
+			else {
+				Energy -= Coulomb_table[distance_sq_lat];
+			}
+		}
+	}
+	// Add electrode image charge interactions
+	if (!lattice.isZPeriodic()) {
+		distance = lattice.getUnitSize()*((double)(lattice.getHeight() - coords.z) - 0.5);
+		if (!((distance - 0.0001) > Coulomb_cutoff)) {
+			Energy -= image_interactions / distance;
+		}
+		distance = lattice.getUnitSize()*((double)(coords.z + 1) - 0.5);
+		if (!((distance - 0.0001) > Coulomb_cutoff)) {
+			Energy -= image_interactions / distance;
+		}
+	}
+	return Energy;
 }
 
 double OSC_Sim::calculateDiffusionLength_avg() const{
@@ -1872,7 +1872,7 @@ bool OSC_Sim::executeNextEvent() {
 		}
 	}
 	// Perform Transients test analysis
-	if (Enable_dynamics_test) {
+	if (Enable_dynamics_test || Enable_ToF_test) {
 		updateTransientData();
 		// If none of the excitons or polarons can move or have reached the transient cutoff
 		if (getN_events() == 0 || (getTime() - Transient_creation_time) > Transient_end) {
@@ -2215,7 +2215,6 @@ void OSC_Sim::generateDynamicsExcitons(){
 	Transient_triplet_counts_prev = N_triplets;
 	Transient_electron_counts_prev = N_electrons;
 	Transient_hole_counts_prev = N_holes;
-	
     auto object_its = getAllObjectPtrs();
     calculateObjectListEvents(object_its);
 }
@@ -2238,10 +2237,12 @@ void OSC_Sim::generateToFPolarons(){
 	if (!ToF_polaron_type) {
 		transient_electron_tags.assign(ToF_initial_polarons, -1);
 		transient_electron_energies_prev.assign(ToF_initial_polarons, 0);
+		Transient_electron_counts_prev = ToF_initial_polarons;
 	}
 	else {
 		transient_hole_tags.assign(ToF_initial_polarons, -1);
 		transient_hole_energies_prev.assign(ToF_initial_polarons, 0);
+		Transient_hole_counts_prev = ToF_initial_polarons;
 	}
     ToF_positions_prev.assign(ToF_initial_polarons,coords.z);
 	Transient_creation_time = getTime();
@@ -2267,14 +2268,15 @@ void OSC_Sim::generateToFPolarons(){
         else if(!ToF_polaron_type){
             generateElectron(coords);
 			transient_electron_tags[num] = electrons.back().getTag();
+			transient_electron_energies_prev[num] = getSiteEnergy(coords);
         }
         else{
             generateHole(coords);
 			transient_hole_tags[num] = holes.back().getTag();
+			transient_hole_energies_prev[num] = getSiteEnergy(coords);
         }
         num++;
     }
-	
     auto object_its = getAllObjectPtrs();
     calculateObjectListEvents(object_its);
 }
@@ -2476,7 +2478,12 @@ vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
 		for (int i = 1; i < (int)electron_extraction_data.size(); i++) {
 			x = i / lattice.getWidth();
 			y = i % lattice.getWidth();
-			ss << x << "," << y << "," << (double)electron_extraction_data[i] / (double)(N_electrons_collected);
+			if (N_electrons_collected > 0) {
+				ss << x << "," << y << "," << (double)electron_extraction_data[i] / (double)(N_electrons_collected);
+			}
+			else {
+				ss << x << "," << y << "," << 0;
+			}
 			output_data[i] = ss.str();
 			ss.str("");
 		}
@@ -2485,7 +2492,12 @@ vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
 		for (int i = 1; i < (int)hole_extraction_data.size(); i++) {
 			x = i / lattice.getWidth();
 			y = i % lattice.getWidth();
-			ss << x << "," << y << "," << (double)hole_extraction_data[i] / (double)(N_holes_collected);
+			if (N_holes_collected > 0) {
+				ss << x << "," << y << "," << (double)hole_extraction_data[i] / (double)(N_holes_collected);
+			}
+			else {
+				ss << x << "," << y << "," << 0;
+			}
 			output_data[i] = ss.str();
 			ss.str("");
 		}
@@ -2698,7 +2710,7 @@ void OSC_Sim::updateTransientData() {
 			}
 			// Update info for any previous timesteps that have elapsed already but were not accounted for
 			while (index != 0 && Transient_index_prev < index - 1 && Transient_index_prev + 1 < (int)transient_times.size()) {
-				if (ToF_polaron_type) {
+				if (!ToF_polaron_type) {
 					transient_electron_counts[Transient_index_prev + 1] += Transient_electron_counts_prev;
 					for (auto const &item : electrons) {
 						int electron_index = distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
@@ -2717,7 +2729,7 @@ void OSC_Sim::updateTransientData() {
 				Transient_index_prev++;
 			}
 			// Update info for the current timestep
-			if (ToF_polaron_type) {
+			if (!ToF_polaron_type) {
 				transient_electron_counts[index] += N_electrons;
 				Transient_electron_counts_prev = N_electrons;
 				for (auto const &item : electrons) {
