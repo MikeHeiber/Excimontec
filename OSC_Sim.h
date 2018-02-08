@@ -51,6 +51,8 @@ struct Parameters_OPV : Parameters_Simulation{
 	double Triplet_lifetime_acceptor; // seconds
     double R_singlet_hopping_donor;
     double R_singlet_hopping_acceptor;
+	double Singlet_localization_donor;
+	double Singlet_localization_acceptor;
 	double R_triplet_hopping_donor;
 	double R_triplet_hopping_acceptor;
 	double Triplet_localization_donor;
@@ -140,10 +142,17 @@ class OSC_Sim : public Simulation{
         bool executeNextEvent();
 		std::vector<double> getDiffusionData() const;
 		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
-		std::vector<int> getDynamicsTransientExcitons() const;
+		std::vector<double> getDynamicsExcitonEnergies() const;
+		std::vector<double> getDynamicsElectronEnergies() const;
+		std::vector<double> getDynamicsHoleEnergies() const;
+		std::vector<int> getDynamicsTransientSinglets() const;
+		std::vector<int> getDynamicsTransientTriplets() const;
 		std::vector<int> getDynamicsTransientElectrons() const;
 		std::vector<int> getDynamicsTransientHoles() const;
 		std::vector<double> getDynamicsTransientTimes() const;
+		std::vector<double> getDynamicsExcitonMSDV() const;
+		std::vector<double> getDynamicsElectronMSDV() const;
+		std::vector<double> getDynamicsHoleMSDV() const;
 		std::vector<double> getSiteEnergies(const short site_type) const;
 		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
 		std::vector<int> getToFTransientCounts() const;
@@ -154,7 +163,13 @@ class OSC_Sim : public Simulation{
         int getN_excitons_created() const;
         int getN_excitons_created(const short site_type) const;
         int getN_excitons_dissociated() const;
-        int getN_excitons_recombined() const;
+        int getN_singlet_excitons_recombined() const;
+		int getN_triplet_excitons_recombined() const;
+		int getN_singlet_singlet_annihilations() const;
+		int getN_singlet_triplet_annihilations() const;
+		int getN_triplet_triplet_annihilations() const;
+		int getN_singlet_polaron_annihilations() const;
+		int getN_triplet_polaron_annihilations() const;
         int getN_electrons_created() const;
         int getN_electrons_collected() const;
         int getN_electrons_recombined() const;
@@ -186,17 +201,20 @@ class OSC_Sim : public Simulation{
         bool Enable_ToF_test;
         bool ToF_polaron_type;
         int ToF_initial_polarons;
-        double ToF_transient_start;
-        double ToF_transient_end;
-        int ToF_pnts_per_decade;
+        //double ToF_transient_start;
+        //double ToF_transient_end;
+        //int ToF_pnts_per_decade;
         bool Enable_IQE_test;
         double IQE_time_cutoff;
         bool Enable_dynamics_test;
         bool Enable_dynamics_extraction;
         double Dynamics_initial_exciton_conc;
-        double Dynamics_transient_start;
-        double Dynamics_transient_end;
-        int Dynamics_pnts_per_decade;
+        //double Dynamics_transient_start;
+        //double Dynamics_transient_end;
+        //int Dynamics_pnts_per_decade;
+		double Transient_start;
+		double Transient_end;
+		int Transient_pnts_per_decade;
         // Exciton Parameters
         double Exciton_generation_rate_donor;
         double Exciton_generation_rate_acceptor;
@@ -206,6 +224,8 @@ class OSC_Sim : public Simulation{
 		double Triplet_lifetime_acceptor; // seconds
         double R_singlet_hopping_donor;
         double R_singlet_hopping_acceptor;
+		double Singlet_localization_donor;
+		double Singlet_localization_acceptor;
 		double R_triplet_hopping_donor;
 		double R_triplet_hopping_acceptor;
 		double Triplet_localization_donor;
@@ -267,8 +287,12 @@ class OSC_Sim : public Simulation{
         bool isLightOn;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
-		double ToF_creation_time;
-		int ToF_index_prev;
+		double Transient_creation_time;
+		int Transient_index_prev;
+		int Transient_singlet_counts_prev;
+		int Transient_triplet_counts_prev;
+		int Transient_electron_counts_prev;
+		int Transient_hole_counts_prev;
         // Site Data Structure
 		std::vector<Site_OSC> sites;
         // Object Data Structures
@@ -296,34 +320,51 @@ class OSC_Sim : public Simulation{
 		std::vector<double> site_energies_acceptor;
 		std::vector<std::pair<double, double>> DOS_correlation_data;
 		std::vector<double> diffusion_distances;
-		std::vector<int> ToF_polaron_tags;
+		std::vector<int> transient_exciton_tags;
+		std::vector<int> transient_electron_tags;
+		std::vector<int> transient_hole_tags;
 		std::vector<int> ToF_positions_prev;
-		std::vector<double> ToF_times_prev;
-		std::vector<double> ToF_energies_prev;
-		std::vector<int> Electron_extraction_data;
-		std::vector<int> Hole_extraction_data;
+		std::vector<double> transient_exciton_energies_prev;
+		std::vector<double> transient_electron_energies_prev;
+		std::vector<double> transient_hole_energies_prev;
+		std::vector<Exciton> transient_exciton_tracker;
+		std::vector<Polaron> transient_electron_tracker;
+		std::vector<Polaron> transient_hole_tracker;
+		std::vector<double> transient_exciton_msdv;
+		std::vector<double> transient_electron_msdv;
+		std::vector<double> transient_hole_msdv;
+		std::vector<int> electron_extraction_data;
+		std::vector<int> hole_extraction_data;
 		std::vector<double> transient_times;
-		std::vector<int> transient_counts;
 		std::vector<double> transient_velocities;
-		std::vector<double> transient_energies;
+		std::vector<double> transient_exciton_energies;
+		std::vector<double> transient_electron_energies;
+		std::vector<double> transient_hole_energies;
 		std::vector<double> transit_times;
-		std::vector<int> transient_excitons;
-		std::vector<int> transient_electrons;
-		std::vector<int> transient_holes;
+		std::vector<int> transient_singlet_counts;
+		std::vector<int> transient_triplet_counts;
+		std::vector<int> transient_electron_counts;
+		std::vector<int> transient_hole_counts;
         // Additional Counters
         int N_donor_sites;
         int N_acceptor_sites;
         int N_excitons_created = 0;
         int N_excitons_created_donor = 0;
         int N_excitons_created_acceptor = 0;
-        int N_excitons_recombined = 0;
+        int N_singlet_excitons_recombined = 0;
+		int N_triplet_excitons_recombined = 0;
         int N_excitons_dissociated = 0;
-		int N_exciton_exciton_annihilations = 0;
-		int N_exciton_polaron_annihilations = 0;
+		int N_singlet_singlet_annihilations = 0;
+		int N_singlet_triplet_annihilations = 0;
+		int N_triplet_triplet_annihilations = 0;
+		int N_singlet_polaron_annihilations = 0;
+		int N_triplet_polaron_annihilations = 0;
 		int N_exciton_intersystem_crossings = 0;
 		int N_exciton_reverse_intersystem_crossings = 0;
         int N_excitons_quenched = 0;
         int N_excitons = 0;
+		int N_singlets = 0;
+		int N_triplets = 0;
         int N_electrons_created = 0;
         int N_electrons_recombined = 0;
         int N_electrons_collected = 0;
@@ -372,8 +413,7 @@ class OSC_Sim : public Simulation{
         short getSiteType(const Coords& coords) const;
         bool initializeArchitecture();
         bool siteContainsHole(const Coords& coords);
-        void updateDynamicsData();
-        void updateToFData();
+        void updateTransientData();
 };
 
 #endif //OSC_SIM_H

@@ -1,10 +1,12 @@
 ## OPV Parameters for Excimontec v1.0-beta.2
 --------------------------------------------------------------
-## Computation Parameters
-true //Enable_mpi
+## Kinetic Monte Carlo Algorithm Parameters
+false //Enable_FRM
+true //Enable_selective_recalc
+3 //Recalc_cutoff (nm) (must not be less than any of the event cutoffs)
+false //Enable_full_recalc
 --------------------------------------------------------------
 ## Simulation Parameters
-false //Enable_logging (for debugging)
 true //Enable_periodic_x
 true //Enable_periodic_y
 false //Enable_periodic_z
@@ -13,7 +15,6 @@ false //Enable_periodic_z
 100 //Height
 1.0 //Unit_size (nm)
 300 //Temperature (K)
-3 //Recalc_cutoff (nm) (must not be less than any of the event cutoffs)
 -1.0 //Internal_potential (V)
 --------------------------------------------------------------
 ## Device Architecture Parameters
@@ -31,7 +32,7 @@ morphology_#_compressed.txt //Morphology_set_format
 4 //N_morphology_set_size
 --------------------------------------------------------------
 ## Test Parameters
-1000 //N_tests
+100 //N_tests
 false //Enable_exciton_diffusion_test
 true //Enable_ToF_test
 hole //ToF_polaron_type (electron or hole)
@@ -47,7 +48,7 @@ false //Enable_dynamics_extraction
 1e16 //Dynamics_initial_exciton_conc (cm^-3)
 1e-13 //Dynamics_transient_start (s)
 1e-5 //Dynamics_transient_end (s)
-20 //Dynamics_pnts_per_decade
+10 //Dynamics_pnts_per_decade
 --------------------------------------------------------------
 ## Exciton Parameters
 1e22 //Exciton_generation_rate_donor (cm^-3 s^-1)
@@ -58,6 +59,8 @@ false //Enable_dynamics_extraction
 1e-6 //Triplet_lifetime_acceptor (s)
 1e12 //R_singlet_hopping_donor (s^-1)
 1e12 //R_singlet_hopping_acceptor (s^-1)
+1.0 //Singlet_localization_donor (nm^-1)
+1.0 //Singlet_localization_acceptor (nm^-1)
 1e12 //R_triplet_hopping_donor (s^-1)
 1e12 //R_triplet_hopping_acceptor (s^-1)
 2.0 //Triplet_localization_donor (nm^-1)
@@ -96,8 +99,8 @@ false //Enable_gaussian_polaron_delocalization
 1.0 //Polaron_delocalization_length (nm)
 --------------------------------------------------------------
 ## Lattice Site Parameters
-5.0 //Homo_donor (eV)
-3.0 //Lumo_donor (eV)
+5.5 //Homo_donor (eV)
+3.5 //Lumo_donor (eV)
 6.0 //Homo_acceptor (eV)
 4.0 //Lumo_acceptor (eV)
 true //Enable_gaussian_dos
