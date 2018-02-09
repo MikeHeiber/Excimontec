@@ -1,7 +1,15 @@
 var searchData=
 [
-  ['n_5fmorphology_5fset_5fsize',['N_morphology_set_size',['../struct_parameters__main.html#a60ee2e45a155f2bef0681753e877bc5f',1,'Parameters_main']]],
-  ['n_5ftest_5fmorphologies',['N_test_morphologies',['../struct_parameters__main.html#a14e42c0e58188c19f860de2046cf796b',1,'Parameters_main']]],
-  ['n_5ftests',['N_tests',['../struct_parameters___o_p_v.html#a502f1711127656c15e78c7f1db168e0f',1,'Parameters_OPV']]],
-  ['name',['name',['../class_exciton.html#a455155f7d0a91a1ada55b64cf25b3405',1,'Exciton::name()'],['../class_exciton___creation.html#a4e72153bdee28c070e978b871eac7c9c',1,'Exciton_Creation::name()'],['../class_exciton___hop.html#abdb3ad0035448cdb55215a4f641b2150',1,'Exciton_Hop::name()'],['../class_exciton___recombination.html#a601fbd52a90812058cb073fb57b1ad6f',1,'Exciton_Recombination::name()'],['../class_exciton___dissociation.html#a16a06165fe1c2468850b2d05243b24cd',1,'Exciton_Dissociation::name()'],['../class_exciton___intersystem___crossing.html#a4c9578265b37f2ab24f1747de3a1f2a2',1,'Exciton_Intersystem_Crossing::name()'],['../class_exciton___exciton___annihilation.html#a8dee3797f6dc1c50276e06117bee82ac',1,'Exciton_Exciton_Annihilation::name()'],['../class_exciton___polaron___annihilation.html#a49bc9251aed38c5a7249385d9bf93dc9',1,'Exciton_Polaron_Annihilation::name()'],['../class_polaron.html#aee580c6a3921395abe02c3be1b55339a',1,'Polaron::name()'],['../class_polaron___hop.html#abcfa4d47e99311d95dd2284bd67cc95a',1,'Polaron_Hop::name()'],['../class_polaron___recombination.html#aa7a004a1e87bccff00a28dde96df78ba',1,'Polaron_Recombination::name()'],['../class_polaron___extraction.html#a35aa28eda2227a38857f42685597eda2',1,'Polaron_Extraction::name()']]]
+  ['object',['Object',['../class_object.html',1,'Object'],['../class_object.html#a40860402e64d8008fb42329df7097cdb',1,'Object::Object()'],['../class_object.html#aff050a622272cc7667251c7315f09fd7',1,'Object::Object(const double time, const int tag_num, const Coords &amp;start_coords)']]],
+  ['object_2ecpp',['Object.cpp',['../_object_8cpp.html',1,'']]],
+  ['object_2eh',['Object.h',['../_object_8h.html',1,'']]],
+  ['object_5ftype',['object_type',['../class_exciton.html#a3fa1eccff8270355ff24d27f687cb205',1,'Exciton::object_type()'],['../class_polaron.html#a44f333ff29e50353d82f04ca0c070e79',1,'Polaron::object_type()']]],
+  ['operator_21_3d',['operator!=',['../struct_coords.html#aaea2c566feec4e4bf56b27a34568be76',1,'Coords']]],
+  ['operator_3d_3d',['operator==',['../struct_coords.html#ad3347f6568814df1a2b98b3cd0b78632',1,'Coords']]],
+  ['osc_5fsim',['OSC_Sim',['../class_o_s_c___sim.html',1,'OSC_Sim'],['../class_o_s_c___sim.html#aeb3e7abae4824a3a506156551e0c9c8e',1,'OSC_Sim::OSC_Sim()']]],
+  ['osc_5fsim_2ecpp',['OSC_Sim.cpp',['../_o_s_c___sim_8cpp.html',1,'']]],
+  ['osc_5fsim_2eh',['OSC_Sim.h',['../_o_s_c___sim_8h.html',1,'']]],
+  ['outputlatticeoccupancy',['outputLatticeOccupancy',['../class_lattice.html#aa1f65735ecbd750ec04b6413b4d47316',1,'Lattice']]],
+  ['outputstatus',['outputStatus',['../class_o_s_c___sim.html#a78aa9badec9d28169b7b71b29e90c265',1,'OSC_Sim']]],
+  ['outputvectortofile',['outputVectorToFile',['../namespace_utils.html#ab76081fb0fa0e9e1633b1b2255db4164',1,'Utils::outputVectorToFile(std::vector&lt; T &gt; &amp;vec, std::string filename)'],['../namespace_utils.html#a652ab00e72bce852c2b9798ff3e1a60b',1,'Utils::outputVectorToFile(std::vector&lt; std::pair&lt; T, T &gt;&gt; &amp;vec, std::string filename)']]]
 ];

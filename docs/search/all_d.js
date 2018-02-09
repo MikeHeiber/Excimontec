@@ -1,14 +1,18 @@
 var searchData=
 [
-  ['object',['Object',['../class_object.html',1,'Object'],['../class_object.html#a40860402e64d8008fb42329df7097cdb',1,'Object::Object()'],['../class_object.html#aff050a622272cc7667251c7315f09fd7',1,'Object::Object(const double time, const int tag_num, const Coords &amp;start_coords)']]],
-  ['object_2ecpp',['Object.cpp',['../_object_8cpp.html',1,'']]],
-  ['object_2eh',['Object.h',['../_object_8h.html',1,'']]],
-  ['operator_21_3d',['operator!=',['../struct_coords.html#aaea2c566feec4e4bf56b27a34568be76',1,'Coords']]],
-  ['operator_3d_3d',['operator==',['../struct_coords.html#ad3347f6568814df1a2b98b3cd0b78632',1,'Coords']]],
-  ['osc_5fsim',['OSC_Sim',['../class_o_s_c___sim.html',1,'OSC_Sim'],['../class_o_s_c___sim.html#aeb3e7abae4824a3a506156551e0c9c8e',1,'OSC_Sim::OSC_Sim()']]],
-  ['osc_5fsim_2ecpp',['OSC_Sim.cpp',['../_o_s_c___sim_8cpp.html',1,'']]],
-  ['osc_5fsim_2eh',['OSC_Sim.h',['../_o_s_c___sim_8h.html',1,'']]],
-  ['outputlatticeoccupancy',['outputLatticeOccupancy',['../class_lattice.html#aa1f65735ecbd750ec04b6413b4d47316',1,'Lattice']]],
-  ['outputstatus',['outputStatus',['../class_o_s_c___sim.html#a78aa9badec9d28169b7b71b29e90c265',1,'OSC_Sim']]],
-  ['outputvectortofile',['outputVectorToFile',['../namespace_utils.html#ab76081fb0fa0e9e1633b1b2255db4164',1,'Utils::outputVectorToFile(std::vector&lt; T &gt; &amp;vec, std::string filename)'],['../namespace_utils.html#a652ab00e72bce852c2b9798ff3e1a60b',1,'Utils::outputVectorToFile(std::vector&lt; std::pair&lt; T, T &gt;&gt; &amp;vec, std::string filename)']]]
+  ['parameters_5flattice',['Parameters_Lattice',['../struct_parameters___lattice.html',1,'']]],
+  ['parameters_5fmain',['Parameters_main',['../struct_parameters__main.html',1,'']]],
+  ['parameters_5fopv',['Parameters_OPV',['../struct_parameters___o_p_v.html',1,'']]],
+  ['parameters_5fsimulation',['Parameters_Simulation',['../struct_parameters___simulation.html',1,'']]],
+  ['polaron',['Polaron',['../class_polaron.html',1,'Polaron'],['../class_polaron.html#a7392b742eec8c5bf4438198901c570a9',1,'Polaron::Polaron()']]],
+  ['polaron_2ecpp',['Polaron.cpp',['../_polaron_8cpp.html',1,'']]],
+  ['polaron_2eh',['Polaron.h',['../_polaron_8h.html',1,'']]],
+  ['polaron_5fdelocalization_5flength',['Polaron_delocalization_length',['../struct_parameters___o_p_v.html#a837c9091cc25ab63dccc75e79e286f9e',1,'Parameters_OPV']]],
+  ['polaron_5fextraction',['Polaron_Extraction',['../class_polaron___extraction.html',1,'Polaron_Extraction'],['../class_polaron___extraction.html#a2ac84785d2265bc1ee0e23a7fbcee03f',1,'Polaron_Extraction::Polaron_Extraction()'],['../class_polaron___extraction.html#ad3fd4585a4caf22be10c8730540b23db',1,'Polaron_Extraction::Polaron_Extraction(Simulation *simulation_ptr)']]],
+  ['polaron_5fhop',['Polaron_Hop',['../class_polaron___hop.html',1,'Polaron_Hop'],['../class_polaron___hop.html#ae8da015929a00a85dc56bc694cd62fa4',1,'Polaron_Hop::Polaron_Hop()'],['../class_polaron___hop.html#abaedc081f619b8e63363fac7f036b09f',1,'Polaron_Hop::Polaron_Hop(Simulation *simulation_ptr)']]],
+  ['polaron_5fhopping_5fcutoff',['Polaron_hopping_cutoff',['../struct_parameters___o_p_v.html#a5955354f2f5aa71d3e2fc6380b508c88',1,'Parameters_OPV']]],
+  ['polaron_5flocalization_5facceptor',['Polaron_localization_acceptor',['../struct_parameters___o_p_v.html#a794d79e512c2c161ab6242f5d372faef',1,'Parameters_OPV']]],
+  ['polaron_5flocalization_5fdonor',['Polaron_localization_donor',['../struct_parameters___o_p_v.html#ac9f152101e3970f62d321eb02d211020',1,'Parameters_OPV']]],
+  ['polaron_5frecombination',['Polaron_Recombination',['../class_polaron___recombination.html',1,'Polaron_Recombination'],['../class_polaron___recombination.html#a653484a1c11e4bc0a744875184fdaf98',1,'Polaron_Recombination::Polaron_Recombination()'],['../class_polaron___recombination.html#abdb1e837d36802564eaaa6053ccb697c',1,'Polaron_Recombination::Polaron_Recombination(Simulation *simulation_ptr)']]],
+  ['power_5fkernel_5fexponent',['Power_kernel_exponent',['../struct_parameters___o_p_v.html#adbae25d923c165c2dbc0785c68fccf92',1,'Parameters_OPV']]]
 ];

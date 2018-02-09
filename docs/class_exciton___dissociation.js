@@ -1,6 +1,8 @@
 var class_exciton___dissociation =
 [
-    [ "calculateExecutionTime", "class_exciton___dissociation.html#a2da846b02c20a7c070567de92762d53b", null ],
-    [ "calculateExecutionTime", "class_exciton___dissociation.html#a8637e01b4532ba5442ded098883b64a0", null ],
-    [ "getName", "class_exciton___dissociation.html#a1cfdbcfa3930666e0fddea28cc18ac9e", null ]
+    [ "Exciton_Dissociation", "class_exciton___dissociation.html#ad127a7325c308e35d52b53668ae52353", null ],
+    [ "Exciton_Dissociation", "class_exciton___dissociation.html#a91ed94e4fa9b465a35aad05a303d0fd0", null ],
+    [ "calculateExecutionTime", "class_exciton___dissociation.html#a9fe9c9206ca43eaef0f56b6e3249cf8d", null ],
+    [ "calculateExecutionTime", "class_exciton___dissociation.html#a4d87633f611d03842854f803de1298e9", null ],
+    [ "getEventType", "class_exciton___dissociation.html#a97807fc4d23400cdbf10203f648d5625", null ]
 ];

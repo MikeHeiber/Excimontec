@@ -1,6 +1,8 @@
 var class_exciton___exciton___annihilation =
 [
-    [ "calculateExecutionTime", "class_exciton___exciton___annihilation.html#a46aa32935c16084a6cea854d4350f413", null ],
-    [ "calculateExecutionTime", "class_exciton___exciton___annihilation.html#a7b5546b124fb9dfda409e48b4f6bc885", null ],
-    [ "getName", "class_exciton___exciton___annihilation.html#a7027d2bee875a346e4c7ec4f07c55816", null ]
+    [ "Exciton_Exciton_Annihilation", "class_exciton___exciton___annihilation.html#a62c62f119f2ddd3a3f024f0b33312a7a", null ],
+    [ "Exciton_Exciton_Annihilation", "class_exciton___exciton___annihilation.html#a15838db1eb32ea23c0442f36b3f6236e", null ],
+    [ "calculateExecutionTime", "class_exciton___exciton___annihilation.html#a4f09a860f2aab323580d334d854512a3", null ],
+    [ "calculateExecutionTime", "class_exciton___exciton___annihilation.html#ae873426c8ae373e70bd707cf3c18d3f9", null ],
+    [ "getEventType", "class_exciton___exciton___annihilation.html#a562b2fe42b2a17aae2aa1d48cd4d3e9b", null ]
 ];
