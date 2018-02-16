@@ -10,19 +10,19 @@ false //Enable_full_recalc
 true //Enable_periodic_x
 true //Enable_periodic_y
 false //Enable_periodic_z
-50 //Length
-50 //Width
-100 //Height
+100 //Length
+100 //Width
+500 //Height
 1.0 //Unit_size (nm)
 300 //Temperature (K)
--1.0 //Internal_potential (V)
+-5.0 //Internal_potential (V)
 --------------------------------------------------------------
 ## Device Architecture Parameters
-false //Enable_neat (uses donor properties)
+true //Enable_neat (uses donor properties)
 false //Enable_bilayer
 25 //Thickness_donor
 25 //Thickness_acceptor
-true //Enable_random_blend
+false //Enable_random_blend
 0.5 //Acceptor_conc
 false //Enable_import_morphology_single
 morphology_0_compressed.txt //Morphology_filename
@@ -32,11 +32,11 @@ morphology_#_compressed.txt //Morphology_set_format
 4 //N_morphology_set_size
 --------------------------------------------------------------
 ## Test Parameters
-100 //N_tests
+200 //N_tests
 false //Enable_exciton_diffusion_test
 true //Enable_ToF_test
 hole //ToF_polaron_type (electron or hole)
-1 //ToF_initial_polarons
+20 //ToF_initial_polarons
 1e-10 //ToF_transient_start (s)
 1e-4 //ToF_transient_end (s)
 20 //ToF_pnts_per_decade
@@ -118,5 +118,5 @@ false //Enable_power_kernel
 ## Coulomb Interaction Parameters
 3.5 //Dielectric_donor
 3.5 //Dielectric_acceptor
-25 //Coulomb_cutoff (nm)
+50 //Coulomb_cutoff (nm)
 --------------------------------------------------------------
