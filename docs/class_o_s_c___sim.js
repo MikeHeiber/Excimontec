@@ -28,6 +28,7 @@ var class_o_s_c___sim =
     [ "getDynamicsTransientSinglets", "class_o_s_c___sim.html#af13f7b1b8f6df5a45c0111d11c0057db", null ],
     [ "getDynamicsTransientTimes", "class_o_s_c___sim.html#acde6068549f59f813d2faed73f6fedc9", null ],
     [ "getDynamicsTransientTriplets", "class_o_s_c___sim.html#a91d2dad10391f727348d96b0b21c8304", null ],
+    [ "getInternalField", "class_o_s_c___sim.html#aa8ee0a55f34be1da2f78be2931584723", null ],
     [ "getN_bimolecular_recombinations", "class_o_s_c___sim.html#afa814164790477d643fe04fca021483d", null ],
     [ "getN_electrons_collected", "class_o_s_c___sim.html#abb8a9aefba0cb189fbaeba0f9bdff180", null ],
     [ "getN_electrons_created", "class_o_s_c___sim.html#aadb3c72821bac6153f0f848ce1a87c2b", null ],

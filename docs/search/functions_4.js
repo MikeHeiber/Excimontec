@@ -30,6 +30,7 @@ var searchData=
   ['getexecutiontime',['getExecutionTime',['../class_event.html#a65550d982cdf85d993658cd7070c960c',1,'Event']]],
   ['getheight',['getHeight',['../class_lattice.html#aaa0cba3ab33ac620d9b9f9508c56d1ac',1,'Lattice']]],
   ['getid',['getId',['../class_simulation.html#aff40f268758bd9a0f390a649fc45c05e',1,'Simulation']]],
+  ['getinternalfield',['getInternalField',['../class_o_s_c___sim.html#aa8ee0a55f34be1da2f78be2931584723',1,'OSC_Sim']]],
   ['getlength',['getLength',['../class_lattice.html#a4b43b67a36fcd3dfe62c9eeaffa561d2',1,'Lattice']]],
   ['getn_5fbimolecular_5frecombinations',['getN_bimolecular_recombinations',['../class_o_s_c___sim.html#afa814164790477d643fe04fca021483d',1,'OSC_Sim']]],
   ['getn_5felectrons_5fcollected',['getN_electrons_collected',['../class_o_s_c___sim.html#abb8a9aefba0cb189fbaeba0f9bdff180',1,'OSC_Sim']]],
@@ -70,5 +71,6 @@ var searchData=
   ['gettransittimedata',['getTransitTimeData',['../class_o_s_c___sim.html#ac5a6b2ae37d49b9114fe032f533e41c6',1,'OSC_Sim']]],
   ['gettype',['getType',['../class_site___o_s_c.html#a704a0a9fe1bab69db8343f5225d5888e',1,'Site_OSC']]],
   ['getunitsize',['getUnitSize',['../class_lattice.html#ac6963a6b2b4b8d96d3417f6e9c2a509d',1,'Lattice']]],
+  ['getvolume',['getVolume',['../class_lattice.html#a46f9cec33419459b64ff0efdf47a38b9',1,'Lattice::getVolume()'],['../class_simulation.html#a623c3fbc431ab74c2d2b2374a3b5a3a7',1,'Simulation::getVolume()']]],
   ['getwidth',['getWidth',['../class_lattice.html#aeb60d2b8bfb02d9da8bef463f0d41428',1,'Lattice']]]
 ];

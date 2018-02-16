@@ -22,6 +22,7 @@ var class_lattice =
     [ "getSiteIndex", "class_lattice.html#a60431f6504a253d47acb0b02f524571c", null ],
     [ "getSiteIt", "class_lattice.html#a46f7d12855d24e1bdd02814621b0a178", null ],
     [ "getUnitSize", "class_lattice.html#ac6963a6b2b4b8d96d3417f6e9c2a509d", null ],
+    [ "getVolume", "class_lattice.html#a46f9cec33419459b64ff0efdf47a38b9", null ],
     [ "getWidth", "class_lattice.html#aeb60d2b8bfb02d9da8bef463f0d41428", null ],
     [ "init", "class_lattice.html#a2b0a88048fae662aa71386a3a123a260", null ],
     [ "isOccupied", "class_lattice.html#a4d37afb6ad4c67f4f6462c2f6d5c337d", null ],

@@ -29,7 +29,7 @@ struct Parameters_main{
 bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0-beta.2";
+	string version = "v1.0-beta.3";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
@@ -76,10 +76,11 @@ int main(int argc, char *argv[]) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &nproc);
 	MPI_Comm_rank(MPI_COMM_WORLD, &procid);
+	cout << procid << ": MPI initialization complete!" << endl;
+	// Initialize error monitoring vectors
 	proc_finished.assign(nproc, false);
 	error_status_vec.assign(nproc, false);
 	error_messages.assign(nproc, "");
-	cout << procid << ": MPI initialization complete!" << endl;
 	// Morphology set import handling
 	if (params_main.Enable_import_morphology_set && params_main.N_test_morphologies > nproc) {
 		cout << "Error! The number of requested processors cannot be less than the number of morphologies tested." << endl;
@@ -389,7 +390,7 @@ int main(int argc, char *argv[]) {
 		if (procid == 0) {
 			// ToF main results output
 			vector<double> mobilities = sim.calculateMobilities(transit_times);
-			double electric_field = fabs(params_opv.Internal_potential) / (1e-7*params_opv.Height*params_opv.Unit_size);
+			double electric_field = fabs(sim.getInternalField());
 			ofstream tof_resultsfile;
 			ss << "ToF_results.txt";
 			tof_resultsfile.open(ss.str().c_str());
@@ -403,10 +404,13 @@ int main(int argc, char *argv[]) {
 			transientfile.open(ss.str().c_str());
 			ss.str("");
 			transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
-			double total_volume = nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size, 3);
+			double volume_total = N_transient_cycles_sum*sim.getVolume();
 			for (int i = 0; i < (int)velocities.size(); i++) {
-				if (counts[i] > 0) {
-					transientfile << times[i] << "," << 1000 * Elementary_charge*1e-7*velocities[i] / (N_transient_cycles_sum*total_volume) << "," << (velocities[i] / counts[i]) / electric_field << "," << energies[i] / counts[i] << "," << counts[i] / (N_transient_cycles_sum*total_volume) << endl;
+				if (counts[i] > 0 && counts[i] > 5 * N_transient_cycles_sum) {
+					transientfile << times[i] << "," << 1000.0 * Elementary_charge*velocities[i] / volume_total << "," << (velocities[i] / (double)counts[i]) / electric_field << "," << energies[i] / (double)counts[i] << "," << (double)counts[i] / volume_total << endl;
+				}
+				else if (counts[i] > 0) {
+					transientfile << times[i] << "," << 1000.0 * Elementary_charge*velocities[i] / volume_total << "," << (velocities[i] / (double)counts[i]) / electric_field << "," << "NaN" << "," << (double)counts[i] / volume_total << endl;
 				}
 				else {
 					transientfile << times[i] << ",0,NaN,NaN,0" << endl;
@@ -448,47 +452,48 @@ int main(int argc, char *argv[]) {
 		vector<double> exciton_energies = MPI_calculateVectorSum(sim.getDynamicsExcitonEnergies());
 		vector<double> electron_energies = MPI_calculateVectorSum(sim.getDynamicsElectronEnergies());
 		vector<double> hole_energies = MPI_calculateVectorSum(sim.getDynamicsHoleEnergies());
-		//vector<double> exciton_msdv = MPI_calculateVectorSum(sim.getDynamicsExcitonMSDV());
-		//vector<double> electron_msdv = MPI_calculateVectorSum(sim.getDynamicsElectronMSDV());
-		//vector<double> hole_msdv = MPI_calculateVectorSum(sim.getDynamicsHoleMSDV());
+		vector<double> exciton_msdv = MPI_calculateVectorSum(sim.getDynamicsExcitonMSDV());
+		vector<double> electron_msdv = MPI_calculateVectorSum(sim.getDynamicsElectronMSDV());
+		vector<double> hole_msdv = MPI_calculateVectorSum(sim.getDynamicsHoleMSDV());
 		if (procid == 0) {
 			ofstream transientfile;
 			ss << "dynamics_average_transients.txt";
 			transientfile.open(ss.str().c_str());
 			ss.str("");
 			transientfile << "Time (s),Singlet Exciton Density (cm^-3),Triplet Exciton Density (cm^-3),Electron Density (cm^-3),Hole Density (cm^-3)";
-			//transientfile << ",Average Exciton Energy (eV),Exciton MSDV (cm^2 s^-1)";
-			transientfile << ",Average Exciton Energy (eV)";
-			//transientfile << ",Average Electron Energy (eV),Electron MSDV (cm^2 s^-1)";
-			transientfile << ",Average Electron Energy (eV)";
-			//transientfile << ",Average Hole Energy (eV),Hole MSDV (cm^2 s^-1)" << endl;
-			transientfile << ",Average Hole Energy (eV)" << endl;
-			double volume_total = nproc*params_opv.Length*params_opv.Width*params_opv.Height*intpow(1e-7*params_opv.Unit_size, 3);
+			transientfile << ",Average Exciton Energy (eV),Exciton MSDV (cm^2 s^-1)";
+			transientfile << ",Average Electron Energy (eV),Electron MSDV (cm^2 s^-1)";
+			transientfile << ",Average Hole Energy (eV),Hole MSDV (cm^2 s^-1)" << endl;
+			double volume_total = N_transient_cycles_sum*sim.getVolume();
 			for (int i = 0; i < (int)times.size(); i++) {
-				transientfile << times[i] << "," << singlets_total[i] / (N_transient_cycles*volume_total) << "," << triplets_total[i] / (N_transient_cycles*volume_total) << "," << electrons_total[i] / (N_transient_cycles*volume_total) << "," << holes_total[i] / (N_transient_cycles*volume_total);
-				if ((singlets_total[i] + triplets_total[i]) > 0) {
-					//transientfile << "," << exciton_energies[i] / (singlets_total[i] + triplets_total[i]) << "," << exciton_msdv[i] / (singlets_total[i] + triplets_total[i]);
-					transientfile << "," << exciton_energies[i] / (singlets_total[i] + triplets_total[i]);
+				transientfile << times[i] << "," << singlets_total[i] / volume_total << "," << triplets_total[i] / volume_total << "," << electrons_total[i] / volume_total << "," << holes_total[i] / volume_total;
+				if ((singlets_total[i] + triplets_total[i]) > 0 && (singlets_total[i] + triplets_total[i]) > 5 * N_transient_cycles_sum) {
+					transientfile << "," << exciton_energies[i] / (singlets_total[i] + triplets_total[i]) << "," << exciton_msdv[i] / (singlets_total[i] + triplets_total[i]);
+				}
+				else if ((singlets_total[i] + triplets_total[i]) > 0 ) {
+					transientfile << "," << "NaN" << "," << exciton_msdv[i] / (singlets_total[i] + triplets_total[i]);
 				}
 				else {
-					//transientfile << ",NaN,NaN";
-					transientfile << ",NaN";
+					transientfile << ",NaN,NaN";
 				}
-				if (electrons_total[i] > 0) {
-					//transientfile << "," << electron_energies[i] / electrons_total[i] << "," << electron_msdv[i] / electrons_total[i];
-					transientfile << "," << electron_energies[i] / electrons_total[i];
+				if (electrons_total[i] > 0 && electrons_total[i] > 5 * N_transient_cycles_sum) {
+					transientfile << "," << electron_energies[i] / electrons_total[i] << "," << electron_msdv[i] / electrons_total[i];
 				}
-				else {
-					//transientfile << ",NaN,NaN";
-					transientfile << ",NaN";
-				}
-				if (holes_total[i] > 0) {
-					//transientfile << "," << hole_energies[i] / holes_total[i] << "," << hole_msdv[i] / holes_total[i] << endl;
-					transientfile << "," << hole_energies[i] / holes_total[i] << endl;
+				else if (electrons_total[i] > 0) {
+					transientfile << "," << "NaN" << "," << electron_msdv[i] / electrons_total[i];
 				}
 				else {
-					//transientfile << ",NaN,NaN" << endl;
-					transientfile << ",NaN" << endl;
+					transientfile << ",NaN,NaN";
+				}
+				if (holes_total[i] > 0 && holes_total[i] > 5 * N_transient_cycles_sum) {
+					transientfile << "," << hole_energies[i] / holes_total[i] << "," << hole_msdv[i] / holes_total[i] << endl;
+				}
+				else if (holes_total[i] > 0) {
+					transientfile << "," << "NaN" << "," << hole_msdv[i] / holes_total[i] << endl;
+				}
+				else {
+					transientfile << ",NaN,NaN" << endl;
+					//transientfile << ",NaN" << endl;
 				}
 			}
 			transientfile.close();

@@ -1,4 +1,4 @@
-## OPV Parameters for Excimontec v1.0-beta.2
+## OPV Parameters for Excimontec v1.0-beta.3
 --------------------------------------------------------------
 ## Kinetic Monte Carlo Algorithm Parameters
 false //Enable_FRM

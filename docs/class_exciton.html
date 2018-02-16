@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
-   &#160;<span id="projectnumber">v1.0-beta.2</span>
+   &#160;<span id="projectnumber">v1.0-beta.3</span>
    </div>
    <div id="projectbrief">An open-source KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more</div>
   </td>
@@ -96,6 +96,9 @@ $(document).ready(function(){initNavTree('class_exciton.html','');});
 </div><!--header-->
 <div class="contents">
 
+<p>This class extends the <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> class to create an exciton object to represent a singlet or triplet exciton in an organic semiconductor.  
+ <a href="class_exciton.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_exciton_8h_source.html">Exciton.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Exciton:</div>
@@ -109,16 +112,20 @@ Inheritance diagram for Exciton:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a105a259c1235f22972cd25d811a750e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a105a259c1235f22972cd25d811a750e7">Exciton</a> (const double time, const int tag_num, const <a class="el" href="struct_coords.html">Coords</a> &amp;start_coords)</td></tr>
-<tr class="separator:a105a259c1235f22972cd25d811a750e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a480ef78405291593519ac372b7712029"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a480ef78405291593519ac372b7712029">Exciton</a> (const double time, const int tag_num, const <a class="el" href="struct_coords.html">Coords</a> &amp;coords_start)</td></tr>
+<tr class="memdesc:a480ef78405291593519ac372b7712029"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that creates and initializes an exciton.  <a href="#a480ef78405291593519ac372b7712029">More...</a><br /></td></tr>
+<tr class="separator:a480ef78405291593519ac372b7712029"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85a7b8561f6e294593679e53dd3b91a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a85a7b8561f6e294593679e53dd3b91a9">flipSpin</a> ()</td></tr>
+<tr class="memdesc:a85a7b8561f6e294593679e53dd3b91a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flips the spin state of the exciton from singlet to triplet or from triplet to singlet.  <a href="#a85a7b8561f6e294593679e53dd3b91a9">More...</a><br /></td></tr>
 <tr class="separator:a85a7b8561f6e294593679e53dd3b91a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d78a570cc48f62886033465219dd04c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a1d78a570cc48f62886033465219dd04c">getObjectType</a> () const</td></tr>
-<tr class="memdesc:a1d78a570cc48f62886033465219dd04c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the name of the <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> class.  <a href="#a1d78a570cc48f62886033465219dd04c">More...</a><br /></td></tr>
+<tr class="memdesc:a1d78a570cc48f62886033465219dd04c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the object type string that denotes what type of <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> class this is.  <a href="#a1d78a570cc48f62886033465219dd04c">More...</a><br /></td></tr>
 <tr class="separator:a1d78a570cc48f62886033465219dd04c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91cb4c59b7e7a7fb756aae4c4109dba3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a91cb4c59b7e7a7fb756aae4c4109dba3">getSpin</a> () const</td></tr>
+<tr class="memdesc:a91cb4c59b7e7a7fb756aae4c4109dba3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current spin state of the exciton.  <a href="#a91cb4c59b7e7a7fb756aae4c4109dba3">More...</a><br /></td></tr>
 <tr class="separator:a91cb4c59b7e7a7fb756aae4c4109dba3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43da382ee3ab29d032ab60a8e97ebaf6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a43da382ee3ab29d032ab60a8e97ebaf6">setSpin</a> (bool spin_state_new)</td></tr>
+<tr class="memdesc:a43da382ee3ab29d032ab60a8e97ebaf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the spin state of the exciton.  <a href="#a43da382ee3ab29d032ab60a8e97ebaf6">More...</a><br /></td></tr>
 <tr class="separator:a43da382ee3ab29d032ab60a8e97ebaf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_object"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_object')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_object.html">Object</a></td></tr>
 <tr class="memitem:ae8f5483f459e46687bd01e6f9977afd3 inherit pub_methods_class_object"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#ae8f5483f459e46687bd01e6f9977afd3">~Object</a> ()</td></tr>
@@ -167,11 +174,17 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a3fa1eccff8270355ff24d27f687cb205"><td class="memItemLeft" align="right" valign="top">static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton.html#a3fa1eccff8270355ff24d27f687cb205">object_type</a> = &quot;Exciton&quot;</td></tr>
+<tr class="memdesc:a3fa1eccff8270355ff24d27f687cb205"><td class="mdescLeft">&#160;</td><td class="mdescRight">This static member variable holds the name of the object, which is "Exciton".  <a href="#a3fa1eccff8270355ff24d27f687cb205">More...</a><br /></td></tr>
 <tr class="separator:a3fa1eccff8270355ff24d27f687cb205"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a105a259c1235f22972cd25d811a750e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a105a259c1235f22972cd25d811a750e7">&#9670;&nbsp;</a></span>Exciton()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This class extends the <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> class to create an exciton object to represent a singlet or triplet exciton in an organic semiconductor. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2018 </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a480ef78405291593519ac372b7712029"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a480ef78405291593519ac372b7712029">&#9670;&nbsp;</a></span>Exciton()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +208,7 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="struct_coords.html">Coords</a> &amp;&#160;</td>
-          <td class="paramname"><em>start_coords</em>&#160;</td>
+          <td class="paramname"><em>coords_start</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -209,6 +222,16 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Constructor that creates and initializes an exciton. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">time</td><td>is the simulation time denoting when the exciton was created. </td></tr>
+    <tr><td class="paramname">tag_num</td><td>is a unique id number used to distinguish the exciton from other excitons. </td></tr>
+    <tr><td class="paramname">coords_start</td><td>is the <a class="el" href="struct_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z. ">Coords</a> struct that represents the starting coordinates of the exciton. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -236,6 +259,8 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Flips the spin state of the exciton from singlet to triplet or from triplet to singlet. </p>
+
 </div>
 </div>
 <a id="a1d78a570cc48f62886033465219dd04c"></a>
@@ -261,8 +286,8 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets the name of the <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> class. </p>
-<dl class="section return"><dt>Returns</dt><dd>"Object" when called on the base class. </dd></dl>
+<p>Gets the object type string that denotes what type of <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> class this is. </p>
+<dl class="section return"><dt>Returns</dt><dd>The string "Exciton". </dd></dl>
 
 <p>Reimplemented from <a class="el" href="class_object.html#a79449834c55900dd1d96fb7c530e4515">Object</a>.</p>
 
@@ -291,6 +316,11 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the current spin state of the exciton. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the exciton is in a singlet state. </dd>
+<dd>
+false if the exciton is in a triplet state. </dd></dl>
+
 </div>
 </div>
 <a id="a43da382ee3ab29d032ab60a8e97ebaf6"></a>
@@ -317,6 +347,14 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Sets the spin state of the exciton. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">spin_state_new</td><td>indicates what the spin state will be set to. True for singlet and false for triplet. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -339,6 +377,8 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>This static member variable holds the name of the object, which is "Exciton". </p>
 
 </div>
 </div>

@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
-   &#160;<span id="projectnumber">v1.0-beta.2</span>
+   &#160;<span id="projectnumber">v1.0-beta.3</span>
    </div>
    <div id="projectbrief">An open-source KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more</div>
   </td>
@@ -166,6 +166,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afbca0a6245adc11d0d7f38e01366556b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd5da99934f079631f1192e0caba1ad4"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_s_c___sim.html#afd5da99934f079631f1192e0caba1ad4">getDynamicsHoleMSDV</a> () const</td></tr>
 <tr class="separator:afd5da99934f079631f1192e0caba1ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8ee0a55f34be1da2f78be2931584723"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_s_c___sim.html#aa8ee0a55f34be1da2f78be2931584723">getInternalField</a> () const</td></tr>
+<tr class="separator:aa8ee0a55f34be1da2f78be2931584723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae233390486c4db28a72936dd7d398f1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_s_c___sim.html#aae233390486c4db28a72936dd7d398f1">getSiteEnergies</a> (const short site_type) const</td></tr>
 <tr class="separator:aae233390486c4db28a72936dd7d398f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ce1e72c2a7d1161f844ebd46231c961"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_o_s_c___sim.html#a6ce1e72c2a7d1161f844ebd46231c961">getChargeExtractionMap</a> (const bool charge) const</td></tr>
@@ -250,6 +252,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a391ac262089c8bda8e76ce930b1db88b inherit pub_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a391ac262089c8bda8e76ce930b1db88b">getTime</a> () const</td></tr>
 <tr class="memdesc:a391ac262089c8bda8e76ce930b1db88b inherit pub_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current simulation time in units of seconds.  <a href="class_simulation.html#a391ac262089c8bda8e76ce930b1db88b">More...</a><br /></td></tr>
 <tr class="separator:a391ac262089c8bda8e76ce930b1db88b inherit pub_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a623c3fbc431ab74c2d2b2374a3b5a3a7 inherit pub_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a623c3fbc431ab74c2d2b2374a3b5a3a7">getVolume</a> () const</td></tr>
+<tr class="memdesc:a623c3fbc431ab74c2d2b2374a3b5a3a7 inherit pub_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the simulation box volume in cm^-3.  <a href="class_simulation.html#a623c3fbc431ab74c2d2b2374a3b5a3a7">More...</a><br /></td></tr>
+<tr class="separator:a623c3fbc431ab74c2d2b2374a3b5a3a7 inherit pub_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7c8a49a4cc506b850891480e0aae512 inherit pub_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#ac7c8a49a4cc506b850891480e0aae512">isLoggingEnabled</a> () const</td></tr>
 <tr class="memdesc:ac7c8a49a4cc506b850891480e0aae512 inherit pub_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether or not logging is enabled.  <a href="class_simulation.html#ac7c8a49a4cc506b850891480e0aae512">More...</a><br /></td></tr>
 <tr class="separator:ac7c8a49a4cc506b850891480e0aae512 inherit pub_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -263,15 +268,15 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_simulation"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_simulation')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_simulation.html">Simulation</a></td></tr>
-<tr class="memitem:a4b84249d359723e00ec4ae77164c8b7d inherit pro_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_event.html">Event</a> * &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a4b84249d359723e00ec4ae77164c8b7d">addEvent</a> (<a class="el" href="class_event.html">Event</a> *event_ptr)</td></tr>
-<tr class="memdesc:a4b84249d359723e00ec4ae77164c8b7d inherit pro_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pointer to an <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> object to the event list and returns the iterator to its position in the list.  <a href="class_simulation.html#a4b84249d359723e00ec4ae77164c8b7d">More...</a><br /></td></tr>
-<tr class="separator:a4b84249d359723e00ec4ae77164c8b7d inherit pro_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33a57b5640b0d33c816dc6e57604162e inherit pro_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_event.html">Event</a> * &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a33a57b5640b0d33c816dc6e57604162e">addEvent</a> (<a class="el" href="class_event.html">Event</a> *event_ptr)</td></tr>
+<tr class="memdesc:a33a57b5640b0d33c816dc6e57604162e inherit pro_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pointer to an <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> object to the event list and returns the iterator to its position in the list.  <a href="class_simulation.html#a33a57b5640b0d33c816dc6e57604162e">More...</a><br /></td></tr>
+<tr class="separator:a33a57b5640b0d33c816dc6e57604162e inherit pro_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e0f43c4e11eda5486054c250f4de08f inherit pro_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a1e0f43c4e11eda5486054c250f4de08f">addObject</a> (<a class="el" href="class_object.html">Object</a> *object_ptr)</td></tr>
 <tr class="memdesc:a1e0f43c4e11eda5486054c250f4de08f inherit pro_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pointer to an <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> object to the object list.  <a href="class_simulation.html#a1e0f43c4e11eda5486054c250f4de08f">More...</a><br /></td></tr>
 <tr class="separator:a1e0f43c4e11eda5486054c250f4de08f inherit pro_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a401d40509ba367a28702873a0d65188d inherit pro_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_event.html">Event</a> * &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a401d40509ba367a28702873a0d65188d">chooseNextEvent</a> ()</td></tr>
-<tr class="memdesc:a401d40509ba367a28702873a0d65188d inherit pro_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Searches the event list and determines which event will be executed next.  <a href="class_simulation.html#a401d40509ba367a28702873a0d65188d">More...</a><br /></td></tr>
-<tr class="separator:a401d40509ba367a28702873a0d65188d inherit pro_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8cf2e5c24531582599423df2d70dc5b inherit pro_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_event.html">Event</a> * &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#af8cf2e5c24531582599423df2d70dc5b">chooseNextEvent</a> ()</td></tr>
+<tr class="memdesc:af8cf2e5c24531582599423df2d70dc5b inherit pro_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Searches the event list and determines which event will be executed next.  <a href="class_simulation.html#af8cf2e5c24531582599423df2d70dc5b">More...</a><br /></td></tr>
+<tr class="separator:af8cf2e5c24531582599423df2d70dc5b inherit pro_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a662702acf2d446dbdef0e1c87bf21038 inherit pro_methods_class_simulation"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_object.html">Object</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_simulation.html#a662702acf2d446dbdef0e1c87bf21038">findRecalcObjects</a> (const <a class="el" href="struct_coords.html">Coords</a> &amp;coords_start, const <a class="el" href="struct_coords.html">Coords</a> &amp;coords_dest) const</td></tr>
 <tr class="memdesc:a662702acf2d446dbdef0e1c87bf21038 inherit pro_methods_class_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and returns a vector of pointers to all <a class="el" href="class_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects that are to have their events recalculated/.  <a href="class_simulation.html#a662702acf2d446dbdef0e1c87bf21038">More...</a><br /></td></tr>
 <tr class="separator:a662702acf2d446dbdef0e1c87bf21038 inherit pro_methods_class_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -835,6 +840,23 @@ false if execution of the next event is unsuccessful. </dd></dl>
       <table class="memname">
         <tr>
           <td class="memname">vector&lt; int &gt; OSC_Sim::getDynamicsTransientTriplets </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa8ee0a55f34be1da2f78be2931584723"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8ee0a55f34be1da2f78be2931584723">&#9670;&nbsp;</a></span>getInternalField()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double OSC_Sim::getInternalField </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

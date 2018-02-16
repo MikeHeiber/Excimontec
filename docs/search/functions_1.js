@@ -20,7 +20,7 @@ var searchData=
   ['checkfinished',['checkFinished',['../class_simulation.html#af69bb46977a3a0084214a194c888e16c',1,'Simulation::checkFinished()'],['../class_o_s_c___sim.html#ab3e4258c850b48ec02e4d3a88b583115',1,'OSC_Sim::checkFinished()']]],
   ['checkmovevalidity',['checkMoveValidity',['../class_lattice.html#ad0592298c4b92e9e84a768b95cd6d0f0',1,'Lattice']]],
   ['checkparameters',['checkParameters',['../class_o_s_c___sim.html#a92f8e2ae6bcd3e0755feb2419849c8e9',1,'OSC_Sim']]],
-  ['choosenextevent',['chooseNextEvent',['../class_simulation.html#a401d40509ba367a28702873a0d65188d',1,'Simulation']]],
+  ['choosenextevent',['chooseNextEvent',['../class_simulation.html#af8cf2e5c24531582599423df2d70dc5b',1,'Simulation']]],
   ['clearoccupancy',['clearOccupancy',['../class_lattice.html#a97a1b4f24cd40b81ed63aa2d7713b63b',1,'Lattice::clearOccupancy()'],['../class_site.html#a46ff077954e39046b493ee1ea57a9c93',1,'Site::clearOccupancy()']]],
   ['createexponentialdosvector',['createExponentialDOSVector',['../namespace_utils.html#af296d2aa8f889f67fe515fc641c5f5fe',1,'Utils']]],
   ['creategaussiandosvector',['createGaussianDOSVector',['../namespace_utils.html#a2ce45ade7d6d4f2995b595da3ebbaaec',1,'Utils']]]
