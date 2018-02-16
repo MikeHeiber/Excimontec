@@ -20,7 +20,7 @@ var searchData=
   ['checkfinished',['checkFinished',['../class_simulation.html#af69bb46977a3a0084214a194c888e16c',1,'Simulation::checkFinished()'],['../class_o_s_c___sim.html#ab3e4258c850b48ec02e4d3a88b583115',1,'OSC_Sim::checkFinished()']]],
   ['checkmovevalidity',['checkMoveValidity',['../class_lattice.html#ad0592298c4b92e9e84a768b95cd6d0f0',1,'Lattice']]],
   ['checkparameters',['checkParameters',['../class_o_s_c___sim.html#a92f8e2ae6bcd3e0755feb2419849c8e9',1,'OSC_Sim']]],
-  ['choosenextevent',['chooseNextEvent',['../class_simulation.html#a401d40509ba367a28702873a0d65188d',1,'Simulation']]],
+  ['choosenextevent',['chooseNextEvent',['../class_simulation.html#af8cf2e5c24531582599423df2d70dc5b',1,'Simulation']]],
   ['clearoccupancy',['clearOccupancy',['../class_lattice.html#a97a1b4f24cd40b81ed63aa2d7713b63b',1,'Lattice::clearOccupancy()'],['../class_site.html#a46ff077954e39046b493ee1ea57a9c93',1,'Site::clearOccupancy()']]],
   ['coords',['Coords',['../struct_coords.html',1,'']]],
   ['coulomb_5fcutoff',['Coulomb_cutoff',['../struct_parameters___o_p_v.html#ac5388c27ae33a5c648404cfce065a873',1,'Parameters_OPV']]],

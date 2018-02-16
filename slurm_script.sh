@@ -5,7 +5,7 @@
 #SBATCH -t 01:00:00 # Maximum walltime
 #SBATCH --cpus-per-task=1
 
-version_num=v1.0-beta.2
+version_num=v1.0-beta.3
 ParameterNum=default
 
 # Setup job directory

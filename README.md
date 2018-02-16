@@ -18,7 +18,7 @@ This software package uses object-oriented design and extends the [KMC_Lattice](
 - Choose between several KMC algorithms (first reaction method, selective recalculation method, or full recalculation method).
 
 ## Current Status
-The current version (Excimontec v1.0-beta.2) is built with KMC_Lattice v2.0-beta.2 and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+The current version (Excimontec v1.0-beta.3) is built with KMC_Lattice v2.0-beta.3 and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
 All major planned features that are to be included in v1.0 are now implemented and have undergone preliminary testing. 
 However, this software tool is still under development, and as such, there may still be bugs that need to be squashed. 
 Please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 

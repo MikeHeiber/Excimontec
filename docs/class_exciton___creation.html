@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
-   &#160;<span id="projectnumber">v1.0-beta.2</span>
+   &#160;<span id="projectnumber">v1.0-beta.3</span>
    </div>
    <div id="projectbrief">An open-source KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more</div>
   </td>
@@ -96,6 +96,9 @@ $(document).ready(function(){initNavTree('class_exciton___creation.html','');});
 </div><!--header-->
 <div class="contents">
 
+<p>This class extends the <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> class to create an specific type of exciton event.  
+ <a href="class_exciton___creation.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_exciton_8h_source.html">Exciton.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Exciton_Creation:</div>
@@ -110,11 +113,13 @@ Inheritance diagram for Exciton_Creation:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a21e9217cb8c671066c6a9b8d417a13ec"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton___creation.html#a21e9217cb8c671066c6a9b8d417a13ec">Exciton_Creation</a> ()</td></tr>
+<tr class="memdesc:a21e9217cb8c671066c6a9b8d417a13ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty event that is uninitialized.  <a href="#a21e9217cb8c671066c6a9b8d417a13ec">More...</a><br /></td></tr>
 <tr class="separator:a21e9217cb8c671066c6a9b8d417a13ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01d52761482e31bd4f98dcab2b7f09d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton___creation.html#a01d52761482e31bd4f98dcab2b7f09d5">Exciton_Creation</a> (<a class="el" href="class_simulation.html">Simulation</a> *simulation_ptr)</td></tr>
+<tr class="memdesc:a01d52761482e31bd4f98dcab2b7f09d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and initializes an event.  <a href="#a01d52761482e31bd4f98dcab2b7f09d5">More...</a><br /></td></tr>
 <tr class="separator:a01d52761482e31bd4f98dcab2b7f09d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8dab95eb7d8c0a2cfddb8bf130d3b805"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton___creation.html#a8dab95eb7d8c0a2cfddb8bf130d3b805">getEventType</a> () const</td></tr>
-<tr class="memdesc:a8dab95eb7d8c0a2cfddb8bf130d3b805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the name of event class.  <a href="#a8dab95eb7d8c0a2cfddb8bf130d3b805">More...</a><br /></td></tr>
+<tr class="memdesc:a8dab95eb7d8c0a2cfddb8bf130d3b805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the event type string that denotes what type of <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> class this is.  <a href="#a8dab95eb7d8c0a2cfddb8bf130d3b805">More...</a><br /></td></tr>
 <tr class="separator:a8dab95eb7d8c0a2cfddb8bf130d3b805"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_event"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_event')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_event.html">Event</a></td></tr>
 <tr class="memitem:a7704ec01ce91e673885792054214b3d2 inherit pub_methods_class_event"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_event.html#a7704ec01ce91e673885792054214b3d2">~Event</a> ()</td></tr>
@@ -156,6 +161,7 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a5330b61389f7f7077591e6103305ef8b"><td class="memItemLeft" align="right" valign="top">static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_exciton___creation.html#a5330b61389f7f7077591e6103305ef8b">event_type</a> = &quot;Exciton Creation&quot;</td></tr>
+<tr class="memdesc:a5330b61389f7f7077591e6103305ef8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This static member variable holds the name of the event, which is "Exciton_Creation".  <a href="#a5330b61389f7f7077591e6103305ef8b">More...</a><br /></td></tr>
 <tr class="separator:a5330b61389f7f7077591e6103305ef8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
@@ -165,7 +171,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memdesc:aa372e6b2345c96b3c0ce21e9603280fb inherit pro_attribs_class_event"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sim_ptr member variable provides a point to the <a class="el" href="class_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> object that the <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> is asociated with.  <a href="class_event.html#aa372e6b2345c96b3c0ce21e9603280fb">More...</a><br /></td></tr>
 <tr class="separator:aa372e6b2345c96b3c0ce21e9603280fb inherit pro_attribs_class_event"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This class extends the <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> class to create an specific type of exciton event. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2018 </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a21e9217cb8c671066c6a9b8d417a13ec"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a21e9217cb8c671066c6a9b8d417a13ec">&#9670;&nbsp;</a></span>Exciton_Creation() <span class="overload">[1/2]</span></h2>
 
@@ -188,6 +199,8 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Constructs an empty event that is uninitialized. </p>
 
 </div>
 </div>
@@ -215,6 +228,14 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Constructs and initializes an event. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">simulation_ptr</td><td>is a pointer to the <a class="el" href="class_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> object that is associated with the event. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -241,8 +262,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Gets the name of event class. </p>
-<dl class="section return"><dt>Returns</dt><dd>"Event" when called on the base class. </dd></dl>
+<p>Gets the event type string that denotes what type of <a class="el" href="class_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> class this is. </p>
+<dl class="section return"><dt>Returns</dt><dd>The string "Exciton_Creation". </dd></dl>
 
 <p>Reimplemented from <a class="el" href="class_event.html#a77ff5602b20c468b3b72e9924038ac94">Event</a>.</p>
 
@@ -268,6 +289,8 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>This static member variable holds the name of the event, which is "Exciton_Creation". </p>
 
 </div>
 </div>

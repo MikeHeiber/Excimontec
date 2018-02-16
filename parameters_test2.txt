@@ -10,9 +10,9 @@ false //Enable_full_recalc
 true //Enable_periodic_x
 true //Enable_periodic_y
 false //Enable_periodic_z
-50 //Length
-50 //Width
-100 //Height
+100 //Length
+100 //Width
+200 //Height
 1.0 //Unit_size (nm)
 300 //Temperature (K)
 -1.0 //Internal_potential (V)
@@ -32,15 +32,15 @@ morphology_#_compressed.txt //Morphology_set_format
 4 //N_morphology_set_size
 --------------------------------------------------------------
 ## Test Parameters
-100 //N_tests
+200 //N_tests
 false //Enable_exciton_diffusion_test
-true //Enable_ToF_test
+false //Enable_ToF_test
 hole //ToF_polaron_type (electron or hole)
-1 //ToF_initial_polarons
+20 //ToF_initial_polarons
 1e-10 //ToF_transient_start (s)
 1e-4 //ToF_transient_end (s)
 20 //ToF_pnts_per_decade
-false //Enable_IQE_test
+true //Enable_IQE_test
 1e-4 //IQE_time_cutoff (s) (simulation time)
 false //Enable_extraction_map_output
 false //Enable_dynamics_test
@@ -95,8 +95,8 @@ false //Enable_marcus
 0.2 //Reorganization_acceptor (eV)
 1e12 //R_polaron_recombination (s^-1)
 3 //Polaron_hopping_cutoff (nm)
-false //Enable_gaussian_polaron_delocalization
-1.0 //Polaron_delocalization_length (nm)
+true //Enable_gaussian_polaron_delocalization
+4.0 //Polaron_delocalization_length (nm)
 --------------------------------------------------------------
 ## Lattice Site Parameters
 5.5 //Homo_donor (eV)
@@ -118,5 +118,5 @@ false //Enable_power_kernel
 ## Coulomb Interaction Parameters
 3.5 //Dielectric_donor
 3.5 //Dielectric_acceptor
-25 //Coulomb_cutoff (nm)
+50 //Coulomb_cutoff (nm)
 --------------------------------------------------------------

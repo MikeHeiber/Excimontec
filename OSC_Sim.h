@@ -153,6 +153,7 @@ class OSC_Sim : public Simulation{
 		std::vector<double> getDynamicsExcitonMSDV() const;
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
+		double getInternalField() const;
 		std::vector<double> getSiteEnergies(const short site_type) const;
 		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
 		std::vector<int> getToFTransientCounts() const;
@@ -301,7 +302,7 @@ class OSC_Sim : public Simulation{
 		std::list<Polaron> holes;
         // Event Data Structures
 		std::list<Exciton_Creation> exciton_creation_events;
-		std::list<Event*>::iterator exciton_creation_it;
+		std::list<Event*>::const_iterator exciton_creation_it;
 		std::list<Exciton_Hop> exciton_hop_events;
 		std::list<Exciton_Recombination> exciton_recombination_events;
 		std::list<Exciton_Dissociation> exciton_dissociation_events;
@@ -327,9 +328,6 @@ class OSC_Sim : public Simulation{
 		std::vector<double> transient_exciton_energies_prev;
 		std::vector<double> transient_electron_energies_prev;
 		std::vector<double> transient_hole_energies_prev;
-		std::vector<Exciton> transient_exciton_tracker;
-		std::vector<Polaron> transient_electron_tracker;
-		std::vector<Polaron> transient_hole_tracker;
 		std::vector<double> transient_exciton_msdv;
 		std::vector<double> transient_electron_msdv;
 		std::vector<double> transient_hole_msdv;
@@ -379,7 +377,7 @@ class OSC_Sim : public Simulation{
         int N_hole_surface_recombinations = 0;
 		int N_transient_cycles = 0;
         // Additional Functions
-		double calculateCoulomb(const std::list<Polaron>::iterator polaron_it, const Coords& coords) const;
+		double calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const Coords& coords) const;
 		double calculateCoulomb(const bool charge, const Coords& coords) const;
         Coords calculateExcitonCreationCoords();
         void calculateExcitonEvents(Exciton* exciton_ptr);
@@ -390,18 +388,18 @@ class OSC_Sim : public Simulation{
         void deleteObject(Object* object_ptr);
         // Exciton Event Execution Functions
         bool executeExcitonCreation();
-        bool executeExcitonHop(const std::list<Event*>::iterator event_it);
-        bool executeExcitonRecombination(const std::list<Event*>::iterator event_it);
-        bool executeExcitonDissociation(const std::list<Event*>::iterator event_it);
-        bool executeExcitonIntersystemCrossing(const std::list<Event*>::iterator event_it);
-        bool executeExcitonExcitonAnnihilation(const std::list<Event*>::iterator event_it);
-        bool executeExcitonPolaronAnnihilation(const std::list<Event*>::iterator event_it);
+        bool executeExcitonHop(const std::list<Event*>::const_iterator event_it);
+        bool executeExcitonRecombination(const std::list<Event*>::const_iterator event_it);
+        bool executeExcitonDissociation(const std::list<Event*>::const_iterator event_it);
+        bool executeExcitonIntersystemCrossing(const std::list<Event*>::const_iterator event_it);
+        bool executeExcitonExcitonAnnihilation(const std::list<Event*>::const_iterator event_it);
+        bool executeExcitonPolaronAnnihilation(const std::list<Event*>::const_iterator event_it);
         // General Event Functions
-        bool executeObjectHop(const std::list<Event*>::iterator event_it);
+        bool executeObjectHop(const std::list<Event*>::const_iterator event_it);
         // Polaron Event Execution Functions
-        bool executePolaronHop(const std::list<Event*>::iterator event_it);
-        bool executePolaronRecombination(const std::list<Event*>::iterator event_it);
-        bool executePolaronExtraction(const std::list<Event*>::iterator event_it);
+        bool executePolaronHop(const std::list<Event*>::const_iterator event_it);
+        bool executePolaronRecombination(const std::list<Event*>::const_iterator event_it);
+        bool executePolaronExtraction(const std::list<Event*>::const_iterator event_it);
         Coords generateExciton();
         void generateElectron(const Coords& coords,int tag);
         void generateHole(const Coords& coords,int tag);

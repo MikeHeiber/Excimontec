@@ -1,7 +1,7 @@
 var searchData=
 [
   ['event',['Event',['../class_event.html#a5a40dd4708297f7031e29b39e039ae10',1,'Event::Event()'],['../class_event.html#adbadc626c37dc77443f6f8c9abec589f',1,'Event::Event(Simulation *sim_ptr)']]],
-  ['exciton',['Exciton',['../class_exciton.html#a105a259c1235f22972cd25d811a750e7',1,'Exciton']]],
+  ['exciton',['Exciton',['../class_exciton.html#a480ef78405291593519ac372b7712029',1,'Exciton']]],
   ['exciton_5fcreation',['Exciton_Creation',['../class_exciton___creation.html#a21e9217cb8c671066c6a9b8d417a13ec',1,'Exciton_Creation::Exciton_Creation()'],['../class_exciton___creation.html#a01d52761482e31bd4f98dcab2b7f09d5',1,'Exciton_Creation::Exciton_Creation(Simulation *simulation_ptr)']]],
   ['exciton_5fdissociation',['Exciton_Dissociation',['../class_exciton___dissociation.html#ad127a7325c308e35d52b53668ae52353',1,'Exciton_Dissociation::Exciton_Dissociation()'],['../class_exciton___dissociation.html#a91ed94e4fa9b465a35aad05a303d0fd0',1,'Exciton_Dissociation::Exciton_Dissociation(Simulation *simulation_ptr)']]],
   ['exciton_5fexciton_5fannihilation',['Exciton_Exciton_Annihilation',['../class_exciton___exciton___annihilation.html#a62c62f119f2ddd3a3f024f0b33312a7a',1,'Exciton_Exciton_Annihilation::Exciton_Exciton_Annihilation()'],['../class_exciton___exciton___annihilation.html#a15838db1eb32ea23c0442f36b3f6236e',1,'Exciton_Exciton_Annihilation::Exciton_Exciton_Annihilation(Simulation *simulation_ptr)']]],
