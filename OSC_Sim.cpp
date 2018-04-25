@@ -44,6 +44,9 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
     Enable_ToF_test = params.Enable_ToF_test;
     ToF_polaron_type = params.ToF_polaron_type;
     ToF_initial_polarons = params.ToF_initial_polarons;
+	Enable_ToF_random_placement = params.Enable_ToF_random_placement;
+	Enable_ToF_energy_placement = params.Enable_ToF_energy_placement;
+	ToF_placement_energy = params.ToF_placement_energy;
     //ToF_transient_start = params.ToF_transient_start;
     //ToF_transient_end = params.ToF_transient_end;
     //ToF_pnts_per_decade = params.ToF_pnts_per_decade;
@@ -228,6 +231,11 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
 	else {
 		return true;
 	}
+}
+
+void OSC_Sim::calculateAllEvents() {
+	auto object_its = getAllObjectPtrs();
+	calculateObjectListEvents(object_its);
 }
 
 double OSC_Sim::calculateCoulomb(const list<Polaron>::const_iterator polaron_it, const Coords& coords) const {
@@ -515,7 +523,11 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 					if (isInFRETRange[index]) {
 						auto object_target_ptr = sites[lattice.getSiteIndex(dest_coords)].getObjectPtr();
 						// Exciton-Exciton annihilation
-						if (object_target_ptr->getObjectType().compare(Exciton::object_type)==0) {
+						if (object_target_ptr->getObjectType().compare(Exciton::object_type) == 0) {
+							// Skip disallowed triplet-singlet annihilation
+							if (!exciton_it->getSpin() && getExcitonIt(object_target_ptr)->getSpin()) {
+								continue;
+							}
 							exciton_exciton_annihilations_temp[index].setObjectPtr(exciton_ptr);
 							exciton_exciton_annihilations_temp[index].setDestCoords(dest_coords);
 							exciton_exciton_annihilations_temp[index].setObjectTargetPtr(object_target_ptr);
@@ -1153,6 +1165,10 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 		return false;
 	}
 	// Check test parameters
+	if (params.Enable_ToF_test && (params.Enable_ToF_random_placement && params.Enable_ToF_energy_placement) && !(params.Enable_ToF_random_placement || params.Enable_ToF_energy_placement)) {
+		cout << "Error! For a time-of-flight charge transport test either the random placement or the low energy placement option must be enabled." << endl;
+		return false;
+	}
 	if (params.Enable_ToF_test && params.Enable_bilayer) {
 		cout << "Error! The bilayer film architecture cannot be used with the time-of-flight charge transport test." << endl;
 		return false;
@@ -1485,6 +1501,54 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 	DOS_correlation_data = calculateDOSCorrelation(distance_max);
 }
 
+void OSC_Sim::createElectron(const Coords& coords) {
+	// Check that coords are valid
+	if (lattice.getSiteIndex(coords) < 0) {
+		cout << "Error! Electron cannot be generated because the input coordinates are invalid." << endl;
+		setErrorMessage("Electron cannot be generated because the input coordinates are invalid.");
+		Error_found = true;
+	}
+	// Check that the site type is valid
+	else if (Enable_phase_restriction && getSiteType(coords) == 1) {
+		cout << "Error! Electron cannot be generated on a donor site." << endl;
+		setErrorMessage("Electron cannot be generated on a donor site.");
+		Error_found = true;
+	}
+	else {
+		generateElectron(coords, 0);
+	}
+}
+
+void OSC_Sim::createExciton(const Coords& coords, const bool spin) {
+	// Check that coords are valid
+	if (lattice.getSiteIndex(coords) < 0) {
+		cout << "Error! Exciton cannot be generated because the input coordinates are invalid." << endl;
+		setErrorMessage("Exciton cannot be generated because the input coordinates are invalid.");
+		Error_found = true;
+	}
+	else {
+		generateExciton(coords, spin, 0);
+	}
+}
+
+void OSC_Sim::createHole(const Coords& coords) {
+	// Check that coords are valid
+	if (lattice.getSiteIndex(coords) < 0) {
+		cout << "Error! Hole cannot be generated because the input coordinates are invalid." << endl;
+		setErrorMessage("Hole cannot be generated because the input coordinates are invalid.");
+		Error_found = true;
+	}
+	// Check that the site type is valid
+	else if (Enable_phase_restriction && getSiteType(coords) == 2) {
+		cout << "Error! Hole cannot be generated on an acceptor site." << endl;
+		setErrorMessage("Hole cannot be generated on an acceptor site.");
+		Error_found = true;
+	}
+	else {
+		generateHole(coords, 0);
+	}
+}
+
 bool OSC_Sim::createImportedMorphology(){
     string file_info;
     string line;
@@ -1713,30 +1777,35 @@ bool OSC_Sim::executeExcitonExcitonAnnihilation(const list<Event*>::const_iterat
 	bool spin_state_target = (getExcitonIt((*event_it)->getObjectTargetPtr()))->getSpin();
 	Coords coords_initial = object_ptr->getCoords();
 	Coords coords_dest = (*event_it)->getDestCoords();
-	// Check for triplet-triplet annihilation
-	if (!getExcitonIt(object_ptr)->getSpin() && !getExcitonIt((*event_it)->getObjectTargetPtr())->getSpin()) {
+	// Triplet-triplet annihilation
+	if (!spin_state && !spin_state_target) {
 		// Target triplet exciton becomes a singlet exciton
-		getExcitonIt((*event_it)->getObjectTargetPtr())->flipSpin();
+		if (rand01() > 0.75) {
+			getExcitonIt((*event_it)->getObjectTargetPtr())->flipSpin();
+			N_triplets -= 2;
+			N_singlets++;
+		}
+		// Target triplet exciton stays a triplet
+		else {
+			N_triplets--;
+		}
+		N_triplet_triplet_annihilations++;
 	}
-	// delete exciton and its events
-	deleteObject((*event_it)->getObjectPtr());
-	// Update exciton counters
-	N_excitons--;
+	// Singlet-singlet or singlet-triplet annihilation
 	// singlet-singlet
-	if (spin_state && spin_state == spin_state_target) {
+	if (spin_state && spin_state_target) {
 		N_singlet_singlet_annihilations++;
 		N_singlets--;
 	}
-	// triplet-triplet
-	else if (!spin_state && spin_state == spin_state_target) {
-		N_triplet_triplet_annihilations++;
-		N_triplets--;
-	}
 	// singlet-triplet
-	else if (spin_state != spin_state_target) {
+	else if (spin_state && !spin_state_target) {
 		N_singlet_triplet_annihilations++;
 		N_singlets--;
 	}
+	// delete exciton and its events
+	deleteObject((*event_it)->getObjectPtr());
+	// Update exciton counter
+	N_excitons--;
 	// Log event
 	if (isLoggingEnabled()) {
 		*Logfile << "Exciton " << exciton_tag << " annihilated at site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z;
@@ -2101,12 +2170,17 @@ Coords OSC_Sim::generateExciton(){
     }
     N_excitons_created++;
     N_excitons++;
-	N_singlets++;
     // Log event
     if(isLoggingEnabled()){
         *Logfile << "Created exciton " << exciton_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
     }
 	return coords;
+	if (spin) {
+		N_singlets++;
+	}
+	else {
+		N_triplets++;
+	}
 }
 
 void OSC_Sim::generateElectron(const Coords& coords,int tag=0){
@@ -2199,24 +2273,23 @@ void OSC_Sim::generateDynamicsExcitons(){
 	Transient_triplet_counts_prev = N_triplets;
 	Transient_electron_counts_prev = N_electrons;
 	Transient_hole_counts_prev = N_holes;
-    auto object_its = getAllObjectPtrs();
-    calculateObjectListEvents(object_its);
+	calculateAllEvents();
 }
 
-void OSC_Sim::generateToFPolarons(){
-    Coords coords;
+void OSC_Sim::generateToFPolarons() {
+	Coords coords;
 	// Reassign site energies
 	if (N_electrons_collected > 0 || N_holes_collected > 0) {
 		reassignSiteEnergies();
 	}
-    // Create electrons at the top plane of the lattice
-    if(!ToF_polaron_type){
-        coords.z = lattice.getHeight()-1;
-    }
-    // Create holes at the bottom plane of the lattice
-    else{
-        coords.z = 0;
-    }
+	// Create electrons at the top plane of the lattice
+	if (!ToF_polaron_type) {
+		coords.z = lattice.getHeight() - 1;
+	}
+	// Create holes at the bottom plane of the lattice
+	else {
+		coords.z = 0;
+	}
 	// Initialize transient data vectors
 	if (!ToF_polaron_type) {
 		transient_electron_tags.assign(ToF_initial_polarons, -1);
@@ -2228,41 +2301,67 @@ void OSC_Sim::generateToFPolarons(){
 		transient_hole_energies_prev.assign(ToF_initial_polarons, 0);
 		Transient_hole_counts_prev = ToF_initial_polarons;
 	}
-    ToF_positions_prev.assign(ToF_initial_polarons,coords.z);
+	ToF_positions_prev.assign(ToF_initial_polarons, coords.z);
 	Transient_creation_time = getTime();
 	Transient_index_prev = -1;
 	N_transient_cycles++;
 	cout << getId() << ": ToF transient cycle " << N_transient_cycles << ": Generating " << ToF_initial_polarons << " initial polarons." << endl;
 	int num = 0;
-    while(num<ToF_initial_polarons){
-        coords.x = lattice.generateRandomX();
-        coords.y = lattice.generateRandomY();
-        // If the site is already occupied, pick a new site
-        if(lattice.isOccupied(coords)){
-            continue;
-        }
-        // If phase restriction is enabled, electrons cannot be created on donor sites
-        else if(Enable_phase_restriction && !ToF_polaron_type && getSiteType(coords)==(short)1){
-            continue;
-        }
-        // If phase restriction is enabled, holes cannot be created on acceptor sites
-        else if(Enable_phase_restriction && ToF_polaron_type && getSiteType(coords)==(short)2){
-            continue;
-        }
-        else if(!ToF_polaron_type){
-            generateElectron(coords);
+	// Determine unique coords for each new polaron
+	vector<Coords> coords_vect(0);
+	// Construct vector of coordinates for all possible sites
+	for (int x = 0; x < lattice.getLength(); x++) {
+		for (int y = 0; y < lattice.getWidth(); y++) {
+			coords.x = x;
+			coords.y = y;
+			// If phase restriction is enabled, electrons cannot be created on donor sites
+			if (Enable_phase_restriction && !ToF_polaron_type && getSiteType(coords) == (short)1) {
+				continue;
+			}
+			// If phase restriction is enabled, holes cannot be created on acceptor sites
+			if (Enable_phase_restriction && ToF_polaron_type && getSiteType(coords) == (short)2) {
+				continue;
+			}
+			coords_vect.push_back(coords);
+		}
+	}
+	// Check to make sure there are enough possible sites
+	if ((int)coords_vect.size() < ToF_initial_polarons){
+		cout << "Error! " << ToF_initial_polarons << " sites were not available to place the initial ToF polarons." << endl;
+		setErrorMessage("Initial ToF polarons could not be created.");
+		Error_found = true;
+	}
+	// Randomly select from the total possible sites
+	if (Enable_ToF_random_placement) {
+		shuffle(coords_vect.begin(), coords_vect.end(), generator);
+		// Resize the vector to only keep the appropriate number of sites
+		coords_vect.resize(ToF_initial_polarons);
+	}
+	// Only select the lowest energy sites
+	else if (Enable_ToF_energy_placement) {
+		// Sort vector by site energy from closest to the target energy to furthest
+		sort(coords_vect.begin(), coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
+			return fabs(getSiteEnergy(a)-ToF_placement_energy) < fabs(getSiteEnergy(b)-ToF_placement_energy);
+		});
+		// Resize vector to only keep the the lowest energy sites
+		coords_vect.resize(ToF_initial_polarons);
+	}
+	// Generate the polarons in the selected sites
+	num = 0;
+	for (auto const &item : coords_vect) {
+		if (!ToF_polaron_type) {
+			generateElectron(item);
 			transient_electron_tags[num] = electrons.back().getTag();
-			transient_electron_energies_prev[num] = getSiteEnergy(coords);
-        }
-        else{
-            generateHole(coords);
+			transient_electron_energies_prev[num] = getSiteEnergy(item);
+		}
+		else {
+			generateHole(item);
 			transient_hole_tags[num] = holes.back().getTag();
-			transient_hole_energies_prev[num] = getSiteEnergy(coords);
-        }
-        num++;
-    }
-    auto object_its = getAllObjectPtrs();
-    calculateObjectListEvents(object_its);
+			transient_hole_energies_prev[num] = getSiteEnergy(item);
+		}
+		num++;
+	}
+	calculateAllEvents();
 }
 
 vector<double> OSC_Sim::getDiffusionData() const {
@@ -2315,6 +2414,16 @@ vector<int> OSC_Sim::getDynamicsTransientHoles() const {
 
 vector<double> OSC_Sim::getDynamicsTransientTimes() const {
     return transient_times;
+}
+
+std::vector<Event> OSC_Sim::getEvents() const {
+	auto event_ptrs = getAllEventPtrs();
+	vector<Event> events;
+	events.reserve(event_ptrs.size());
+	for (auto item : event_ptrs) {
+		events.push_back(*item);
+	}
+	return events;
 }
 
 list<Exciton>::iterator OSC_Sim::getExcitonIt(const Object* object_ptr){
@@ -2679,10 +2788,12 @@ void OSC_Sim::reassignSiteEnergies() {
 }
 
 bool OSC_Sim::siteContainsHole(const Coords& coords){
-    auto object_ptr = (*lattice.getSiteIt(coords))->getObjectPtr();
-    if(object_ptr->getObjectType().compare(Polaron::object_type)==0){
-        return static_cast<Polaron*>(object_ptr)->getCharge();
-    }
+	if (lattice.isOccupied(coords)) {
+		auto object_ptr = (*lattice.getSiteIt(coords))->getObjectPtr();
+		if (object_ptr->getObjectType().compare(Polaron::object_type) == 0) {
+			return static_cast<Polaron*>(object_ptr)->getCharge();
+		}
+	}
     return false;
 }
 

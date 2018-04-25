@@ -31,6 +31,9 @@ struct Parameters_OPV : Parameters_Simulation{
     bool Enable_ToF_test;
     bool ToF_polaron_type;
     int ToF_initial_polarons;
+	bool Enable_ToF_random_placement;
+	bool Enable_ToF_energy_placement;
+	double ToF_placement_energy;
     double ToF_transient_start;
     double ToF_transient_end;
     int ToF_pnts_per_decade;
@@ -128,6 +131,7 @@ class OSC_Sim : public Simulation{
 		OSC_Sim();
 		virtual ~OSC_Sim();
         bool init(const Parameters_OPV& params,const int id);
+		void calculateAllEvents();
         double calculateDiffusionLength_avg() const;
         double calculateDiffusionLength_stdev() const;
 		std::vector<std::pair<double,double>> calculateDOSCorrelation(const double cutoff_radius);
@@ -139,6 +143,9 @@ class OSC_Sim : public Simulation{
         double calculateMobility_stdev() const;
         bool checkFinished() const;
 		bool checkParameters(const Parameters_OPV& params) const;
+		void createExciton(const Coords& coords, const bool spin);
+		void createElectron(const Coords& coords);
+		void createHole(const Coords& coords);
         bool executeNextEvent();
 		std::vector<double> getDiffusionData() const;
 		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
@@ -153,6 +160,7 @@ class OSC_Sim : public Simulation{
 		std::vector<double> getDynamicsExcitonMSDV() const;
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
+		std::vector<Event> getEvents() const;
 		double getInternalField() const;
 		std::vector<double> getSiteEnergies(const short site_type) const;
 		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
@@ -202,6 +210,9 @@ class OSC_Sim : public Simulation{
         bool Enable_ToF_test;
         bool ToF_polaron_type;
         int ToF_initial_polarons;
+		bool Enable_ToF_random_placement;
+		bool Enable_ToF_energy_placement;
+		double ToF_placement_energy;
         //double ToF_transient_start;
         //double ToF_transient_end;
         //int ToF_pnts_per_decade;
@@ -401,6 +412,7 @@ class OSC_Sim : public Simulation{
         bool executePolaronRecombination(const std::list<Event*>::const_iterator event_it);
         bool executePolaronExtraction(const std::list<Event*>::const_iterator event_it);
         Coords generateExciton();
+		void generateExciton(const Coords& coords, const bool spin, int tag);
         void generateElectron(const Coords& coords,int tag);
         void generateHole(const Coords& coords,int tag);
         void generateDynamicsExcitons();
