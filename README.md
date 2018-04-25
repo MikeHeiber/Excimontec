@@ -1,4 +1,4 @@
-# Excimontec
+# Excimontec  [![Gitter chat](https://badges.gitter.im/Excimontec.png)](https://gitter.im/Excimontec)
 The goal of this project is to develop an open-source KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more. 
 The software is being developed in modern C++ and is optimized for efficient execution on high performance computing clusters using MPI. 
 This software package uses object-oriented design and extends the [KMC_Lattice](https://github.com/MikeHeiber/KMC_Lattice) framework.
@@ -23,9 +23,12 @@ All major planned features that are to be included in v1.0 are now implemented a
 However, this software tool is still under development, and as such, there may still be bugs that need to be squashed. 
 Please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 
+Major releases and other significant developments will be announced on the Excimontec: General News mailing list. If you are interested in keeping up to date with the development and application of this tool, please subscribe at the following link:
+[Subscribe Here](http://eepurl.com/dis9AT)
+
 ## Work Together
 
-If you would like to contribute to the development of this project or would like some help in using the tool for your research, please contact me to discuss a collaboration. 
+If you would like to contribute to the development of this project or would like some help in using the tool for your research, please contact me (heiber@mailaps.org) to discuss a collaboration. 
 You can check out my KMC research and other work on [Researchgate](https://www.researchgate.net/profile/Michael_Heiber).
 
 ## How to try Excimontec?
