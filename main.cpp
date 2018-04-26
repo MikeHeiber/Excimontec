@@ -29,7 +29,7 @@ struct Parameters_main{
 bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameters_OPV& params);
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0-beta.3";
+	string version = "v1.0-beta.4";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
@@ -85,6 +85,11 @@ int main(int argc, char *argv[]) {
 	if (params_main.Enable_import_morphology_set && params_main.N_test_morphologies > nproc) {
 		cout << "Error! The number of requested processors cannot be less than the number of morphologies tested." << endl;
 		cout << "You have requested " << nproc << " processors for " << params_main.N_test_morphologies << " morphologies." << endl;
+		return 0;
+	}
+	if (params_main.Enable_import_morphology_set && params_main.N_test_morphologies > params_main.N_morphology_set_size) {
+		cout << "Error! The number of tested morphologies cannot be greater than the number of morphologies in the set." << endl;
+		cout << "You have asked to test " << params_main.N_test_morphologies << " morphologies out of a " << params_main.N_morphology_set_size << " morphology set." << endl;
 		return 0;
 	}
 	if (params_main.Enable_import_morphology_set) {
@@ -276,14 +281,16 @@ int main(int argc, char *argv[]) {
 	resultsfile << sim.getTime() << " seconds have been simulated.\n";
 	resultsfile << sim.getN_events_executed() << " events have been executed.\n";
 	if (!success) {
-		resultsfile << "An error occured during the simulation:" << endl;
+		resultsfile << "An error occurred during the simulation:" << endl;
 		resultsfile << sim.getErrorMessage() << endl;
 	}
 	else {
 		if (params_opv.Enable_exciton_diffusion_test) {
 			resultsfile << "Exciton diffusion test results:\n";
 			resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
-			resultsfile << "Exciton Diffusion Length is " << sim.calculateDiffusionLength_avg() << " ± " << sim.calculateDiffusionLength_stdev() << " nm.\n";
+			resultsfile << "Exciton diffusion length is " << sim.calculateExcitonDiffusionLength_avg() << " ± " << sim.calculateExcitonDiffusionLength_stdev() << " nm.\n";
+			resultsfile << "Exciton hop distance is " << sim.calculateExcitonHopLength_avg() << " ± " << sim.calculateExcitonHopLength_stdev() << " nm.\n";
+			resultsfile << "Exciton lifetime is " << sim.calculateExcitonLifetime_avg() << " ± " << sim.calculateExcitonLifetime_stdev() << " s.\n";
 		}
 		else if (params_opv.Enable_ToF_test) {
 			resultsfile << "Time-of-flight charge transport test results:\n";
@@ -358,7 +365,7 @@ int main(int argc, char *argv[]) {
 		analysisfile << "Simulation was performed on " << nproc << " processors.\n";
 		analysisfile << "Average calculation time was " << (double)elapsedtime_sum / (60 * nproc) << " minutes.\n";
 		if (error_found == (char)1) {
-			analysisfile << endl << "An error occured on one or more processors:" << endl;
+			analysisfile << endl << "An error occurred on one or more processors:" << endl;
 			for (int i = 0; i < nproc; i++) {
 				if (error_status_vec[i]) {
 					analysisfile << i << ": " << error_messages[i] << endl;
@@ -367,12 +374,18 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	if (error_found == (char)0 && params_opv.Enable_exciton_diffusion_test) {
-		vector<double> diffusion_data;
-		diffusion_data = MPI_gatherVectors(sim.getDiffusionData());
+		vector<double> exciton_diffusion_data;
+		vector<int> exciton_hop_length_data;
+		vector<double> exciton_lifetime_data;
+		exciton_diffusion_data = MPI_gatherVectors(sim.getExcitonDiffusionData());
+		exciton_hop_length_data = MPI_gatherVectors(sim.getExcitonHopLengthData());
+		exciton_lifetime_data = MPI_gatherVectors(sim.getExcitonLifetimeData());
 		if (procid == 0) {
 			analysisfile << "Overall exciton diffusion test results:\n";
 			analysisfile << nproc*(sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
-			analysisfile << "Exciton diffusion length is " << vector_avg(diffusion_data) << " ± " << vector_stdev(diffusion_data) << " nm.\n";
+			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ± " << vector_stdev(exciton_diffusion_data) << " nm.\n";
+			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params_opv.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params_opv.Unit_size << " nm.\n";
+			analysisfile << "Exciton lifetime is " << vector_avg(exciton_lifetime_data) << " ± " << vector_stdev(exciton_lifetime_data) << " s.\n";
 		}
 	}
 	if (error_found == (char)0 && params_opv.Enable_ToF_test) {
@@ -406,11 +419,11 @@ int main(int argc, char *argv[]) {
 			transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
 			double volume_total = N_transient_cycles_sum*sim.getVolume();
 			for (int i = 0; i < (int)velocities.size(); i++) {
-				if (counts[i] > 0 && counts[i] > 5 * N_transient_cycles_sum) {
+				if ((double)counts[i] > 0.95*counts[0]) {
 					transientfile << times[i] << "," << 1000.0 * Elementary_charge*velocities[i] / volume_total << "," << (velocities[i] / (double)counts[i]) / electric_field << "," << energies[i] / (double)counts[i] << "," << (double)counts[i] / volume_total << endl;
 				}
 				else if (counts[i] > 0) {
-					transientfile << times[i] << "," << 1000.0 * Elementary_charge*velocities[i] / volume_total << "," << (velocities[i] / (double)counts[i]) / electric_field << "," << "NaN" << "," << (double)counts[i] / volume_total << endl;
+					transientfile << times[i] << "," << 1000.0 * Elementary_charge*velocities[i] / volume_total << "," << "NaN" << "," << "NaN" << "," << (double)counts[i] / volume_total << endl;
 				}
 				else {
 					transientfile << times[i] << ",0,NaN,NaN,0" << endl;
@@ -723,6 +736,20 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
     i++;
     params.ToF_initial_polarons = atoi(stringvars[i].c_str());
     i++;
+	params.Enable_ToF_random_placement = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling ToF random placement option." << endl;
+		return false;
+	}
+	i++;
+	params.Enable_ToF_energy_placement = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling ToF low energy placement option." << endl;
+		return false;
+	}
+	i++;
+	params.ToF_placement_energy = atof(stringvars[i].c_str());
+	i++;
     params.ToF_transient_start = atof(stringvars[i].c_str());
     i++;
     params.ToF_transient_end = atof(stringvars[i].c_str());

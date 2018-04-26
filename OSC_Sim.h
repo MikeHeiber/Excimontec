@@ -132,8 +132,12 @@ class OSC_Sim : public Simulation{
 		virtual ~OSC_Sim();
         bool init(const Parameters_OPV& params,const int id);
 		void calculateAllEvents();
-        double calculateDiffusionLength_avg() const;
-        double calculateDiffusionLength_stdev() const;
+        double calculateExcitonDiffusionLength_avg() const;
+        double calculateExcitonDiffusionLength_stdev() const;
+		double calculateExcitonHopLength_avg() const;
+		double calculateExcitonHopLength_stdev() const;
+		double calculateExcitonLifetime_avg() const;
+		double calculateExcitonLifetime_stdev() const;
 		std::vector<std::pair<double,double>> calculateDOSCorrelation(const double cutoff_radius);
 		std::vector<double> calculateTransitTimeDist(const std::vector<double>& data,const int counts) const;
         double calculateTransitTime_avg() const;
@@ -147,7 +151,6 @@ class OSC_Sim : public Simulation{
 		void createElectron(const Coords& coords);
 		void createHole(const Coords& coords);
         bool executeNextEvent();
-		std::vector<double> getDiffusionData() const;
 		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
 		std::vector<double> getDynamicsExcitonEnergies() const;
 		std::vector<double> getDynamicsElectronEnergies() const;
@@ -161,6 +164,9 @@ class OSC_Sim : public Simulation{
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
 		std::vector<Event> getEvents() const;
+		std::vector<double> getExcitonDiffusionData() const;
+		std::vector<int> getExcitonHopLengthData() const;
+		std::vector<double> getExcitonLifetimeData() const;
 		double getInternalField() const;
 		std::vector<double> getSiteEnergies(const short site_type) const;
 		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
@@ -331,7 +337,9 @@ class OSC_Sim : public Simulation{
 		std::vector<double> site_energies_donor;
 		std::vector<double> site_energies_acceptor;
 		std::vector<std::pair<double, double>> DOS_correlation_data;
-		std::vector<double> diffusion_distances;
+		std::vector<double> exciton_lifetimes;
+		std::vector<double> exciton_diffusion_distances;
+		std::vector<int> exciton_hop_distances; // saved as lattice units squared
 		std::vector<int> transient_exciton_tags;
 		std::vector<int> transient_electron_tags;
 		std::vector<int> transient_hole_tags;
@@ -422,6 +430,7 @@ class OSC_Sim : public Simulation{
         double getSiteEnergy(const Coords& coords) const;
         short getSiteType(const Coords& coords) const;
         bool initializeArchitecture();
+		void removeExciton(std::list<Exciton>::iterator exciton_it);
         bool siteContainsHole(const Coords& coords);
         void updateTransientData();
 };

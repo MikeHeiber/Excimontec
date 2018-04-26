@@ -335,12 +335,28 @@ double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const 
 	return Energy;
 }
 
-double OSC_Sim::calculateDiffusionLength_avg() const{
-    return vector_avg(diffusion_distances);
+double OSC_Sim::calculateExcitonDiffusionLength_avg() const{
+    return vector_avg(exciton_diffusion_distances);
 }
 
-double OSC_Sim::calculateDiffusionLength_stdev() const{
-    return vector_stdev(diffusion_distances);
+double OSC_Sim::calculateExcitonDiffusionLength_stdev() const{
+    return vector_stdev(exciton_diffusion_distances);
+}
+
+double OSC_Sim::calculateExcitonHopLength_avg() const {
+	return sqrt(vector_avg(exciton_hop_distances))*lattice.getUnitSize();
+}
+
+double OSC_Sim::calculateExcitonHopLength_stdev() const {
+	return sqrt(vector_stdev(exciton_hop_distances))*lattice.getUnitSize();
+}
+
+double OSC_Sim::calculateExcitonLifetime_avg() const {
+	return vector_avg(exciton_lifetimes);
+}
+
+double OSC_Sim::calculateExcitonLifetime_stdev() const {
+	return vector_stdev(exciton_lifetimes);
 }
 
 vector<pair<double,double>> OSC_Sim::calculateDOSCorrelation(const double cutoff_radius) {
@@ -1770,24 +1786,20 @@ bool OSC_Sim::executeExcitonDissociation(const list<Event*>::const_iterator even
 
 bool OSC_Sim::executeExcitonExcitonAnnihilation(const list<Event*>::const_iterator event_it) {
 	// Get event info
-	auto object_ptr = (*event_it)->getObjectPtr();
-	int exciton_tag = object_ptr->getTag();
-	bool spin_state = (getExcitonIt((*event_it)->getObjectPtr()))->getSpin();
+	auto exciton_it = getExcitonIt((*event_it)->getObjectPtr());
+	int exciton_tag = exciton_it->getTag();
+	bool spin_state = exciton_it->getSpin();
 	int target_tag = ((*event_it)->getObjectTargetPtr())->getTag();
 	bool spin_state_target = (getExcitonIt((*event_it)->getObjectTargetPtr()))->getSpin();
-	Coords coords_initial = object_ptr->getCoords();
+	Coords coords_initial = exciton_it->getCoords();
 	Coords coords_dest = (*event_it)->getDestCoords();
 	// Triplet-triplet annihilation
 	if (!spin_state && !spin_state_target) {
 		// Target triplet exciton becomes a singlet exciton
 		if (rand01() > 0.75) {
 			getExcitonIt((*event_it)->getObjectTargetPtr())->flipSpin();
-			N_triplets -= 2;
-			N_singlets++;
-		}
-		// Target triplet exciton stays a triplet
-		else {
 			N_triplets--;
+			N_singlets++;
 		}
 		N_triplet_triplet_annihilations++;
 	}
@@ -1795,17 +1807,13 @@ bool OSC_Sim::executeExcitonExcitonAnnihilation(const list<Event*>::const_iterat
 	// singlet-singlet
 	if (spin_state && spin_state_target) {
 		N_singlet_singlet_annihilations++;
-		N_singlets--;
 	}
 	// singlet-triplet
 	else if (spin_state && !spin_state_target) {
 		N_singlet_triplet_annihilations++;
-		N_singlets--;
 	}
 	// delete exciton and its events
-	deleteObject((*event_it)->getObjectPtr());
-	// Update exciton counter
-	N_excitons--;
+	removeExciton(exciton_it);
 	// Log event
 	if (isLoggingEnabled()) {
 		*Logfile << "Exciton " << exciton_tag << " annihilated at site " << coords_initial.x << "," << coords_initial.y << "," << coords_initial.z;
@@ -1859,6 +1867,10 @@ bool OSC_Sim::executeExcitonHop(const list<Event*>::const_iterator event_it) {
 		if (isLoggingEnabled()) {
 			*Logfile << "Exciton " << ((*event_it)->getObjectPtr())->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
 		}
+		// Log information aobut the top when the exciton diffusion test is enabled
+		if (Enable_exciton_diffusion_test) {
+			exciton_hop_distances.push_back(lattice.calculateLatticeDistanceSquared(((*event_it)->getObjectPtr())->getCoords(), (*event_it)->getDestCoords()));
+		}
 		return executeObjectHop(event_it);
 	}
 }
@@ -1899,24 +1911,18 @@ bool OSC_Sim::executeExcitonIntersystemCrossing(const list<Event*>::const_iterat
 
 bool OSC_Sim::executeExcitonRecombination(const list<Event*>::const_iterator event_it) {
 	// Get event info
-	int exciton_tag = ((*event_it)->getObjectPtr())->getTag();
-	Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
-	bool spin_state = (getExcitonIt((*event_it)->getObjectPtr()))->getSpin();
-	// Output diffusion distance
-	if (Enable_exciton_diffusion_test) {
-		diffusion_distances.push_back(((*event_it)->getObjectPtr())->calculateDisplacement());
-	}
+	auto exciton_it = getExcitonIt((*event_it)->getObjectPtr());
+	int exciton_tag = exciton_it->getTag();
+	Coords coords_initial = exciton_it->getCoords();
+	bool spin_state = exciton_it->getSpin();
 	// delete exciton and its events
-	deleteObject((*event_it)->getObjectPtr());
+	removeExciton(exciton_it);
 	// Update exciton counters
-	N_excitons--;
 	if (spin_state) {
 		N_singlet_excitons_recombined++;
-		N_singlets--;
 	}
 	else {
 		N_triplet_excitons_recombined++;
-		N_triplets--;
 	}
 	// Log event
 	if (isLoggingEnabled()) {
@@ -1929,6 +1935,7 @@ bool OSC_Sim::executeExcitonRecombination(const list<Event*>::const_iterator eve
 }
 
 bool OSC_Sim::executeNextEvent() {
+	// Check or when to stop generating excitons in the IQE test before executing the next event
 	if (Enable_IQE_test) {
 		if (isLightOn && N_excitons_created == N_tests) {
 			removeEvent(&exciton_creation_events.front());
@@ -2139,21 +2146,29 @@ bool OSC_Sim::executePolaronRecombination(const list<Event*>::const_iterator eve
 Coords OSC_Sim::generateExciton(){
 	// Determine coords
 	Coords coords = calculateExcitonCreationCoords();
-    // Create the new exciton and add it to the simulation
-    Exciton exciton_new(getTime(),N_excitons_created+1,coords);
-	exciton_new.setSpin(true); // Generated exciton is in singlet state
-    excitons.push_back(exciton_new);
+	generateExciton(coords, true, 0);
+	return coords;
+}
+
+void OSC_Sim::generateExciton(const Coords& coords, const bool spin, int tag=0) {
+	if (tag == 0) {
+		tag = N_excitons_created + 1;
+	}
+	// Create the new exciton and add it to the simulation
+	Exciton exciton_new(getTime(), tag, coords);
+	exciton_new.setSpin(spin); // Generated exciton is in singlet state
+	excitons.push_back(exciton_new);
 	Object* object_ptr = &excitons.back();
-    addObject(object_ptr);
-    // Add placeholder events to the corresponding lists
+	addObject(object_ptr);
+	// Add placeholder events to the corresponding lists
 	Simulation* sim_ptr = this;
-    Exciton_Hop hop_event(sim_ptr);
-    exciton_hop_events.push_back(hop_event);
-    Exciton_Recombination recombination_event(sim_ptr);
-    recombination_event.setObjectPtr(object_ptr);
-    exciton_recombination_events.push_back(recombination_event);
-    Exciton_Dissociation dissociation_event(sim_ptr);
-    exciton_dissociation_events.push_back(dissociation_event);
+	Exciton_Hop hop_event(sim_ptr);
+	exciton_hop_events.push_back(hop_event);
+	Exciton_Recombination recombination_event(sim_ptr);
+	recombination_event.setObjectPtr(object_ptr);
+	exciton_recombination_events.push_back(recombination_event);
+	Exciton_Dissociation dissociation_event(sim_ptr);
+	exciton_dissociation_events.push_back(dissociation_event);
 	Exciton_Exciton_Annihilation exciton_exciton_annihilation_event(sim_ptr);
 	exciton_exciton_annihilation_events.push_back(exciton_exciton_annihilation_event);
 	Exciton_Polaron_Annihilation exciton_polaron_annihilation_event(sim_ptr);
@@ -2161,25 +2176,24 @@ Coords OSC_Sim::generateExciton(){
 	Exciton_Intersystem_Crossing intersystem_crossing_event(sim_ptr);
 	intersystem_crossing_event.setObjectPtr(object_ptr);
 	exciton_intersystem_crossing_events.push_back(intersystem_crossing_event);
-    // Update exciton counters
-    if(getSiteType(coords)==(short)1){
-        N_excitons_created_donor++;
-    }
-    else{
-        N_excitons_created_acceptor++;
-    }
-    N_excitons_created++;
-    N_excitons++;
-    // Log event
-    if(isLoggingEnabled()){
-        *Logfile << "Created exciton " << exciton_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
-    }
-	return coords;
+	// Update exciton counters
+	if (getSiteType(coords) == (short)1) {
+		N_excitons_created_donor++;
+	}
+	else {
+		N_excitons_created_acceptor++;
+	}
+	N_excitons_created++;
+	N_excitons++;
 	if (spin) {
 		N_singlets++;
 	}
 	else {
 		N_triplets++;
+	}
+	// Log event
+	if (isLoggingEnabled()) {
+		*Logfile << "Created exciton " << exciton_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
 	}
 }
 
@@ -2364,10 +2378,6 @@ void OSC_Sim::generateToFPolarons() {
 	calculateAllEvents();
 }
 
-vector<double> OSC_Sim::getDiffusionData() const {
-    return diffusion_distances;
-}
-
 vector<double> OSC_Sim::getDynamicsExcitonMSDV() const {
 	return transient_exciton_msdv;
 }
@@ -2424,6 +2434,18 @@ std::vector<Event> OSC_Sim::getEvents() const {
 		events.push_back(*item);
 	}
 	return events;
+}
+
+vector<double> OSC_Sim::getExcitonDiffusionData() const {
+	return exciton_diffusion_distances;
+}
+
+vector<int> OSC_Sim::getExcitonHopLengthData() const {
+	return exciton_hop_distances;
+}
+
+vector<double> OSC_Sim::getExcitonLifetimeData() const {
+	return exciton_lifetimes;
 }
 
 list<Exciton>::iterator OSC_Sim::getExcitonIt(const Object* object_ptr){
@@ -2785,6 +2807,24 @@ void OSC_Sim::reassignSiteEnergies() {
 		createCorrelatedDOS(Disorder_correlation_length);
 	}
 	//outputVectorToFile(site_energies_donor, "DOS_data.txt");
+}
+
+void OSC_Sim::removeExciton(list<Exciton>::iterator exciton_it) {
+	// Output diffusion distance
+	if (Enable_exciton_diffusion_test) {
+		exciton_diffusion_distances.push_back(lattice.getUnitSize()*exciton_it->calculateDisplacement());
+		exciton_lifetimes.push_back(getTime() - exciton_it->getCreationTime());
+	}
+	// Update exciton counters
+	N_excitons--;
+	if (exciton_it->getSpin()) {
+		N_singlets--;
+	}
+	else {
+		N_triplets--;
+	}
+	// Delete exciton
+	deleteObject(&(*exciton_it));
 }
 
 bool OSC_Sim::siteContainsHole(const Coords& coords){
