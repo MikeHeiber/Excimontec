@@ -38,4 +38,4 @@ before_install:
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
     
 script:
-    - make
+    - make && make test
