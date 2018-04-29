@@ -22,10 +22,11 @@ before_install:
     - eval "${COMPILER_OPTIONS}"
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update -qq
-    - sudo apt-get install -qq gcc-$VERSION g++-$VERSION
-    - export CC=gcc-$VERSION
+    - sudo apt-get install -qq g++-$VERSION
     - export CXX=g++-$VERSION
-    - gcc --version
+    - g++ --version
+    - which g++
+    - echo $PATH
     - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
     - if [[ "$MPI" = mpich2 ]]; then export MPICH_CXX=g++$VERSION; fi
