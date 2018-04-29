@@ -12,13 +12,30 @@ sudo: required
 compiler:
     - gcc
     
-env:
-  - MPI=mpich2
-  - MPI=openmpi
-
 matrix:
     include:
-    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8.1
+      env:
+         - MATRIX_EVAL="CC=gcc-4.8.1 && CXX=g++-4.8.1"
+         - MPI=mpich2
+         
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8.1
+      env:
+         - MATRIX_EVAL="CC=gcc-4.8.1 && CXX=g++-4.8.1"
+         - MPI=openmpi
+         
     - os: linux
       addons:
         apt:
@@ -28,8 +45,19 @@ matrix:
             - g++-4.9
       env:
          - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+         - MPI=mpich2
+         
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+         - MPI=openmpi
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -39,8 +67,19 @@ matrix:
             - g++-5
       env:
          - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+         - MPI=mpich2
+         
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+         - MPI=openmpi
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -49,9 +88,20 @@ matrix:
           packages:
             - g++-6
       env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    # works on Precise and Trusty
+         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+         - MPI=mpich2
+         
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+         - MPI=openmpi
+         
     - os: linux
       addons:
         apt:
@@ -60,7 +110,19 @@ matrix:
           packages:
             - g++-7
       env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+         - MPI=mpich2
+         
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+         - MPI=openmpi
   
 before_install:
     - eval "${MATRIX_EVAL}"
