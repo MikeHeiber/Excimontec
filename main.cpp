@@ -202,7 +202,8 @@ int main(int argc, char *argv[]) {
 					if (!success) {
 						msg_length = (char)sim.getErrorMessage().size();
 						MPI_Send(&msg_length, 1, MPI_CHAR, 0, i, MPI_COMM_WORLD);
-						MPI_Send(sim.getErrorMessage().c_str(), (int)msg_length, MPI_CHAR, 0, i, MPI_COMM_WORLD);
+						char* error_msg = &sim.getErrorMessage()[0];
+						MPI_Send(&error_msg, (int)msg_length, MPI_CHAR, 0, i, MPI_COMM_WORLD);
 					}
 					MPI_Send(&finished_status, 1, MPI_CHAR, 0, i, MPI_COMM_WORLD);
 				}
