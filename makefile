@@ -1,8 +1,8 @@
-FLAGS = -v -Wall -Wextra -O3 -std=c++11
+FLAGS = -Wall -Wextra -O3 -std=c++11
 OBJS = main.o OSC_Sim.o Exciton.o Polaron.o Event.o Lattice.o Object.o Simulation.o Site.o Utils.o
 
 Excimontec.exe : $(OBJS)
-	mpicxx $(FLAGS) $(OBJS) -o Excimontec.exe
+	mpicxx -v $(FLAGS) $(OBJS) -o Excimontec.exe
 
 main.o : main.cpp OSC_Sim.h Exciton.h Polaron.h KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
 	mpicxx $(FLAGS) -c main.cpp

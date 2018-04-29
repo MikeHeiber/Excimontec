@@ -13,10 +13,18 @@ compiler:
     - gcc
     
 env:
+    - COMPILER_OPTIONS="VERSION=4.7 && MPI=mpich2"
+    - COMPILER_OPTIONS="VERSION=4.7 && MPI=openmpi"
     - COMPILER_OPTIONS="VERSION=4.8 && MPI=mpich2"
     - COMPILER_OPTIONS="VERSION=4.8 && MPI=openmpi"
     - COMPILER_OPTIONS="VERSION=4.9 && MPI=mpich2"
     - COMPILER_OPTIONS="VERSION=4.9 && MPI=openmpi"
+    - COMPILER_OPTIONS="VERSION=5 && MPI=mpich2"
+    - COMPILER_OPTIONS="VERSION=5 && MPI=openmpi"
+    - COMPILER_OPTIONS="VERSION=6 && MPI=mpich2"
+    - COMPILER_OPTIONS="VERSION=6 && MPI=openmpi"
+    - COMPILER_OPTIONS="VERSION=7 && MPI=mpich2"
+    - COMPILER_OPTIONS="VERSION=7 && MPI=openmpi"
          
 before_install:
     - eval "${COMPILER_OPTIONS}"
@@ -25,17 +33,9 @@ before_install:
     - sudo apt-get install -qq gcc-$VERSION g++-$VERSION -y
     - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$VERSION
     - sudo update-alternatives --config gcc
-#    - export CC=gcc-$VERSION
-#    - export CXX=g++-$VERSION
     - gcc --version
-    - g++ --version
-    - which gcc
-    - which g++
-    - echo $PATH
     - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
-#    - if [[ "$MPI" = mpich2 ]]; then export MPICH_CXX=g++$VERSION; fi
-#    - if [[ "$MPI" = openmpi ]]; then export OMPI_MPICXX=g++$VERSION; fi
     
 script:
     - make
