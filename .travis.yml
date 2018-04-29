@@ -34,7 +34,7 @@ matrix:
           packages:
             - g++-4.8
       env:
-         - MATRIX_EVAL="CXX=g++-4.8"
+         - MATRIX_EVAL="OMPI_MPICXX=g++-4.8"
          - MPI=openmpi
          - SHOW="-showme"
          
@@ -58,7 +58,7 @@ matrix:
           packages:
             - g++-4.9
       env:
-         - MATRIX_EVAL="CXX=g++-4.9"
+         - MATRIX_EVAL="OMPI_MPICXX=g++-4.9"
          - MPI=openmpi
          - SHOW="-showme"
 
@@ -82,7 +82,7 @@ matrix:
           packages:
             - g++-5
       env:
-         - MATRIX_EVAL="CXX=g++-5"
+         - MATRIX_EVAL="OMPI_MPICXX=g++-5"
          - MPI=openmpi
          - SHOW="-showme"
 
@@ -106,7 +106,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CXX=g++-6"
+         - MATRIX_EVAL="OMPI_MPICXX=g++-6"
          - MPI=openmpi
          - SHOW="-showme"
          
@@ -130,7 +130,7 @@ matrix:
           packages:
             - g++-7
       env:
-         - MATRIX_EVAL="CXX=g++-7"
+         - MATRIX_EVAL="OMPI_MPICXX=g++-7"
          - MPI=openmpi
          - SHOW="-showme"
   
