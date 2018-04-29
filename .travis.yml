@@ -22,9 +22,8 @@ matrix:
           packages:
             - g++-4.8
       env:
-         - MATRIX_EVAL="MPICH_CXX=g++-4.8"
+         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8 && MPICH_CXX=g++-4.8"
          - MPI=mpich2
-         - SHOW="-show"
          
     - os: linux
       addons:
@@ -34,9 +33,8 @@ matrix:
           packages:
             - g++-4.8
       env:
-         - MATRIX_EVAL="OMPI_MPICXX=g++-4.8"
+         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8 && OMPI_MPICXX=g++-4.8"
          - MPI=openmpi
-         - SHOW="-showme"
          
     - os: linux
       addons:
@@ -46,9 +44,8 @@ matrix:
           packages:
             - g++-4.9
       env:
-         - MATRIX_EVAL="MPICH_CXX=g++-4.9"
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9 && MPICH_CXX=g++-4.9"
          - MPI=mpich2
-         - SHOW="-show"
          
     - os: linux
       addons:
@@ -58,9 +55,8 @@ matrix:
           packages:
             - g++-4.9
       env:
-         - MATRIX_EVAL="OMPI_MPICXX=g++-4.9"
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9 && OMPI_MPICXX=g++-4.9"
          - MPI=openmpi
-         - SHOW="-showme"
 
     - os: linux
       addons:
@@ -137,6 +133,8 @@ matrix:
 before_install:
     - eval "${MATRIX_EVAL}"
     - sudo apt-get update -qq
+#    - sudo apt-get install -qq gcc-$Version g++-$Version
+#    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$Version 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$Version
     - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
     
