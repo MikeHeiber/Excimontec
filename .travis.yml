@@ -20,9 +20,9 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-4.8.1
+            - g++-4.8
       env:
-         - MATRIX_EVAL="CC=gcc-4.8.1 && CXX=g++-4.8.1"
+         - MATRIX_EVAL="MPI_CXX=g++-4.8"
          - MPI=mpich2
          
     - os: linux
@@ -31,9 +31,9 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-4.8.1
+            - g++-4.8
       env:
-         - MATRIX_EVAL="CC=gcc-4.8.1 && CXX=g++-4.8.1"
+         - MATRIX_EVAL="MPI_CXX=g++-4.8"
          - MPI=openmpi
          
     - os: linux
@@ -44,7 +44,7 @@ matrix:
           packages:
             - g++-4.9
       env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+         - MATRIX_EVAL="MPI_CXX=g++-4.9"
          - MPI=mpich2
          
     - os: linux
@@ -55,7 +55,7 @@ matrix:
           packages:
             - g++-4.9
       env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+         - MATRIX_EVAL="MPI_CXX=g++-4.9"
          - MPI=openmpi
 
     - os: linux
@@ -66,7 +66,7 @@ matrix:
           packages:
             - g++-5
       env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+         - MATRIX_EVAL="MPI_CXX=g++-5"
          - MPI=mpich2
          
     - os: linux
@@ -77,7 +77,7 @@ matrix:
           packages:
             - g++-5
       env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+         - MATRIX_EVAL="MPI_CXX=g++-5"
          - MPI=openmpi
 
     - os: linux
@@ -88,7 +88,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+         - MATRIX_EVAL="MPI_CXX=g++-6"
          - MPI=mpich2
          
     - os: linux
@@ -99,7 +99,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+         - MATRIX_EVAL="MPI_CXX=g++-6"
          - MPI=openmpi
          
     - os: linux
@@ -110,7 +110,7 @@ matrix:
           packages:
             - g++-7
       env:
-         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+         - MATRIX_EVAL="MPI_CXX=g++-7"
          - MPI=mpich2
          
     - os: linux
@@ -121,7 +121,7 @@ matrix:
           packages:
             - g++-7
       env:
-         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+         - MATRIX_EVAL="MPI_CXX=g++-7"
          - MPI=openmpi
   
 before_install:
