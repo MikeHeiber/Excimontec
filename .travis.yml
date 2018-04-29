@@ -23,7 +23,7 @@ before_install:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update -qq
     - sudo apt-get install -qq gcc-$VERSION g++-$VERSION -y
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$VERSION && \
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$VERSION
     - sudo update-alternatives --config gcc
 #    - export CC=gcc-$VERSION
 #    - export CXX=g++-$VERSION
