@@ -52,7 +52,7 @@ gtest-all.o : $(GTEST_SRCS_)
 test.o : testing/test.cpp $(GTEST_HEADERS) OSC_Sim.h Exciton.h KMC_Lattice/Utils.h
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -I. -c testing/test.cpp
 
-Excimontec_tests.exe : test.o gtest-all.o
+Excimontec_tests.exe : test.o gtest-all.o $(OBJS)
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
 			
 # Run the tests
