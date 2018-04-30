@@ -6,7 +6,7 @@
 #include "gtest/gtest.h"
 #include "OSC_Sim.h"
 #include "Exciton.h"
-#include "Utils.h"
+#include "KMC_Lattice/Utils.h"
 
 using namespace std;
 using namespace Utils;
