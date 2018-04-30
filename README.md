@@ -28,6 +28,8 @@ Major releases and other significant developments will be announced on the Excim
 
 Travis CI continuous integration status:
 
+Excimontec is currently being tested on Ubuntu v14.04 with the GCC compiler (versions 4.7, 4.8, 4.9, 5, 6, and 7) and on both OpenMPI v1.6.5 and MPICH v3.04.
+
 Master branch: [![Build Status](https://travis-ci.org/MikeHeiber/Excimontec.svg?branch=master)](https://travis-ci.org/MikeHeiber/Excimontec)
 
 Development branch: [![Build Status](https://travis-ci.org/MikeHeiber/Excimontec.svg?branch=development)](https://travis-ci.org/MikeHeiber/Excimontec)
