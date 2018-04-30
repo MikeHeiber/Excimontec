@@ -44,10 +44,10 @@ GTEST_FLAGS = -isystem $(GTEST_DIR)/include -pthread
 gtest-all.o : $(GTEST_SRCS_)
 	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc
 			
-test.o : testing/test.ccp $(GTEST_HEADERS) $(OBJS)
+test.o : testing/test.ccp $(GTEST_HEADERS) OSC_Sim.h Exciton.h KMC_Lattice/Utils.h
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test.cpp
 
-Excimontec_tests.exe : test.o gtest_all.o
+Excimontec_tests.exe : test.o gtest-all.o
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
 			
 # Run the tests
