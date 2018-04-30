@@ -237,7 +237,7 @@ namespace{
 		EXPECT_EQ(50, lattice.getLength());
 		EXPECT_EQ(50, lattice.getWidth());
 		EXPECT_EQ(50, lattice.getHeight());
-		EXPECT_EQ(1.0, lattice.getUnitSize(), tolerance);
+		EXPECT_DOUBLE_EQ(1.0, lattice.getUnitSize());
 		EXPECT_EQ((long int)50 * 50 * 50, lattice.getNumSites());
 	}
 
