@@ -1,3 +1,9 @@
+# Copyright (c) 2018 Michael C. Heiber
+# This source file is part of the Excimontec project, which is subject to the MIT License.
+# For more information, see the LICENSE file that accompanies this software.
+# The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
+# makefile for GNU make
+
 FLAGS = -Wall -Wextra -O3 -std=c++11
 OBJS = main.o OSC_Sim.o Exciton.o Polaron.o Event.o Lattice.o Object.o Simulation.o Site.o Utils.o
 
@@ -44,7 +50,7 @@ GTEST_FLAGS = -isystem $(GTEST_DIR)/include -pthread
 gtest-all.o : $(GTEST_SRCS_)
 	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc
 			
-test.o : testing/test.ccp $(GTEST_HEADERS) OSC_Sim.h Exciton.h KMC_Lattice/Utils.h
+test.o : testing/test.cpp $(GTEST_HEADERS) OSC_Sim.h Exciton.h KMC_Lattice/Utils.h
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test.cpp
 
 Excimontec_tests.exe : test.o gtest-all.o
