@@ -41,4 +41,4 @@ script:
     - make -j10 && make -j10 test
     
 after_success:
-    - ./Excimontec_tests.exe
+    - ./testing/Excimontec_tests.exe
