@@ -1,4 +1,4 @@
-## OPV Parameters for Excimontec v1.0-beta.3
+## OPV Parameters for Excimontec v1.0-beta.4
 --------------------------------------------------------------
 ## Kinetic Monte Carlo Algorithm Parameters
 false //Enable_FRM
@@ -9,20 +9,20 @@ false //Enable_full_recalc
 ## Simulation Parameters
 true //Enable_periodic_x
 true //Enable_periodic_y
-false //Enable_periodic_z
+true //Enable_periodic_z
 50 //Length
 50 //Width
-100 //Height
+50 //Height
 1.0 //Unit_size (nm)
 300 //Temperature (K)
--1.0 //Internal_potential (V)
+0.0 //Internal_potential (V)
 --------------------------------------------------------------
 ## Device Architecture Parameters
-false //Enable_neat (uses donor properties)
+true //Enable_neat (uses donor properties)
 false //Enable_bilayer
 25 //Thickness_donor
 25 //Thickness_acceptor
-true //Enable_random_blend
+false //Enable_random_blend
 0.5 //Acceptor_conc
 false //Enable_import_morphology_single
 morphology_0_compressed.txt //Morphology_filename
@@ -33,10 +33,13 @@ morphology_#_compressed.txt //Morphology_set_format
 --------------------------------------------------------------
 ## Test Parameters
 100 //N_tests
-false //Enable_exciton_diffusion_test
-true //Enable_ToF_test
+true //Enable_exciton_diffusion_test
+false //Enable_ToF_test
 hole //ToF_polaron_type (electron or hole)
-1 //ToF_initial_polarons
+10 //ToF_initial_polarons
+true //Enable_ToF_random_placement
+false //Enable_ToF_energy_placement
+0.0 //ToF_placement_energy
 1e-10 //ToF_transient_start (s)
 1e-4 //ToF_transient_end (s)
 20 //ToF_pnts_per_decade
@@ -103,7 +106,7 @@ false //Enable_gaussian_polaron_delocalization
 3.5 //Lumo_donor (eV)
 6.0 //Homo_acceptor (eV)
 4.0 //Lumo_acceptor (eV)
-true //Enable_gaussian_dos
+false //Enable_gaussian_dos
 0.075 //Energy_stdev_donor (eV)
 0.075 //Energy_stdev_acceptor (eV)
 false //Enable_exponential_dos

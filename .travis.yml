@@ -42,3 +42,4 @@ script:
     
 after_success:
     - ./testing/Excimontec_tests.exe
+    - mpiexec -n 4 Excimontec.exe parameters_default.txt
