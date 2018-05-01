@@ -18,7 +18,7 @@ This software package uses object-oriented design and extends the [KMC_Lattice](
 - Choose between several KMC algorithms (first reaction method, selective recalculation method, or full recalculation method).
 
 ## Current Status
-The current version (Excimontec v1.0-beta.3) is built with KMC_Lattice v2.0-beta.3 and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+The current release (Excimontec v1.0-beta.3) is built with KMC_Lattice v2.0-beta.3 and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
 All major planned features that are to be included in v1.0 are now implemented and have undergone preliminary testing. 
 However, this software tool is still under development, and as such, there may still be bugs that need to be squashed. 
 Please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
@@ -27,6 +27,8 @@ Major releases and other significant developments will be announced on the Excim
 [Subscribe Here](http://eepurl.com/dis9AT)
 
 Travis CI continuous integration status:
+
+Excimontec is currently being tested on Ubuntu v14.04 with the GCC compiler (versions 4.7, 4.8, 4.9, 5, 6, and 7) and on both OpenMPI v1.6.5 and MPICH v3.04.
 
 Master branch: [![Build Status](https://travis-ci.org/MikeHeiber/Excimontec.svg?branch=master)](https://travis-ci.org/MikeHeiber/Excimontec)
 
@@ -43,11 +45,11 @@ Have a quick question or want to chat about Excimontec?  Join the dicussion on G
 
 #### Building and Testing the Executable
 
-This software tool uses Message Passing Interface (MPI) to utilize parallel computing power. 
+This software tool uses [Message Passing Interface (MPI)](https://computing.llnl.gov/tutorials/mpi/) to utilize parallel computing power. 
 As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excitmontec executable must be built on your specific system. 
 We cannot provide pre-built binaries for your system. 
 Contact your HPC admin to determine the protocols for building MPI applications on your HPC system. 
-In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the gcc compiler. 
+In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/). 
 
 If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. For development and preliminary simulation tests, sometimes it is more efficient to run on your own workstation instead of an HPC system. More information about common MPI packages can be found here:
 - http://www.open-mpi.org/
@@ -64,8 +66,8 @@ Please report any build or testing errors in the [Issues](https://github.com/Mik
 #### Usage
 In most cases, your HPC system will use a job scheduler to manage the computing workload. 
 For performing Excimontec simulations, it is recommended to submit batch jobs where you will request the resources needed to perform the simulation. 
-An example batch script for the SLURM job scheduling system is provided with this package (slurm_script.sh). 
-Similar batch scripts can also be written for TORQUE or other job schedulers.
+An example batch script for the [SLURM](https://slurm.schedmd.com/) job scheduling system is provided with this package (slurm_script.sh). 
+Similar batch scripts can also be written for other job schedulers.
 
 Regardless of the job scheduler, the program execution command is essentially the same. 
 Excimontec.exe takes one required input argument, which is the filename of the input parameter file. 
