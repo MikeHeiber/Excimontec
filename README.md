@@ -41,7 +41,7 @@ Have a quick question or want to chat about Excimontec?  Join the dicussion on G
 
 ## How to try Excimontec?
 
-#### Building an Executable
+#### Building and Testing the Executable
 
 This software tool uses Message Passing Interface (MPI) to utilize parallel computing power. 
 As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excitmontec executable must be built on your specific system. 
@@ -54,6 +54,13 @@ If you wish, you can also install MPI on your own personal workstation and then 
 - http://www.mpich.org/
 - http://mvapich.cse.ohio-state.edu/
 
+Once you have an MPI library installed, to build Excimontec, copy the Excimontec directory to your machine, set it as your working directory, and run `make`. 
+Compilation flags have been set for GCC and PGI compilers.  If you are using another compiler, you will need to edit the makefile and define your own compiler options.
+Once the normal build is successful, you should test Excimontec on your own hardware using the unit and system tests provided before you use the tool. 
+Build the testing executable by running `make test`. 
+Once the test build is complete, navigate to the testing directory, and run `./Excimontec_tests.exe`.
+Please report any build or testing errors in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
+
 #### Usage
 In most cases, your HPC system will use a job scheduler to manage the computing workload. 
 For performing Excimontec simulations, it is recommended to submit batch jobs where you will request the resources needed to perform the simulation. 
@@ -65,7 +72,8 @@ Excimontec.exe takes one required input argument, which is the filename of the i
 An example parameter file is provided with this package (parameters_default.txt).
 
 For example, within the batch script, to create a simulation that runs on 10 processors, an the execution command is:
->    mpiexec -n 10 Excimontec.exe parameters_default.txt
+
+```mpiexec -n 10 Excimontec.exe parameters_default.txt```
 
 In this example, the parameters_default.txt file that is located in the current working directory is loaded into the Excimontec program to determine what simulation to run.
 
