@@ -273,6 +273,11 @@ int main(int argc, char *argv[]) {
 	cout << procid << ": Simulation finished." << endl;
 	time_end = time(NULL);
 	elapsedtime = (int)difftime(time_end, time_start);
+	// Output disorder correlation information if correlated disorder is enabled
+	if (params_opv.Enable_correlated_disorder) {
+		auto dos_correlation_data = sim.getDOSCorrelationData();
+		outputVectorToFile(dos_correlation_data, "DOS_correlation_data.txt");
+	}
 	// Output result summary for each processor
 	ss << "results" << procid << ".txt";
 	resultsfile.open(ss.str().c_str());

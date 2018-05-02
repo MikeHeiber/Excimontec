@@ -359,11 +359,22 @@ double OSC_Sim::calculateExcitonLifetime_stdev() const {
 	return vector_stdev(exciton_lifetimes);
 }
 
-vector<pair<double,double>> OSC_Sim::calculateDOSCorrelation(const double cutoff_radius) {
+vector<pair<double, double>> OSC_Sim::calculateDOSCorrelation() {
+	double cutoff_radius = 1.0;
+	auto correlation_data = calculateDOSCorrelation(cutoff_radius);
+	while (correlation_data.back().second>0.005) {
+		cutoff_radius += 1.0;
+		correlation_data = calculateDOSCorrelation(cutoff_radius);
+	}
+	return correlation_data;
+}
+
+vector<pair<double, double>> OSC_Sim::calculateDOSCorrelation(const double cutoff_radius) {
+	int size_old = (int)DOS_correlation_data.size();
 	int range = (int)ceil(cutoff_radius / lattice.getUnitSize());
-	int size = (int)ceil(intpow(cutoff_radius / lattice.getUnitSize(), 2)) + 1;
-	vector<double> sum_total(size, 0.0);
-	vector<double> count_total(size, 0.0);
+	int size_new = (int)ceil(2*cutoff_radius / lattice.getUnitSize()) + 1;
+	vector<double> sum_total(size_new, 0.0);
+	vector<int> count_total(size_new, 0);
 	vector<double> energies(sites.size());
 	for (int n = 0, nmax = (int)sites.size(); n < nmax; n++) {
 		Coords coords = lattice.getSiteCoords(n);
@@ -374,27 +385,34 @@ vector<pair<double,double>> OSC_Sim::calculateDOSCorrelation(const double cutoff
 					if (!lattice.checkMoveValidity(coords, i, j, k)) {
 						continue;
 					}
+					int bin = (int)round(2.0 * sqrt(i * i + j * j + k * k));
+					// Calculation is skipped for bin values that have already been calculated during previous calls
+					if (bin < (size_old - 1)) {
+						continue;
+					}
 					Coords dest_coords;
 					lattice.calculateDestinationCoords(coords, i, j, k, dest_coords);
-					int distance_sq_lat = i*i + j*j + k*k;
-					if (distance_sq_lat < size) {
-						sum_total[distance_sq_lat] += getSiteEnergy(coords)*getSiteEnergy(dest_coords);
-						count_total[distance_sq_lat] += 1.0;
+					if (bin < size_new) {
+						sum_total[bin] += getSiteEnergy(coords)*getSiteEnergy(dest_coords);
+						count_total[bin]++;
 					}
 				}
 			}
 		}
 	}
 	double stdev = vector_stdev(energies);
-	pair<double, double> data_pair;
-	vector<pair<double, double>> correlation_data(1);
+	vector<pair<double, double>> correlation_data(size_new);
 	correlation_data[0].first = 0.0;
 	correlation_data[0].second = 1.0;
-	for (int m = 1; m < size; m++) {
-		if (count_total[m] > 0.1) {
-			data_pair.first = lattice.getUnitSize()*sqrt((double)m);
-			data_pair.second = sum_total[m] / ((count_total[m] - 1.0)*stdev*stdev);
-			correlation_data.push_back(data_pair);
+	correlation_data[1].first = lattice.getUnitSize()*0.5;
+	correlation_data[1].second = 1.0;
+	for (int m = 2; m < size_new; m++) {
+		if (m < size_old) {
+			continue;
+		}
+		if (count_total[m] > 0) {
+			correlation_data[m].first = lattice.getUnitSize()*m/2.0;
+			correlation_data[m].second = sum_total[m] / ((count_total[m] - 1)*stdev*stdev);
 		}
 	}
 	return correlation_data;
@@ -1405,11 +1423,9 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 }
 
 void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
-	int range;
 	double stdev, percent_diff;
 	double distance_max = 0;
 	double scale_factor = 1;
-	double Unit_size = lattice.getUnitSize();
 	if (Enable_gaussian_kernel) {
 		distance_max = 1 + 1.8*correlation_length;
 		scale_factor = -0.1 - 1.21*pow(correlation_length, -2.87);
@@ -1435,7 +1451,7 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 			for (int k = -range; k <= range; k++) {
 				int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
 				distance_indices[index] = i*i + j*j + k*k;
-				distances[index] = Unit_size*sqrt((double)(i*i + j*j + k*k));
+				distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j*j + k*k));
 				if (i == 0 && j == 0 && k == 0) {
 					distances[index] = -1.0;
 				}
@@ -1492,7 +1508,7 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 		counts.assign((int)ceil((distance_max / Unit_size)*(distance_max / Unit_size)) + 1, 0.0);
 		for (int m = 0; m < vec_size; m++) {
 			if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
-				counts[distance_indices[m]] += 1.0;
+				counts[distance_indices[m]] ++;
 			}
 		}
 		for (int m = 0; m < vec_size; m++) {
@@ -1514,7 +1530,7 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 		sites[n].setEnergy(new_energies[n]);
 	}
 	// Calculate the correlation function
-	DOS_correlation_data = calculateDOSCorrelation(distance_max);
+	DOS_correlation_data = calculateDOSCorrelation();
 }
 
 void OSC_Sim::createElectron(const Coords& coords) {
@@ -1987,6 +2003,7 @@ bool OSC_Sim::executeNextEvent() {
         Error_found = true;
         return false;
     }
+	//cout << (*event_it)->getExecutionTime() - getTime() << endl;
     string event_type = (*event_it)->getEventType();
     if(isLoggingEnabled()){
         *Logfile << "Executing " << event_type << " event" << endl;
