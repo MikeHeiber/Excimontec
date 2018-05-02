@@ -1090,7 +1090,7 @@ bool OSC_Sim::checkFinished() const{
 		return (N_excitons == 0 && N_electrons == 0 && N_holes == 0 && N_excitons_created >= N_tests);
     }
     if(Enable_ToF_test){
-        return ((N_electrons==0 && N_electrons_collected>=N_tests) || (N_holes==0 && N_holes_collected>=N_tests) || N_electrons_created>2*N_tests || N_holes_created>2*N_tests);
+        return ((N_electrons==0 && N_electrons_created>=N_tests) || (N_holes==0 && N_holes_created>=N_tests));
     }
     if(Enable_IQE_test){
         if(N_excitons_created==N_tests && N_excitons==0 && N_electrons==0 && N_holes==0){

@@ -601,9 +601,10 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
     bool error_status = false;
     while(inputfile.good()){
         getline(inputfile,line);
-        if((line.substr(0,2)).compare("--")!=0 && (line.substr(0,2)).compare("##")!=0){
-            pos = line.find("/",0);
-            var = line.substr(0,pos-1);
+        if((line.substr(0,2)).compare("--")!=0 && (line.substr(0,2)).compare("##")!=0 && line.compare("")!=0){
+            pos = line.find_first_of("/",0);
+            var = line.substr(0,pos);
+			var = removeWhitespace(var);
             stringvars.push_back(var);
         }
     }
