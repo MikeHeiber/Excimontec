@@ -1,8 +1,12 @@
 # Excimontec
 
-The goal of this project is to develop an open-source KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more. 
-The software is being developed in modern C++ and is optimized for efficient execution on high performance computing clusters using MPI. 
-This software package uses object-oriented design and extends the [KMC_Lattice](https://github.com/MikeHeiber/KMC_Lattice) framework.
+Kinetic Monte Carlo simulations are a powerful computational tool that can be used in concert with experiments and more detailed theoretical methods to understand and optimize organic semiconductor materials and devices. 
+However, despite over 30 years of applying KMC tools to organic semiconductors, no widespread or standardized software tools have taken hold in the community. 
+Instead, many research groups around the world have maintained private codebases of varying complexity, efficiency, and reliability. 
+As a result, there have been large barriers to entry for new researchers and a lot of repeated effort throughout the community that would be much better off applied to pushing the capabilities of the technique and further refining the physical models. 
+
+Excimontec represents an honest effort to bring the community together around a well-tested, optimized, reliable, and accessible open-source tool for performing KMC simulations of organic electronic devices. The software is being developed in modern C++ and is optimized for efficient execution on high performance computing clusters using MPI. 
+This software package uses object-oriented design and extends the [KMC_Lattice](https://github.com/MikeHeiber/KMC_Lattice) framework. 
 
 #### Major Features:
 - Adjustable periodic boundary conditions in all three directions allow users to perform 1D, 2D, or 3D simulations.
