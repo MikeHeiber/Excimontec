@@ -61,7 +61,7 @@ This software tool uses [Message Passing Interface (MPI)](https://computing.llnl
 As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excitmontec executable must be built on your specific system. 
 We cannot provide pre-built binaries for your system. 
 Contact your HPC admin to determine the protocols for building MPI applications on your HPC system. 
-In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/). 
+In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/) or the [PGI compiler](https://www.pgroup.com/). 
 
 If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. For development and preliminary simulation tests, sometimes it is more efficient to run on your own workstation instead of an HPC system. More information about common MPI packages can be found here:
 - Open MPI, http://www.open-mpi.org/
@@ -102,6 +102,7 @@ Excimontec will create a number of different output files depending which test i
 - ToF_transit_time_dist.txt -- When performing a time-of-flight charge transport test, the resulting polaron transit time probability distribution will be output to this file.
 - ToF_results.txt -- When performing a time-of-flight charge transport test, the resulting quantitative results are put into this parsable delimited results file.
 - Charge_extraction_map#.txt -- When performing a time-of-flight or IQE test, the x-y locations where charges are extracted from the lattice are saving into this map file.
+- DOS_correlation_data#.txt -- When a correlated density of states model is enabled, data showing the statistical correlation of site energies vs. distance is output into this file.
 
 #### Data Analysis
 

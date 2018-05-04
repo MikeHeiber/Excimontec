@@ -138,8 +138,8 @@ class OSC_Sim : public Simulation{
 		double calculateExcitonHopLength_stdev() const;
 		double calculateExcitonLifetime_avg() const;
 		double calculateExcitonLifetime_stdev() const;
-		std::vector<std::pair<double, double>> calculateDOSCorrelation();
-		std::vector<std::pair<double,double>> calculateDOSCorrelation(const double cutoff_radius);
+		void calculateDOSCorrelation();
+		void calculateDOSCorrelation(const double cutoff_radius);
 		std::vector<double> calculateTransitTimeDist(const std::vector<double>& data,const int counts) const;
         double calculateTransitTime_avg() const;
         double calculateTransitTime_stdev() const;

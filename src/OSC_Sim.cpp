@@ -359,17 +359,17 @@ double OSC_Sim::calculateExcitonLifetime_stdev() const {
 	return vector_stdev(exciton_lifetimes);
 }
 
-vector<pair<double, double>> OSC_Sim::calculateDOSCorrelation() {
+void OSC_Sim::calculateDOSCorrelation() {
+	DOS_correlation_data.clear();
 	double cutoff_radius = 1.0;
-	auto correlation_data = calculateDOSCorrelation(cutoff_radius);
-	while (correlation_data.back().second>0.005) {
+	calculateDOSCorrelation(cutoff_radius);
+	while (DOS_correlation_data.back().second > 0.01) {
 		cutoff_radius += 1.0;
-		correlation_data = calculateDOSCorrelation(cutoff_radius);
+		calculateDOSCorrelation(cutoff_radius);
 	}
-	return correlation_data;
 }
 
-vector<pair<double, double>> OSC_Sim::calculateDOSCorrelation(const double cutoff_radius) {
+void OSC_Sim::calculateDOSCorrelation(const double cutoff_radius) {
 	int size_old = (int)DOS_correlation_data.size();
 	int range = (int)ceil(cutoff_radius / lattice.getUnitSize());
 	int size_new = (int)ceil(2*cutoff_radius / lattice.getUnitSize()) + 1;
@@ -401,21 +401,20 @@ vector<pair<double, double>> OSC_Sim::calculateDOSCorrelation(const double cutof
 		}
 	}
 	double stdev = vector_stdev(energies);
-	vector<pair<double, double>> correlation_data(size_new);
-	correlation_data[0].first = 0.0;
-	correlation_data[0].second = 1.0;
-	correlation_data[1].first = lattice.getUnitSize()*0.5;
-	correlation_data[1].second = 1.0;
+	DOS_correlation_data.resize(size_new);
+	DOS_correlation_data[0].first = 0.0;
+	DOS_correlation_data[0].second = 1.0;
+	DOS_correlation_data[1].first = lattice.getUnitSize()*0.5;
+	DOS_correlation_data[1].second = 1.0;
 	for (int m = 2; m < size_new; m++) {
 		if (m < size_old) {
 			continue;
 		}
 		if (count_total[m] > 0) {
-			correlation_data[m].first = lattice.getUnitSize()*m/2.0;
-			correlation_data[m].second = sum_total[m] / ((count_total[m] - 1)*stdev*stdev);
+			DOS_correlation_data[m].first = lattice.getUnitSize()*m/2.0;
+			DOS_correlation_data[m].second = sum_total[m] / ((count_total[m] - 1)*stdev*stdev);
 		}
 	}
-	return correlation_data;
 }
 
 vector<double> OSC_Sim::calculateMobilities(const vector<double>& transit_times) const {
@@ -1398,8 +1397,8 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 		cout << "Error! When using the correlated disorder model with the power kernel, the power kernel exponent must be either -1 or -2." << endl;
 		return false;
 	}
-	if (params.Enable_correlated_disorder && (params.Disorder_correlation_length < 0.999 || params.Disorder_correlation_length > 3.001)) {
-		cout << "Error! When using the correlated disorder model, the disorder correlation length must be in the range between 1.0 and 3.0." << endl;
+	if (params.Enable_correlated_disorder && (params.Disorder_correlation_length < 0.999 || params.Disorder_correlation_length > 2.001)) {
+		cout << "Error! When using the correlated disorder model, the disorder correlation length must be in the range between 1.0 and 2.0." << endl;
 		return false;
 	}
 	if (params.Enable_correlated_disorder && !params.Enable_neat && params.Energy_stdev_donor != params.Energy_stdev_acceptor) {
@@ -1424,113 +1423,129 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 
 void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 	double stdev, percent_diff;
-	double distance_max = 0;
 	double scale_factor = 1;
 	if (Enable_gaussian_kernel) {
-		distance_max = 1 + 1.8*correlation_length;
-		scale_factor = -0.1 - 1.21*pow(correlation_length, -2.87);
+		scale_factor = -0.07*exp((correlation_length-1)/-0.21) - 0.09*exp((correlation_length-1)/-0.9);
 	}
 	if (Enable_power_kernel && Power_kernel_exponent == -1) {
-		distance_max = 1 + 4.5*correlation_length;
 		scale_factor = 0.7 + 3.1*pow(correlation_length, -1.55);
 	}
 	if (Enable_power_kernel && Power_kernel_exponent == -2) {
-		distance_max = 1 + 2.3*correlation_length;
 		scale_factor = -0.4 + 2.2*pow(correlation_length, -0.74);
 		scale_factor = pow(scale_factor, 2);
 	}
-	// Create and calculates distances and range check vectors
-	range = (int)ceil(distance_max / Unit_size);
-	int dim = 2 * range + 1;
-	int vec_size = dim*dim*dim;
-	vector<double> distances(vec_size, 0.0);
-	vector<bool> isInRange(vec_size, false);
-	vector<int> distance_indices(vec_size, 0);
-	for (int i = -range; i <= range; i++) {
-		for (int j = -range; j <= range; j++) {
-			for (int k = -range; k <= range; k++) {
-				int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
-				distance_indices[index] = i*i + j*j + k*k;
-				distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j*j + k*k));
-				if (i == 0 && j == 0 && k == 0) {
-					distances[index] = -1.0;
-				}
-				else if ((distances[index] - 1e-6) < distance_max) {
-					isInRange[index] = true;
-				}
-			}
-		}
+	// Save original site energies
+	vector<double> original_energies((int)sites.size(), 0.0);
+	for (int n = 0; n < (int)sites.size(); n++) {
+		original_energies[n] = sites[n].getEnergy();
 	}
-	// Impart correlation
 	vector<double> new_energies((int)sites.size(), 0.0);
-	vector<double> isAble(vec_size, 0.0);
-	vector<double> energies_temp(vec_size, 0.0);
-	vector<double> counts((int)ceil((distance_max / Unit_size)*(distance_max / Unit_size)) + 1, 0.0);
-	for (int n = 0, nmax = (int)sites.size(); n < nmax; n++) {
-		isAble.assign(vec_size, 0.0);
-		energies_temp.assign(vec_size, 0.0);
-		Coords coords = lattice.getSiteCoords(n);
-		// Get nearby site energies and determine if able
-		#pragma loop(hint_parallel(2))
-		#pragma loop(ivdep)
+	int range = 2;
+	while (1) {
+		// Create and calculates distances and range check vectors
+		int dim = 2 * range + 1;
+		int vec_size = dim * dim*dim;
+		vector<double> distances(vec_size, 0.0);
+		vector<bool> isInRange(vec_size, false);
+		vector<int> distance_indices(vec_size, 0);
 		for (int i = -range; i <= range; i++) {
 			for (int j = -range; j <= range; j++) {
 				for (int k = -range; k <= range; k++) {
-					if (!lattice.checkMoveValidity(coords, i, j, k)) {
-						continue;
-					}
-					Coords dest_coords;
-					lattice.calculateDestinationCoords(coords, i, j, k, dest_coords);
 					int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
-					if (isInRange[index]) {
-						energies_temp[index] = getSiteEnergy(dest_coords);
-						isAble[index] = 1.0;
+					distance_indices[index] = i * i + j * j + k * k;
+					distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j * j + k * k));
+					if (i == 0 && j == 0 && k == 0) {
+						distances[index] = -1.0;
+					}
+					else if (distance_indices[index] < range*range) {
+						isInRange[index] = true;
 					}
 				}
 			}
 		}
-		if (Enable_gaussian_kernel) {
+		// Impart correlation
+		vector<double> isAble(vec_size, 0.0);
+		vector<double> energies_temp(vec_size, 0.0);
+		vector<int> counts(range*range + 1, 0);
+		for (int n = 0, nmax = (int)sites.size(); n < nmax; n++) {
+			isAble.assign(vec_size, 0.0);
+			energies_temp.assign(vec_size, 0.0);
+			Coords coords = lattice.getSiteCoords(n);
+			// Get nearby site energies and determine if able
+			#pragma loop(hint_parallel(2))
+			#pragma loop(ivdep)
+			for (int i = -range; i <= range; i++) {
+				for (int j = -range; j <= range; j++) {
+					for (int k = -range; k <= range; k++) {
+						if (!lattice.checkMoveValidity(coords, i, j, k)) {
+							continue;
+						}
+						Coords dest_coords;
+						lattice.calculateDestinationCoords(coords, i, j, k, dest_coords);
+						int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
+						if (isInRange[index]) {
+							energies_temp[index] = getSiteEnergy(dest_coords);
+							isAble[index] = 1.0;
+						}
+					}
+				}
+			}
+			if (Enable_gaussian_kernel) {
+				for (int m = 0; m < vec_size; m++) {
+					energies_temp[m] = isAble[m] * energies_temp[m] * exp(scale_factor * distances[m] * distances[m]);
+				}
+			}
+			if (Enable_power_kernel && Power_kernel_exponent == -1) {
+				for (int m = 0; m < vec_size; m++) {
+					energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m]);
+				}
+			}
+			if (Enable_power_kernel && Power_kernel_exponent == -2) {
+				for (int m = 0; m < vec_size; m++) {
+					energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m] * distances[m]);
+				}
+			}
+			// Normalize energies by site count
+			counts.assign(range*range + 1, 0);
 			for (int m = 0; m < vec_size; m++) {
-				energies_temp[m] = isAble[m] * energies_temp[m] * exp(scale_factor * distances[m] * distances[m]);
+				if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
+					counts[distance_indices[m]] ++;
+				}
 			}
-		}
-		if (Enable_power_kernel && Power_kernel_exponent == -1) {
 			for (int m = 0; m < vec_size; m++) {
-				energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m]);
+				if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
+					energies_temp[m] /= counts[distance_indices[m]];
+				}
 			}
+			new_energies[n] = accumulate(energies_temp.begin(), energies_temp.end(), getSiteEnergy(coords));
 		}
-		if (Enable_power_kernel && Power_kernel_exponent == -2) {
-			for (int m = 0; m < vec_size; m++) {
-				energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m] * distances[m]);
+		// Normalize energies to reach desired disorder
+		stdev = vector_stdev(new_energies);
+		percent_diff = (stdev - Energy_stdev_donor) / Energy_stdev_donor;
+		double norm_factor = 1 + percent_diff;
+		for (auto &item : new_energies) {
+			item /= norm_factor;
+		}
+		// Assign new energies to the sites
+		for (int n = 0; n < (int)sites.size(); n++) {
+			sites[n].setEnergy(new_energies[n]);
+		}
+		// Calculate the correlation function
+		calculateDOSCorrelation();
+		// Check if finished
+		if (DOS_correlation_data.size() - 1 < 2 * range) {
+			break;
+		}
+		// If not finished
+		else {
+			// Reassign original site energies
+			for (int n = 0; n < (int)sites.size(); n++) {
+				sites[n].setEnergy(original_energies[n]);
 			}
+			// Increment range and repeat the calculation
+			range += 2;
 		}
-		// Normalize energies by site count
-		counts.assign((int)ceil((distance_max / Unit_size)*(distance_max / Unit_size)) + 1, 0.0);
-		for (int m = 0; m < vec_size; m++) {
-			if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
-				counts[distance_indices[m]] ++;
-			}
-		}
-		for (int m = 0; m < vec_size; m++) {
-			if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
-				energies_temp[m] /= counts[distance_indices[m]];
-			}
-		}
-		new_energies[n] = accumulate(energies_temp.begin(), energies_temp.end(), getSiteEnergy(coords));
 	}
-	// Normalize energies to reach desired disorder
-	stdev = vector_stdev(new_energies);
-	percent_diff = (stdev - Energy_stdev_donor) / Energy_stdev_donor;
-	double norm_factor = 1 + percent_diff;
-	for (auto &item : new_energies) {
-		item /= norm_factor;
-	}
-	// Assign new energies to the sites
-	for (int n = 0; n < (int)sites.size(); n++) {
-		sites[n].setEnergy(new_energies[n]);
-	}
-	// Calculate the correlation function
-	DOS_correlation_data = calculateDOSCorrelation();
 }
 
 void OSC_Sim::createElectron(const Coords& coords) {
@@ -2823,7 +2838,6 @@ void OSC_Sim::reassignSiteEnergies() {
 	if (Enable_correlated_disorder) {
 		createCorrelatedDOS(Disorder_correlation_length);
 	}
-	//outputVectorToFile(site_energies_donor, "DOS_data.txt");
 }
 
 void OSC_Sim::removeExciton(list<Exciton>::iterator exciton_it) {

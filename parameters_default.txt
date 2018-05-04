@@ -112,8 +112,8 @@ false //Enable_gaussian_dos
 false //Enable_exponential_dos
 0.03 //Energy_urbach_donor (eV)
 0.03 //Energy_urbach_acceptor (eV)
-false //Enable_correlated_disorder
-2.0 //Disorder_correlation_length (nm) (1.0-3.0, used by all kernels)
+false //Enable_correlated_disorder (only works with Gaussian DOS)
+1.0 //Disorder_correlation_length (nm) (1.0-2.0, used by all kernels)
 false //Enable_gaussian_kernel
 false //Enable_power_kernel
 -1 //Power_kernel_exponent (integer: -1 or -2)
