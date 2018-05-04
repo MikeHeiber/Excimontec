@@ -40,7 +40,6 @@ int main(int argc, char *argv[]) {
 	ofstream analysisfile;
 	stringstream ss;
 	// Initialize variables
-	string parameterfilename;
 	string logfilename;
 	Parameters_main params_main;
 	Parameters_OPV params_opv;
@@ -58,8 +57,7 @@ int main(int argc, char *argv[]) {
 	time_start = time(NULL);
 	// Import parameters and options from parameter file and command line arguments
 	cout << "Loading input parameters from file... " << endl;
-	parameterfilename = argv[1];
-	parameterfile.open(parameterfilename.c_str(), ifstream::in);
+	parameterfile.open(argv[1], ifstream::in);
 	if (!parameterfile.good()) {
 		cout << "Error loading parameter file.  Program will now exit." << endl;
 		return 0;
@@ -148,10 +146,8 @@ int main(int argc, char *argv[]) {
 	// Setup file output
 	cout << procid << ": Creating output files..." << endl;
 	if (params_opv.Enable_logging) {
-		ss << "log" << procid << ".txt";
-		logfilename = ss.str();
-		logfile.open(ss.str().c_str());
-		ss.str("");
+		logfilename = "log" + to_string(procid) + ".txt";
+		logfile.open(logfilename);
 	}
 	params_opv.Logfile = &logfile;
 	// Initialize Simulation
@@ -262,7 +258,7 @@ int main(int argc, char *argv[]) {
 			if (params_opv.Enable_logging) {
 				if (sim.getN_events_executed() % 1000 == 0) {
 					logfile.close();
-					logfile.open(logfilename.c_str());
+					logfile.open(logfilename);
 				}
 			}
 		}
@@ -276,12 +272,10 @@ int main(int argc, char *argv[]) {
 	// Output disorder correlation information if correlated disorder is enabled
 	if (params_opv.Enable_correlated_disorder) {
 		auto dos_correlation_data = sim.getDOSCorrelationData();
-		outputVectorToFile(dos_correlation_data, "DOS_correlation_data.txt");
+		outputVectorToFile(dos_correlation_data, "DOS_correlation_data"+to_string(procid)+".txt");
 	}
 	// Output result summary for each processor
-	ss << "results" << procid << ".txt";
-	resultsfile.open(ss.str().c_str());
-	ss.str("");
+	resultsfile.open("results" + to_string(procid) + ".txt");
 	resultsfile << "Excimontec " << version << " Results:\n";
 	resultsfile << "Calculation time elapsed is " << (double)elapsedtime / 60 << " minutes.\n";
 	resultsfile << sim.getTime() << " seconds have been simulated.\n";
@@ -341,21 +335,15 @@ int main(int argc, char *argv[]) {
 	// Output charge extraction map data
 	if (success && params_main.Enable_extraction_map_output && (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test)) {
 		if (params_opv.Enable_ToF_test) {
-			ss << "Charge_extraction_map" << procid << ".txt";
-			string filename = ss.str();
-			ss.str("");
+			string filename = "Charge_extraction_map" + to_string(procid) + ".txt";
 			vector<string> extraction_data = sim.getChargeExtractionMap(params_opv.ToF_polaron_type);
 			outputVectorToFile(extraction_data, filename);
 		}
 		if (params_opv.Enable_IQE_test) {
-			ss << "Electron_extraction_map" << procid << ".txt";
-			string filename = ss.str();
-			ss.str("");
+			string filename = "Electron_extraction_map" + to_string(procid) + ".txt";
 			vector<string> extraction_data = sim.getChargeExtractionMap(false);
 			outputVectorToFile(extraction_data, filename);
-			ss << "Hole_extraction_map" << procid << ".txt";
-			filename = ss.str();
-			ss.str("");
+			filename = "Hole_extraction_map" + to_string(procid) + ".txt";
 			extraction_data = sim.getChargeExtractionMap(true);
 			outputVectorToFile(extraction_data, filename);
 		}
@@ -364,9 +352,7 @@ int main(int argc, char *argv[]) {
 	int elapsedtime_sum;
 	MPI_Reduce(&elapsedtime, &elapsedtime_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 	if (procid == 0) {
-		ss << "analysis_summary.txt";
-		analysisfile.open(ss.str().c_str());
-		ss.str("");
+		analysisfile.open("analysis_summary.txt");
 		analysisfile << "Excimontec " << version << " Results Summary:\n";
 		analysisfile << "Simulation was performed on " << nproc << " processors.\n";
 		analysisfile << "Average calculation time was " << (double)elapsedtime_sum / (60 * nproc) << " minutes.\n";
@@ -411,17 +397,13 @@ int main(int argc, char *argv[]) {
 			vector<double> mobilities = sim.calculateMobilities(transit_times);
 			double electric_field = fabs(sim.getInternalField());
 			ofstream tof_resultsfile;
-			ss << "ToF_results.txt";
-			tof_resultsfile.open(ss.str().c_str());
-			ss.str("");
+			tof_resultsfile.open("ToF_results.txt");
 			tof_resultsfile << "Electric Field (V/cm),Transit Time Avg (s),Transit Time Stdev (s),Mobility Avg (cm^2 V^-1 s^-1),Mobility Stdev (cm^2 V^-1 s^-1)" << endl;
 			tof_resultsfile << electric_field << "," << vector_avg(transit_times) << "," << vector_stdev(transit_times) << "," << vector_avg(mobilities) << "," << vector_stdev(mobilities) << endl;
 			tof_resultsfile.close();
 			// ToF transient output
 			ofstream transientfile;
-			ss << "ToF_average_transients.txt";
-			transientfile.open(ss.str().c_str());
-			ss.str("");
+			transientfile.open("ToF_average_transients.txt");
 			transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
 			double volume_total = N_transient_cycles_sum*sim.getVolume();
 			for (int i = 0; i < (int)velocities.size(); i++) {
@@ -438,9 +420,7 @@ int main(int argc, char *argv[]) {
 			transientfile.close();
 			// ToF transit time distribution output
 			ofstream transitdistfile;
-			ss << "ToF_transit_time_dist.txt";
-			transitdistfile.open(ss.str().c_str());
-			ss.str("");
+			transitdistfile.open("ToF_transit_time_dist.txt");
 			vector<double> transit_dist = sim.calculateTransitTimeDist(transit_times, transit_attempts_total);
 			transitdistfile << "Transit Time (s),Probability" << endl;
 			for (int i = 0; i < (int)transit_dist.size(); i++) {
@@ -476,9 +456,7 @@ int main(int argc, char *argv[]) {
 		vector<double> hole_msdv = MPI_calculateVectorSum(sim.getDynamicsHoleMSDV());
 		if (procid == 0) {
 			ofstream transientfile;
-			ss << "dynamics_average_transients.txt";
-			transientfile.open(ss.str().c_str());
-			ss.str("");
+			transientfile.open("dynamics_average_transients.txt");
 			transientfile << "Time (s),Singlet Exciton Density (cm^-3),Triplet Exciton Density (cm^-3),Electron Density (cm^-3),Hole Density (cm^-3)";
 			transientfile << ",Average Exciton Energy (eV),Exciton MSDV (cm^2 s^-1)";
 			transientfile << ",Average Electron Energy (eV),Electron MSDV (cm^2 s^-1)";
