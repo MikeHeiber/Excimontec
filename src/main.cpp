@@ -38,7 +38,6 @@ int main(int argc, char *argv[]) {
 	ofstream logfile;
 	ofstream resultsfile;
 	ofstream analysisfile;
-	stringstream ss;
 	// Initialize variables
 	string logfilename;
 	Parameters_main params_main;
@@ -124,10 +123,8 @@ int main(int argc, char *argv[]) {
 		string prefix = params_main.Morphology_set_format.substr(0, pos);
 		string suffix = params_main.Morphology_set_format.substr(pos + 1);
 		cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
-		ss << prefix << selected_morphologies[procid] << suffix;
-		cout << procid << ": " << ss.str() << " selected." << endl;
-		params_main.Morphology_filename = ss.str();
-		ss.str("");
+		params_main.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
+		cout << procid << ": " << params_main.Morphology_filename << " selected." << endl;
 	}
 	if (params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set) {
 		params_opv.Enable_import_morphology = true;
