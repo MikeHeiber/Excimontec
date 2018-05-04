@@ -19,7 +19,7 @@ true //Enable_periodic_z
 --------------------------------------------------------------
 ## Device Architecture Parameters
 true //Enable_neat (uses donor properties)
-false //Enable_bilayer
+false //Enable_bilayer (Sum of Thickness_donor and Thickness_acceptor must equal Height)
 25 //Thickness_donor
 25 //Thickness_acceptor
 false //Enable_random_blend
@@ -87,7 +87,7 @@ false //Enable_FRET_triplet_annihilation
 0.7 //E_exciton_ST_acceptor (eV)
 --------------------------------------------------------------
 ## Polaron Parameters
-true //Enable_phase_restriction
+true //Enable_phase_restriction (holes on donor sites, electrons on acceptor sites)
 1e12 //R_polaron_hopping_donor (s^-1)
 1e12 //R_polaron_hopping_acceptor (s^-1)
 2.0 //Polaron_localization_donor (nm^-1)
@@ -119,7 +119,8 @@ false //Enable_power_kernel
 -1 //Power_kernel_exponent (integer: -1 or -2)
 --------------------------------------------------------------
 ## Coulomb Interaction Parameters
-3.5 //Dielectric_donor
-3.5 //Dielectric_acceptor
+3.5 //Dielectric_constant (relative permittivity)
+true //Enable_Coulomb_maximum (sets cutoff to 1/2 the smallest lattice dimension)
+false //Enable_Coulomb_cutoff
 25 //Coulomb_cutoff (nm)
 --------------------------------------------------------------

@@ -940,11 +940,37 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 	i++;
     // Coulomb Calculation Parameters
     params.Dielectric_donor = atof(stringvars[i].c_str());
-    i++;
+    //i++;
     params.Dielectric_acceptor = atof(stringvars[i].c_str());
     i++;
+	//enable_coulomb_maximum
+	bool Enable_Coulomb_maximum = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Coulomb interaction options" << endl;
+		return false;
+	}
+	i++;
+	//enable_coulomb_cutoff
+	bool Enable_Coulomb_cutoff = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Coulomb interaction options" << endl;
+		return false;
+	}
+	i++;
     params.Coulomb_cutoff = atoi(stringvars[i].c_str());
     i++;
+	if (Enable_Coulomb_maximum && Enable_Coulomb_cutoff) {
+		cout << "Error! Cannot enable both the maximum Coulomb cutoff and enable use of a sepcific cutoff distance." << endl;
+		return false;
+	}
+	if (!Enable_Coulomb_maximum && !Enable_Coulomb_cutoff) {
+		cout << "Error! One of the Coulomb interactions calculation options must be enabled." << endl;
+		return false;
+	}
+	if (Enable_Coulomb_maximum) {
+		auto vec = { params.Length, params.Width, params.Height };
+		params.Coulomb_cutoff = (int)floor(*min_element(vec.begin(), vec.end()) / 2.0);
+	}
     return true;
 }
 
