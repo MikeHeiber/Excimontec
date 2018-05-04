@@ -25,6 +25,8 @@ env:
     - COMPILER_OPTIONS="VERSION=6 && MPI=openmpi"
     - COMPILER_OPTIONS="VERSION=7 && MPI=mpich2"
     - COMPILER_OPTIONS="VERSION=7 && MPI=openmpi"
+    - COMPILER_OPTIONS="VERSION=8 && MPI=mpich2"
+    - COMPILER_OPTIONS="VERSION=8 && MPI=openmpi"
          
 before_install:
     - eval "${COMPILER_OPTIONS}"
@@ -36,7 +38,10 @@ before_install:
     - gcc --version
     - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
+    - pip install --user cpp-coveralls
     
 script:
-    - make -j10 && make -j10 test && ./testing/Excimontec_tests.exe && mpiexec -n 4 ./Excimontec.exe parameters_default.txt
+    - ./configure --enable-gcov && make -j10 && make -j10 test && ./testing/Excimontec_tests.exe && mpiexec -n 4 ./Excimontec.exe parameters_default.txt
 
+after_success:
+  - coveralls --exclude "docs/*" --exclude "googletest/*" --gcov-options '\-lp'
