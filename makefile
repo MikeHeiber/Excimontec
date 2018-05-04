@@ -4,10 +4,10 @@
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 ifeq ($(lastword $(subst /, ,$(CXX))),g++)
-	FLAGS = -Wall -Wextra -O3 -std=c++11 -I. -Isrc
+	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc
 endif
 ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
-	FLAGS = -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc
+	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc
 endif
 
 OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o src/Event.o src/Lattice.o src/Object.o src/Simulation.o src/Site.o src/Utils.o
