@@ -39,7 +39,7 @@ before_install:
     - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
     - pip install --user cpp-coveralls
-    - FLAGS = -fprofile-arcs -ftest-coverage
+    - FLAGS = "-fprofile-arcs -ftest-coverage"
     
 script:
     - make -j10 && make -j10 test && ./testing/Excimontec_tests.exe && mpiexec -n 4 ./Excimontec.exe parameters_default.txt
