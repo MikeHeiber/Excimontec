@@ -43,7 +43,6 @@ before_install:
 script:
     - FLAGS="-fprofile-arcs -ftest-coverage"
     - make -j10 test && ./testing/Excimontec_tests.exe
-    - make clean
     - FLAGS=""
     - make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt
 
