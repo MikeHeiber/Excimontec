@@ -1,6 +1,6 @@
 # Excimontec
 
-Kinetic Monte Carlo simulations are a powerful computational tool that can be used in concert with experiments and more detailed theoretical methods to understand and optimize organic semiconductor materials and devices. 
+Kinetic Monte Carlo simulations are a powerful computational tool that have been used in concert with experiments and more detailed theoretical methods to understand and optimize organic semiconductor materials and devices. 
 However, despite over 30 years of applying KMC tools to organic semiconductors, no widespread or standardized software tools have taken hold in the community. 
 Instead, many research groups around the world have maintained private codebases of varying complexity, efficiency, and reliability. 
 As a result, there have been large barriers to entry for new researchers and a lot of repeated effort throughout the community that would be much better off applied to pushing the capabilities of the technique and further refining the physical models. 
