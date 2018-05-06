@@ -47,4 +47,4 @@ script:
     - make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt
 
 after_success:
-  - coveralls --root ./src --build-root ./src --include ./KMC_Lattice --exclude "googletest/*" --gcov-options '\-lp'
+  - coveralls --include ./src --include ./KMC_Lattice --exclude "googletest/*" --gcov-options '\-lp'
