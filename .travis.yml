@@ -41,10 +41,7 @@ before_install:
     - pip install --user cpp-coveralls
     
 script:
-    - FLAGS="-fprofile-arcs -ftest-coverage"
     - make -j10 test && ./testing/Excimontec_tests.exe
-    - FLAGS=""
-    - make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt
-
-after_success:
-  - coveralls --include ./src --include ./KMC_Lattice --exclude "googletest/*" --gcov-options '\-lp' --dump report.json
+    - coveralls --include ./src --include ./KMC_Lattice --exclude "googletest/*" --gcov-options '\-lp'
+    - make clean
+    - make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt  

@@ -54,34 +54,31 @@ KMC_Lattice/Utils.o : KMC_Lattice/Utils.h KMC_Lattice/Utils.cpp
 # Testing Section using googletest
 #
 
+ifndef FLAGS
+	$(error Valid compiler not detected.)
+endif
 GTEST_DIR = googletest/googletest
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
-
 ifeq ($(lastword $(subst /, ,$(CXX))),g++)
 	GTEST_FLAGS = -isystem $(GTEST_DIR)/include -pthread
 endif
 ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
 	GTEST_FLAGS = -I$(GTEST_DIR)/include
 endif
-ifndef FLAGS
-	$(error Valid compiler not detected.)
-endif
+
+test : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc
+test : testing/Excimontec_tests.exe	
+	
+testing/Excimontec_tests.exe : testing/test.o testing/gtest-all.o $(OBJS)
+	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
 
 testing/gtest-all.o : $(GTEST_SRCS_)
 	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 			
 testing/test.o : testing/test.cpp $(GTEST_HEADERS) src/OSC_Sim.h src/Exciton.h KMC_Lattice/Utils.h
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test.cpp -o $@
-
-testing/Excimontec_tests.exe : testing/test.o testing/gtest-all.o $(OBJS)
-	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
-			
-test : testing/Excimontec_tests.exe
-ifndef FLAGS
-	$(error Valid compiler not detected.)
-endif
 	
 clean:
-	\rm src/*.o src/*.gcno* src/*.gcda KMC_Lattice/*.o KMC_Lattice/*.gcno* KMC_Lattice/*.gcda testing/*.o testing/*.gcno* testing/*.gcda *~ Excimontec.exe testing/*.o testing/Excimontec_tests.exe
+	-rm src/*.o src/*.gcno* src/*.gcda KMC_Lattice/*.o KMC_Lattice/*.gcno* KMC_Lattice/*.gcda testing/*.o testing/*.gcno* testing/*.gcda *~ Excimontec.exe testing/*.o testing/Excimontec_tests.exe
