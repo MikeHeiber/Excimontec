@@ -814,38 +814,41 @@ namespace OSC_SimTests {
 		params.Enable_correlated_disorder = true;
 		params.Enable_gaussian_kernel = true;
 		params.Enable_power_kernel = false;
-		// correlation length = 1.2, Unit_size = 1.0
-		params.Disorder_correlation_length = 1.2;
-		sim.init(params, 0);
-		auto energies = sim.getSiteEnergies(1);
-		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
-		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
-		auto correlation_data = sim.getDOSCorrelationData();
-		EXPECT_NEAR(1/exp(1), interpolateData(correlation_data, 1.2), 0.05);
-		// correlation length = 1.1, Unit_size = 0.8
-		params.Unit_size = 0.8;
+		// correlation length = 1.1, Unit_size = 1.0
 		params.Length = 40;
 		params.Width = 40;
 		params.Height = 40;
 		params.Disorder_correlation_length = 1.1;
 		sim.init(params, 0);
-		energies = sim.getSiteEnergies(1);
+		auto energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
 		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
-		correlation_data = sim.getDOSCorrelationData();
+		auto correlation_data = sim.getDOSCorrelationData();
 		EXPECT_NEAR(1/exp(1), interpolateData(correlation_data, 1.1), 0.05);
-		// correlation length = 1.4, Unit_size = 1.2
-		params.Unit_size = 1.2;
-		params.Length = 60;
-		params.Width = 60;
-		params.Height = 60;
-		params.Disorder_correlation_length = 1.4;
+		// correlation length = 1.0, Unit_size = 0.8
+		params.Unit_size = 0.8;
+		params.Length = 30;
+		params.Width = 30;
+		params.Height = 30;
+		params.Disorder_correlation_length = 1.0;
 		sim.init(params, 0);
 		energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
 		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
 		correlation_data = sim.getDOSCorrelationData();
-		EXPECT_NEAR(1 / exp(1), interpolateData(correlation_data, 1.4), 0.05);
+		EXPECT_NEAR(1/exp(1), interpolateData(correlation_data, 1.0), 0.05);
+		// correlation length = 1.3, Unit_size = 1.2
+		params.Unit_size = 1.2;
+		params.Length = 50;
+		params.Width = 50;
+		params.Height = 50;
+		params.Disorder_correlation_length = 1.3;
+		sim.init(params, 0);
+		energies = sim.getSiteEnergies(1);
+		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
+		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
+		correlation_data = sim.getDOSCorrelationData();
+		EXPECT_NEAR(1 / exp(1), interpolateData(correlation_data, 1.3), 0.05);
 	}
 
 }
