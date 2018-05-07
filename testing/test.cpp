@@ -35,7 +35,7 @@ namespace UtilsTests {
 		mt19937 gen(std::random_device{}());
 		uniform_real_distribution<> dist(0, 100);
 		vector<double> data((int)1e7);
-		for (int i = 0; i < data.size(); i++) {
+		for (int i = 0; i < (int)data.size(); i++) {
 			data[i] = dist(gen);
 		}
 		auto hist = calculateProbabilityHist(data, 10);
