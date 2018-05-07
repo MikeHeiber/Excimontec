@@ -24,7 +24,9 @@ This software package uses object-oriented design and extends the [KMC_Lattice](
 
 ## Current Status
 
-The current release, [Excimontec v1.0-beta.4](https://github.com/MikeHeiber/Excimontec/releases/tag/v1.0-beta.4), is built with [KMC_Lattice v2.0-beta.4](https://github.com/MikeHeiber/KMC_Lattice/releases/tag/v2.0-beta.4) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+The current release, Excimontec
+[![GitHub (pre-)release](https://img.shields.io/github/release/MikeHeiber/Excimontec/all.svg?style=flat-square)](https://github.com/MikeHeiber/Excimontec/releases)
+, is built with KMC_Lattice [![GitHub (pre-)release](https://img.shields.io/github/release/MikeHeiber/KMC_Lattice/all.svg?style=flat-square)](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
 All major planned features that are to be included in v1.0 are now implemented and have undergone preliminary testing. 
 However, this software tool is still under development, and as such, there may still be bugs that need to be squashed. 
 Please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
@@ -36,15 +38,15 @@ Major releases and other significant developments will be announced on the Excim
 
 Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) v14.04 with the [GCC compiler](https://gcc.gnu.org/) (versions 4.7, 4.8, 4.9, 5, 6, 7, and 8) and on both [Open MPI](http://www.open-mpi.org/) v1.6.5 and [MPICH](http://www.mpich.org/) v3.04 using [Travis CI](https://travis-ci.com/).
 
-Master branch: [![Build Status](https://travis-ci.org/MikeHeiber/Excimontec.svg?branch=master)](https://travis-ci.org/MikeHeiber/Excimontec)
+Master branch: [![Build Status](https://img.shields.io/travis/MikeHeiber/Excimontec/master.svg?style=for-the-badge)](https://travis-ci.org/MikeHeiber/Excimontec)
 
-Development branch: [![Build Status](https://travis-ci.org/MikeHeiber/Excimontec.svg?branch=development)](https://travis-ci.org/MikeHeiber/Excimontec)
+Development branch: [![Build Status](https://img.shields.io/travis/MikeHeiber/Excimontec/development.svg?style=for-the-badge)](https://travis-ci.org/MikeHeiber/Excimontec)
 
 Code is being tested using [googletest](https://github.com/google/googletest) with test coverage assessment by [Coveralls](https://coveralls.io/).
 
-Master branch: [![Coverage Status](https://coveralls.io/repos/github/MikeHeiber/Excimontec/badge.svg?branch=master)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=master)
+Master branch: [![Coveralls github branch](https://img.shields.io/coveralls/github/MikeHeiber/Excimontec/master.svg?style=for-the-badge)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=master)
 
-Development Branch: [![Coverage Status](https://coveralls.io/repos/github/MikeHeiber/Excimontec/badge.svg?branch=development)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=development)
+Development Branch: [![Coveralls github branch](https://img.shields.io/coveralls/github/MikeHeiber/Excimontec/development.svg?style=for-the-badge)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=development)
 
 ## Contact
 
