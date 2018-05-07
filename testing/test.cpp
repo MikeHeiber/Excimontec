@@ -32,12 +32,103 @@ namespace UtilsTests {
 	}
 
 	TEST(UtilsTests, CalculateProbabilityHistTests) {
-		vector<double> data{ 0.0, 0.5, 1.0, 1.5, 2.0, 2.5 };
-		auto hist = calculateProbabilityHist(data, 1.0);
-		EXPECT_EQ(3, (int)hist.size());
-		EXPECT_DOUBLE_EQ((double)1 / (double)3, hist[0].second);
-		EXPECT_DOUBLE_EQ((double)1 / (double)3, hist[1].second);
-		EXPECT_DOUBLE_EQ((double)1 / (double)3, hist[2].second);
+		mt19937 gen(std::random_device{}());
+		uniform_real_distribution<> dist(0, 100);
+		vector<double> data((int)1e7);
+		for (int i = 0; i < data.size(); i++) {
+			data[i] = dist(gen);
+		}
+		auto hist = calculateProbabilityHist(data, 10);
+		uniform_int_distribution<> dist2(0, 9);
+		EXPECT_EQ(10, (int)hist.size());
+		EXPECT_NEAR(1.0 / 100.0, hist[dist2(gen)].second,1e-4);
+		EXPECT_NEAR(1.0 / 100.0, hist[dist2(gen)].second, 1e-4);
+		EXPECT_NEAR(1.0 / 100.0, hist[dist2(gen)].second, 1e-4);
+		hist = calculateProbabilityHist(data, 10.0);
+		EXPECT_EQ(10, (int)hist.size());
+		EXPECT_NEAR(1.0 / 100.0, hist[dist2(gen)].second, 1e-4);
+		EXPECT_NEAR(1.0 / 100.0, hist[dist2(gen)].second, 1e-4);
+		EXPECT_NEAR(1.0 / 100.0, hist[dist2(gen)].second, 1e-4);
+	}
+
+	TEST(UtilsTests, ExponentialDOSTests) {
+		mt19937 gen(std::random_device{}());
+		vector<double> data((int)2e7, 0.0);
+		createExponentialDOSVector(data, 0.0, 0.1, gen);
+		auto hist = calculateProbabilityHist(data, 1000);
+		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
+		vector<double> prob;
+		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
+		double peak = *max_element(prob.begin(), prob.end());
+		EXPECT_NEAR(0.5*(1.0 / 0.1), peak, 1e-2*peak);
+		createExponentialDOSVector(data, 0.0, 0.05, gen);
+		hist = calculateProbabilityHist(data, 1000);
+		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
+		prob.clear();
+		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
+		peak = *max_element(prob.begin(), prob.end());
+		EXPECT_NEAR(0.5*(1.0 / 0.05), peak, 1e-2*peak);
+	}
+
+	TEST(UtilsTests, GaussianDOSTests) {
+		mt19937 gen(std::random_device{}());
+		vector<double> data((int)3e7, 0.0);
+		createGaussianDOSVector(data, 0.0, 0.15, gen);
+		EXPECT_NEAR(0.0, vector_avg(data), 1e-4);
+		EXPECT_NEAR(0.15, vector_stdev(data), 1e-4);
+		auto hist = calculateProbabilityHist(data, 1000);
+		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
+		double peak = hist[499].second;
+		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.15, 2)), peak, 5e-2*peak);
+		createGaussianDOSVector(data, 0.0, 0.05, gen);
+		EXPECT_NEAR(0.0, vector_avg(data), 1e-4);
+		EXPECT_NEAR(0.05, vector_stdev(data), 1e-4);
+		hist = calculateProbabilityHist(data, 0.005);
+		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
+		vector<double> prob;
+		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
+		peak = *max_element(prob.begin(), prob.end());
+		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.05, 2)), peak, 5e-2*peak);
+	}
+
+	TEST(UtilsTests, ImportBooleanTests) {
+		bool error_status;
+		EXPECT_TRUE(importBooleanParam("true", error_status));
+		EXPECT_TRUE(importBooleanParam(" true  ", error_status));
+		EXPECT_FALSE(importBooleanParam("false", error_status));
+		EXPECT_FALSE(importBooleanParam("   false", error_status));
+		EXPECT_FALSE(importBooleanParam("blah", error_status));
+		EXPECT_FALSE(importBooleanParam("blah  ", error_status));
+		EXPECT_TRUE(error_status);
+	}
+
+	TEST(UtilsTests, IntegrateDataTests) {
+		vector<pair<double, double>> data_vec = { {0.0,0.0},{1.0,1.0},{2.0,2.0},{3.0,3.0} };
+		auto area = integrateData(data_vec);
+		EXPECT_DOUBLE_EQ(area, 9.0 / 2.0);
+	}
+
+	TEST(UtilsTests, InterpolateDataTests) {
+		vector<pair<double, double>> data_vec(100);
+		for (int i = 0; i < (int)data_vec.size();i++) {
+			data_vec[i].first = 0.1*i;
+			data_vec[i].second = exp(-data_vec[i].first/2.85);
+		}
+		EXPECT_NEAR(1 / exp(1), interpolateData(data_vec, 2.85), 1e-4);
+		for (int i = 0; i < (int)data_vec.size(); i++) {
+			data_vec[i].first = 0.2*i;
+			data_vec[i].second = 2.5*data_vec[i].first - 5.0;
+		}
+		EXPECT_NEAR(3.25, interpolateData(data_vec, 3.3), 1e-4);
+	}
+
+	TEST(UtilsTests, RemoveWhitespaceTests) {
+		string str = " text          ";
+		EXPECT_EQ(removeWhitespace(str), "text");
+		str = " text	";
+		EXPECT_EQ(removeWhitespace(str), "text");
+		str = "			text ";
+		EXPECT_EQ(removeWhitespace(str), "text");
 	}
 
 	TEST(UtilsTests, ArrayStatsTests) {
@@ -68,37 +159,6 @@ namespace UtilsTests {
 		EXPECT_DOUBLE_EQ(-2.75, array_avg(double_data, 10));
 		EXPECT_NEAR(1.51382517704875, array_stdev(double_data, 10), 1e-14);
 	}
-	TEST(UtilsTests, VectorStatsTests) {
-		// positive ints
-		vector<int> int_data;
-		int_data.assign(10, 0);
-		for (int i = 0; i < 10; i++) {
-			int_data[i] = i + 1;
-		}
-		EXPECT_DOUBLE_EQ(5.5, vector_avg(int_data));
-		EXPECT_NEAR(3.02765035409749, vector_stdev(int_data), 1e-14);
-		// negative ints
-		for (int i = 0; i < 10; i++) {
-			int_data[i] = -(i + 1);
-		}
-		EXPECT_DOUBLE_EQ(-5.5, vector_avg(int_data));
-		EXPECT_NEAR(3.02765035409749, vector_stdev(int_data), 1e-14);
-		// positive doubles
-		vector<double> double_data;
-		double_data.assign(10, 0);
-		for (int i = 0; i < 10; i++) {
-			double_data[i] = 0.5*(i + 1);
-		}
-		EXPECT_DOUBLE_EQ(2.75, vector_avg(double_data));
-		EXPECT_NEAR(1.51382517704875, vector_stdev(double_data), 1e-14);
-		// negative doubles
-		double_data.assign(10, 0);
-		for (int i = 0; i < 10; i++) {
-			double_data[i] = -0.5*(i + 1);
-		}
-		EXPECT_DOUBLE_EQ(-2.75, vector_avg(double_data));
-		EXPECT_NEAR(1.51382517704875, vector_stdev(double_data), 1e-14);
-	}
 
 	TEST(UtilsTests, IntPowTests) {
 		EXPECT_DOUBLE_EQ(1.0, intpow(2.5, 0));
@@ -110,57 +170,6 @@ namespace UtilsTests {
 		EXPECT_DOUBLE_EQ(1.048576e-4, intpow(2.5, -10));
 		EXPECT_DOUBLE_EQ(1.0, intpow(15.04564, 0));
 		EXPECT_DOUBLE_EQ(1e-21, intpow(1e-7, 3));
-	}
-
-	TEST(UtilsTests, GaussianDOSTests) {
-		mt19937 gen(std::random_device{}());
-		vector<double> data((int)3e7,0.0);
-		createGaussianDOSVector(data, 0.0, 0.15, gen);
-		EXPECT_NEAR(0.0, vector_avg(data), 1e-4);
-		EXPECT_NEAR(0.15, vector_stdev(data), 1e-4);
-		auto hist = calculateProbabilityHist(data, 1000);
-		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
-		double peak = hist[499].second;
-		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.15, 2)), peak, 5e-2*peak);
-		createGaussianDOSVector(data, 0.0, 0.05, gen);
-		EXPECT_NEAR(0.0, vector_avg(data), 1e-4);
-		EXPECT_NEAR(0.05, vector_stdev(data), 1e-4);
-		hist = calculateProbabilityHist(data, 0.005);
-		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
-		vector<double> prob;
-		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
-		peak = *max_element(prob.begin(), prob.end());
-		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.05, 2)), peak, 5e-2*peak);
-	}
-
-	TEST(UtilsTests, ExponentialDOSTests) {
-		mt19937 gen(std::random_device{}());
-		vector<double> data((int)2e7, 0.0);
-		createExponentialDOSVector(data, 0.0, 0.1, gen);
-		auto hist = calculateProbabilityHist(data, 1000);
-		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
-		vector<double> prob;
-		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
-		double peak = *max_element(prob.begin(), prob.end());
-		EXPECT_NEAR(0.5*(1.0 / 0.1), peak, 1e-2*peak);
-		createExponentialDOSVector(data, 0.0, 0.05, gen);
-		hist = calculateProbabilityHist(data, 1000);
-		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
-		prob.clear();
-		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
-		peak = *max_element(prob.begin(), prob.end());
-		EXPECT_NEAR(0.5*(1.0 / 0.05), peak, 1e-2*peak);
-	}
-
-	TEST(UtilsTests, ImportBooleanTests) {
-		bool error_status;
-		EXPECT_TRUE(importBooleanParam("true", error_status));
-		EXPECT_TRUE(importBooleanParam(" true  ", error_status));
-		EXPECT_FALSE(importBooleanParam("false", error_status));
-		EXPECT_FALSE(importBooleanParam("   false", error_status));
-		EXPECT_FALSE(importBooleanParam("blah", error_status));
-		EXPECT_FALSE(importBooleanParam("blah  ", error_status));
-		EXPECT_TRUE(error_status);
 	}
 
 	TEST(UtilsTests, RemoveDuplicatesTests) {
@@ -199,6 +208,37 @@ namespace UtilsTests {
 		EXPECT_EQ(1, (int)vec6.size());
 	}
 
+	TEST(UtilsTests, VectorStatsTests) {
+		// positive ints
+		vector<int> int_data;
+		int_data.assign(10, 0);
+		for (int i = 0; i < 10; i++) {
+			int_data[i] = i + 1;
+		}
+		EXPECT_DOUBLE_EQ(5.5, vector_avg(int_data));
+		EXPECT_NEAR(3.02765035409749, vector_stdev(int_data), 1e-14);
+		// negative ints
+		for (int i = 0; i < 10; i++) {
+			int_data[i] = -(i + 1);
+		}
+		EXPECT_DOUBLE_EQ(-5.5, vector_avg(int_data));
+		EXPECT_NEAR(3.02765035409749, vector_stdev(int_data), 1e-14);
+		// positive doubles
+		vector<double> double_data;
+		double_data.assign(10, 0);
+		for (int i = 0; i < 10; i++) {
+			double_data[i] = 0.5*(i + 1);
+		}
+		EXPECT_DOUBLE_EQ(2.75, vector_avg(double_data));
+		EXPECT_NEAR(1.51382517704875, vector_stdev(double_data), 1e-14);
+		// negative doubles
+		double_data.assign(10, 0);
+		for (int i = 0; i < 10; i++) {
+			double_data[i] = -0.5*(i + 1);
+		}
+		EXPECT_DOUBLE_EQ(-2.75, vector_avg(double_data));
+		EXPECT_NEAR(1.51382517704875, vector_stdev(double_data), 1e-14);
+	}
 }
 
 namespace LatticeTests{
