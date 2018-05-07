@@ -1533,7 +1533,7 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 		// Calculate the correlation function
 		calculateDOSCorrelation();
 		// Check if finished
-		if (DOS_correlation_data.size() - 1 < 2 * range) {
+		if ((int)DOS_correlation_data.size() - 1 < 2 * range) {
 			break;
 		}
 		// If not finished
@@ -2724,7 +2724,7 @@ bool OSC_Sim::initializeArchitecture() {
 		}
 		N_donor_sites = lattice.getNumSites() - N_acceptor_sites;
 		shuffle(site_types.begin(), site_types.end(), generator);
-		for (int i = 0; i < sites.size(); i++) {
+		for (int i = 0; i < (int)sites.size(); i++) {
 			sites[i].setType(site_types[i]);
 		}
 	}
