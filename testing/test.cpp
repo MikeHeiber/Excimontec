@@ -114,7 +114,7 @@ namespace UtilsTests {
 
 	TEST(UtilsTests, GaussianDOSTests) {
 		mt19937 gen(std::random_device{}());
-		vector<double> data((int)2e7,0.0);
+		vector<double> data((int)3e7,0.0);
 		createGaussianDOSVector(data, 0.0, 0.15, gen);
 		EXPECT_NEAR(0.0, vector_avg(data), 1e-4);
 		EXPECT_NEAR(0.15, vector_stdev(data), 1e-4);
