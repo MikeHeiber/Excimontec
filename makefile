@@ -77,8 +77,17 @@ testing/Excimontec_tests.exe : testing/test.o testing/gtest-all.o $(OBJS)
 testing/gtest-all.o : $(GTEST_SRCS_)
 	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 			
-testing/test.o : testing/test.cpp $(GTEST_HEADERS) src/OSC_Sim.h src/Exciton.h KMC_Lattice/Utils.h
+testing/test.o : testing/test.cpp $(GTEST_HEADERS) $(OBJS)
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test.cpp -o $@
+
+test_mpi : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc
+test_mpi : testing/Excimontec_mpi_tests.exe
+
+testing/Excimontec_mpi_tests.exe : testing/test_mpi.o testing/gtest-all.o $(OBJS)
+	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
+
+testing/test_mpi.o : testing/test_mpi.cpp $(GTEST_HEADERS) $(OBJS)
+	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test_mpi.cpp -o $@
 	
 clean:
-	-rm src/*.o src/*.gcno* src/*.gcda KMC_Lattice/*.o KMC_Lattice/*.gcno* KMC_Lattice/*.gcda testing/*.o testing/*.gcno* testing/*.gcda *~ Excimontec.exe testing/*.o testing/Excimontec_tests.exe
+	-rm src/*.o src/*.gcno* src/*.gcda KMC_Lattice/*.o KMC_Lattice/*.gcno* KMC_Lattice/*.gcda testing/*.o testing/*.gcno* testing/*.gcda *~ Excimontec.exe testing/*.o testing/Excimontec_tests.exe testing/Excimontec_mpi_tests.exe

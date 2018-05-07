@@ -42,6 +42,7 @@ before_install:
     
 script:
     - make -j10 test && travis_wait ./testing/Excimontec_tests.exe
+    - make -j10 test_mpi && travis_wait mpiexec -n 4 ./testing/Excimontec_mpi_tests.exe
     - coveralls --include ./src --include ./KMC_Lattice --exclude "googletest/*" --gcov-options '\-lp'
     - make clean
     - make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt  
