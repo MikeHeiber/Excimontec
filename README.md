@@ -53,7 +53,8 @@ Development Branch: [![Coveralls github branch](https://img.shields.io/coveralls
 If you would like to contribute to the development of this project or would like some help in using the tool for your research, please contact me (heiber@mailaps.org) to discuss a collaboration. 
 You can check out my KMC research and other work on [Researchgate](https://www.researchgate.net/profile/Michael_Heiber).
 
-Have a quick question or want to chat about Excimontec?  Join the discussion on Gitter: [![Gitter chat](https://badges.gitter.im/Excimontec.png)](https://gitter.im/Excimontec)
+Have a quick question or want to chat about Excimontec?  Join the discussion on Gitter: [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=for-the-badge)
+](https://gitter.im/Excimontec)
 
 ## How to try Excimontec?
 
