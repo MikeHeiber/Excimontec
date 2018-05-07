@@ -79,7 +79,7 @@ namespace UtilsTests {
 		auto hist = calculateProbabilityHist(data, 1000);
 		EXPECT_NEAR(1.0, integrateData(hist), 1e-4);
 		double peak = hist[499].second;
-		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.15, 2)), peak, 5e-2*peak);
+		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.15, 2)), peak, 1e-1*peak);
 		createGaussianDOSVector(data, 0.0, 0.05, gen);
 		EXPECT_NEAR(0.0, vector_avg(data), 1e-4);
 		EXPECT_NEAR(0.05, vector_stdev(data), 1e-4);
@@ -88,7 +88,7 @@ namespace UtilsTests {
 		vector<double> prob;
 		for_each(hist.begin(), hist.end(), [&prob](pair<double, double>& x_y) {prob.push_back(x_y.second); });
 		peak = *max_element(prob.begin(), prob.end());
-		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.05, 2)), peak, 5e-2*peak);
+		EXPECT_NEAR(1.0 / sqrt(2.0*Pi*intpow(0.05, 2)), peak, 1e-1*peak);
 	}
 
 	TEST(UtilsTests, ImportBooleanTests) {
