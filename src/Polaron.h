@@ -6,9 +6,9 @@
 #ifndef POLARON_H
 #define POLARON_H
 
-#include "KMC_Lattice/Utils.h"
-#include "KMC_Lattice/Object.h"
-#include "KMC_Lattice/Event.h"
+#include "Utils.h"
+#include "Object.h"
+#include "Event.h"
 #include <string>
 
 class Polaron : public Object{

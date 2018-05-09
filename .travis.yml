@@ -13,36 +13,36 @@ compiler:
     - gcc
     
 env:
-    - COMPILER_OPTIONS="VERSION=4.7 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=4.7 && MPI=openmpi"
-    - COMPILER_OPTIONS="VERSION=4.8 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=4.8 && MPI=openmpi"
-    - COMPILER_OPTIONS="VERSION=4.9 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=4.9 && MPI=openmpi"
-    - COMPILER_OPTIONS="VERSION=5 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=5 && MPI=openmpi"
-    - COMPILER_OPTIONS="VERSION=6 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=6 && MPI=openmpi"
-    - COMPILER_OPTIONS="VERSION=7 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=7 && MPI=openmpi"
-    - COMPILER_OPTIONS="VERSION=8 && MPI=mpich2"
-    - COMPILER_OPTIONS="VERSION=8 && MPI=openmpi"
+    - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test_coverage"
+    - OPTIONS="GCC_VERSION=4.7 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.7 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.8 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.8 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=5 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=6 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=6 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=7 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=7 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=8 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=8 && MPI=openmpi && TARGET=test"
          
 before_install:
-    - eval "${COMPILER_OPTIONS}"
+    - eval "${OPTIONS}"
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update -qq
-    - sudo apt-get install -qq gcc-$VERSION g++-$VERSION -y
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$VERSION
+    - sudo apt-get install -qq gcc-$GCC_VERSION g++-$GCC_VERSION -y
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$GCC_VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$GCC_VERSION
     - sudo update-alternatives --config gcc
     - gcc --version
     - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
-    - pip install --user cpp-coveralls
+    - if [[ "$TARGET" = test_coverage ]]; then pip install --user cpp-coveralls; fi
     
 script:
-    - make -j10 test && travis_wait ./testing/Excimontec_tests.exe
-    - make -j10 test_mpi && travis_wait mpiexec -n 4 ./testing/Excimontec_mpi_tests.exe
-    - coveralls --include ./src --include ./KMC_Lattice --exclude "googletest/*" --gcov-options '\-lp'
+    - make -j10 $TARGET && travis_wait ./test/Excimontec_tests.exe && travis_wait mpiexec -n 4 ./test/Excimontec_MPI_tests.exe
+    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --exclude "googletest/*" --gcov-options '\-lp'; fi
     - make clean
-    - make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt  
+    - if [[ "$TARGET" = test ]]; then make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt; fi

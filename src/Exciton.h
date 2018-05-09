@@ -6,10 +6,10 @@
 #ifndef EXCITON_H
 #define EXCITON_H
 
-#include "KMC_Lattice/Utils.h"
-#include "KMC_Lattice/Object.h"
-#include "KMC_Lattice/Event.h"
-#include "KMC_Lattice/Simulation.h"
+#include "Utils.h"
+#include "Object.h"
+#include "Event.h"
+#include "Simulation.h"
 #include <string>
 
 //! \brief This class extends the Object class to create an exciton object to represent a singlet or triplet exciton in an organic semiconductor.

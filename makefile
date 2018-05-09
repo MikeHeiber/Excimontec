@@ -4,51 +4,36 @@
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 ifeq ($(lastword $(subst /, ,$(CXX))),g++)
-	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc
+	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc -IKMC_Lattice/src
 endif
 ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
-	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc
+	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc -IKMC_Lattice/src
 endif
 
-OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o KMC_Lattice/Event.o KMC_Lattice/Lattice.o KMC_Lattice/Object.o KMC_Lattice/Simulation.o KMC_Lattice/Site.o KMC_Lattice/Utils.o
+OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o
 
 all : Excimontec.exe
 ifndef FLAGS
 	$(error Valid compiler not detected.)
 endif
 
-Excimontec.exe : src/main.o $(OBJS)
-	mpicxx -v $(FLAGS) src/main.o $(OBJS) -o Excimontec.exe
-
-src/main.o : src/main.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c src/main.cpp -o $@
+Excimontec.exe : src/main.o $(OBJS) KMC_Lattice/libKMC.a
+	mpicxx $(FLAGS) $^ -o $@
 	
-src/OSC_Sim.o : src/OSC_Sim.h src/OSC_Sim.cpp src/Exciton.h src/Polaron.h KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c src/OSC_Sim.cpp -o $@
+KMC_Lattice/libKMC.a : KMC_Lattice/src/*.h
+	$(MAKE) -C KMC_Lattice 
 
-src/Exciton.o : src/Exciton.h src/Exciton.cpp KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c src/Exciton.cpp -o $@
-
-src/Polaron.o : src/Polaron.h src/Polaron.cpp KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c src/Polaron.cpp -o $@
-
-KMC_Lattice/Event.o : KMC_Lattice/Event.h KMC_Lattice/Event.cpp KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c KMC_Lattice/Event.cpp -o $@
-
-KMC_Lattice/Lattice.o : KMC_Lattice/Lattice.h KMC_Lattice/Lattice.cpp KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c KMC_Lattice/Lattice.cpp -o $@
-
-KMC_Lattice/Object.o : KMC_Lattice/Object.h KMC_Lattice/Object.cpp KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c KMC_Lattice/Object.cpp -o $@
-
-KMC_Lattice/Simulation.o : KMC_Lattice/Simulation.h KMC_Lattice/Simulation.cpp KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	mpicxx $(FLAGS) -c KMC_Lattice/Simulation.cpp -o $@
+src/main.o : src/main.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h
+	mpicxx $(FLAGS) -c $< -o $@
 	
-KMC_Lattice/Site.o : KMC_Lattice/Site.h KMC_Lattice/Site.cpp
-	mpicxx $(FLAGS) -c KMC_Lattice/Site.cpp -o $@
-	
-KMC_Lattice/Utils.o : KMC_Lattice/Utils.h KMC_Lattice/Utils.cpp
-	mpicxx $(FLAGS) -c KMC_Lattice/Utils.cpp -o $@
+src/OSC_Sim.o : src/OSC_Sim.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h
+	mpicxx $(FLAGS) -c $< -o $@
+
+src/Exciton.o : src/Exciton.cpp src/Exciton.h
+	mpicxx $(FLAGS) -c $< -o $@
+
+src/Polaron.o : src/Polaron.cpp src/Polaron.h
+	mpicxx $(FLAGS) -c $< -o $@
 
 #
 # Testing Section using googletest
@@ -68,26 +53,19 @@ ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
 	GTEST_FLAGS = -I$(GTEST_DIR)/include
 endif
 
-test : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc
-test : testing/Excimontec_tests.exe	
-	
-testing/Excimontec_tests.exe : testing/test.o testing/gtest-all.o $(OBJS)
-	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
+test_coverage : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc -IKMC_Lattice/src
+test_coverage : test/Excimontec_tests.exe
 
-testing/gtest-all.o : $(GTEST_SRCS_)
+test : test/Excimontec_tests.exe	
+	
+test/Excimontec_tests.exe : test/test.o test/gtest-all.o $(OBJS) KMC_Lattice/libKMC.a
+	mpicxx $(GTEST_FLAGS) $(FLAGS) $^ KMC_Lattice/libKMC.a -lpthread -o $@
+
+test/gtest-all.o : $(GTEST_SRCS_)
 	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 			
-testing/test.o : testing/test.cpp $(GTEST_HEADERS) $(OBJS)
-	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test.cpp -o $@
-
-test_mpi : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc
-test_mpi : testing/Excimontec_mpi_tests.exe
-
-testing/Excimontec_mpi_tests.exe : testing/test_mpi.o testing/gtest-all.o $(OBJS)
-	mpicxx $(GTEST_FLAGS) $(FLAGS) -lpthread $^ -o $@
-
-testing/test_mpi.o : testing/test_mpi.cpp $(GTEST_HEADERS) $(OBJS)
-	mpicxx $(GTEST_FLAGS) $(FLAGS) -c testing/test_mpi.cpp -o $@
+test/test.o : test/test.cpp $(GTEST_HEADERS) $(OBJS)
+	mpicxx $(GTEST_FLAGS) $(FLAGS) -c $< -o $@
 	
 clean:
-	-rm src/*.o src/*.gcno* src/*.gcda KMC_Lattice/*.o KMC_Lattice/*.gcno* KMC_Lattice/*.gcda testing/*.o testing/*.gcno* testing/*.gcda *~ Excimontec.exe testing/*.o testing/Excimontec_tests.exe testing/Excimontec_mpi_tests.exe
+	-rm src/*.o src/*.gcno* src/*.gcda test/*.o test/*.gcno* test/*.gcda *~ Excimontec.exe test/Excimontec_tests.exe

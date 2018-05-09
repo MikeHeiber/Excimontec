@@ -6,8 +6,8 @@
 #ifndef OSC_SIM_H
 #define OSC_SIM_H
 
-#include "KMC_Lattice/Simulation.h"
-#include "KMC_Lattice/Site.h"
+#include "Simulation.h"
+#include "Site.h"
 #include "Exciton.h"
 #include "Polaron.h"
 #include <algorithm>
