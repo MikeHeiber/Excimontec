@@ -335,30 +335,6 @@ double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const 
 	return Energy;
 }
 
-double OSC_Sim::calculateExcitonDiffusionLength_avg() const{
-    return vector_avg(exciton_diffusion_distances);
-}
-
-double OSC_Sim::calculateExcitonDiffusionLength_stdev() const{
-    return vector_stdev(exciton_diffusion_distances);
-}
-
-double OSC_Sim::calculateExcitonHopLength_avg() const {
-	return sqrt(vector_avg(exciton_hop_distances))*lattice.getUnitSize();
-}
-
-double OSC_Sim::calculateExcitonHopLength_stdev() const {
-	return sqrt(vector_stdev(exciton_hop_distances))*lattice.getUnitSize();
-}
-
-double OSC_Sim::calculateExcitonLifetime_avg() const {
-	return vector_avg(exciton_lifetimes);
-}
-
-double OSC_Sim::calculateExcitonLifetime_stdev() const {
-	return vector_stdev(exciton_lifetimes);
-}
-
 void OSC_Sim::calculateDOSCorrelation() {
 	DOS_correlation_data.clear();
 	double cutoff_radius = 1.0;
@@ -417,23 +393,13 @@ void OSC_Sim::calculateDOSCorrelation(const double cutoff_radius) {
 	}
 }
 
-vector<double> OSC_Sim::calculateMobilities(const vector<double>& transit_times) const {
+vector<double> OSC_Sim::calculateMobilityData(const vector<double>& transit_times) const {
 	vector<double> mobilities = transit_times;
 	for (int i = 0; i < (int)mobilities.size(); i++) {
 		mobilities[i] = (1e-7*lattice.getUnitSize()*lattice.getHeight()) / (fabs(Internal_potential)*transit_times[i]);
 		mobilities[i] *= 1e-7*lattice.getUnitSize()*lattice.getHeight();
 	}
 	return mobilities;
-}
-
-double OSC_Sim::calculateMobility_avg() const {
-	auto mobilities = calculateMobilities(transit_times);
-	return vector_avg(mobilities);
-}
-
-double OSC_Sim::calculateMobility_stdev() const {
-	auto mobilities = calculateMobilities(transit_times);
-	return vector_stdev(mobilities);
 }
 
 vector<double> OSC_Sim::calculateTransitTimeDist(const vector<double>& data,const int counts) const{
@@ -447,14 +413,6 @@ vector<double> OSC_Sim::calculateTransitTimeDist(const vector<double>& data,cons
         }
     }
     return dist;
-}
-
-double OSC_Sim::calculateTransitTime_avg() const{
-    return vector_avg(transit_times);
-}
-
-double OSC_Sim::calculateTransitTime_stdev() const{
-    return vector_stdev(transit_times);
 }
 
 Coords OSC_Sim::calculateExcitonCreationCoords(){
@@ -2018,7 +1976,6 @@ bool OSC_Sim::executeNextEvent() {
         Error_found = true;
         return false;
     }
-	//cout << (*event_it)->getExecutionTime() - getTime() << endl;
     string event_type = (*event_it)->getEventType();
     if(isLoggingEnabled()){
         *Logfile << "Executing " << event_type << " event" << endl;
