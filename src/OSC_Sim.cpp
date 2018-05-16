@@ -176,28 +176,28 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
 		exciton_creation_events.assign(1,exciton_creation_event);
         exciton_creation_it = addEvent(&exciton_creation_events.front());
     }
-    else if(Enable_dynamics_test){
+	else if (Enable_dynamics_test) {
 		isLightOn = false;
-        // Initialize data structures
-        double step_size = 1.0/(double)Transient_pnts_per_decade;
-        int num_steps = (int)floor((log10(Transient_end)-log10(Transient_start))/step_size)+1;
-        transient_times.assign(num_steps,0);
-        for(int i=0;i<(int)transient_times.size();i++){
-            transient_times[i] = pow(10,log10(Transient_start)+i*step_size);
-        }
-        transient_singlet_counts.assign(num_steps,0);
+		// Initialize data structures
+		double step_size = 1.0 / (double)Transient_pnts_per_decade;
+		int num_steps = (int)floor((log10(Transient_end) - log10(Transient_start)) / step_size) + 1;
+		transient_times.assign(num_steps, 0);
+		for (int i = 0; i < (int)transient_times.size(); i++) {
+			transient_times[i] = pow(10, log10(Transient_start) + i * step_size);
+		}
+		transient_singlet_counts.assign(num_steps, 0);
 		transient_triplet_counts.assign(num_steps, 0);
-        transient_electron_counts.assign(num_steps,0);
-        transient_hole_counts.assign(num_steps,0);
+		transient_electron_counts.assign(num_steps, 0);
+		transient_hole_counts.assign(num_steps, 0);
 		transient_exciton_msdv.assign(num_steps, 0);
 		transient_electron_msdv.assign(num_steps, 0);
 		transient_hole_msdv.assign(num_steps, 0);
 		transient_exciton_energies.assign(num_steps, 0);
 		transient_electron_energies.assign(num_steps, 0);
 		transient_hole_energies.assign(num_steps, 0);
-        // Create initial test excitons
-        generateDynamicsExcitons();
-    }
+		// Create initial test excitons
+		generateDynamicsExcitons();
+	}
     else if(Enable_ToF_test){
 		isLightOn = false;
         // Initialize data structures
