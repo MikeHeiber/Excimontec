@@ -673,8 +673,7 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
         }
     }
     // Exciton Recombination
-    auto recombination_event_it = exciton_recombination_events.begin();
-    std::advance(recombination_event_it,std::distance(excitons.begin(),exciton_it));
+	auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton_Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
 	if (exciton_it->getSpin()) {
 		if (getSiteType(object_coords) == (short)1) {
 			rate = 1.0 / Singlet_lifetime_donor;
@@ -694,8 +693,7 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
     recombination_event_it->calculateExecutionTime(rate);
 	possible_events.push_back(&(*recombination_event_it));
 	// Exciton Intersystem Crossing
-	auto intersystem_crossing_event_it = exciton_intersystem_crossing_events.begin();
-	std::advance(intersystem_crossing_event_it, std::distance(excitons.begin(), exciton_it));
+	auto intersystem_crossing_event_it = find_if(exciton_intersystem_crossing_events.begin(), exciton_intersystem_crossing_events.end(), [exciton_ptr](Exciton_Intersystem_Crossing& a) { return a.getObjectPtr() == exciton_ptr; });
 	// ISC
 	if (exciton_it->getSpin()) {
 		if (getSiteType(object_coords) == (short)1) {
@@ -2438,15 +2436,13 @@ vector<double> OSC_Sim::getExcitonLifetimeData() const {
 }
 
 list<Exciton>::iterator OSC_Sim::getExcitonIt(const Object* object_ptr){
-    for (auto it=excitons.begin();it!=excitons.end();++it){
-        if(object_ptr->getTag()==it->getTag()){
-            return it;
-        }
-    }
-	cout << "Error! Exciton iterator could not be located." << endl;
-	setErrorMessage("Exciton iterator could not be located.");
-	Error_found = true;
-	return excitons.end();
+	auto it = find_if(excitons.begin(), excitons.end(), [object_ptr](Exciton& a) {return (a.getTag() == object_ptr->getTag()); });
+	if (it == excitons.end()) {
+		cout << "Error! Exciton iterator could not be located." << endl;
+		setErrorMessage("Exciton iterator could not be located.");
+		Error_found = true;
+	}
+	return it;
 }
 
 double OSC_Sim::getInternalField() const {
@@ -2535,28 +2531,23 @@ int OSC_Sim::getN_transient_cycles() const {
 }
 
 list<Polaron>::iterator OSC_Sim::getPolaronIt(const Object* object_ptr) {
+	list<Polaron>::iterator it;
 	if (object_ptr->getObjectType().compare(Polaron::object_type) == 0) {
 		// electrons
 		if (!(static_cast<const Polaron*>(object_ptr)->getCharge())) {
-			for (auto it = electrons.begin(); it != electrons.end(); ++it) {
-				if (object_ptr->getTag() == it->getTag()) {
-					return it;
-				}
-			}
+			it = find_if(electrons.begin(), electrons.end(), [object_ptr](Polaron& a) {return (a.getTag() == object_ptr->getTag()); });
 		}
 		// holes
 		else {
-			for (auto it = holes.begin(); it != holes.end(); ++it) {
-				if (object_ptr->getTag() == it->getTag()) {
-					return it;
-				}
-			}
+			it = find_if(holes.begin(), holes.end(), [object_ptr](Polaron& a) {return (a.getTag() == object_ptr->getTag()); });
 		}
 	}
-	cout << "Error! Polaron iterator could not be located." << endl;
-	setErrorMessage("Polaron iterator could not be located.");
-	Error_found = true;
-	return electrons.end();
+	if (it == electrons.end() || it == holes.end()) {
+		cout << "Error! Polaron iterator could not be located." << endl;
+		setErrorMessage("Polaron iterator could not be located.");
+		Error_found = true;
+	}
+	return it;
 }
 
 vector<double> OSC_Sim::getSiteEnergies(const short site_type) const {
