@@ -28,9 +28,9 @@ namespace OSC_SimTests {
 			params_default.Enable_periodic_x = true;
 			params_default.Enable_periodic_y = true;
 			params_default.Enable_periodic_z = true;
-			params_default.Length = 50;
-			params_default.Width = 50;
-			params_default.Height = 50;
+			params_default.Length = 100;
+			params_default.Width = 100;
+			params_default.Height = 100;
 			params_default.Unit_size = 1.0;
 			params_default.Temperature = 300;
 			// Output files
@@ -47,7 +47,7 @@ namespace OSC_SimTests {
 			params_default.Enable_import_morphology = false;
 			params_default.Morphology_file = NULL;
 			// Test Parameters
-			params_default.N_tests = 100;
+			params_default.N_tests = 10000;
 			params_default.Enable_exciton_diffusion_test = true;
 			params_default.Enable_ToF_test = false;
 			params_default.ToF_polaron_type = false;
@@ -64,14 +64,14 @@ namespace OSC_SimTests {
 			params_default.Dynamics_transient_end = 1e-5;
 			params_default.Dynamics_pnts_per_decade = 20;
 			// Exciton Parameters
-			params_default.Exciton_generation_rate_donor = 1e22;
-			params_default.Exciton_generation_rate_acceptor = 1e22;
+			params_default.Exciton_generation_rate_donor = 1e18;
+			params_default.Exciton_generation_rate_acceptor = 1e18;
 			params_default.Singlet_lifetime_donor = 500e-12;
 			params_default.Singlet_lifetime_acceptor = 500e-12;
 			params_default.Triplet_lifetime_donor = 1e-6;
 			params_default.Triplet_lifetime_acceptor = 1e-6;
-			params_default.R_singlet_hopping_donor = 1e12;
-			params_default.R_singlet_hopping_acceptor = 1e12;
+			params_default.R_singlet_hopping_donor = 1e11;
+			params_default.R_singlet_hopping_acceptor = 1e11;
 			params_default.Singlet_localization_donor = 1.0;
 			params_default.Singlet_localization_acceptor = 1.0;
 			params_default.R_singlet_hopping_acceptor = 1e12;
@@ -84,16 +84,16 @@ namespace OSC_SimTests {
 			params_default.R_exciton_exciton_annihilation_acceptor = 1e12;
 			params_default.R_exciton_polaron_annihilation_donor = 1e12;
 			params_default.R_exciton_polaron_annihilation_acceptor = 1e12;
-			params_default.FRET_cutoff = 3;
+			params_default.FRET_cutoff = 1;
 			params_default.E_exciton_binding_donor = 0.5;
 			params_default.E_exciton_binding_acceptor = 0.5;
 			params_default.R_exciton_dissociation_donor = 1e14;
 			params_default.R_exciton_dissociation_acceptor = 1e14;
-			params_default.Exciton_dissociation_cutoff = 3;
-			params_default.R_exciton_isc_donor = 1e7;
-			params_default.R_exciton_isc_acceptor = 1e7;
-			params_default.R_exciton_risc_donor = 1e7;
-			params_default.R_exciton_risc_acceptor = 1e7;
+			params_default.Exciton_dissociation_cutoff = 1;
+			params_default.R_exciton_isc_donor = 1e-12;
+			params_default.R_exciton_isc_acceptor = 1e-12;
+			params_default.R_exciton_risc_donor = 1e-12;
+			params_default.R_exciton_risc_acceptor = 1e-12;
 			params_default.E_exciton_ST_donor = 0.7;
 			params_default.E_exciton_ST_acceptor = 0.7;
 			// Polaron Parameters
@@ -107,7 +107,7 @@ namespace OSC_SimTests {
 			params_default.Reorganization_donor = 0.2;
 			params_default.Reorganization_acceptor = 0.2;
 			params_default.R_polaron_recombination = 1e12;
-			params_default.Polaron_hopping_cutoff = 3;
+			params_default.Polaron_hopping_cutoff = 1;
 			params_default.Enable_gaussian_polaron_delocalization = false;
 			params_default.Polaron_delocalization_length = 1.0;
 			// Additional Lattice Parameters
@@ -115,7 +115,7 @@ namespace OSC_SimTests {
 			params_default.Lumo_donor = 3.0;
 			params_default.Homo_acceptor = 6.0;
 			params_default.Lumo_acceptor = 4.0;
-			params_default.Enable_gaussian_dos = true;
+			params_default.Enable_gaussian_dos = false;
 			params_default.Energy_stdev_donor = 0.05;
 			params_default.Energy_stdev_acceptor = 0.05;
 			params_default.Enable_exponential_dos = false;
@@ -129,9 +129,7 @@ namespace OSC_SimTests {
 			// Coulomb Calculation Parameters
 			params_default.Dielectric_donor = 3.5;
 			params_default.Dielectric_acceptor = 3.5;
-			params_default.Coulomb_cutoff = 15;
-			// Initialize OSC_Sim object
-			sim.init(params_default, 0);
+			params_default.Coulomb_cutoff = 50;
 		}
 	};
 
@@ -145,8 +143,29 @@ namespace OSC_SimTests {
 		EXPECT_FALSE(sim.init(params, 0));
 	}
 
+	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
+		EXPECT_TRUE(sim.init(params_default, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		auto lifetime_data = sim.getExcitonLifetimeData();
+		double lifetime_avg = vector_avg(sim.getExcitonLifetimeData());
+		EXPECT_NEAR(params_default.Singlet_lifetime_donor, lifetime_avg, 2e-2*params_default.Singlet_lifetime_donor);
+		double hop_length_avg = vector_avg(sim.getExcitonHopLengthData());
+		EXPECT_DOUBLE_EQ(1.0, hop_length_avg);
+		auto displacement_data = sim.getExcitonDiffusionData();
+		auto ratio_data(displacement_data);
+		transform(displacement_data.begin(), displacement_data.end(), lifetime_data.begin(), ratio_data.begin(), [this](double& displacement_element, double& lifetime_element) {
+			return displacement_element / sqrt(6 * params_default.R_singlet_hopping_donor*lifetime_element);
+		});
+		double dim = 3.0;
+		double expected_ratio = sqrt(2.0 / dim)*(tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0));
+		EXPECT_NEAR(expected_ratio, vector_avg(ratio_data), 2e-2*expected_ratio);
+	}
+
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
 		Parameters_OPV params = params_default;
+		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		params.Energy_stdev_acceptor = 0.05;
 		params.Enable_correlated_disorder = true;
