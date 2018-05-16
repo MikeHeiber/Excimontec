@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	if (params_main.Enable_import_morphology_set) {
-		int* selected_morphologies = (int *)malloc(sizeof(int)*nproc);
+		int* selected_morphologies = new int[nproc];
 		if (procid == 0) {
 			default_random_engine generator((int)time(0));
 			vector<int> morphology_set_original(params_main.N_test_morphologies);
@@ -125,6 +125,8 @@ int main(int argc, char *argv[]) {
 		cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
 		params_main.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
 		cout << procid << ": " << params_main.Morphology_filename << " selected." << endl;
+		// Cleanup
+		delete[] selected_morphologies;
 	}
 	if (params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set) {
 		params_opv.Enable_import_morphology = true;
@@ -208,10 +210,11 @@ int main(int argc, char *argv[]) {
 					// If the proc has an error, then receive the error message
 					if (error_status_vec[i]) {
 						MPI_Recv(&msg_length, 1, MPI_CHAR, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-						char* error_msg = (char *)malloc(sizeof(char) * (int)msg_length);
+						char* error_msg = new char[(int)msg_length];
 						MPI_Recv(error_msg, (int)msg_length, MPI_CHAR, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 						error_messages[i] = string(error_msg);
 						error_found = (char)1;
+						delete[] error_msg;
 					}
 					MPI_Recv(&finished_status, 1, MPI_CHAR, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 					proc_finished[i] = (finished_status == (char)1) ? true : false;
@@ -285,9 +288,9 @@ int main(int argc, char *argv[]) {
 		if (params_opv.Enable_exciton_diffusion_test) {
 			resultsfile << "Exciton diffusion test results:\n";
 			resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
-			resultsfile << "Exciton diffusion length is " << sim.calculateExcitonDiffusionLength_avg() << " ± " << sim.calculateExcitonDiffusionLength_stdev() << " nm.\n";
-			resultsfile << "Exciton hop distance is " << sim.calculateExcitonHopLength_avg() << " ± " << sim.calculateExcitonHopLength_stdev() << " nm.\n";
-			resultsfile << "Exciton lifetime is " << sim.calculateExcitonLifetime_avg() << " ± " << sim.calculateExcitonLifetime_stdev() << " s.\n";
+			resultsfile << "Exciton diffusion length is " << vector_avg(sim.getExcitonDiffusionData()) << " ± " << vector_stdev(sim.getExcitonDiffusionData()) << " nm.\n";
+			resultsfile << "Exciton hop distance is " << vector_avg(sim.getExcitonHopLengthData()) << " ± " << vector_stdev(sim.getExcitonHopLengthData()) << " nm.\n";
+			resultsfile << "Exciton lifetime is " << vector_avg(sim.getExcitonLifetimeData()) << " ± " << vector_stdev(sim.getExcitonLifetimeData()) << " s.\n";
 		}
 		else if (params_opv.Enable_ToF_test) {
 			resultsfile << "Time-of-flight charge transport test results:\n";
@@ -297,8 +300,8 @@ int main(int argc, char *argv[]) {
 			else {
 				resultsfile << sim.getN_holes_collected() << " of " << sim.getN_holes_created() << " holes have been collected.\n";
 			}
-			resultsfile << "Transit time is " << sim.calculateTransitTime_avg() << " ± " << sim.calculateTransitTime_stdev() << " s.\n";
-			resultsfile << "Charge carrier mobility is " << sim.calculateMobility_avg() << " ± " << sim.calculateMobility_stdev() << " cm^2 V^-1 s^-1.\n";
+			resultsfile << "Transit time is " << vector_avg(sim.getTransitTimeData()) << " ± " << vector_stdev(sim.getTransitTimeData()) << " s.\n";
+			resultsfile << "Charge carrier mobility is " << vector_avg(sim.calculateMobilityData(sim.getTransitTimeData())) << " ± " << vector_stdev(sim.calculateMobilityData(sim.getTransitTimeData())) << " cm^2 V^-1 s^-1.\n";
 		}
 		if (params_opv.Enable_dynamics_test) {
 			resultsfile << "Dynamics test results:\n";
@@ -370,7 +373,7 @@ int main(int argc, char *argv[]) {
 		exciton_hop_length_data = MPI_gatherVectors(sim.getExcitonHopLengthData());
 		exciton_lifetime_data = MPI_gatherVectors(sim.getExcitonLifetimeData());
 		if (procid == 0) {
-			analysisfile << "Overall exciton diffusion test results:\n";
+			analysisfile << "\nOverall exciton diffusion test results:\n";
 			analysisfile << nproc*(sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
 			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ± " << vector_stdev(exciton_diffusion_data) << " nm.\n";
 			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params_opv.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params_opv.Unit_size << " nm.\n";
@@ -381,7 +384,7 @@ int main(int argc, char *argv[]) {
 		int N_transient_cycles = sim.getN_transient_cycles();
 		int N_transient_cycles_sum;
 		MPI_Reduce(&N_transient_cycles, &N_transient_cycles_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-		vector<double> transit_times = MPI_gatherVectors(sim.getTransitTimeData());
+		vector<double> transit_times_all = MPI_gatherVectors(sim.getTransitTimeData());
 		int transit_attempts = ((sim.getN_electrons_collected() > sim.getN_holes_collected()) ? sim.getN_electrons_created() : (sim.getN_holes_created()));
 		int transit_attempts_total;
 		MPI_Reduce(&transit_attempts, &transit_attempts_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -391,12 +394,12 @@ int main(int argc, char *argv[]) {
 		vector<double> times = sim.getToFTransientTimes();
 		if (procid == 0) {
 			// ToF main results output
-			vector<double> mobilities = sim.calculateMobilities(transit_times);
+			vector<double> mobility_data_all = sim.calculateMobilityData(transit_times_all);
 			double electric_field = fabs(sim.getInternalField());
 			ofstream tof_resultsfile;
 			tof_resultsfile.open("ToF_results.txt");
 			tof_resultsfile << "Electric Field (V/cm),Transit Time Avg (s),Transit Time Stdev (s),Mobility Avg (cm^2 V^-1 s^-1),Mobility Stdev (cm^2 V^-1 s^-1)" << endl;
-			tof_resultsfile << electric_field << "," << vector_avg(transit_times) << "," << vector_stdev(transit_times) << "," << vector_avg(mobilities) << "," << vector_stdev(mobilities) << endl;
+			tof_resultsfile << electric_field << "," << vector_avg(transit_times_all) << "," << vector_stdev(transit_times_all) << "," << vector_avg(mobility_data_all) << "," << vector_stdev(mobility_data_all) << endl;
 			tof_resultsfile.close();
 			// ToF transient output
 			ofstream transientfile;
@@ -418,7 +421,7 @@ int main(int argc, char *argv[]) {
 			// ToF transit time distribution output
 			ofstream transitdistfile;
 			transitdistfile.open("ToF_transit_time_dist.txt");
-			vector<double> transit_dist = sim.calculateTransitTimeDist(transit_times, transit_attempts_total);
+			vector<double> transit_dist = sim.calculateTransitTimeDist(transit_times_all, transit_attempts_total);
 			transitdistfile << "Transit Time (s),Probability" << endl;
 			for (int i = 0; i < (int)transit_dist.size(); i++) {
 				transitdistfile << times[i] << "," << transit_dist[i] << endl;
@@ -432,8 +435,8 @@ int main(int argc, char *argv[]) {
 				analysisfile << nproc*sim.getN_holes_collected() << " total holes collected out of " << transit_attempts_total << " total attempts.\n";
 			}
 			analysisfile << "Overall time-of-flight charge transport test results:\n";
-			analysisfile << "Transit time is " << vector_avg(transit_times) << " ± " << vector_stdev(transit_times) << " s.\n";
-			analysisfile << "Charge carrier mobility is " << vector_avg(mobilities) << " ± " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
+			analysisfile << "Transit time is " << vector_avg(transit_times_all) << " ± " << vector_stdev(transit_times_all) << " s.\n";
+			analysisfile << "Charge carrier mobility is " << vector_avg(mobility_data_all) << " ± " << vector_stdev(mobility_data_all) << " cm^2 V^-1 s^-1.\n";
 		}
 	}
 	if (error_found == (char)0 && params_opv.Enable_dynamics_test) {
@@ -493,7 +496,7 @@ int main(int argc, char *argv[]) {
 			transientfile.close();
 		}
 	}
-	if (error_found == (char)0 && (params_opv.Enable_dynamics_test || params_opv.Enable_IQE_test)) {
+	if (error_found == (char)0 && (params_opv.Enable_dynamics_test || params_opv.Enable_IQE_test || params_opv.Enable_exciton_diffusion_test)) {
 		int excitons_created = sim.getN_excitons_created();
 		int excitons_created_total;
 		MPI_Reduce(&excitons_created, &excitons_created_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -545,6 +548,9 @@ int main(int argc, char *argv[]) {
 		if (procid == 0 && params_opv.Enable_IQE_test) {
 			analysisfile << "Overall internal quantum efficiency test results:\n";
 		}
+		if (procid == 0 && params_opv.Enable_exciton_diffusion_test) {
+			analysisfile << "\nOverall exciton mechanism statistics:\n";
+		}
 		if (procid == 0) {
 			analysisfile << excitons_created_total << " total excitons have been created.\n";
 			analysisfile << excitons_created_donor_total << " excitons were created on donor sites.\n";
@@ -557,9 +563,11 @@ int main(int argc, char *argv[]) {
 			analysisfile << 100 * (double)triplet_triplet_annihilations_total / (double)excitons_created_total << "% of total excitons were lost to triplet-triplet annihilation.\n";
 			analysisfile << 100 * (double)singlet_polaron_annihilations_total / (double)excitons_created_total << "% of total excitons were lost to singlet-polaron annihilation.\n";
 			analysisfile << 100 * (double)triplet_polaron_annihilations_total / (double)excitons_created_total << "% of total excitons were lost to triplet-polaron annihilation.\n";
-			analysisfile << 100 * (double)geminate_recombinations_total / (double)excitons_dissociated_total << "% of total photogenerated charges were lost to geminate recombination.\n";
-			analysisfile << 100 * (double)bimolecular_recombinations_total / (double)excitons_dissociated_total << "% of total photogenerated charges were lost to bimolecular recombination.\n";
-			analysisfile << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_dissociated_total) << "% of total photogenerated charges were extracted.\n";
+			if (excitons_dissociated_total > 0) {
+				analysisfile << 100 * (double)geminate_recombinations_total / (double)excitons_dissociated_total << "% of total photogenerated charges were lost to geminate recombination.\n";
+				analysisfile << 100 * (double)bimolecular_recombinations_total / (double)excitons_dissociated_total << "% of total photogenerated charges were lost to bimolecular recombination.\n";
+				analysisfile << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_dissociated_total) << "% of total photogenerated charges were extracted.\n";
+			}
 		}
 		if (procid == 0 && params_opv.Enable_IQE_test) {
 			analysisfile << "IQE = " << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_created_total) << "% with an internal potential of " << params_opv.Internal_potential << " V." << endl;
