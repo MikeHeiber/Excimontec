@@ -40,8 +40,8 @@ namespace OSC_SimTests {
 			// Morphology Parameters
 			params_default.Enable_neat = true;
 			params_default.Enable_bilayer = false;
-			params_default.Thickness_donor = 25;
-			params_default.Thickness_acceptor = 25;
+			params_default.Thickness_donor = 50;
+			params_default.Thickness_acceptor = 50;
 			params_default.Enable_random_blend = false;
 			params_default.Acceptor_conc = 0.5;
 			params_default.Enable_import_morphology = false;
@@ -137,14 +137,37 @@ namespace OSC_SimTests {
 
 	TEST_F(OSC_SimTest, ParameterCheckTests) {
 		Parameters_OPV params = params_default;
+		// Check that default parameters are valid
 		EXPECT_TRUE(sim.init(params, 0));
-		params.Enable_bilayer = true;
+		// Check for multiple enabled morphologies
+		params.Enable_neat = true;
+		params.Enable_random_blend = true;
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Enable_bilayer = false;
+		// Check for ToF test boundary conditions, films architectures, and test conditions
+		sim = OSC_Sim();
+		params = params_default;
+		params.Enable_exciton_diffusion_test = false;
 		params.Enable_ToF_test = true;
+		params.Enable_periodic_z = false;
+		EXPECT_TRUE(sim.init(params, 0));
+		params.Enable_periodic_z = true;
 		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_periodic_z = false;
+		params.Enable_bilayer = true;
+		params.Enable_neat = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_neat = true;
+		params.Enable_bilayer = false;
 		params.Enable_ToF_random_placement = false;
 		params.Enable_ToF_energy_placement = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_ToF_random_placement = true;
+		params.ToF_polaron_type = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for multiple enabled tests
+		params = params_default;
+		params.Enable_dynamics_test = true;
+		params.Enable_exciton_diffusion_test = true;
 		EXPECT_FALSE(sim.init(params, 0));
 	}
 
@@ -170,13 +193,14 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ToFTest) {
+		// Hole ToF test
 		sim = OSC_Sim();
 		params_default.Enable_periodic_z = false;
 		params_default.Height = 200;
 		params_default.Internal_potential = -4.0;
 		params_default.Enable_exciton_diffusion_test = false;
 		params_default.Enable_ToF_test = true;
-		params_default.N_tests = 2000;
+		params_default.N_tests = 1000;
 		EXPECT_TRUE(sim.init(params_default, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
