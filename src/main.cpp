@@ -428,13 +428,14 @@ int main(int argc, char *argv[]) {
 			}
 			transitdistfile.close();
 			// Analysis Output
+			analysisfile << "\nOverall time-of-flight charge transport test results:\n";
 			if (!params_opv.ToF_polaron_type) {
 				analysisfile << nproc*sim.getN_electrons_collected() << " total electrons collected out of " << transit_attempts_total << " total attempts.\n";
 			}
 			else {
 				analysisfile << nproc*sim.getN_holes_collected() << " total holes collected out of " << transit_attempts_total << " total attempts.\n";
 			}
-			analysisfile << "Overall time-of-flight charge transport test results:\n";
+			
 			analysisfile << "Transit time is " << vector_avg(transit_times_all) << " ± " << vector_stdev(transit_times_all) << " s.\n";
 			analysisfile << "Charge carrier mobility is " << vector_avg(mobility_data_all) << " ± " << vector_stdev(mobility_data_all) << " cm^2 V^-1 s^-1.\n";
 		}

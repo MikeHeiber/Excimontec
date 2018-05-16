@@ -1154,7 +1154,7 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 		return false;
 	}
 	// Check test parameters
-	if (params.Enable_ToF_test && (params.Enable_ToF_random_placement && params.Enable_ToF_energy_placement) && !(params.Enable_ToF_random_placement || params.Enable_ToF_energy_placement)) {
+	if (params.Enable_ToF_test && ((params.Enable_ToF_random_placement && params.Enable_ToF_energy_placement) || (!params.Enable_ToF_random_placement && !params.Enable_ToF_energy_placement))) {
 		cout << "Error! For a time-of-flight charge transport test either the random placement or the low energy placement option must be enabled." << endl;
 		return false;
 	}
@@ -2306,7 +2306,9 @@ void OSC_Sim::generateToFPolarons() {
 	Transient_creation_time = getTime();
 	Transient_index_prev = -1;
 	N_transient_cycles++;
-	cout << getId() << ": ToF transient cycle " << N_transient_cycles << ": Generating " << ToF_initial_polarons << " initial polarons." << endl;
+	if (N_transient_cycles % 5 == 0) {
+		cout << getId() << ": ToF transient cycle " << N_transient_cycles << ": Generating " << ToF_initial_polarons << " initial polarons." << endl;
+	}
 	int num = 0;
 	// Determine unique coords for each new polaron
 	vector<Coords> coords_vect(0);

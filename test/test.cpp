@@ -50,8 +50,10 @@ namespace OSC_SimTests {
 			params_default.N_tests = 10000;
 			params_default.Enable_exciton_diffusion_test = true;
 			params_default.Enable_ToF_test = false;
-			params_default.ToF_polaron_type = false;
-			params_default.ToF_initial_polarons = 1;
+			params_default.ToF_polaron_type = true;
+			params_default.ToF_initial_polarons = 5;
+			params_default.Enable_ToF_random_placement = true;
+			params_default.Enable_ToF_energy_placement = false;
 			params_default.ToF_transient_start = 1e-10;
 			params_default.ToF_transient_end = 1e-4;
 			params_default.ToF_pnts_per_decade = 20;
@@ -98,8 +100,8 @@ namespace OSC_SimTests {
 			params_default.E_exciton_ST_acceptor = 0.7;
 			// Polaron Parameters
 			params_default.Enable_phase_restriction = true;
-			params_default.R_polaron_hopping_donor = 1e12;
-			params_default.R_polaron_hopping_acceptor = 1e12;
+			params_default.R_polaron_hopping_donor = 1e11;
+			params_default.R_polaron_hopping_acceptor = 1e11;
 			params_default.Polaron_localization_donor = 2.0;
 			params_default.Polaron_localization_acceptor = 2.0;
 			params_default.Enable_miller_abrahams = true;
@@ -141,9 +143,13 @@ namespace OSC_SimTests {
 		params.Enable_bilayer = false;
 		params.Enable_ToF_test = true;
 		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_ToF_random_placement = false;
+		params.Enable_ToF_energy_placement = false;
+		EXPECT_FALSE(sim.init(params, 0));
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
+		sim = OSC_Sim();
 		EXPECT_TRUE(sim.init(params_default, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
@@ -163,7 +169,27 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(expected_ratio, vector_avg(ratio_data), 2e-2*expected_ratio);
 	}
 
+	TEST_F(OSC_SimTest, ToFTest) {
+		sim = OSC_Sim();
+		params_default.Enable_periodic_z = false;
+		params_default.Height = 200;
+		params_default.Internal_potential = -4.0;
+		params_default.Enable_exciton_diffusion_test = false;
+		params_default.Enable_ToF_test = true;
+		params_default.N_tests = 2000;
+		EXPECT_TRUE(sim.init(params_default, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		auto transit_time_data = sim.getTransitTimeData();
+		auto mobility_data = sim.calculateMobilityData(transit_time_data);
+		double dim = 3.0;
+		double expected_mobility = (params_default.R_polaron_hopping_donor*exp(-2.0*params_default.Polaron_localization_donor)*1e-14) * (2.0/3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * ( 1 / (K_b*params_default.Temperature));
+		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+	}
+
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
+		sim = OSC_Sim();
 		Parameters_OPV params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
@@ -183,6 +209,7 @@ namespace OSC_SimTests {
 		auto correlation_data = sim.getDOSCorrelationData();
 		EXPECT_NEAR(1/exp(1), interpolateData(correlation_data, 1.1), 0.05);
 		// correlation length = 1.3, Unit_size = 1.2
+		sim = OSC_Sim();
 		params.Unit_size = 1.2;
 		params.Length = 40;
 		params.Width = 40;
