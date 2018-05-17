@@ -82,10 +82,10 @@ namespace OSC_SimTests {
 			params_default.Triplet_localization_donor = 2.0;
 			params_default.Triplet_localization_acceptor = 2.0;
 			params_default.Enable_FRET_triplet_annihilation = false;
-			params_default.R_exciton_exciton_annihilation_donor = 1e12;
-			params_default.R_exciton_exciton_annihilation_acceptor = 1e12;
-			params_default.R_exciton_polaron_annihilation_donor = 1e12;
-			params_default.R_exciton_polaron_annihilation_acceptor = 1e12;
+			params_default.R_exciton_exciton_annihilation_donor = 1e1;
+			params_default.R_exciton_exciton_annihilation_acceptor = 1e1;
+			params_default.R_exciton_polaron_annihilation_donor = 1e1;
+			params_default.R_exciton_polaron_annihilation_acceptor = 1e1;
 			params_default.FRET_cutoff = 1;
 			params_default.E_exciton_binding_donor = 0.5;
 			params_default.E_exciton_binding_acceptor = 0.5;
