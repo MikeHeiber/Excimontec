@@ -715,16 +715,15 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 		return;
 	}
     // Determine fastest valid event
-	double best_time = possible_events[0]->getExecutionTime();
-	Event* event_ptr_target = possible_events[0];
-	for (auto const& event_ptr : possible_events) {
-		if (event_ptr->getExecutionTime() < best_time) {
-			best_time = event_ptr->getExecutionTime();
-			event_ptr_target = event_ptr;
-		}
+	Event* event_ptr_target;
+	auto possible_it = min_element(possible_events.begin(), possible_events.end(), [](Event* ptr1, Event* ptr2) {
+		return ptr1->getExecutionTime() < ptr2->getExecutionTime();
+	});
+	if (possible_it != possible_events.end()) {
+		event_ptr_target = *possible_it;
 	}
 	// Check that the execution time is valid
-	if (best_time < getTime()) {
+	if (event_ptr_target->getExecutionTime() < getTime()) {
 		setObjectEvent(exciton_ptr, nullptr);
 		cout << getId() << ": Error! The fastest exciton event execution time is less than the current simulation time." << endl;
 		setErrorMessage(" The fastest exciton event execution time is less than the current simulation time.");
@@ -946,16 +945,15 @@ void OSC_Sim::calculatePolaronEvents(Polaron* polaron_ptr){
         return;
     }
     // Determine the fastest possible event
-	double best_time = possible_events[0]->getExecutionTime();
-	Event* event_ptr_target = possible_events[0];
-	for (auto const &event_ptr : possible_events) {
-		if (event_ptr->getExecutionTime() < best_time) {
-			best_time = event_ptr->getExecutionTime();
-			event_ptr_target = event_ptr;
-		}
+	Event* event_ptr_target;
+	auto possible_it = min_element(possible_events.begin(), possible_events.end(), [](Event* ptr1, Event* ptr2) {
+		return ptr1->getExecutionTime() < ptr2->getExecutionTime();
+	});
+	if (possible_it != possible_events.end()) {
+		event_ptr_target = *possible_it;
 	}
 	// Check that the execution time is valid
-	if (best_time < getTime()) {
+	if (event_ptr_target->getExecutionTime() < getTime()) {
 		setObjectEvent(polaron_ptr, nullptr);
 		cout << getId() << ": Error! The fastest polaron event execution time is less than the current simulation time." << endl;
 		setErrorMessage(" The fastest polaron event execution time is less than the current simulation time.");
