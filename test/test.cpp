@@ -208,7 +208,7 @@ namespace OSC_SimTests {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		auto lifetime_data = sim.getExcitonLifetimeData();
-		EXPECT_NEAR(params.Singlet_lifetime_donor, vector_avg(lifetime_data), 2e-2*params.Singlet_lifetime_donor);
+		EXPECT_NEAR(params.Singlet_lifetime_donor, vector_avg(lifetime_data), 5e-2*params.Singlet_lifetime_donor);
 		EXPECT_DOUBLE_EQ(1.0, vector_avg(sim.getExcitonHopLengthData()));
 		auto displacement_data = sim.getExcitonDiffusionData();
 		auto ratio_data(displacement_data);
