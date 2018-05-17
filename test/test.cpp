@@ -196,7 +196,7 @@ namespace OSC_SimTests {
 			transient_data[i] = pair<double, double>(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-4*params.Dynamics_initial_exciton_conc);
-		EXPECT_NEAR(params.Dynamics_initial_exciton_conc / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor), 2e-2*params.Dynamics_initial_exciton_conc / exp(1));
+		EXPECT_NEAR(params.Dynamics_initial_exciton_conc / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor), 5e-2*params.Dynamics_initial_exciton_conc / exp(1));
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
