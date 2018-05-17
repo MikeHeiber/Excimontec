@@ -47,7 +47,7 @@ namespace OSC_SimTests {
 			params_default.Enable_import_morphology = false;
 			params_default.Morphology_file = NULL;
 			// Test Parameters
-			params_default.N_tests = 10000;
+			params_default.N_tests = 1000;
 			params_default.Enable_exciton_diffusion_test = true;
 			params_default.Enable_ToF_test = false;
 			params_default.ToF_polaron_type = true;
@@ -68,8 +68,8 @@ namespace OSC_SimTests {
 			// Exciton Parameters
 			params_default.Exciton_generation_rate_donor = 1e18;
 			params_default.Exciton_generation_rate_acceptor = 1e18;
-			params_default.Singlet_lifetime_donor = 500e-12;
-			params_default.Singlet_lifetime_acceptor = 500e-12;
+			params_default.Singlet_lifetime_donor = 1e-9;
+			params_default.Singlet_lifetime_acceptor = 1e-9;
 			params_default.Triplet_lifetime_donor = 1e-6;
 			params_default.Triplet_lifetime_acceptor = 1e-6;
 			params_default.R_singlet_hopping_donor = 1e11;
@@ -171,21 +171,49 @@ namespace OSC_SimTests {
 		EXPECT_FALSE(sim.init(params, 0));
 	}
 
+	TEST_F(OSC_SimTest, SetupTests) {
+		sim = OSC_Sim();
+		Parameters_OPV params = params_default;
+		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
+	}
+
+	TEST_F(OSC_SimTest, ExcitonDynamicsTest) {
+		sim = OSC_Sim();
+		Parameters_OPV params = params_default;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_dynamics_test = true;
+		params.N_tests = 3000;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		auto time_data = sim.getDynamicsTransientTimes();
+		auto singlet_data = sim.getDynamicsTransientSinglets();
+		EXPECT_TRUE(time_data.size() == singlet_data.size());
+		vector<pair<double, double>> transient_data(time_data.size());
+		for (int i = 0; i < (int)time_data.size(); i++) {
+			transient_data[i] = pair<double, double>(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
+		}
+		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-4*params.Dynamics_initial_exciton_conc);
+		EXPECT_NEAR(params.Dynamics_initial_exciton_conc / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor), 2e-2*params.Dynamics_initial_exciton_conc / exp(1));
+	}
+
 	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params_default, 0));
+		Parameters_OPV params = params_default;
+		params.N_tests = 5000;
+		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		auto lifetime_data = sim.getExcitonLifetimeData();
-		double lifetime_avg = vector_avg(sim.getExcitonLifetimeData());
-		EXPECT_NEAR(params_default.Singlet_lifetime_donor, lifetime_avg, 2e-2*params_default.Singlet_lifetime_donor);
-		double hop_length_avg = vector_avg(sim.getExcitonHopLengthData());
-		EXPECT_DOUBLE_EQ(1.0, hop_length_avg);
+		EXPECT_NEAR(params.Singlet_lifetime_donor, vector_avg(lifetime_data), 2e-2*params.Singlet_lifetime_donor);
+		EXPECT_DOUBLE_EQ(1.0, vector_avg(sim.getExcitonHopLengthData()));
 		auto displacement_data = sim.getExcitonDiffusionData();
 		auto ratio_data(displacement_data);
-		transform(displacement_data.begin(), displacement_data.end(), lifetime_data.begin(), ratio_data.begin(), [this](double& displacement_element, double& lifetime_element) {
-			return displacement_element / sqrt(6 * params_default.R_singlet_hopping_donor*lifetime_element);
+		transform(displacement_data.begin(), displacement_data.end(), lifetime_data.begin(), ratio_data.begin(), [params](double& displacement_element, double& lifetime_element) {
+			return displacement_element / sqrt(6 * params.R_singlet_hopping_donor*lifetime_element);
 		});
 		double dim = 3.0;
 		double expected_ratio = sqrt(2.0 / dim)*(tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0));
@@ -195,20 +223,21 @@ namespace OSC_SimTests {
 	TEST_F(OSC_SimTest, ToFTest) {
 		// Hole ToF test
 		sim = OSC_Sim();
-		params_default.Enable_periodic_z = false;
-		params_default.Height = 200;
-		params_default.Internal_potential = -4.0;
-		params_default.Enable_exciton_diffusion_test = false;
-		params_default.Enable_ToF_test = true;
-		params_default.N_tests = 1000;
-		EXPECT_TRUE(sim.init(params_default, 0));
+		Parameters_OPV params = params_default;
+		params.Enable_periodic_z = false;
+		params.Height = 200;
+		params.Internal_potential = -4.0;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_ToF_test = true;
+		params.N_tests = 1000;
+		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		auto transit_time_data = sim.getTransitTimeData();
 		auto mobility_data = sim.calculateMobilityData(transit_time_data);
 		double dim = 3.0;
-		double expected_mobility = (params_default.R_polaron_hopping_donor*exp(-2.0*params_default.Polaron_localization_donor)*1e-14) * (2.0/3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * ( 1 / (K_b*params_default.Temperature));
+		double expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0/3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * ( 1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
 	}
 

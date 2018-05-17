@@ -1116,6 +1116,10 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 		cout << "Error! The z-direction periodic boundary must be disabled in order to run the time-of-flight charge transport test." << endl;
 		return false;
 	}
+	if (params.Enable_ToF_test && !params.ToF_polaron_type && params.Enable_neat) {
+		cout << "Error! The time-of-flight charge transport test cannot be performed with electrons on a neat film architecture. Use holes instead." << endl;
+		return false;
+	}
 	if (params.Enable_IQE_test && params.Enable_periodic_z) {
 		cout << "Error! The z-direction periodic boundary must be disabled in order to run the internal quantum efficiency test." << endl;
 		return false;
@@ -1157,16 +1161,6 @@ bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
 	}
 	if (params.Enable_dynamics_test && params.Enable_dynamics_extraction && params.Enable_periodic_z) {
 		cout << "Error! When running a dynamics test with extraction, z-direction periodic boundaries cannot be used." << endl;
-		return false;
-	}
-	// Check ToF test conditions
-	if (params.Enable_ToF_test && params.Enable_periodic_z) {
-		cout << "Error! When running a ToF test, z-direction periodic boundaries cannot be used." << endl;
-		return false;
-	}
-	// Check IQE test conditions
-	if (params.Enable_IQE_test && params.Enable_periodic_z) {
-		cout << "Error! When running an IQE test, z-direction periodic boundaries cannot be used." << endl;
 		return false;
 	}
 	// Check exciton parameters
@@ -2217,7 +2211,9 @@ void OSC_Sim::generateDynamicsExcitons(){
 	transient_hole_energies_prev.clear();
 	N_transient_cycles++;
     int num = 0;
-    cout << getId() << ": Dynamics transient cycle " << N_transient_cycles << ": Generating " << N_initial_excitons << " initial excitons." << endl;
+	if (N_transient_cycles % 5 == 0) {
+		cout << getId() << ": Dynamics transient cycle " << N_transient_cycles << ": Generating " << N_initial_excitons << " initial excitons." << endl;
+	}
     while(num<N_initial_excitons){
         generateExciton();
 		transient_exciton_tags[num] = excitons.back().getTag();
