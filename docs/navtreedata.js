@@ -24,22 +24,14 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "Excimontec", "index.html", [
-    [ "KMC_Lattice", "md__k_m_c__lattice__r_e_a_d_m_e.html", null ],
     [ "Excimontec", "md__r_e_a_d_m_e.html", null ],
-    [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
-      [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
-        [ "Functions", "namespacemembers_func.html", null ]
-      ] ]
-    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
@@ -55,8 +47,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_event_8cpp.html",
-"class_simulation.html#a0f06c75c9dd6be20a3911781b48fd467"
+"_exciton_8cpp.html",
+"struct_parameters___o_p_v.html#ad61e54053c0644fca200f803197a4550"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

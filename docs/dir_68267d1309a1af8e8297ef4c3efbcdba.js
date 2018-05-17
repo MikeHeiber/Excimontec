@@ -1,6 +1,5 @@
-var files =
+var dir_68267d1309a1af8e8297ef4c3efbcdba =
 [
-    [ "KMC_Lattice", "dir_6f62b451fe0710dc1584a1c9c5fb6ce0.html", "dir_6f62b451fe0710dc1584a1c9c5fb6ce0" ],
     [ "Exciton.cpp", "_exciton_8cpp.html", null ],
     [ "Exciton.h", "_exciton_8h.html", [
       [ "Exciton", "class_exciton.html", "class_exciton" ],
