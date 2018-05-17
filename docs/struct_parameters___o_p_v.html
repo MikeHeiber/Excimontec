@@ -30,9 +30,9 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
-   &#160;<span id="projectnumber">v1.0-beta.3</span>
+   &#160;<span id="projectnumber">v1.0-beta.4</span>
    </div>
-   <div id="projectbrief">An open-source KMC simulation software package for modeling organic semiconductor materials and devices, such as OPVs, OLEDs, and more</div>
+   <div id="projectbrief">An open-source KMC simulation software package for modeling the optoelectronic processes in organic semiconductor materials and devices, such as OPVs, OLEDs, and more.</div>
   </td>
  </tr>
  </tbody>
@@ -102,7 +102,6 @@ Inheritance diagram for Parameters_OPV:</div>
  <div class="center">
   <img src="struct_parameters___o_p_v.png" usemap="#Parameters_5FOPV_map" alt=""/>
   <map id="Parameters_5FOPV_map" name="Parameters_5FOPV_map">
-<area href="struct_parameters___simulation.html" title="This struct contains all of the main input parameters needed by the Simulation class. " alt="Parameters_Simulation" shape="rect" coords="0,0,140,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -136,6 +135,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0a65769f9018d42e76e57244b20c4165"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8d1f06c2e6e94b0b6bbf419d7b838aa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#aa8d1f06c2e6e94b0b6bbf419d7b838aa">ToF_initial_polarons</a></td></tr>
 <tr class="separator:aa8d1f06c2e6e94b0b6bbf419d7b838aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcda83235617668783cbe31d5b66221d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#abcda83235617668783cbe31d5b66221d">Enable_ToF_random_placement</a></td></tr>
+<tr class="separator:abcda83235617668783cbe31d5b66221d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94746d884494104c15bc1d5f39b20b2b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#a94746d884494104c15bc1d5f39b20b2b">Enable_ToF_energy_placement</a></td></tr>
+<tr class="separator:a94746d884494104c15bc1d5f39b20b2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6e728c4d1efe0ba5b6b4e28c67a0378"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#af6e728c4d1efe0ba5b6b4e28c67a0378">ToF_placement_energy</a></td></tr>
+<tr class="separator:af6e728c4d1efe0ba5b6b4e28c67a0378"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5e99b212ed3ece698fb032dd347af63"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#af5e99b212ed3ece698fb032dd347af63">ToF_transient_start</a></td></tr>
 <tr class="separator:af5e99b212ed3ece698fb032dd347af63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e17e68edee042fbcc30ccb06161dfb1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#a6e17e68edee042fbcc30ccb06161dfb1">ToF_transient_end</a></td></tr>
@@ -282,49 +287,6 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a73a3db08abc5bc8b3b6e478cc4373769"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5388c27ae33a5c648404cfce065a873"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___o_p_v.html#ac5388c27ae33a5c648404cfce065a873">Coulomb_cutoff</a></td></tr>
 <tr class="separator:ac5388c27ae33a5c648404cfce065a873"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_struct_parameters___simulation"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_parameters___simulation')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_parameters___simulation.html">Parameters_Simulation</a></td></tr>
-<tr class="memitem:afde5aaac6f3cd226249cb9646a4c8a4b inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#afde5aaac6f3cd226249cb9646a4c8a4b">Enable_logging</a></td></tr>
-<tr class="memdesc:afde5aaac6f3cd226249cb9646a4c8a4b inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether logging to a logfile during the simulation will be enabled or not.  <a href="struct_parameters___simulation.html#afde5aaac6f3cd226249cb9646a4c8a4b">More...</a><br /></td></tr>
-<tr class="separator:afde5aaac6f3cd226249cb9646a4c8a4b inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5624782454dd99271ad94923f53866b4 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#a5624782454dd99271ad94923f53866b4">Enable_periodic_x</a></td></tr>
-<tr class="memdesc:a5624782454dd99271ad94923f53866b4 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the x-direction periodic boundary conditions will be enabled or not in the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a>.  <a href="struct_parameters___simulation.html#a5624782454dd99271ad94923f53866b4">More...</a><br /></td></tr>
-<tr class="separator:a5624782454dd99271ad94923f53866b4 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c3d79a4dcf194f884e8a3d346c2261a inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#a1c3d79a4dcf194f884e8a3d346c2261a">Enable_periodic_y</a></td></tr>
-<tr class="memdesc:a1c3d79a4dcf194f884e8a3d346c2261a inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the y-direction periodic boundary conditions will be enabled or not in the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a>.  <a href="struct_parameters___simulation.html#a1c3d79a4dcf194f884e8a3d346c2261a">More...</a><br /></td></tr>
-<tr class="separator:a1c3d79a4dcf194f884e8a3d346c2261a inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d318f1a9eb75fa909b4ae8266696be1 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#a0d318f1a9eb75fa909b4ae8266696be1">Enable_periodic_z</a></td></tr>
-<tr class="memdesc:a0d318f1a9eb75fa909b4ae8266696be1 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the z-direction periodic boundary conditions will be enabled or not in the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a>.  <a href="struct_parameters___simulation.html#a0d318f1a9eb75fa909b4ae8266696be1">More...</a><br /></td></tr>
-<tr class="separator:a0d318f1a9eb75fa909b4ae8266696be1 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a038f418e1b2e4fec3fc6a8336f8b23de inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#a038f418e1b2e4fec3fc6a8336f8b23de">Length</a></td></tr>
-<tr class="memdesc:a038f418e1b2e4fec3fc6a8336f8b23de inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired x-direction size of the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a>.  <a href="struct_parameters___simulation.html#a038f418e1b2e4fec3fc6a8336f8b23de">More...</a><br /></td></tr>
-<tr class="separator:a038f418e1b2e4fec3fc6a8336f8b23de inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab42f7eb6b5ec1916475d9022ed5165f inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#aab42f7eb6b5ec1916475d9022ed5165f">Width</a></td></tr>
-<tr class="memdesc:aab42f7eb6b5ec1916475d9022ed5165f inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired y-direction size of the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a>.  <a href="struct_parameters___simulation.html#aab42f7eb6b5ec1916475d9022ed5165f">More...</a><br /></td></tr>
-<tr class="separator:aab42f7eb6b5ec1916475d9022ed5165f inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1ffb86ac22065dbbb58196db95b3199 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#aa1ffb86ac22065dbbb58196db95b3199">Height</a></td></tr>
-<tr class="memdesc:aa1ffb86ac22065dbbb58196db95b3199 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired z-direction size of the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a>.  <a href="struct_parameters___simulation.html#aa1ffb86ac22065dbbb58196db95b3199">More...</a><br /></td></tr>
-<tr class="separator:aa1ffb86ac22065dbbb58196db95b3199 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5dda6868bc9359d97a614f027734349 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#ab5dda6868bc9359d97a614f027734349">Unit_size</a></td></tr>
-<tr class="memdesc:ab5dda6868bc9359d97a614f027734349 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired resolution of the <a class="el" href="class_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a> in units of nm.  <a href="struct_parameters___simulation.html#ab5dda6868bc9359d97a614f027734349">More...</a><br /></td></tr>
-<tr class="separator:ab5dda6868bc9359d97a614f027734349 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad5bdf64239620d1b214c49532dba743 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#aad5bdf64239620d1b214c49532dba743">Temperature</a></td></tr>
-<tr class="memdesc:aad5bdf64239620d1b214c49532dba743 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired temperature of the simulation in Kelvin.  <a href="struct_parameters___simulation.html#aad5bdf64239620d1b214c49532dba743">More...</a><br /></td></tr>
-<tr class="separator:aad5bdf64239620d1b214c49532dba743 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38edd7e56d80c80258d0563f602d09ea inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#a38edd7e56d80c80258d0563f602d09ea">Enable_FRM</a></td></tr>
-<tr class="memdesc:a38edd7e56d80c80258d0563f602d09ea inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the first reaction method will be used or not.  <a href="struct_parameters___simulation.html#a38edd7e56d80c80258d0563f602d09ea">More...</a><br /></td></tr>
-<tr class="separator:a38edd7e56d80c80258d0563f602d09ea inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41834e14865ffe273bfb5824193371b9 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#a41834e14865ffe273bfb5824193371b9">Enable_selective_recalc</a></td></tr>
-<tr class="memdesc:a41834e14865ffe273bfb5824193371b9 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the selective recalculation method will be used or not.  <a href="struct_parameters___simulation.html#a41834e14865ffe273bfb5824193371b9">More...</a><br /></td></tr>
-<tr class="separator:a41834e14865ffe273bfb5824193371b9 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af55371ca9e7027e799f5be46e40eacc1 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#af55371ca9e7027e799f5be46e40eacc1">Recalc_cutoff</a></td></tr>
-<tr class="memdesc:af55371ca9e7027e799f5be46e40eacc1 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired event recalculation cutoff radius for the simulation in nm.  <a href="struct_parameters___simulation.html#af55371ca9e7027e799f5be46e40eacc1">More...</a><br /></td></tr>
-<tr class="separator:af55371ca9e7027e799f5be46e40eacc1 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc993369a04d510926341a72e4e54aad inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#adc993369a04d510926341a72e4e54aad">Enable_full_recalc</a></td></tr>
-<tr class="memdesc:adc993369a04d510926341a72e4e54aad inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the full recalculation method will be used or not.  <a href="struct_parameters___simulation.html#adc993369a04d510926341a72e4e54aad">More...</a><br /></td></tr>
-<tr class="separator:adc993369a04d510926341a72e4e54aad inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa491c1f8ca5045b4cc9c8bbfcb930024 inherit pub_attribs_struct_parameters___simulation"><td class="memItemLeft" align="right" valign="top">std::ofstream *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_parameters___simulation.html#aa491c1f8ca5045b4cc9c8bbfcb930024">Logfile</a></td></tr>
-<tr class="memdesc:aa491c1f8ca5045b4cc9c8bbfcb930024 inherit pub_attribs_struct_parameters___simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the desired output file stream pointer to the logfile.  <a href="struct_parameters___simulation.html#aa491c1f8ca5045b4cc9c8bbfcb930024">More...</a><br /></td></tr>
-<tr class="separator:aa491c1f8ca5045b4cc9c8bbfcb930024 inherit pub_attribs_struct_parameters___simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="a21c46734660f2b2a55dbac798f6ea74b"></a>
@@ -755,6 +717,34 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool Parameters_OPV::Enable_random_blend</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a94746d884494104c15bc1d5f39b20b2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94746d884494104c15bc1d5f39b20b2b">&#9670;&nbsp;</a></span>Enable_ToF_energy_placement</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters_OPV::Enable_ToF_energy_placement</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abcda83235617668783cbe31d5b66221d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abcda83235617668783cbe31d5b66221d">&#9670;&nbsp;</a></span>Enable_ToF_random_placement</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters_OPV::Enable_ToF_random_placement</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1433,6 +1423,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="af6e728c4d1efe0ba5b6b4e28c67a0378"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6e728c4d1efe0ba5b6b4e28c67a0378">&#9670;&nbsp;</a></span>ToF_placement_energy</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Parameters_OPV::ToF_placement_energy</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae89162ef61b8288b28e96ea1fe527da7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae89162ef61b8288b28e96ea1fe527da7">&#9670;&nbsp;</a></span>ToF_pnts_per_decade</h2>
 
@@ -1546,7 +1550,7 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="_o_s_c___sim_8h_source.html">OSC_Sim.h</a></li>
+<li>src/<a class="el" href="_o_s_c___sim_8h_source.html">OSC_Sim.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

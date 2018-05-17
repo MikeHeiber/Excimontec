@@ -1,3 +1,6 @@
 [submodule "KMC_Lattice"]
 	path = KMC_Lattice
 	url = https://github.com/MikeHeiber/KMC_Lattice
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest

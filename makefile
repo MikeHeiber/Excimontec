@@ -1,39 +1,71 @@
-CC = mpicxx
-FLAGS = -Wall -Wextra -O3 -std=c++11
-OBJS = main.o OSC_Sim.o Exciton.o Polaron.o Event.o Lattice.o Object.o Simulation.o Site.o Utils.o
+# Copyright (c) 2018 Michael C. Heiber
+# This source file is part of the Excimontec project, which is subject to the MIT License.
+# For more information, see the LICENSE file that accompanies this software.
+# The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
-Excimontec.exe : $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o Excimontec.exe
+ifeq ($(lastword $(subst /, ,$(CXX))),g++)
+	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc -IKMC_Lattice/src
+endif
+ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
+	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc -IKMC_Lattice/src
+endif
 
-main.o : main.cpp OSC_Sim.h Exciton.h Polaron.h KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c main.cpp
+OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o
+
+all : Excimontec.exe
+ifndef FLAGS
+	$(error Valid compiler not detected.)
+endif
+
+Excimontec.exe : src/main.o $(OBJS) KMC_Lattice/libKMC.a
+	mpicxx $(FLAGS) $^ -o $@
 	
-OSC_Sim.o : OSC_Sim.h OSC_Sim.cpp Exciton.h Polaron.h KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c OSC_Sim.cpp
+KMC_Lattice/libKMC.a : KMC_Lattice/src/*.h
+	$(MAKE) -C KMC_Lattice 
 
-Exciton.o : Exciton.h Exciton.cpp KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c Exciton.cpp
-
-Polaron.o : Polaron.h Polaron.cpp KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c Polaron.cpp
-
-Event.o : KMC_Lattice/Event.h KMC_Lattice/Event.cpp KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Simulation.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c KMC_Lattice/Event.cpp
-
-Lattice.o : KMC_Lattice/Lattice.h KMC_Lattice/Lattice.cpp KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c KMC_Lattice/Lattice.cpp
-
-Object.o : KMC_Lattice/Object.h KMC_Lattice/Object.cpp KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c KMC_Lattice/Object.cpp
-
-Simulation.o : KMC_Lattice/Simulation.h KMC_Lattice/Simulation.cpp KMC_Lattice/Event.h KMC_Lattice/Lattice.h KMC_Lattice/Object.h KMC_Lattice/Site.h KMC_Lattice/Utils.h
-	$(CC) $(FLAGS) -c KMC_Lattice/Simulation.cpp
+src/main.o : src/main.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h
+	mpicxx $(FLAGS) -c $< -o $@
 	
-Site.o : KMC_Lattice/Site.h KMC_Lattice/Site.cpp
-	$(CC) $(FLAGS) -c KMC_Lattice/Site.cpp
+src/OSC_Sim.o : src/OSC_Sim.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h
+	mpicxx $(FLAGS) -c $< -o $@
+
+src/Exciton.o : src/Exciton.cpp src/Exciton.h
+	mpicxx $(FLAGS) -c $< -o $@
+
+src/Polaron.o : src/Polaron.cpp src/Polaron.h
+	mpicxx $(FLAGS) -c $< -o $@
+
+#
+# Testing Section using googletest
+#
+
+ifndef FLAGS
+	$(error Valid compiler not detected.)
+endif
+GTEST_DIR = googletest/googletest
+GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
+                $(GTEST_DIR)/include/gtest/internal/*.h
+GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
+ifeq ($(lastword $(subst /, ,$(CXX))),g++)
+	GTEST_FLAGS = -isystem $(GTEST_DIR)/include -pthread
+endif
+ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
+	GTEST_FLAGS = -I$(GTEST_DIR)/include
+endif
+
+test_coverage : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc -IKMC_Lattice/src
+test_coverage : test/Excimontec_tests.exe
+
+test : test/Excimontec_tests.exe	
 	
-Utils.o : KMC_Lattice/Utils.h KMC_Lattice/Utils.cpp
-	$(CC) $(FLAGS) -c KMC_Lattice/Utils.cpp
+test/Excimontec_tests.exe : test/test.o test/gtest-all.o $(OBJS) KMC_Lattice/libKMC.a
+	mpicxx $(GTEST_FLAGS) $(FLAGS) $^ KMC_Lattice/libKMC.a -lpthread -o $@
+
+test/gtest-all.o : $(GTEST_SRCS_)
+	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
+			
+test/test.o : test/test.cpp $(GTEST_HEADERS) $(OBJS)
+	mpicxx $(GTEST_FLAGS) $(FLAGS) -c $< -o $@
 	
 clean:
-	\rm *.o *~ Excimontec.exe
+	-rm src/*.o src/*.gcno* src/*.gcda test/*.o test/*.gcno* test/*.gcda *~ Excimontec.exe test/Excimontec_tests.exe

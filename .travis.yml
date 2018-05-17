@@ -1,0 +1,47 @@
+# Copyright (c) 2018 Michael C. Heiber
+# This source file is part of the Excimontec project, which is subject to the MIT License.
+# For more information, see the LICENSE file that accompanies this software.
+# The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
+# Travis CI continuous integration build script
+
+language: cpp
+os: linux
+dist: trusty
+sudo: required
+
+compiler:
+    - gcc
+    
+env:
+    - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test_coverage"
+    - OPTIONS="GCC_VERSION=4.7 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.7 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.8 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.8 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=5 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=6 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=6 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=7 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=7 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=8 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=8 && MPI=openmpi && TARGET=test"
+         
+before_install:
+    - eval "${OPTIONS}"
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq gcc-$GCC_VERSION g++-$GCC_VERSION -y
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$GCC_VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$GCC_VERSION
+    - sudo update-alternatives --config gcc
+    - gcc --version
+    - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
+    - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
+    - if [[ "$TARGET" = test_coverage ]]; then pip install --user cpp-coveralls; fi
+    
+script:
+    - make -j10 $TARGET && travis_wait ./test/Excimontec_tests.exe
+    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --exclude "googletest/*" --gcov-options '\-lp'; fi
+    - if [[ "$TARGET" = test ]]; then make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt; fi

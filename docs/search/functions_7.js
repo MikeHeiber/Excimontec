@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['main',['main',['../main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
-  ['moveobject',['moveObject',['../class_simulation.html#a59666ceba048bec35557cb8b691d24d9',1,'Simulation']]],
-  ['mpi_5fcalculatevectoravg',['MPI_calculateVectorAvg',['../namespace_utils.html#a71eeb04d74f890da3d27128c37fcff78',1,'Utils']]],
-  ['mpi_5fcalculatevectorsum',['MPI_calculateVectorSum',['../namespace_utils.html#a0a17d0ad939418dc745bcfd194ce2bc1',1,'Utils::MPI_calculateVectorSum(const std::vector&lt; double &gt; &amp;input_vector)'],['../namespace_utils.html#ad7b634b14633046c6da126945d688aaf',1,'Utils::MPI_calculateVectorSum(const std::vector&lt; int &gt; &amp;input_vector)']]],
-  ['mpi_5fgathervectors',['MPI_gatherVectors',['../namespace_utils.html#aee439dad386e2477d34968311b166c85',1,'Utils']]]
+  ['polaron',['Polaron',['../class_polaron.html#a7392b742eec8c5bf4438198901c570a9',1,'Polaron']]],
+  ['polaron_5fextraction',['Polaron_Extraction',['../class_polaron___extraction.html#a2ac84785d2265bc1ee0e23a7fbcee03f',1,'Polaron_Extraction::Polaron_Extraction()'],['../class_polaron___extraction.html#ad3fd4585a4caf22be10c8730540b23db',1,'Polaron_Extraction::Polaron_Extraction(Simulation *simulation_ptr)']]],
+  ['polaron_5fhop',['Polaron_Hop',['../class_polaron___hop.html#ae8da015929a00a85dc56bc694cd62fa4',1,'Polaron_Hop::Polaron_Hop()'],['../class_polaron___hop.html#abaedc081f619b8e63363fac7f036b09f',1,'Polaron_Hop::Polaron_Hop(Simulation *simulation_ptr)']]],
+  ['polaron_5frecombination',['Polaron_Recombination',['../class_polaron___recombination.html#a653484a1c11e4bc0a744875184fdaf98',1,'Polaron_Recombination::Polaron_Recombination()'],['../class_polaron___recombination.html#abdb1e837d36802564eaaa6053ccb697c',1,'Polaron_Recombination::Polaron_Recombination(Simulation *simulation_ptr)']]]
 ];
