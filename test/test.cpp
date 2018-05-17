@@ -183,7 +183,7 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
-		params.N_tests = 3000;
+		params.N_tests = 5000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
