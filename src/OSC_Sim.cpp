@@ -134,8 +134,6 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
     Dielectric_donor = params.Dielectric_donor;
     Dielectric_acceptor = params.Dielectric_acceptor;
     Coulomb_cutoff = params.Coulomb_cutoff;
-    // Output files
-
     // Initialize Sites
     Site_OSC site;
     sites.assign(lattice.getNumSites(),site);
@@ -150,40 +148,47 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
 	// Assign energies to each site in the sites vector
 	reassignSiteEnergies();
     // Initialize Coulomb interactions lookup table
-    double avgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
+    AvgDielectric = (Dielectric_donor+Dielectric_acceptor)/2;
+	Image_interaction_prefactor = (Elementary_charge / (16 * Pi*AvgDielectric*Vacuum_permittivity))*1e9;
 	double Unit_size = lattice.getUnitSize();
     int range = (int)ceil(intpow(Coulomb_cutoff/lattice.getUnitSize(),2));
     Coulomb_table.assign(range+1,0);
 	for (int i = 1, imax = (int)Coulomb_table.size(); i<imax; i++) {
-        Coulomb_table[i] = ((Coulomb_constant*Elementary_charge)/avgDielectric)/(1e-9*Unit_size*sqrt((double)i));
+        Coulomb_table[i] = ((Coulomb_constant*Elementary_charge)/AvgDielectric)/(1e-9*Unit_size*sqrt((double)i));
         if(Enable_gaussian_polaron_delocalization){
             Coulomb_table[i] *= erf((Unit_size*sqrt((double)i))/(Polaron_delocalization_length*sqrt(2)));
         }
     }
+	Coulomb_range = (int)ceil((Coulomb_cutoff / lattice.getUnitSize())*(Coulomb_cutoff / lattice.getUnitSize()));
     // Initialize electrical potential vector
     E_potential.assign(lattice.getHeight(),0);
     for(int i=0;i<lattice.getHeight();i++){
         E_potential[i] = (Internal_potential*lattice.getHeight()/(lattice.getHeight()+1))-(Internal_potential/(lattice.getHeight()+1))*i;
     }
+	// Initialize event calculation data
+	exciton_event_calc_vars = ExcitonEventCalcVars(this);
+	polaron_event_calc_vars = PolaronEventCalcVars(this);
     // Initialize exciton creation event
     R_exciton_generation_donor = ((Exciton_generation_rate_donor*N_donor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
     R_exciton_generation_acceptor = ((Exciton_generation_rate_acceptor*N_acceptor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
     if(Enable_exciton_diffusion_test || Enable_IQE_test){
         isLightOn = true;
-		Simulation* sim_ptr = this;
-		Exciton_Creation exciton_creation_event(sim_ptr);
+		//Simulation* sim_ptr = this;
+		Exciton_Creation exciton_creation_event(this);
         exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor+R_exciton_generation_acceptor);
 		exciton_creation_events.assign(1,exciton_creation_event);
         exciton_creation_it = addEvent(&exciton_creation_events.front());
     }
 	else if (Enable_dynamics_test) {
 		isLightOn = false;
+		// Initialize parameters
+		N_initial_excitons = (int)ceil(Dynamics_initial_exciton_conc*lattice.getVolume());
 		// Initialize data structures
-		double step_size = 1.0 / (double)Transient_pnts_per_decade;
-		int num_steps = (int)floor((log10(Transient_end) - log10(Transient_start)) / step_size) + 1;
+		Transient_step_size = 1.0 / (double)Transient_pnts_per_decade;
+		int num_steps = (int)floor((log10(Transient_end) - log10(Transient_start)) / Transient_step_size) + 1;
 		transient_times.assign(num_steps, 0);
 		for (int i = 0; i < (int)transient_times.size(); i++) {
-			transient_times[i] = pow(10, log10(Transient_start) + i * step_size);
+			transient_times[i] = pow(10, log10(Transient_start) + i * Transient_step_size);
 		}
 		transient_singlet_counts.assign(num_steps, 0);
 		transient_triplet_counts.assign(num_steps, 0);
@@ -201,11 +206,11 @@ bool OSC_Sim::init(const Parameters_OPV& params,const int id){
     else if(Enable_ToF_test){
 		isLightOn = false;
         // Initialize data structures
-        double step_size = 1.0/(double)Transient_pnts_per_decade;
-        int num_steps = (int)floor((log10(Transient_end)-log10(Transient_start))/step_size)+1;
+		Transient_step_size = 1.0 / (double)Transient_pnts_per_decade;
+        int num_steps = (int)floor((log10(Transient_end)-log10(Transient_start))/Transient_step_size)+1;
         transient_times.assign(num_steps,0);
         for(int i=0;i<(int)transient_times.size();i++){
-            transient_times[i] = pow(10,log10(Transient_start)+i*step_size);
+            transient_times[i] = pow(10,log10(Transient_start)+i* Transient_step_size);
         }
         transient_velocities.assign(num_steps,0);
 		if (!ToF_polaron_type) {
@@ -239,20 +244,17 @@ void OSC_Sim::calculateAllEvents() {
 }
 
 double OSC_Sim::calculateCoulomb(const list<Polaron>::const_iterator polaron_it, const Coords& coords) const {
-	static const double avgDielectric = (Dielectric_donor + Dielectric_acceptor) / 2;
-	static const double image_interactions = (Elementary_charge / (16 * Pi*avgDielectric*Vacuum_permittivity))*1e9;
 	double Energy = 0;
 	double distance;
 	int distance_sq_lat;
 	bool charge = polaron_it->getCharge();
-	static const int range = (int)ceil((Coulomb_cutoff / lattice.getUnitSize())*(Coulomb_cutoff / lattice.getUnitSize()));
 	// Loop through electrons
 	for (auto const &item : electrons) {
 		if (!charge && item.getTag() == polaron_it->getTag()) {
 			continue;
 		}
 		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
-		if (!(distance_sq_lat > range)) {
+		if (!(distance_sq_lat > Coulomb_range)) {
 			if (!charge) {
 				Energy += Coulomb_table[distance_sq_lat];
 			}
@@ -267,7 +269,7 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::const_iterator polaron_it,
 			continue;
 		}
 		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
-		if (!(distance_sq_lat > range)) {
+		if (!(distance_sq_lat > Coulomb_range)) {
 			if (charge) {
 				Energy += Coulomb_table[distance_sq_lat];
 			}
@@ -280,27 +282,25 @@ double OSC_Sim::calculateCoulomb(const list<Polaron>::const_iterator polaron_it,
 	if (!lattice.isZPeriodic() && !Enable_ToF_test) {
 		distance = lattice.getUnitSize()*((double)(lattice.getHeight() - coords.z) - 0.5);
 		if (!((distance - 0.0001) > Coulomb_cutoff)) {
-			Energy -= image_interactions / distance;
+			Energy -= Image_interaction_prefactor / distance;
 		}
 		distance = lattice.getUnitSize()*((double)(coords.z + 1) - 0.5);
 		if (!((distance - 0.0001) > Coulomb_cutoff)) {
-			Energy -= image_interactions / distance;
+			Energy -= Image_interaction_prefactor / distance;
 		}
 	}
 	return Energy;
 }
 
 double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const {
-	static const double avgDielectric = (Dielectric_donor + Dielectric_acceptor) / 2;
-	static const double image_interactions = (Elementary_charge / (16 * Pi*avgDielectric*Vacuum_permittivity))*1e9;
 	double Energy = 0;
 	double distance;
 	int distance_sq_lat;
-	static const int range = (int)ceil((Coulomb_cutoff / lattice.getUnitSize())*(Coulomb_cutoff / lattice.getUnitSize()));
+	
 	// Loop through electrons
 	for (auto const &item : electrons) {
 		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
-		if (!(distance_sq_lat > range)) {
+		if (!(distance_sq_lat > Coulomb_range)) {
 			if (!charge) {
 				Energy += Coulomb_table[distance_sq_lat];
 			}
@@ -312,7 +312,7 @@ double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const 
 	// Loop through holes
 	for (auto const &item : holes) {
 		distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
-		if (!(distance_sq_lat > range)) {
+		if (!(distance_sq_lat > Coulomb_range)) {
 			if (charge) {
 				Energy += Coulomb_table[distance_sq_lat];
 			}
@@ -325,11 +325,11 @@ double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const 
 	if (!lattice.isZPeriodic()) {
 		distance = lattice.getUnitSize()*((double)(lattice.getHeight() - coords.z) - 0.5);
 		if (!((distance - 0.0001) > Coulomb_cutoff)) {
-			Energy -= image_interactions / distance;
+			Energy -= Image_interaction_prefactor / distance;
 		}
 		distance = lattice.getUnitSize()*((double)(coords.z + 1) - 0.5);
 		if (!((distance - 0.0001) > Coulomb_cutoff)) {
-			Energy -= image_interactions / distance;
+			Energy -= Image_interaction_prefactor / distance;
 		}
 	}
 	return Energy;
@@ -416,7 +416,7 @@ vector<double> OSC_Sim::calculateTransitTimeDist(const vector<double>& data,cons
 }
 
 Coords OSC_Sim::calculateExcitonCreationCoords(){
-    static uniform_real_distribution<double> dist(0.0,R_exciton_generation_donor+R_exciton_generation_acceptor);
+    uniform_real_distribution<double> dist(0.0,R_exciton_generation_donor+R_exciton_generation_acceptor);
     double num = dist(generator);
     short type_target;
     if(num<R_exciton_generation_donor){
@@ -452,66 +452,26 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
     Coords dest_coords;
 	double E_delta, Coulomb_final;
 	double rate = 0;
-    int index;
 	vector<Event*> possible_events;
-	// Declare static variables
-    static const int range = (int)ceil( ((FRET_cutoff>Exciton_dissociation_cutoff) ? (FRET_cutoff):(Exciton_dissociation_cutoff))/ lattice.getUnitSize());
-    static const int dim = (2*range+1);
-	static Exciton_Hop hop_event(this);
-    static vector<Exciton_Hop> hops_temp(dim*dim*dim,hop_event);
-	static Exciton_Dissociation diss_event(this);
-    static vector<Exciton_Dissociation> dissociations_temp(dim*dim*dim,diss_event);
-	static Exciton_Exciton_Annihilation eea_event(this);
-	static vector<Exciton_Exciton_Annihilation> exciton_exciton_annihilations_temp(dim*dim*dim,eea_event);
-	static Exciton_Polaron_Annihilation epa_event(this);
-	static vector<Exciton_Polaron_Annihilation> exciton_polaron_annihilations_temp(dim*dim*dim,epa_event);
-    static vector<bool> hops_valid(dim*dim*dim,false);
-    static vector<bool> dissociations_valid(dim*dim*dim,false);
-	static vector<bool> exciton_exciton_annihilations_valid(dim*dim*dim, false);
-	static vector<bool> exciton_polaron_annihilations_valid(dim*dim*dim, false);
-	// pre-calculate a distances vector that contains the distances to nearby sites used for event execution time calculations
-	// pre-calculate isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
-	static vector<double> distances(dim*dim*dim, 0.0);
-	static vector<bool> isInDissRange(dim*dim*dim, false);
-	static vector<bool> isInFRETRange(dim*dim*dim, false);
-	static bool isInitialized = false;
-	// Initiaize static distances, isInDissRange, and isInFRETRange vectors
-	if (!isInitialized) {
-		for (int i = -range; i <= range; i++) {
-			for (int j = -range; j <= range; j++) {
-				for (int k = -range; k <= range; k++) {
-					index = (i + range)*dim*dim + (j + range)*dim + (k + range);
-					distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j*j + k*k));
-					if (!((distances[index] - 0.0001) > Exciton_dissociation_cutoff)) {
-						isInDissRange[index] = true;
-					}
-					if (!((distances[index] - 0.0001) > FRET_cutoff)) {
-						isInFRETRange[index] = true;
-					}
-				}
-			}
-		}
-		isInitialized = true;
-	}
 	// Exciton hopping, dissociation, and annihilation events
-	hops_valid.assign(dim*dim*dim,false);
-	dissociations_valid.assign(dim*dim*dim, false);
-	exciton_exciton_annihilations_valid.assign(dim*dim*dim, false);
-	exciton_polaron_annihilations_valid.assign(dim*dim*dim, false);
-    for(int i=-range;i<=range;i++){
-        for(int j=-range;j<=range;j++){
-            for(int k=-range;k<=range;k++){
-                index = (i+range)*dim*dim+(j+range)*dim+(k+range);
-				if (!isInDissRange[index] && !isInFRETRange[index]) {
+	fill(exciton_event_calc_vars.hops_valid.begin(), exciton_event_calc_vars.hops_valid.end(), false);
+	fill(exciton_event_calc_vars.dissociations_valid.begin(), exciton_event_calc_vars.dissociations_valid.end(), false);
+	fill(exciton_event_calc_vars.ee_annihilations_valid.begin(), exciton_event_calc_vars.ee_annihilations_valid.end(), false);
+	fill(exciton_event_calc_vars.ep_annihilations_valid.begin(), exciton_event_calc_vars.ep_annihilations_valid.end(), false);
+	for (int i = -exciton_event_calc_vars.range, imax = exciton_event_calc_vars.range; i <= imax; i++) {
+		for (int j = -exciton_event_calc_vars.range, jmax = exciton_event_calc_vars.range; j <= jmax; j++) {
+			for (int k = -exciton_event_calc_vars.range, kmax = exciton_event_calc_vars.range; k <= kmax; k++) {
+				int index = (i + exciton_event_calc_vars.range)*exciton_event_calc_vars.dim*exciton_event_calc_vars.dim + (j + exciton_event_calc_vars.range)*exciton_event_calc_vars.dim + (k + exciton_event_calc_vars.range);
+				if (!exciton_event_calc_vars.isInDissRange[index] && !exciton_event_calc_vars.isInFRETRange[index]) {
 					continue;
 				}
-                if(!lattice.checkMoveValidity(object_coords,i,j,k)){
-                    continue;
-                }
-                lattice.calculateDestinationCoords(object_coords,i,j,k,dest_coords);
+				if (!lattice.checkMoveValidity(object_coords, i, j, k)) {
+					continue;
+				}
+				lattice.calculateDestinationCoords(object_coords, i, j, k, dest_coords);
 				// Annihilation events
 				if (lattice.isOccupied(dest_coords)) {
-					if (isInFRETRange[index]) {
+					if (exciton_event_calc_vars.isInFRETRange[index]) {
 						auto object_target_ptr = sites[lattice.getSiteIndex(dest_coords)].getObjectPtr();
 						// Exciton-Exciton annihilation
 						if (object_target_ptr->getObjectType().compare(Exciton::object_type) == 0) {
@@ -519,81 +479,81 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 							if (!exciton_it->getSpin() && getExcitonIt(object_target_ptr)->getSpin()) {
 								continue;
 							}
-							exciton_exciton_annihilations_temp[index].setObjectPtr(exciton_ptr);
-							exciton_exciton_annihilations_temp[index].setDestCoords(dest_coords);
-							exciton_exciton_annihilations_temp[index].setObjectTargetPtr(object_target_ptr);
+							exciton_event_calc_vars.ee_annihilations_temp[index].setObjectPtr(exciton_ptr);
+							exciton_event_calc_vars.ee_annihilations_temp[index].setDestCoords(dest_coords);
+							exciton_event_calc_vars.ee_annihilations_temp[index].setObjectTargetPtr(object_target_ptr);
 							// Exciton is starting from a donor site
 							if (getSiteType(object_coords) == (short)1) {
 								// Triplet Dexter mechanism
 								if (!exciton_it->getSpin() && !Enable_FRET_triplet_annihilation) {
-									exciton_exciton_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_donor, Triplet_localization_donor, distances[index]);
+									exciton_event_calc_vars.ee_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_donor, Triplet_localization_donor, exciton_event_calc_vars.distances[index]);
 								}
 								// FRET mechanism
 								else {
-									exciton_exciton_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_donor, distances[index]);
+									exciton_event_calc_vars.ee_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_donor, exciton_event_calc_vars.distances[index]);
 								}
 							}
 							// Exciton is starting from an acceptor site
 							else {
 								// Triplet Dexter mechanism
 								if (!exciton_it->getSpin() && !Enable_FRET_triplet_annihilation) {
-									exciton_exciton_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_acceptor, Triplet_localization_acceptor, distances[index]);
+									exciton_event_calc_vars.ee_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_acceptor, Triplet_localization_acceptor, exciton_event_calc_vars.distances[index]);
 								}
 								// FRET mechanism
 								else {
-									exciton_exciton_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_acceptor, distances[index]);
+									exciton_event_calc_vars.ee_annihilations_temp[index].calculateExecutionTime(R_exciton_exciton_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
 								}
 							}
-							exciton_exciton_annihilations_valid[index] = true;
+							exciton_event_calc_vars.ee_annihilations_valid[index] = true;
 						}
 						// Exciton-Polaron annihilation
-						else if(sites[lattice.getSiteIndex(dest_coords)].getObjectPtr()->getObjectType().compare(Polaron::object_type)==0) {
-							exciton_polaron_annihilations_temp[index].setObjectPtr(exciton_ptr);
-							exciton_polaron_annihilations_temp[index].setDestCoords(dest_coords);
-							exciton_polaron_annihilations_temp[index].setObjectTargetPtr(object_target_ptr);
+						else if (sites[lattice.getSiteIndex(dest_coords)].getObjectPtr()->getObjectType().compare(Polaron::object_type) == 0) {
+							exciton_event_calc_vars.ep_annihilations_temp[index].setObjectPtr(exciton_ptr);
+							exciton_event_calc_vars.ep_annihilations_temp[index].setDestCoords(dest_coords);
+							exciton_event_calc_vars.ep_annihilations_temp[index].setObjectTargetPtr(object_target_ptr);
 							// Exciton is starting from a donor site
 							if (getSiteType(object_coords) == (short)1) {
 								// Triplet Dexter mechanism
 								if (!exciton_it->getSpin() && !Enable_FRET_triplet_annihilation) {
-									exciton_polaron_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_donor,Triplet_localization_donor, distances[index]);
+									exciton_event_calc_vars.ep_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_donor, Triplet_localization_donor, exciton_event_calc_vars.distances[index]);
 								}
 								// FRET mechanism
 								else {
-									exciton_polaron_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_donor, distances[index]);
+									exciton_event_calc_vars.ep_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_donor, exciton_event_calc_vars.distances[index]);
 								}
 							}
 							// Exciton is starting from an acceptor site
 							else {
 								// Triplet Dexter mechanism
 								if (!exciton_it->getSpin() && !Enable_FRET_triplet_annihilation) {
-									exciton_polaron_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_acceptor,Triplet_localization_acceptor, distances[index]);
+									exciton_event_calc_vars.ep_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_acceptor, Triplet_localization_acceptor, exciton_event_calc_vars.distances[index]);
 								}
 								// FRET mechanism
 								else {
-									exciton_polaron_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_acceptor, distances[index]);
+									exciton_event_calc_vars.ep_annihilations_temp[index].calculateExecutionTime(R_exciton_polaron_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
 								}
 							}
-							exciton_polaron_annihilations_valid[index] = true;
+							exciton_event_calc_vars.ep_annihilations_valid[index] = true;
 						}
 					}
 				}
 				// Dissociation and Hop events
 				else {
 					// Dissociation event
-					if (getSiteType(object_coords) != getSiteType(dest_coords) && isInDissRange[index]) {
-						dissociations_temp[index].setObjectPtr(exciton_ptr);
-						dissociations_temp[index].setDestCoords(dest_coords);
+					if (getSiteType(object_coords) != getSiteType(dest_coords) && exciton_event_calc_vars.isInDissRange[index]) {
+						exciton_event_calc_vars.dissociations_temp[index].setObjectPtr(exciton_ptr);
+						exciton_event_calc_vars.dissociations_temp[index].setDestCoords(dest_coords);
 						// Exciton is starting from a donor site
 						if (getSiteType(object_coords) == (short)1) {
-							Coulomb_final = calculateCoulomb(true, object_coords) + calculateCoulomb(false, dest_coords) - Coulomb_table[i*i + j*j + k*k];
+							Coulomb_final = calculateCoulomb(true, object_coords) + calculateCoulomb(false, dest_coords) - Coulomb_table[i*i + j * j + k * k];
 							E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords)) - (Lumo_acceptor - Lumo_donor) + (Coulomb_final + E_exciton_binding_donor) + (E_potential[dest_coords.z] - E_potential[object_coords.z]);
 							// Singlet
 							if (exciton_ptr->getSpin()) {
 								if (Enable_miller_abrahams) {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Singlet_localization_donor, distances[index], E_delta);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Singlet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 								else {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Singlet_localization_donor, distances[index], E_delta, Reorganization_donor);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Singlet_localization_donor, exciton_event_calc_vars.distances[index], E_delta, Reorganization_donor);
 								}
 							}
 							// Triplet
@@ -601,44 +561,44 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 								// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
 								E_delta += E_exciton_ST_donor;
 								if (Enable_miller_abrahams) {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Triplet_localization_donor, distances[index], E_delta);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 								else {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Triplet_localization_donor, distances[index], E_delta, Reorganization_donor);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_donor, Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta, Reorganization_donor);
 								}
 							}
 						}
 						// Exciton is starting from an acceptor site
 						else {
-							Coulomb_final = calculateCoulomb(false, object_coords) + calculateCoulomb(true, dest_coords) - Coulomb_table[i*i + j*j + k*k];
+							Coulomb_final = calculateCoulomb(false, object_coords) + calculateCoulomb(true, dest_coords) - Coulomb_table[i*i + j * j + k * k];
 							E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords)) + (Homo_donor - Homo_acceptor) + (Coulomb_final + E_exciton_binding_donor) - (E_potential[dest_coords.z] - E_potential[object_coords.z]);
 							// Singlet
 							if (exciton_ptr->getSpin()) {
 								if (Enable_miller_abrahams) {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Singlet_localization_acceptor, distances[index], E_delta);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Singlet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 								else {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Singlet_localization_acceptor, distances[index], E_delta, Reorganization_acceptor);
-								}	
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Singlet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta, Reorganization_acceptor);
+								}
 							}
 							// Triplet
 							else {
 								// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
 								E_delta += E_exciton_ST_acceptor;
 								if (Enable_miller_abrahams) {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Triplet_localization_acceptor, distances[index], E_delta);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 								else {
-									dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Triplet_localization_acceptor, distances[index], E_delta, Reorganization_acceptor);
+									exciton_event_calc_vars.dissociations_temp[index].calculateExecutionTime(R_exciton_dissociation_acceptor, Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta, Reorganization_acceptor);
 								}
 							}
 						}
-						dissociations_valid[index] = true;
+						exciton_event_calc_vars.dissociations_valid[index] = true;
 					}
 					// Hop event
-					if (isInFRETRange[index]) {
-						hops_temp[index].setObjectPtr(exciton_ptr);
-						hops_temp[index].setDestCoords(dest_coords);
+					if (exciton_event_calc_vars.isInFRETRange[index]) {
+						exciton_event_calc_vars.hops_temp[index].setObjectPtr(exciton_ptr);
+						exciton_event_calc_vars.hops_temp[index].setDestCoords(dest_coords);
 						E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords));
 						// Singlet FRET hopping
 						if (exciton_it->getSpin()) {
@@ -647,31 +607,31 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 								if (getSiteType(dest_coords) == (short)2) {
 									E_delta += (Homo_acceptor - Lumo_acceptor - E_exciton_binding_acceptor) - (Homo_donor - Lumo_donor - E_exciton_binding_donor);
 								}
-								hops_temp[index].calculateExecutionTime(R_singlet_hopping_donor, distances[index], E_delta);
+								exciton_event_calc_vars.hops_temp[index].calculateExecutionTime(R_singlet_hopping_donor, exciton_event_calc_vars.distances[index], E_delta);
 							}
 							else {
 								// acceptor-to-donor energy modification
 								if (getSiteType(dest_coords) == (short)1) {
 									E_delta += (Homo_donor - Lumo_donor - E_exciton_binding_donor) - (Homo_acceptor - Lumo_acceptor - E_exciton_binding_acceptor);
 								}
-								hops_temp[index].calculateExecutionTime(R_singlet_hopping_acceptor, distances[index], E_delta);
+								exciton_event_calc_vars.hops_temp[index].calculateExecutionTime(R_singlet_hopping_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 							}
 						}
 						// Dexter hopping is only donor-to-donor and acceptor-to-acceptor
 						else {
 							if (getSiteType(object_coords) == (short)1) {
-								hops_temp[index].calculateExecutionTime(R_triplet_hopping_donor, Triplet_localization_donor, distances[index], E_delta);
+								exciton_event_calc_vars.hops_temp[index].calculateExecutionTime(R_triplet_hopping_donor, Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
 							}
 							else {
-								hops_temp[index].calculateExecutionTime(R_triplet_hopping_donor, Triplet_localization_acceptor, distances[index], E_delta);
+								exciton_event_calc_vars.hops_temp[index].calculateExecutionTime(R_triplet_hopping_donor, Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 							}
 						}
-						hops_valid[index] = true;
+						exciton_event_calc_vars.hops_valid[index] = true;
 					}
 				}
-            }
-        }
-    }
+			}
+		}
+	}
     // Exciton Recombination
 	auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton_Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
 	if (exciton_it->getSpin()) {
@@ -715,33 +675,33 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 	}
 	possible_events.push_back(&(*intersystem_crossing_event_it));
 	// Determine the valid exciton-exciton annihilation events
-	index = 0;
-	for (auto &item : exciton_exciton_annihilations_temp) {
-		if (exciton_exciton_annihilations_valid[index]) {
+	int index = 0;
+	for (auto &item : exciton_event_calc_vars.ee_annihilations_temp) {
+		if (exciton_event_calc_vars.ee_annihilations_valid[index]) {
 			possible_events.push_back(&item);
 		}
 		index++;
 	}
 	// Determine the valid exciton-polaron annihilation events
 	index = 0;
-	for (auto &item : exciton_polaron_annihilations_temp) {
-		if (exciton_polaron_annihilations_valid[index]) {
+	for (auto &item : exciton_event_calc_vars.ep_annihilations_temp) {
+		if (exciton_event_calc_vars.ep_annihilations_valid[index]) {
 			possible_events.push_back(&item);
 		}
 		index++;
 	}
     // Determine the valid hop events
 	index = 0;
-    for (auto &item : hops_temp){
-        if(hops_valid[index]){
+    for (auto &item : exciton_event_calc_vars.hops_temp){
+        if(exciton_event_calc_vars.hops_valid[index]){
 			possible_events.push_back(&item);
         }
 		index++;
     }
     // Determine the valid dissociation events
 	index = 0;
-    for (auto &item : dissociations_temp){
-        if(dissociations_valid[index]){
+    for (auto &item : exciton_event_calc_vars.dissociations_temp){
+        if(exciton_event_calc_vars.dissociations_valid[index]){
 			possible_events.push_back(&item);
         }
 		index++;
@@ -757,11 +717,19 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
     // Determine fastest valid event
 	double best_time = possible_events[0]->getExecutionTime();
 	Event* event_ptr_target = possible_events[0];
-	for (auto const &event_ptr : possible_events) {
+	for (auto const& event_ptr : possible_events) {
 		if (event_ptr->getExecutionTime() < best_time) {
 			best_time = event_ptr->getExecutionTime();
 			event_ptr_target = event_ptr;
 		}
+	}
+	// Check that the execution time is valid
+	if (best_time < getTime()) {
+		setObjectEvent(exciton_ptr, nullptr);
+		cout << getId() << ": Error! The fastest exciton event execution time is less than the current simulation time." << endl;
+		setErrorMessage(" The fastest exciton event execution time is less than the current simulation time.");
+		Error_found = true;
+		return;
 	}
 	// Copy the chosen temp event to the appropriate main event list and set the target event pointer to the corresponding event from the main list
 	string event_type = event_ptr_target->getEventType();
@@ -838,115 +806,86 @@ void OSC_Sim::calculatePolaronEvents(Polaron* polaron_ptr){
 	double E_site_i = getSiteEnergy(object_coords);
     double Coulomb_i = calculateCoulomb(polaron_it,object_coords);
 	vector<Event*> possible_events;
-	// Static obejcts
-    static const int range = (int)ceil(Polaron_hopping_cutoff/ lattice.getUnitSize());
-    static const int dim = (2*range+1);
-	static Polaron_Hop hop_event(this);
-    static vector<Polaron_Hop> hops_temp(dim*dim*dim,hop_event);
-	static Polaron_Recombination rec_event(this);
-	static vector<Polaron_Recombination> recombinations_temp(dim*dim*dim,rec_event);
-    static vector<bool> hops_valid(dim*dim*dim,false);
-    static vector<bool> recombinations_valid(dim*dim*dim,false);
-	// pre-calculate a distances vector that contains the distances to nearby sites used for event execution time calculations
-	// pre-calculate a isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
-	static vector<double> distances(dim*dim*dim, 0.0);
-	static vector<double> E_deltas(dim*dim*dim, 0.0);
-	static vector<bool> isInRange(dim*dim*dim, false);
-	static bool isInitialized = false;
-	// Intialize static distances and isInRange vectors
-	if (!isInitialized) {
-		for (int i = -range; i <= range; i++) {
-			for (int j = -range; j <= range; j++) {
-				for (int k = -range; k <= range; k++) {
-					index = (i + range)*dim*dim + (j + range)*dim + (k + range);
-					distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j*j + k*k));
-					if (!((distances[index] - 0.0001) > Polaron_hopping_cutoff)) {
-						isInRange[index] = true;
-					}
-				}
-			}
-		}
-		isInitialized = true;
-	}
+	
 	// Calculate Polaron hopping and recombination events
-	hops_valid.assign(dim*dim*dim, false);
-	recombinations_valid.assign(dim*dim*dim, false);
-    for(int i=-range;i<=range;i++){
-        for(int j=-range;j<=range;j++){
-            for(int k=-range;k<=range;k++){
-				index = (i + range)*dim*dim + (j + range)*dim + (k + range);
-				if (!isInRange[index]) {
+	fill(polaron_event_calc_vars.hops_valid.begin(), polaron_event_calc_vars.hops_valid.end(), false);
+	fill(polaron_event_calc_vars.recombinations_valid.begin(), polaron_event_calc_vars.recombinations_valid.end(), false);
+	for (int i = -polaron_event_calc_vars.range, imax = polaron_event_calc_vars.range; i <= imax; i++) {
+		for (int j = -polaron_event_calc_vars.range, jmax = polaron_event_calc_vars.range; j <= jmax; j++) {
+			for (int k = -polaron_event_calc_vars.range, kmax = polaron_event_calc_vars.range; k <= kmax; k++) {
+				index = (i + polaron_event_calc_vars.range)*polaron_event_calc_vars.dim*polaron_event_calc_vars.dim + (j + polaron_event_calc_vars.range)*polaron_event_calc_vars.dim + (k + polaron_event_calc_vars.range);
+				if (!polaron_event_calc_vars.isInRange[index]) {
 					continue;
 				}
 				if (!lattice.checkMoveValidity(object_coords, i, j, k)) {
 					continue;
 				}
-                lattice.calculateDestinationCoords(object_coords,i,j,k,dest_coords);
-                // Recombination events
-                // If destination site is occupied by a hole Polaron and the main Polaron is an electron, check for a possible recombination event
-                if(lattice.isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)){
-                    if(getSiteType(object_coords)==(short)1){
-                        recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_donor,distances[index],0);
-                    }
-                    else if(getSiteType(object_coords)==(short)2){
-                        recombinations_temp[index].calculateExecutionTime(R_polaron_recombination,Polaron_localization_acceptor,distances[index],0);
-                    }
-					recombinations_temp[index].setObjectPtr(polaron_ptr);
-                    recombinations_temp[index].setDestCoords(dest_coords);
-                    recombinations_temp[index].setObjectTargetPtr((*lattice.getSiteIt(dest_coords))->getObjectPtr());
-                    recombinations_valid[index] = true;
-                }
-                // Hop events
-                // If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
-                if(!lattice.isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords)==getSiteType(dest_coords))){
-					E_deltas[index] = (getSiteEnergy(dest_coords) - E_site_i);
-					E_deltas[index] += (calculateCoulomb(polaron_it,dest_coords)-Coulomb_i);
-                    if(!polaron_it->getCharge()){
-                        E_deltas[index] += (E_potential[dest_coords.z]-E_potential[object_coords.z]);
-                    }
-                    else{
-                        E_deltas[index] -= (E_potential[dest_coords.z]-E_potential[object_coords.z]);
-                    }
-                    if(getSiteType(object_coords)==(short)1){
-                        if(getSiteType(dest_coords)==(short)2){
-                            if(!polaron_it->getCharge()){
-                                E_deltas[index] -= (Lumo_acceptor-Lumo_donor);
-                            }
-                            else{
-                                E_deltas[index] -= (Homo_acceptor-Homo_donor);
-                            }
-                        }
-                        if(Enable_miller_abrahams){
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_deltas[index]);
-                        }
-                        else{
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor,Polaron_localization_donor,distances[index],E_deltas[index],Reorganization_donor);
-                        }
-                    }
-                    else if(getSiteType(object_coords)==(short)2){
-                        if(getSiteType(dest_coords)==(short)1){
-                            if(!polaron_it->getCharge()){
-                                E_deltas[index] -= (Lumo_donor-Lumo_acceptor);
-                            }
-                            else{
-                                E_deltas[index] -= (Homo_donor-Homo_acceptor);
-                            }
-                        }
-                        if(Enable_miller_abrahams){
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_deltas[index]);
-                        }
-                        else{
-                            hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor,Polaron_localization_acceptor,distances[index],E_deltas[index],Reorganization_acceptor);
-                        }
-                    }
-					hops_temp[index].setObjectPtr(polaron_ptr);
-					hops_temp[index].setDestCoords(dest_coords);
-					hops_temp[index].setObjectTargetPtr(nullptr);
-                    hops_valid[index] = true;
-                }
-            }
-        }
-    }
+				lattice.calculateDestinationCoords(object_coords, i, j, k, dest_coords);
+				// Recombination events
+				// If destination site is occupied by a hole Polaron and the main Polaron is an electron, check for a possible recombination event
+				if (lattice.isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)) {
+					if (getSiteType(object_coords) == (short)1) {
+						polaron_event_calc_vars.recombinations_temp[index].calculateExecutionTime(R_polaron_recombination, Polaron_localization_donor, polaron_event_calc_vars.distances[index], 0);
+					}
+					else if (getSiteType(object_coords) == (short)2) {
+						polaron_event_calc_vars.recombinations_temp[index].calculateExecutionTime(R_polaron_recombination, Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], 0);
+					}
+					polaron_event_calc_vars.recombinations_temp[index].setObjectPtr(polaron_ptr);
+					polaron_event_calc_vars.recombinations_temp[index].setDestCoords(dest_coords);
+					polaron_event_calc_vars.recombinations_temp[index].setObjectTargetPtr((*lattice.getSiteIt(dest_coords))->getObjectPtr());
+					polaron_event_calc_vars.recombinations_valid[index] = true;
+				}
+				// Hop events
+				// If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
+				if (!lattice.isOccupied(dest_coords) && (!Enable_phase_restriction || getSiteType(object_coords) == getSiteType(dest_coords))) {
+					polaron_event_calc_vars.E_deltas[index] = (getSiteEnergy(dest_coords) - E_site_i);
+					polaron_event_calc_vars.E_deltas[index] += (calculateCoulomb(polaron_it, dest_coords) - Coulomb_i);
+					if (!polaron_it->getCharge()) {
+						polaron_event_calc_vars.E_deltas[index] += (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+					}
+					else {
+						polaron_event_calc_vars.E_deltas[index] -= (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+					}
+					if (getSiteType(object_coords) == (short)1) {
+						if (getSiteType(dest_coords) == (short)2) {
+							if (!polaron_it->getCharge()) {
+								polaron_event_calc_vars.E_deltas[index] -= (Lumo_acceptor - Lumo_donor);
+							}
+							else {
+								polaron_event_calc_vars.E_deltas[index] -= (Homo_acceptor - Homo_donor);
+							}
+						}
+						if (Enable_miller_abrahams) {
+							polaron_event_calc_vars.hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor, Polaron_localization_donor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index]);
+						}
+						else {
+							polaron_event_calc_vars.hops_temp[index].calculateExecutionTime(R_polaron_hopping_donor, Polaron_localization_donor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index], Reorganization_donor);
+						}
+					}
+					else if (getSiteType(object_coords) == (short)2) {
+						if (getSiteType(dest_coords) == (short)1) {
+							if (!polaron_it->getCharge()) {
+								polaron_event_calc_vars.E_deltas[index] -= (Lumo_donor - Lumo_acceptor);
+							}
+							else {
+								polaron_event_calc_vars.E_deltas[index] -= (Homo_donor - Homo_acceptor);
+							}
+						}
+						if (Enable_miller_abrahams) {
+							polaron_event_calc_vars.hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor, Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index]);
+						}
+						else {
+							polaron_event_calc_vars.hops_temp[index].calculateExecutionTime(R_polaron_hopping_acceptor, Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index], Reorganization_acceptor);
+						}
+					}
+					polaron_event_calc_vars.hops_temp[index].setObjectPtr(polaron_ptr);
+					polaron_event_calc_vars.hops_temp[index].setDestCoords(dest_coords);
+					polaron_event_calc_vars.hops_temp[index].setObjectTargetPtr(nullptr);
+					polaron_event_calc_vars.hops_valid[index] = true;
+				}
+			}
+		}
+	}
     // Calculate possible extraction event
     // Electrons are extracted at the bottom of the lattice (z=-1)
     // Holes are extracted at the top of the lattice (z=Height)
@@ -984,16 +923,16 @@ void OSC_Sim::calculatePolaronEvents(Polaron* polaron_ptr){
     }
     // Add the valid hop events to possible events vector
 	index = 0;
-    for (auto &item : hops_temp){
-        if(hops_valid[index]){
+    for (auto &item : polaron_event_calc_vars.hops_temp){
+        if(polaron_event_calc_vars.hops_valid[index]){
             possible_events.push_back(&item);
         }
 		index++;
     }
     // Add the valid recombination events to the possible events vector
 	index = 0;
-    for (auto &item : recombinations_temp){
-        if(recombinations_valid[index]){
+    for (auto &item : polaron_event_calc_vars.recombinations_temp){
+        if(polaron_event_calc_vars.recombinations_valid[index]){
 			possible_events.push_back(&item);
         }
 		index++;
@@ -1001,6 +940,9 @@ void OSC_Sim::calculatePolaronEvents(Polaron* polaron_ptr){
     // If there are no possible events, return an error
     if(possible_events.size()==0){
 		setObjectEvent(polaron_ptr,nullptr);
+		cout << getId() << ": Error! No valid polaron events could be calculated." << endl;
+		setErrorMessage("No valid polaronm events could be calculated.");
+		Error_found = true;
         return;
     }
     // Determine the fastest possible event
@@ -1011,6 +953,14 @@ void OSC_Sim::calculatePolaronEvents(Polaron* polaron_ptr){
 			best_time = event_ptr->getExecutionTime();
 			event_ptr_target = event_ptr;
 		}
+	}
+	// Check that the execution time is valid
+	if (best_time < getTime()) {
+		setObjectEvent(polaron_ptr, nullptr);
+		cout << getId() << ": Error! The fastest polaron event execution time is less than the current simulation time." << endl;
+		setErrorMessage(" The fastest polaron event execution time is less than the current simulation time.");
+		Error_found = true;
+		return;
 	}
 	// Copy the chosen temp event to the appropriate main event list and set the target event pointer to the corresponding event from the main list
 	string event_type = event_ptr_target->getEventType();
@@ -1968,12 +1918,19 @@ bool OSC_Sim::executeNextEvent() {
 		}
 	}
     auto event_it = chooseNextEvent();
+	// Check for errors
     if(*event_it==nullptr){
         cout << getId() << ": Error! The simulation has no events to execute." << endl;
 		setErrorMessage("The simulation has no events to execute.");
         Error_found = true;
         return false;
     }
+	if ((*event_it)->getExecutionTime() < getTime()) {
+		cout << getId() << ": Error! The chosen event execution time is less than the current simulation time." << endl;
+		setErrorMessage(" The chosen event execution time is less than the current simulation time.");
+		Error_found = true;
+		return false;
+	}
     string event_type = (*event_it)->getEventType();
     if(isLoggingEnabled()){
         *Logfile << "Executing " << event_type << " event" << endl;
@@ -2252,7 +2209,6 @@ void OSC_Sim::generateDynamicsExcitons(){
 		reassignSiteEnergies();
 	}
 	// Initialize transient data vectors
-	static const int N_initial_excitons = (int)ceil(Dynamics_initial_exciton_conc*lattice.getVolume());
 	transient_exciton_tags.assign(N_initial_excitons, -1);
 	transient_exciton_energies_prev.assign(N_initial_excitons, 0);
 	transient_electron_tags.clear();
@@ -2821,11 +2777,10 @@ bool OSC_Sim::siteContainsHole(const Coords& coords){
 void OSC_Sim::updateTransientData() {
 	// ToF_positions_prev is a vector that stores the z-position of each charge carrier at the previous time interval
 	// Transient_xxxx_energies_prev is a vector that stores the energies of each object at the previous time interval
-	static const double step_size = 1.0 / (double)Transient_pnts_per_decade;
 	if (Enable_ToF_test) {
 		// Cheeck if enough time has passed since the previous time interval
 		if ((getTime() - Transient_creation_time) > transient_times[Transient_index_prev + 1]) {
-			int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / step_size);
+			int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / Transient_step_size);
 			if (index >= (int)transient_times.size()) {
 				return;
 			}
@@ -2884,7 +2839,7 @@ void OSC_Sim::updateTransientData() {
 	else if (Enable_dynamics_test) {
 		// Calculate data for next time step if enough time has elapsed
 		if ((getTime() - Transient_creation_time) > transient_times[Transient_index_prev + 1]) {
-			int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / step_size);
+			int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / Transient_step_size);
 			if (index >= (int)transient_times.size()) {
 				return;
 			}

@@ -190,6 +190,116 @@ class OSC_Sim : public Simulation{
     protected:
 
     private:
+
+		struct ExcitonEventCalcVars {
+			int range;
+			int dim;
+			Exciton_Hop hop_event;
+			std::vector<Exciton_Hop> hops_temp;
+			Exciton_Dissociation diss_event;
+			std::vector<Exciton_Dissociation> dissociations_temp;
+			Exciton_Exciton_Annihilation ee_annihilation_event;
+			std::vector<Exciton_Exciton_Annihilation> ee_annihilations_temp;
+			Exciton_Polaron_Annihilation ep_annihilation_event;
+			std::vector<Exciton_Polaron_Annihilation> ep_annihilations_temp;
+			std::vector<bool> hops_valid;
+			std::vector<bool> dissociations_valid;
+			std::vector<bool> ee_annihilations_valid;
+			std::vector<bool> ep_annihilations_valid;
+			// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+			std::vector<double> distances;
+			// pre-calculated isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
+			std::vector<bool> isInDissRange;
+			std::vector<bool> isInFRETRange;
+
+			ExcitonEventCalcVars() {}
+
+			ExcitonEventCalcVars(OSC_Sim* sim_ptr) {
+				range = (int)ceil(((sim_ptr->FRET_cutoff > sim_ptr->Exciton_dissociation_cutoff) ? (sim_ptr->FRET_cutoff) : (sim_ptr->Exciton_dissociation_cutoff)) / sim_ptr->lattice.getUnitSize());
+				dim = (2 * range + 1);
+				hop_event = Exciton_Hop(sim_ptr);
+				hops_temp.assign(dim*dim*dim, hop_event);
+				diss_event = Exciton_Dissociation(sim_ptr);
+				dissociations_temp.assign(dim*dim*dim, diss_event);
+				ee_annihilation_event = Exciton_Exciton_Annihilation(sim_ptr);
+				ee_annihilations_temp.assign(dim*dim*dim, ee_annihilation_event);
+				ep_annihilation_event = Exciton_Polaron_Annihilation(sim_ptr);
+				ep_annihilations_temp.assign(dim*dim*dim, ep_annihilation_event);
+				hops_valid.assign(dim*dim*dim, false);
+				dissociations_valid.assign(dim*dim*dim, false);
+				ee_annihilations_valid.assign(dim*dim*dim, false);
+				ep_annihilations_valid.assign(dim*dim*dim, false);
+				// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+				distances.assign(dim*dim*dim, 0.0);
+				// pre-calculated isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
+				isInDissRange.assign(dim*dim*dim, false);
+				isInFRETRange.assign(dim*dim*dim, false);
+				// Initiaize distances, isInDissRange, and isInFRETRange vectors
+				for (int i = -range; i <= range; i++) {
+					for (int j = -range; j <= range; j++) {
+						for (int k = -range; k <= range; k++) {
+							int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
+							distances[index] = sim_ptr->lattice.getUnitSize()*sqrt((double)(i*i + j * j + k * k));
+							if (!((distances[index] - 0.0001) > sim_ptr->Exciton_dissociation_cutoff)) {
+								isInDissRange[index] = true;
+							}
+							if (!((distances[index] - 0.0001) > sim_ptr->FRET_cutoff)) {
+								isInFRETRange[index] = true;
+							}
+						}
+					}
+				}
+			}
+		};
+		ExcitonEventCalcVars exciton_event_calc_vars;
+
+		struct PolaronEventCalcVars {
+			int range;
+			int dim;
+			Polaron_Hop hop_event;
+			std::vector<Polaron_Hop> hops_temp;
+			Polaron_Recombination rec_event;
+			std::vector<Polaron_Recombination> recombinations_temp;
+			std::vector<bool> hops_valid;
+			std::vector<bool> recombinations_valid;
+			// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+			std::vector<double> distances;
+			std::vector<double> E_deltas;
+			// pre-calculated isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
+			std::vector<bool> isInRange;
+
+			PolaronEventCalcVars() {}
+
+			PolaronEventCalcVars(OSC_Sim* sim_ptr) {
+				range = (int)ceil(sim_ptr->Polaron_hopping_cutoff / sim_ptr->lattice.getUnitSize());
+				dim = (2 * range + 1);
+				hop_event = Polaron_Hop(sim_ptr);
+				hops_temp.assign(dim*dim*dim, hop_event);
+				rec_event = Polaron_Recombination(sim_ptr);
+				recombinations_temp.assign(dim*dim*dim, rec_event);
+				hops_valid.assign(dim*dim*dim, false);
+				recombinations_valid.assign(dim*dim*dim, false);
+				// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+				distances.assign(dim*dim*dim, 0.0);
+				E_deltas.assign(dim*dim*dim, 0.0);
+				// pre-calculated isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
+				isInRange.assign(dim*dim*dim, false);
+				// Intialize distances and isInRange vectors
+				for (int i = -range; i <= range; i++) {
+					for (int j = -range; j <= range; j++) {
+						for (int k = -range; k <= range; k++) {
+							int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
+							distances[index] = sim_ptr->lattice.getUnitSize()*sqrt((double)(i*i + j * j + k * k));
+							if (!((distances[index] - 0.0001) > sim_ptr->Polaron_hopping_cutoff)) {
+								isInRange[index] = true;
+							}
+						}
+					}
+				}
+			}
+		};
+		PolaronEventCalcVars polaron_event_calc_vars;
+
         // Additional General Parameters
         double Internal_potential;
         // Morphology Parameters
@@ -296,12 +406,17 @@ class OSC_Sim : public Simulation{
         bool isLightOn;
         double R_exciton_generation_donor;
         double R_exciton_generation_acceptor;
+		double Transient_step_size;
 		double Transient_creation_time;
 		int Transient_index_prev;
 		int Transient_singlet_counts_prev;
 		int Transient_triplet_counts_prev;
 		int Transient_electron_counts_prev;
 		int Transient_hole_counts_prev;
+		int Coulomb_range;
+		double AvgDielectric;
+		double Image_interaction_prefactor;
+		int N_initial_excitons;
         // Site Data Structure
 		std::vector<Site_OSC> sites;
         // Object Data Structures
