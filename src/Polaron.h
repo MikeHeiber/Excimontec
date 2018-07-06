@@ -11,6 +11,8 @@
 #include "Event.h"
 #include <string>
 
+namespace Excimontec {
+
 class Polaron : public Object{
     public:
         static const std::string object_type;
@@ -83,5 +85,7 @@ class Polaron_Extraction : public Event{
 		std::string getEventType() const{return event_type;}
     private:
 };
+
+}
 
 #endif // POLARON_H

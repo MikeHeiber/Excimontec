@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace Utils;
+using namespace Excimontec;
 
 OSC_Sim::OSC_Sim() {
 
