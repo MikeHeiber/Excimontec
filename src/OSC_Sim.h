@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <numeric>
 
+namespace Excimontec {
+
 struct Parameters_OPV : Parameters_Simulation{
     // Additional General Parameters
     double Internal_potential;
@@ -540,5 +542,7 @@ class OSC_Sim : public Simulation{
         bool siteContainsHole(const Coords& coords);
         void updateTransientData();
 };
+
+}
 
 #endif //OSC_SIM_H

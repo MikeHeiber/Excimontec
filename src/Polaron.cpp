@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace Utils;
+using namespace Excimontec;
 
 // Initialize static class members
 const string Polaron::object_type = "Polaron";

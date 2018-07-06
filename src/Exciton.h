@@ -12,6 +12,7 @@
 #include "Simulation.h"
 #include <string>
 
+namespace Excimontec {
 //! \brief This class extends the Object class to create an exciton object to represent a singlet or triplet exciton in an organic semiconductor.
 //! \copyright MIT License.  For more information, see the LICENSE file that accompanies this software package.
 //! \author Michael C. Heiber
@@ -297,5 +298,7 @@ class Exciton_Polaron_Annihilation : public Event{
 
     private:
 };
+
+}
 
 #endif // EXCITON_H

@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace Utils;
+using namespace Excimontec;
 
 namespace OSC_SimTests {
 
