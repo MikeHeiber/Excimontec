@@ -63,7 +63,7 @@ Have a quick question or want to chat about Excimontec?  Join the discussion on 
 #### Building and Testing the Executable
 
 This software tool uses [Message Passing Interface (MPI)](https://computing.llnl.gov/tutorials/mpi/) to utilize parallel computing power. 
-As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excitmontec executable must be built on your specific system. 
+As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excimontec executable must be built on your specific system. 
 We cannot provide pre-built binaries for your system. 
 Contact your HPC admin to determine the protocols for building MPI applications on your HPC system. 
 In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/) or the [PGI compiler](https://www.pgroup.com/). 
@@ -73,11 +73,32 @@ If you wish, you can also install MPI on your own personal workstation and then 
 - MPICH, http://www.mpich.org/
 - MVAPICH, http://mvapich.cse.ohio-state.edu/
 
-Once you have an MPI library installed, to build Excimontec, copy the Excimontec directory to your machine, set it as your working directory, and run `make`. 
-Compilation flags have been set for GCC and PGI compilers.  If you are using another compiler, you will need to edit the makefile and define your own compiler options.
+Once you have an MPI library installed, to build Excimontec, first copy the Excimontec directory to your machine.  On linux this can be done using the command,
+
+```git clone --recurse-submodules https://github.com/MikeHeiber/Excimontec```
+
+Then set Excimontec as your working directory,
+
+```cd Excimontec```
+
+and finally build the software package with the default makefile.
+
+```make```
+
+In the default makefile, compilation flags have been set for the GCC and PGI compilers.  If you are using another compiler, you will need to edit the makefile and define your own compiler options.
 Once the normal build is successful, you should test Excimontec on your own hardware using the unit and system tests provided before you use the tool. 
-Build the testing executable by running `make test`. 
-Once the test build is complete, navigate to the testing directory, and run `./Excimontec_tests.exe`.
+Build the testing executable by running
+
+```make test```
+
+Once the test build is complete, navigate to the testing directory,
+
+```cd test```
+
+and run the test suite.
+
+```./Excimontec_tests.exe```
+
 Please report any build or testing errors in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 
 #### Usage
@@ -91,11 +112,11 @@ Regardless of the job scheduler, the program execution command is essentially th
 Excimontec.exe takes one required input argument, which is the filename of the input parameter file. 
 An example parameter file is provided with this package (parameters_default.txt).
 
-For example, within the batch script, to create a simulation that runs on 10 processors, an the execution command is:
+For example, within the batch script, to create a simulation that runs on 10 processors, the execution command is
 
 ```mpiexec -n 10 Excimontec.exe parameters_default.txt```
 
-In this example, the parameters_default.txt file that is located in the current working directory is loaded into the Excimontec program to determine what simulation to run.
+In this example, the parameters_default.txt file that is located in the current working directory is loaded into the Excimontec program to determine which simulation to run.
 
 #### Output
 
