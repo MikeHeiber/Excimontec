@@ -10,12 +10,12 @@ using namespace Utils;
 using namespace Excimontec;
 
 // Initialize static class members
-const string Exciton::object_type = "Exciton";
-const string Exciton_Creation::event_type = "Exciton Creation";
-const string Exciton_Hop::event_type = "Exciton Hop";
-const string Exciton_Recombination::event_type = "Exciton Recombination";
-const string Exciton_Dissociation::event_type = "Exciton Dissociation";
-const string Exciton_Intersystem_Crossing::event_type = "Exciton Intersystem Crossing";
-const string Exciton_Exciton_Annihilation::event_type = "Exciton-Exciton Annihilation";
-const string Exciton_Polaron_Annihilation::event_type = "Exciton-Polaron Annihilation";
+const string Excimontec::Exciton::object_type = "Exciton";
+const string Excimontec::Exciton_Creation::event_type = "Exciton Creation";
+const string Excimontec::Exciton_Hop::event_type = "Exciton Hop";
+const string Excimontec::Exciton_Recombination::event_type = "Exciton Recombination";
+const string Excimontec::Exciton_Dissociation::event_type = "Exciton Dissociation";
+const string Excimontec::Exciton_Intersystem_Crossing::event_type = "Exciton Intersystem Crossing";
+const string Excimontec::Exciton_Exciton_Annihilation::event_type = "Exciton-Exciton Annihilation";
+const string Excimontec::Exciton_Polaron_Annihilation::event_type = "Exciton-Polaron Annihilation";
 

@@ -10,7 +10,7 @@ using namespace Utils;
 using namespace Excimontec;
 
 // Initialize static class members
-const string Polaron::object_type = "Polaron";
-const string Polaron_Hop::event_type = "Polaron Hop";
-const string Polaron_Recombination::event_type = "Polaron Recombination";
-const string Polaron_Extraction::event_type = "Polaron Extraction";
+const string Excimontec::Polaron::object_type = "Polaron";
+const string Excimontec::Polaron_Hop::event_type = "Polaron Hop";
+const string Excimontec::Polaron_Recombination::event_type = "Polaron Recombination";
+const string Excimontec::Polaron_Extraction::event_type = "Polaron Extraction";
