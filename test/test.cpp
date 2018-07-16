@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace Utils;
+using namespace Excimontec;
 
 namespace OSC_SimTests {
 
@@ -204,8 +205,13 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		params.N_tests = 5000;
 		EXPECT_TRUE(sim.init(params, 0));
+		bool success;
 		while (!sim.checkFinished()) {
-			EXPECT_TRUE(sim.executeNextEvent());
+			success = sim.executeNextEvent();
+			EXPECT_TRUE(success);
+			if (!success) {
+				cout << sim.getErrorMessage() << endl;
+			}
 		}
 		auto lifetime_data = sim.getExcitonLifetimeData();
 		EXPECT_NEAR(params.Singlet_lifetime_donor, vector_avg(lifetime_data), 5e-2*params.Singlet_lifetime_donor);
@@ -237,7 +243,7 @@ namespace OSC_SimTests {
 		auto transit_time_data = sim.getTransitTimeData();
 		auto mobility_data = sim.calculateMobilityData(transit_time_data);
 		double dim = 3.0;
-		double expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0/3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * ( 1 / (K_b*params.Temperature));
+		double expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
 	}
 
@@ -260,7 +266,7 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
 		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
 		auto correlation_data = sim.getDOSCorrelationData();
-		EXPECT_NEAR(1/exp(1), interpolateData(correlation_data, 1.1), 0.05);
+		EXPECT_NEAR(1 / exp(1), interpolateData(correlation_data, 1.1), 0.05);
 		// correlation length = 1.3, Unit_size = 1.2
 		sim = OSC_Sim();
 		params.Unit_size = 1.2;
@@ -280,5 +286,7 @@ namespace OSC_SimTests {
 
 int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
+	// Redirect cout to NULL to suppress command line output during the tests
+	cout.rdbuf(NULL);
 	return RUN_ALL_TESTS();
 }
