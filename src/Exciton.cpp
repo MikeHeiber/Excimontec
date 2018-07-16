@@ -18,4 +18,3 @@ const string Exciton_Dissociation::event_type = "Exciton Dissociation";
 const string Exciton_Intersystem_Crossing::event_type = "Exciton Intersystem Crossing";
 const string Exciton_Exciton_Annihilation::event_type = "Exciton-Exciton Annihilation";
 const string Exciton_Polaron_Annihilation::event_type = "Exciton-Polaron Annihilation";
-
