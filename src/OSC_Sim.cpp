@@ -4,6 +4,7 @@
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 #include "OSC_Sim.h"
+#include <omp.h>
 
 using namespace std;
 using namespace Utils;
@@ -715,7 +716,7 @@ void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr){
 		return;
 	}
     // Determine fastest valid event
-	Event* event_ptr_target;
+	Event* event_ptr_target = nullptr;
 	auto possible_it = min_element(possible_events.begin(), possible_events.end(), [](Event* ptr1, Event* ptr2) {
 		return ptr1->getExecutionTime() < ptr2->getExecutionTime();
 	});
@@ -945,7 +946,7 @@ void OSC_Sim::calculatePolaronEvents(Polaron* polaron_ptr){
         return;
     }
     // Determine the fastest possible event
-	Event* event_ptr_target;
+	Event* event_ptr_target = nullptr;
 	auto possible_it = min_element(possible_events.begin(), possible_events.end(), [](Event* ptr1, Event* ptr2) {
 		return ptr1->getExecutionTime() < ptr2->getExecutionTime();
 	});
@@ -1370,8 +1371,10 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 			energies_temp.assign(vec_size, 0.0);
 			Coords coords = lattice.getSiteCoords(n);
 			// Get nearby site energies and determine if able
+#if defined(_OPENMP)
 			#pragma loop(hint_parallel(2))
 			#pragma loop(ivdep)
+#endif
 			for (int i = -range; i <= range; i++) {
 				for (int j = -range; j <= range; j++) {
 					for (int k = -range; k <= range; k++) {
