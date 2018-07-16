@@ -16,21 +16,21 @@ using namespace std;
 using namespace Utils;
 using namespace Excimontec;
 
-struct Parameters_main{
-    bool Enable_import_morphology_single;
-    string Morphology_filename;
-    bool Enable_import_morphology_set;
-    string Morphology_set_format;
-    int N_test_morphologies;
-    int N_morphology_set_size;
+struct Parameters_main {
+	bool Enable_import_morphology_single;
+	string Morphology_filename;
+	bool Enable_import_morphology_set;
+	string Morphology_set_format;
+	int N_test_morphologies;
+	int N_morphology_set_size;
 	bool Enable_extraction_map_output;
 };
 
 //Declare Functions
-bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameters_OPV& params);
+bool importParameters(ifstream& inputfile, Parameters_main& params_main, Parameters_OPV& params);
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0-beta.4";
+	string version = "v1.0-beta.5";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
@@ -273,7 +273,7 @@ int main(int argc, char *argv[]) {
 	// Output disorder correlation information if correlated disorder is enabled
 	if (params_opv.Enable_correlated_disorder) {
 		auto dos_correlation_data = sim.getDOSCorrelationData();
-		outputVectorToFile(dos_correlation_data, "DOS_correlation_data"+to_string(procid)+".txt");
+		outputVectorToFile(dos_correlation_data, "DOS_correlation_data" + to_string(procid) + ".txt");
 	}
 	// Output result summary for each processor
 	resultsfile.open("results" + to_string(procid) + ".txt");
@@ -375,7 +375,7 @@ int main(int argc, char *argv[]) {
 		exciton_lifetime_data = MPI_gatherVectors(sim.getExcitonLifetimeData());
 		if (procid == 0) {
 			analysisfile << "\nOverall exciton diffusion test results:\n";
-			analysisfile << nproc*(sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
+			analysisfile << nproc * (sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
 			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ± " << vector_stdev(exciton_diffusion_data) << " nm.\n";
 			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params_opv.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params_opv.Unit_size << " nm.\n";
 			analysisfile << "Exciton lifetime is " << vector_avg(exciton_lifetime_data) << " ± " << vector_stdev(exciton_lifetime_data) << " s.\n";
@@ -406,7 +406,7 @@ int main(int argc, char *argv[]) {
 			ofstream transientfile;
 			transientfile.open("ToF_average_transients.txt");
 			transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
-			double volume_total = N_transient_cycles_sum*sim.getVolume();
+			double volume_total = N_transient_cycles_sum * sim.getVolume();
 			for (int i = 0; i < (int)velocities.size(); i++) {
 				if ((double)counts[i] > 0.95*counts[0]) {
 					transientfile << times[i] << "," << 1000.0 * Elementary_charge*velocities[i] / volume_total << "," << (velocities[i] / (double)counts[i]) / electric_field << "," << energies[i] / (double)counts[i] << "," << (double)counts[i] / volume_total << endl;
@@ -431,12 +431,12 @@ int main(int argc, char *argv[]) {
 			// Analysis Output
 			analysisfile << "\nOverall time-of-flight charge transport test results:\n";
 			if (!params_opv.ToF_polaron_type) {
-				analysisfile << nproc*sim.getN_electrons_collected() << " total electrons collected out of " << transit_attempts_total << " total attempts.\n";
+				analysisfile << nproc * sim.getN_electrons_collected() << " total electrons collected out of " << transit_attempts_total << " total attempts.\n";
 			}
 			else {
-				analysisfile << nproc*sim.getN_holes_collected() << " total holes collected out of " << transit_attempts_total << " total attempts.\n";
+				analysisfile << nproc * sim.getN_holes_collected() << " total holes collected out of " << transit_attempts_total << " total attempts.\n";
 			}
-			
+
 			analysisfile << "Transit time is " << vector_avg(transit_times_all) << " ± " << vector_stdev(transit_times_all) << " s.\n";
 			analysisfile << "Charge carrier mobility is " << vector_avg(mobility_data_all) << " ± " << vector_stdev(mobility_data_all) << " cm^2 V^-1 s^-1.\n";
 		}
@@ -463,13 +463,13 @@ int main(int argc, char *argv[]) {
 			transientfile << ",Average Exciton Energy (eV),Exciton MSDV (cm^2 s^-1)";
 			transientfile << ",Average Electron Energy (eV),Electron MSDV (cm^2 s^-1)";
 			transientfile << ",Average Hole Energy (eV),Hole MSDV (cm^2 s^-1)" << endl;
-			double volume_total = N_transient_cycles_sum*sim.getVolume();
+			double volume_total = N_transient_cycles_sum * sim.getVolume();
 			for (int i = 0; i < (int)times.size(); i++) {
 				transientfile << times[i] << "," << singlets_total[i] / volume_total << "," << triplets_total[i] / volume_total << "," << electrons_total[i] / volume_total << "," << holes_total[i] / volume_total;
 				if ((singlets_total[i] + triplets_total[i]) > 0 && (singlets_total[i] + triplets_total[i]) > 5 * N_transient_cycles_sum) {
 					transientfile << "," << exciton_energies[i] / (singlets_total[i] + triplets_total[i]) << "," << exciton_msdv[i] / (singlets_total[i] + triplets_total[i]);
 				}
-				else if ((singlets_total[i] + triplets_total[i]) > 0 ) {
+				else if ((singlets_total[i] + triplets_total[i]) > 0) {
 					transientfile << "," << "NaN" << "," << exciton_msdv[i] / (singlets_total[i] + triplets_total[i]);
 				}
 				else {
@@ -583,23 +583,23 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameters_OPV& params){
-    string line;
-    string var;
-    size_t pos;
-    vector<string> stringvars;
-    bool error_status = false;
-    while(inputfile.good()){
-        getline(inputfile,line);
-        if((line.substr(0,2)).compare("--")!=0 && (line.substr(0,2)).compare("##")!=0 && line.compare("")!=0){
-            pos = line.find_first_of("/",0);
-            var = line.substr(0,pos);
+bool importParameters(ifstream& inputfile, Parameters_main& params_main, Parameters_OPV& params) {
+	string line;
+	string var;
+	size_t pos;
+	vector<string> stringvars;
+	bool error_status = false;
+	while (inputfile.good()) {
+		getline(inputfile, line);
+		if ((line.substr(0, 2)).compare("--") != 0 && (line.substr(0, 2)).compare("##") != 0 && line.compare("") != 0) {
+			pos = line.find_first_of("/", 0);
+			var = line.substr(0, pos);
 			var = removeWhitespace(var);
-            stringvars.push_back(var);
-        }
-    }
-    int i = 0;
-    // Simulation Parameters
+			stringvars.push_back(var);
+		}
+	}
+	int i = 0;
+	// Simulation Parameters
 	params.Enable_logging = false;
 	// KMC Algorithm Parameters
 	params.Enable_FRM = importBooleanParam(stringvars[i], error_status);
@@ -622,112 +622,112 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 		return false;
 	}
 	i++;
-    //enable_periodic_x
-    params.Enable_periodic_x = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting x-periodic boundary options" << endl;
-        return false;
-    }
-    i++;
-    //enable_periodic_y
-    params.Enable_periodic_y = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting y-periodic boundary options" << endl;
-        return false;
-    }
-    i++;
-    //enable_periodic_z
-    params.Enable_periodic_z = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting z-periodic boundary options" << endl;
-        return false;
-    }
-    i++;
-    params.Length = atoi(stringvars[i].c_str());
-    i++;
-    params.Width = atoi(stringvars[i].c_str());
-    i++;
-    params.Height = atoi(stringvars[i].c_str());
-    i++;
-    params.Unit_size = atof(stringvars[i].c_str());
-    i++;
-    params.Temperature = atoi(stringvars[i].c_str());
-    i++;
+	//enable_periodic_x
+	params.Enable_periodic_x = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting x-periodic boundary options" << endl;
+		return false;
+	}
+	i++;
+	//enable_periodic_y
+	params.Enable_periodic_y = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting y-periodic boundary options" << endl;
+		return false;
+	}
+	i++;
+	//enable_periodic_z
+	params.Enable_periodic_z = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting z-periodic boundary options" << endl;
+		return false;
+	}
+	i++;
+	params.Length = atoi(stringvars[i].c_str());
+	i++;
+	params.Width = atoi(stringvars[i].c_str());
+	i++;
+	params.Height = atoi(stringvars[i].c_str());
+	i++;
+	params.Unit_size = atof(stringvars[i].c_str());
+	i++;
+	params.Temperature = atoi(stringvars[i].c_str());
+	i++;
 	params.Internal_potential = atof(stringvars[i].c_str());
 	i++;
-    // Film Architecture Parameters
-    params.Enable_neat = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling neat film architecture." << endl;
-        return false;
-    }
-    i++;
-    params.Enable_bilayer = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling bilayer film architecture." << endl;
-        return false;
-    }
-    i++;
-    params.Thickness_donor = atoi(stringvars[i].c_str());
-    i++;
-    params.Thickness_acceptor = atoi(stringvars[i].c_str());
-    i++;
-    params.Enable_random_blend = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling random blend film architecture." << endl;
-        return false;
-    }
-    i++;
-    params.Acceptor_conc = atof(stringvars[i].c_str());;
-    i++;
-    params_main.Enable_import_morphology_single = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling morphology import." << endl;
-        return false;
-    }
-    i++;
-    params_main.Morphology_filename = stringvars[i];
-    i++;
-    params_main.Enable_import_morphology_set = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling morphology set import." << endl;
-        return false;
-    }
-    i++;
-    params_main.Morphology_set_format = stringvars[i];
-    i++;
-    params_main.N_test_morphologies = atoi(stringvars[i].c_str());
-    i++;
-    params_main.N_morphology_set_size = atoi(stringvars[i].c_str());
-    i++;
-    // Test Parameters
-    params.N_tests = atoi(stringvars[i].c_str());
-    i++;
-    params.Enable_exciton_diffusion_test = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling the exciton diffusion test." << endl;
-        return false;
-    }
-    i++;
-    params.Enable_ToF_test = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling the time-of-flight polaron transport test." << endl;
-        return false;
-    }
-    i++;
-    if(stringvars[i].compare("electron")==0){
-        params.ToF_polaron_type = false;
-    }
-    else if(stringvars[i].compare("hole")==0){
-        params.ToF_polaron_type = true;
-    }
-    else{
-        cout << "Error setting polaron type for the time-of-flight test." << endl;
-        return false;
-    }
-    i++;
-    params.ToF_initial_polarons = atoi(stringvars[i].c_str());
-    i++;
+	// Film Architecture Parameters
+	params.Enable_neat = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling neat film architecture." << endl;
+		return false;
+	}
+	i++;
+	params.Enable_bilayer = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling bilayer film architecture." << endl;
+		return false;
+	}
+	i++;
+	params.Thickness_donor = atoi(stringvars[i].c_str());
+	i++;
+	params.Thickness_acceptor = atoi(stringvars[i].c_str());
+	i++;
+	params.Enable_random_blend = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling random blend film architecture." << endl;
+		return false;
+	}
+	i++;
+	params.Acceptor_conc = atof(stringvars[i].c_str());;
+	i++;
+	params_main.Enable_import_morphology_single = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling morphology import." << endl;
+		return false;
+	}
+	i++;
+	params_main.Morphology_filename = stringvars[i];
+	i++;
+	params_main.Enable_import_morphology_set = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling morphology set import." << endl;
+		return false;
+	}
+	i++;
+	params_main.Morphology_set_format = stringvars[i];
+	i++;
+	params_main.N_test_morphologies = atoi(stringvars[i].c_str());
+	i++;
+	params_main.N_morphology_set_size = atoi(stringvars[i].c_str());
+	i++;
+	// Test Parameters
+	params.N_tests = atoi(stringvars[i].c_str());
+	i++;
+	params.Enable_exciton_diffusion_test = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling the exciton diffusion test." << endl;
+		return false;
+	}
+	i++;
+	params.Enable_ToF_test = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling the time-of-flight polaron transport test." << endl;
+		return false;
+	}
+	i++;
+	if (stringvars[i].compare("electron") == 0) {
+		params.ToF_polaron_type = false;
+	}
+	else if (stringvars[i].compare("hole") == 0) {
+		params.ToF_polaron_type = true;
+	}
+	else {
+		cout << "Error setting polaron type for the time-of-flight test." << endl;
+		return false;
+	}
+	i++;
+	params.ToF_initial_polarons = atoi(stringvars[i].c_str());
+	i++;
 	params.Enable_ToF_random_placement = importBooleanParam(stringvars[i], error_status);
 	if (error_status) {
 		cout << "Error enabling ToF random placement option." << endl;
@@ -742,63 +742,63 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 	i++;
 	params.ToF_placement_energy = atof(stringvars[i].c_str());
 	i++;
-    params.ToF_transient_start = atof(stringvars[i].c_str());
-    i++;
-    params.ToF_transient_end = atof(stringvars[i].c_str());
-    i++;
-    params.ToF_pnts_per_decade = atoi(stringvars[i].c_str());
-    i++;
-    params.Enable_IQE_test = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling the internal quantum efficiency test." << endl;
-        return false;
-    }
-    i++;
-    params.IQE_time_cutoff = atof(stringvars[i].c_str());
-    i++;
+	params.ToF_transient_start = atof(stringvars[i].c_str());
+	i++;
+	params.ToF_transient_end = atof(stringvars[i].c_str());
+	i++;
+	params.ToF_pnts_per_decade = atoi(stringvars[i].c_str());
+	i++;
+	params.Enable_IQE_test = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling the internal quantum efficiency test." << endl;
+		return false;
+	}
+	i++;
+	params.IQE_time_cutoff = atof(stringvars[i].c_str());
+	i++;
 	params_main.Enable_extraction_map_output = importBooleanParam(stringvars[i], error_status);
 	if (error_status) {
 		cout << "Error setting charge extraction map output settings." << endl;
 		return false;
 	}
 	i++;
-    params.Enable_dynamics_test = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error enabling the dynamics test." << endl;
-        return false;
-    }
-    i++;
-    params.Enable_dynamics_extraction = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting dynamics test extraction option." << endl;
-        return false;
-    }
-    i++;
-    params.Dynamics_initial_exciton_conc = atof(stringvars[i].c_str());
-    i++;
-    params.Dynamics_transient_start = atof(stringvars[i].c_str());
-    i++;
-    params.Dynamics_transient_end = atof(stringvars[i].c_str());
-    i++;
-    params.Dynamics_pnts_per_decade = atoi(stringvars[i].c_str());
-    i++;
-    // Exciton Parameters
-    params.Exciton_generation_rate_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Exciton_generation_rate_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.Singlet_lifetime_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Singlet_lifetime_acceptor = atof(stringvars[i].c_str());
-    i++;
+	params.Enable_dynamics_test = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error enabling the dynamics test." << endl;
+		return false;
+	}
+	i++;
+	params.Enable_dynamics_extraction = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting dynamics test extraction option." << endl;
+		return false;
+	}
+	i++;
+	params.Dynamics_initial_exciton_conc = atof(stringvars[i].c_str());
+	i++;
+	params.Dynamics_transient_start = atof(stringvars[i].c_str());
+	i++;
+	params.Dynamics_transient_end = atof(stringvars[i].c_str());
+	i++;
+	params.Dynamics_pnts_per_decade = atoi(stringvars[i].c_str());
+	i++;
+	// Exciton Parameters
+	params.Exciton_generation_rate_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Exciton_generation_rate_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Singlet_lifetime_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Singlet_lifetime_acceptor = atof(stringvars[i].c_str());
+	i++;
 	params.Triplet_lifetime_donor = atof(stringvars[i].c_str());
 	i++;
 	params.Triplet_lifetime_acceptor = atof(stringvars[i].c_str());
 	i++;
-    params.R_singlet_hopping_donor = atof(stringvars[i].c_str());
-    i++;
-    params.R_singlet_hopping_acceptor = atof(stringvars[i].c_str());
-    i++;
+	params.R_singlet_hopping_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_singlet_hopping_acceptor = atof(stringvars[i].c_str());
+	i++;
 	params.Singlet_localization_donor = atof(stringvars[i].c_str());
 	i++;
 	params.Singlet_localization_acceptor = atof(stringvars[i].c_str());
@@ -825,18 +825,18 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 	i++;
 	params.R_exciton_polaron_annihilation_acceptor = atof(stringvars[i].c_str());
 	i++;
-    params.FRET_cutoff = atoi(stringvars[i].c_str());
-    i++;
-    params.E_exciton_binding_donor = atof(stringvars[i].c_str());
-    i++;
-    params.E_exciton_binding_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.R_exciton_dissociation_donor = atof(stringvars[i].c_str());
-    i++;
-    params.R_exciton_dissociation_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.Exciton_dissociation_cutoff = atoi(stringvars[i].c_str());
-    i++;
+	params.FRET_cutoff = atoi(stringvars[i].c_str());
+	i++;
+	params.E_exciton_binding_donor = atof(stringvars[i].c_str());
+	i++;
+	params.E_exciton_binding_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_dissociation_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_exciton_dissociation_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Exciton_dissociation_cutoff = atoi(stringvars[i].c_str());
+	i++;
 	params.R_exciton_isc_donor = atof(stringvars[i].c_str());
 	i++;
 	params.R_exciton_isc_acceptor = atof(stringvars[i].c_str());
@@ -849,80 +849,80 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 	i++;
 	params.E_exciton_ST_acceptor = atof(stringvars[i].c_str());
 	i++;
-    // Polaron Parameters
-    params.Enable_phase_restriction = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting polaron phase restriction option." << endl;
-        return false;
-    }
-    i++;
-    params.R_polaron_hopping_donor = atof(stringvars[i].c_str());
-    i++;
-    params.R_polaron_hopping_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.Polaron_localization_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.Enable_miller_abrahams = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting Miller-Abrahams polaron hopping model options" << endl;
-        return false;
-    }
-    i++;
-    params.Enable_marcus = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting Marcus polaron hopping model options" << endl;
-        return false;
-    }
-    i++;
-    params.Reorganization_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Reorganization_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.R_polaron_recombination = atof(stringvars[i].c_str());
-    i++;
-    params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
-    i++;
-    params.Enable_gaussian_polaron_delocalization = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting Gaussian polaron delocalization option." << endl;
-        return false;
-    }
-    i++;
-    params.Polaron_delocalization_length = atof(stringvars[i].c_str());
-    i++;
-    // Lattice Parameters
-    params.Homo_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Lumo_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Homo_acceptor = atof(stringvars[i].c_str());
-    i++;
-    params.Lumo_acceptor = atof(stringvars[i].c_str());
-    i++;
-    //enable_gaussian_dos
-    params.Enable_gaussian_dos = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting Gaussian DOS options" << endl;
-        return false;
-    }
-    i++;
-    params.Energy_stdev_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Energy_stdev_acceptor = atof(stringvars[i].c_str());
-    i++;
-    //enable_exponential_dos
-    params.Enable_exponential_dos = importBooleanParam(stringvars[i],error_status);
-    if(error_status){
-        cout << "Error setting Exponential DOS options" << endl;
-        return false;
-    }
-    i++;
-    params.Energy_urbach_donor = atof(stringvars[i].c_str());
-    i++;
-    params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
-    i++;
+	// Polaron Parameters
+	params.Enable_phase_restriction = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting polaron phase restriction option." << endl;
+		return false;
+	}
+	i++;
+	params.R_polaron_hopping_donor = atof(stringvars[i].c_str());
+	i++;
+	params.R_polaron_hopping_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Polaron_localization_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Enable_miller_abrahams = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Miller-Abrahams polaron hopping model options" << endl;
+		return false;
+	}
+	i++;
+	params.Enable_marcus = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Marcus polaron hopping model options" << endl;
+		return false;
+	}
+	i++;
+	params.Reorganization_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Reorganization_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.R_polaron_recombination = atof(stringvars[i].c_str());
+	i++;
+	params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
+	i++;
+	params.Enable_gaussian_polaron_delocalization = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Gaussian polaron delocalization option." << endl;
+		return false;
+	}
+	i++;
+	params.Polaron_delocalization_length = atof(stringvars[i].c_str());
+	i++;
+	// Lattice Parameters
+	params.Homo_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Lumo_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Homo_acceptor = atof(stringvars[i].c_str());
+	i++;
+	params.Lumo_acceptor = atof(stringvars[i].c_str());
+	i++;
+	//enable_gaussian_dos
+	params.Enable_gaussian_dos = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Gaussian DOS options" << endl;
+		return false;
+	}
+	i++;
+	params.Energy_stdev_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Energy_stdev_acceptor = atof(stringvars[i].c_str());
+	i++;
+	//enable_exponential_dos
+	params.Enable_exponential_dos = importBooleanParam(stringvars[i], error_status);
+	if (error_status) {
+		cout << "Error setting Exponential DOS options" << endl;
+		return false;
+	}
+	i++;
+	params.Energy_urbach_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
+	i++;
 	//enable_correlated_disorder
 	params.Enable_correlated_disorder = importBooleanParam(stringvars[i], error_status);
 	if (error_status) {
@@ -948,11 +948,11 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 	i++;
 	params.Power_kernel_exponent = atoi(stringvars[i].c_str());
 	i++;
-    // Coulomb Calculation Parameters
-    params.Dielectric_donor = atof(stringvars[i].c_str());
-    //i++;
-    params.Dielectric_acceptor = atof(stringvars[i].c_str());
-    i++;
+	// Coulomb Calculation Parameters
+	params.Dielectric_donor = atof(stringvars[i].c_str());
+	//i++;
+	params.Dielectric_acceptor = atof(stringvars[i].c_str());
+	i++;
 	//enable_coulomb_maximum
 	bool Enable_Coulomb_maximum = importBooleanParam(stringvars[i], error_status);
 	if (error_status) {
@@ -967,8 +967,8 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 		return false;
 	}
 	i++;
-    params.Coulomb_cutoff = atoi(stringvars[i].c_str());
-    i++;
+	params.Coulomb_cutoff = atoi(stringvars[i].c_str());
+	i++;
 	if (Enable_Coulomb_maximum && Enable_Coulomb_cutoff) {
 		cout << "Error! Cannot enable both the maximum Coulomb cutoff and enable use of a sepcific cutoff distance." << endl;
 		return false;
@@ -981,7 +981,7 @@ bool importParameters(ifstream& inputfile,Parameters_main& params_main,Parameter
 		auto vec = { params.Length, params.Width, params.Height };
 		params.Coulomb_cutoff = (int)floor(*min_element(vec.begin(), vec.end()) / 2.0);
 	}
-    return true;
+	return true;
 }
 
 
