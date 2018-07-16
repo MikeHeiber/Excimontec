@@ -4,7 +4,6 @@
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 #include "OSC_Sim.h"
-#include <omp.h>
 
 using namespace std;
 using namespace Utils;
