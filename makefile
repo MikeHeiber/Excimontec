@@ -5,10 +5,17 @@
 
 ifeq ($(lastword $(subst /, ,$(CXX))),g++)
 	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc -IKMC_Lattice/src
+	ifdef ENABLE_OMP
+		FLAGS += -openmp
+	endif
 endif
 ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
-	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -fopenmp -I. -Isrc -IKMC_Lattice/src
+	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc -IKMC_Lattice/src
+	ifdef ENABLE_OMP
+		FLAGS += -mp
+	endif
 endif
+
 
 OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o
 
