@@ -64,6 +64,12 @@ class Exciton_Creation : public Event{
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Creation(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
+		//! \brief Calculates the rate constant for the exciton creation event.
+		//! \param rate is the rate constant for the transition.
+		void calculateRateConstant(const double rate) {
+			rate_constant = rate;
+		}
+
 		//! \brief Gets the event type string that denotes what type of Event class this is.
 		//! \returns The string "Exciton_Creation".
 		std::string getEventType() const{return event_type;}
@@ -87,29 +93,27 @@ class Exciton_Hop : public Event{
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Hop(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
-		//! \brief Calculates and updates the execution time for the exciton hop event using the FRET hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton hop event using the FRET hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param distance is the distance between the starting site and destination site.
 		//! \param E_delta is the potential energy change that would occur if the event is executed.
-		void calculateExecutionTime(const double prefactor, const double distance, const double E_delta) {
-			double rate = prefactor*Utils::intpow(1.0 / distance, 6);
+		void calculateRateConstant(const double prefactor, const double distance, const double E_delta) {
+			rate_constant = prefactor*Utils::intpow(1.0 / distance, 6);
 			if (E_delta > 0) {
-				rate *= exp(-E_delta / (Utils::K_b*sim_ptr->getTemp()));
+				rate_constant *= exp(-E_delta / (Utils::K_b*sim_ptr->getTemp()));
 			}
-			Event::calculateExecutionTime(rate);
 		}
 
-		//! \brief Calculates and updates the execution time for the exciton hop event using the Dexter hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton hop event using the Dexter hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param localization is the inverse localization parameter that describes how localized the exciton is.
 		//! \param distance is the distance between the starting site and destination site.
 		//! \param E_delta is the potential energy change that would occur if the event is executed.
-		void calculateExecutionTime(const double prefactor, const double localization, const double distance, const double E_delta) {
-			double rate = prefactor*exp(-2.0*localization*distance);
+		void calculateRateConstant(const double prefactor, const double localization, const double distance, const double E_delta) {
+			rate_constant = prefactor*exp(-2.0*localization*distance);
 			if (E_delta>0) {
-				rate *= exp(-E_delta / (Utils::K_b*sim_ptr->getTemp()));
+				rate_constant *= exp(-E_delta / (Utils::K_b*sim_ptr->getTemp()));
 			}
-			Event::calculateExecutionTime(rate);
 		}
 
 		//! \brief Gets the event type string that denotes what type of Event class this is.
@@ -135,6 +139,12 @@ class Exciton_Recombination : public Event{
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Recombination(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
+		//! \brief Calculates the rate constant for the exciton recombination event.
+		//! \param rate is the rate constant for the transition.
+		void calculateRateConstant(const double rate) {
+			rate_constant = rate;
+		}
+
 		//! \brief Gets the event type string that denotes what type of Event class this is.
 		//! \returns The string "Exciton_Recombination".
 		std::string getEventType() const{return event_type;}
@@ -158,28 +168,26 @@ class Exciton_Dissociation : public Event{
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Dissociation(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
-		//! \brief Calculates and updates the execution time for the exciton dissociation event using the Miller-Abrahams polaron hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton dissociation event using the Miller-Abrahams polaron hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param localization is the inverse localization parameter that describes how localized the exciton is.
 		//! \param distance is the distance between the starting site and destination site.
 		//! \param E_delta is the potential energy change that would occur if the event is executed.
-        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta){
-            double rate = prefactor*exp(-2.0*localization*distance);
+        void calculateRateConstant(const double prefactor,const double localization,const double distance,const double E_delta){
+            rate_constant = prefactor*exp(-2.0*localization*distance);
             if(E_delta>0){
-                rate *= exp(-E_delta/(Utils::K_b*sim_ptr->getTemp()));
+                rate_constant *= exp(-E_delta/(Utils::K_b*sim_ptr->getTemp()));
             }
-            Event::calculateExecutionTime(rate);
         }
 
-		//! \brief Calculates and updates the execution time for the exciton dissociation event using the Marcus polaron hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton dissociation event using the Marcus polaron hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param localization is the inverse localization parameter that describes how localized the exciton is.
 		//! \param distance is the distance between the starting site and destination site.
 		//! \param E_delta is the potential energy change that would occur if the event is executed.
 		//! \param reorganization is the reorganization energy for the Marcus electron transfer mechanism.
-        void calculateExecutionTime(const double prefactor,const double localization,const double distance,const double E_delta,const double reorganization){
-            double rate = (prefactor/sqrt(4.0*Utils::Pi*reorganization*Utils::K_b*sim_ptr->getTemp()))*exp(-2.0*localization*distance)*exp(-Utils::intpow(reorganization+E_delta,2)/(4.0*reorganization*Utils::K_b*sim_ptr->getTemp()));
-            Event::calculateExecutionTime(rate);
+        void calculateRateConstant(const double prefactor,const double localization,const double distance,const double E_delta,const double reorganization){
+            rate_constant = (prefactor/sqrt(4.0*Utils::Pi*reorganization*Utils::K_b*sim_ptr->getTemp()))*exp(-2.0*localization*distance)*exp(-Utils::intpow(reorganization+E_delta,2)/(4.0*reorganization*Utils::K_b*sim_ptr->getTemp()));
         }
 
 		//! \brief Gets the event type string that denotes what type of Event class this is.
@@ -205,15 +213,14 @@ class Exciton_Intersystem_Crossing : public Event {
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Intersystem_Crossing(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
-		//! \brief Calculates and updates the execution time for the exciton intersystem crossing event.
+		//! \brief Calculates the rate constant for the exciton intersystem crossing event.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param E_delta is the potential energy change that would occur if the event is executed.
-		void calculateExecutionTime(const double prefactor, const double E_delta) {
-			double rate = prefactor;
+		void calculateRateConstant(const double prefactor, const double E_delta) {
+			rate_constant = prefactor;
 			if (E_delta>0) {
-				rate *= exp(-E_delta / (Utils::K_b*sim_ptr->getTemp()));
+				rate_constant *= exp(-E_delta / (Utils::K_b*sim_ptr->getTemp()));
 			}
-			Event::calculateExecutionTime(rate);
 		}
 
 		//! \brief Gets the event type string that denotes what type of Event class this is.
@@ -239,19 +246,19 @@ class Exciton_Exciton_Annihilation : public Event{
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Exciton_Annihilation(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
-		//! \brief Calculates and updates the execution time for the exciton-exciton annihilation event using a FRET hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton-exciton annihilation event using a FRET hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param distance is the distance between the starting site and destination site.
-		void calculateExecutionTime(const double prefactor, const double distance) {
-			Event::calculateExecutionTime(prefactor*Utils::intpow(1.0 / distance, 6));
+		void calculateRateConstant(const double prefactor, const double distance) {
+			rate_constant = prefactor*Utils::intpow(1.0 / distance, 6);
 		}
 
-		//! \brief Calculates and updates the execution time for the exciton-exciton annihilation event using the Dexter hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton-exciton annihilation event using the Dexter hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param localization is the inverse localization parameter that describes how localized the exciton is.
 		//! \param distance is the distance between the starting site and destination site.
-		void calculateExecutionTime(const double prefactor, const double localization, const double distance) {
-			Event::calculateExecutionTime(prefactor*exp(-2.0*localization*distance));
+		void calculateRateConstant(const double prefactor, const double localization, const double distance) {
+			rate_constant = prefactor*exp(-2.0*localization*distance);
 		}
 
 		//! \brief Gets the event type string that denotes what type of Event class this is.
@@ -277,19 +284,19 @@ class Exciton_Polaron_Annihilation : public Event{
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Polaron_Annihilation(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
-		//! \brief Calculates and updates the execution time for the exciton-polaron annihilation event using a FRET hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton-polaron annihilation event using a FRET hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param distance is the distance between the starting site and destination site.
-		void calculateExecutionTime(const double prefactor, const double distance) {
-			Event::calculateExecutionTime(prefactor*Utils::intpow(1.0 / distance, 6));
+		void calculateRateConstant(const double prefactor, const double distance) {
+			rate_constant = prefactor*Utils::intpow(1.0 / distance, 6);
 		}
 
-		//! \brief Calculates and updates the execution time for the exciton-polaron annihilation event using the Dexter hopping mechanism.
+		//! \brief Calculates the rate constant for the exciton-polaron annihilation event using the Dexter hopping mechanism.
 		//! \param prefactor is the rate constant prefactor for the transition.
 		//! \param localization is the inverse localization parameter that describes how localized the exciton is.
 		//! \param distance is the distance between the starting site and destination site.
-		void calculateExecutionTime(const double prefactor, const double localization, const double distance) {
-			Event::calculateExecutionTime(prefactor*exp(-2.0*localization*distance));
+		void calculateRateConstant(const double prefactor, const double localization, const double distance) {
+			rate_constant = prefactor*exp(-2.0*localization*distance);
 		}
 
 		//! \brief Gets the event type string that denotes what type of Event class this is.
