@@ -11,83 +11,82 @@
 #include <map>
 
 namespace Excimontec {
-	
-  class Version {
-    private:
-      int major_ = 1;
-      int minor_ = 0;
-      int bug_release_ = 5;
-      std::string release_type_ = "beta";
-			static const std::map<std::string,int> key_type_ = {
+
+	class Version {
+		private:
+			int major_ = 1;
+			int minor_ = 0;
+			int bug_release_ = 5;
+			std::string release_type_ = "beta";
+			std::map<std::string,int> key_type_ = {
 				{"beta",0},
 				{"alpha",1}};
-		
-    public:
-			setVersion(std::string version){
+
+		public:
+
+			void setVersion(std::string version){
 				std::replace(version.begin(),version.end(),'v',' ');
 				std::replace(version.begin(),version.end(),'.',' ');
 				std::replace(version.begin(),version.end(),'-',' ');
-				istringstream iss(version);
-				iss >> major;
-				iss >> minor;
+				std::istringstream iss(version);
+				iss >> major_;
+				iss >> minor_;
 				iss >> release_type_;
 				iss >> bug_release_;
 			}
-      const int getMajor(){return major_;}
-      const int getMinor(){return minor_;}
-      const int getBugRelease(){return bug_release_;}
-      const std::string getReleaseType(){return release_type_;}
-      const std::string getVersion(){
-        return "v"+to_string(major)+"."+to_string(minor)+"-"
-          release_type_+"."+to_string(bug_release_);
 
-			friend bool operator==(const Version &v1, const Version &v2);
-			friend bool operator!=(const Version &v1, const Version &v2);
-			friend bool operator>(const Version &v1, const Version &v2);
-			friend bool operator>(const Version &v1, const Version &v2);
-			friend bool operator<=(const Version &v1, const Version &v2);
-			friend bool operator<=(const Version &v1, const Version &v2);
+			int getMajor() const {return major_;}
+			int getMinor() const {return minor_;}
+			int getBugRelease() const {return bug_release_;}
 
-      }
-  };
+			std::string getReleaseType() const {return release_type_;}
+
+			std::string getVersion() const {
+				return "v"+std::to_string(major_)+"."+std::to_string(minor_)+"-"+
+					release_type_+"."+std::to_string(bug_release_);
+			}
+
+			friend bool operator==(const Version &v1,const Version &v2){
+
+				if(v1.major_!=v2.major_) return false;
+				if(v1.minor_!=v2.minor_) return false;
+				if(v1.bug_release_!=v2.bug_release_) return false;
+				if(v1.release_type_.compare(v2.release_type_)!=0) return false;
+				return true;
+			}
+
+			friend bool operator!=(const Version &v1,const Version &v2){ 
+				return !(v1==v2);
+			}
+
+			friend bool operator<(const Version &v1,const Version &v2){
+				if(v1==v2) return false;
+				return ((v1>v2) ? false : true );
+			}
+
+			friend bool operator>(const Version &v1,const Version &v2){
+				return ((v1<=v2) ? false : true );
+			}
+
+			friend bool operator<=(const Version &v1,const Version &v2){
+
+				if(v1.major_>v2.major_) return false;
+				if(v1.minor_>v2.minor_) return false;
+				if(v1.key_type_.at(v1.release_type_)>v2.key_type_.at(v2.release_type_)){
+					return false;
+				}
+				if(v1.bug_release_>v2.bug_release_) return false;
+				return true;
+			}
+
+			friend bool operator>=(const Version &v1,const Version &v2){
+				return ((v1<v2) ? false : true);
+			}
+
+	};
 
 	// The default is the current version
 	const Version current_version;
 
-	bool operator==(const Version &v1, const Version &v2){
-		if(v1.major_!=v2.major_) return false;
-		if(v1.minor_!=v2.minor_) return false;
-		if(v1.bug_release_!=v2.bug_release_) return false;
-		if(v1.release_type_.compare(v2.release_type_)!=0) return false;
-		return true;
-	}
-
-	bool operator!=(const Version &v1, const Version &v2){ return !(v1==v2);}
-	
-	bool operator<(const Version &v1, const Version &v2){
-		if(v1.major_>v2.major_) return false;
-		if(v1.minor_>v2.minor_) return false;
-		if(key_type_[v1.release_type_]>key_type_[v2.release_type_]) return false;
-		if(v1.bug_release_>v2.bug_release_) return false;
-		if(v1==v2) return false;
-		return true;
-	}
-
-	bool operator<=(const Version &v1, const Version &v2){
-		if(v1==v2) return true;
-		if(v1<v2) return true;
-		return false;
-	}
-
-	bool operator>(const Version &v1, const Version &v2){
-		if(v1<=v2) return false;
-		return true;
-	}
-
-	bool operator>=(const Version &v1, const Version &v2){
-		if(v1<v2) return true;
-		return false;
-	}
 }
-
 #endif // EXCIMONTEC_VERSION_H
