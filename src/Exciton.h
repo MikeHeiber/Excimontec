@@ -64,12 +64,6 @@ namespace Excimontec {
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Creation(Simulation* simulation_ptr) : Event(simulation_ptr) {}
 
-		//! \brief Calculates the rate constant for the exciton creation event.
-		//! \param rate is the rate constant for the transition.
-		void calculateRateConstant(const double rate) {
-			rate_constant = rate;
-		}
-
 		//! \brief Gets the event type string that denotes what type of Event class this is.
 		//! \returns The string "Exciton_Creation".
 		std::string getEventType() const { return event_type; }
@@ -138,12 +132,6 @@ namespace Excimontec {
 		//! \brief Constructs and initializes an event.
 		//! \param simulation_ptr is a pointer to the Simulation object that is associated with the event.
 		Exciton_Recombination(Simulation* simulation_ptr) : Event(simulation_ptr) {}
-
-		//! \brief Calculates the rate constant for the exciton recombination event.
-		//! \param rate is the rate constant for the transition.
-		void calculateRateConstant(const double rate) {
-			rate_constant = rate;
-		}
 
 		//! \brief Gets the event type string that denotes what type of Event class this is.
 		//! \returns The string "Exciton_Recombination".
