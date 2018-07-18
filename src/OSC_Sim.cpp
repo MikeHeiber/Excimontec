@@ -1310,8 +1310,8 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 			energies_temp.assign(vec_size, 0.0);
 			Coords coords = lattice.getSiteCoords(n);
 			// Get nearby site energies and determine if able
-#pragma loop(hint_parallel(2))
-#pragma loop(ivdep)
+			//#pragma loop(hint_parallel(2))
+			//#pragma loop(ivdep)
 			for (int i = -range; i <= range; i++) {
 				for (int j = -range; j <= range; j++) {
 					for (int k = -range; k <= range; k++) {
