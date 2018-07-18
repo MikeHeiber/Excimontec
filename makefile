@@ -10,7 +10,6 @@ ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
 	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc -IKMC_Lattice/src
 endif
 
-
 OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o
 
 all : Excimontec.exe
