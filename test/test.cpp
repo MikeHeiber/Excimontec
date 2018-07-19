@@ -46,7 +46,7 @@ namespace OSC_SimTests {
 			params_default.Enable_random_blend = false;
 			params_default.Acceptor_conc = 0.5;
 			params_default.Enable_import_morphology = false;
-			params_default.Morphology_file = NULL;
+			params_default.Morphology_filename = "";
 			// Test Parameters
 			params_default.N_tests = 1000;
 			params_default.Enable_exciton_diffusion_test = true;
@@ -177,6 +177,25 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		EXPECT_TRUE(sim.init(params, 0));
 		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
+		// Test morphology import
+		sim = OSC_Sim();
+		params.Enable_neat = false;
+		params.Enable_import_morphology = true;
+		params.Length = 200;
+		params.Width = 200;
+		params.Height = 200;
+		// Test incorrect filename
+		params.Morphology_filename = "test_morphology123.txt";
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Morphology_filename = "test_morphology.txt";
+		// Test incorrect dimensions
+		sim = OSC_Sim();
+		params.Height = 100;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Height = 200;
+		// Test correct import
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDynamicsTest) {

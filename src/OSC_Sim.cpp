@@ -38,7 +38,7 @@ bool OSC_Sim::init(const Parameters_OPV& params, const int id) {
 	Enable_random_blend = params.Enable_random_blend;
 	Acceptor_conc = params.Acceptor_conc;
 	Enable_import_morphology = params.Enable_import_morphology;
-	Morphology_file = params.Morphology_file;
+	Morphology_filename = params.Morphology_filename;
 	// Test Parameters
 	N_tests = params.N_tests;
 	Enable_exciton_diffusion_test = params.Enable_exciton_diffusion_test;
@@ -1310,8 +1310,11 @@ void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 			energies_temp.assign(vec_size, 0.0);
 			Coords coords = lattice.getSiteCoords(n);
 			// Get nearby site energies and determine if able
-			//#pragma loop(hint_parallel(2))
-			//#pragma loop(ivdep)
+
+#if defined(_OPENMP)
+			#pragma loop(hint_parallel(2))
+			#pragma loop(ivdep)
+#endif
 			for (int i = -range; i <= range; i++) {
 				for (int j = -range; j <= range; j++) {
 					for (int k = -range; k <= range; k++) {
@@ -1444,8 +1447,18 @@ bool OSC_Sim::createImportedMorphology() {
 	int site_count = 0;
 	bool isV3 = false;
 	bool isV4 = false;
+	// Open morphology file
+	ifstream morphology_file(Morphology_filename.c_str(), ifstream::in);
+	// Check if morphology file exists and is accessible
+	if (!morphology_file.good()) {
+		cout << getId() << ": Error opening morphology file for importing." << endl;
+		setErrorMessage("Morphology file could not be opened for importing.");
+		Error_found = true;
+		morphology_file.close();
+		return false;
+	}
 	// Get input morphology file information
-	getline(*Morphology_file, line);
+	getline(morphology_file, line);
 	file_info = line;
 	// Parse file info
 	if (file_info.find("Ising_OPV v3.2 - compressed format") != string::npos) {
@@ -1458,37 +1471,39 @@ bool OSC_Sim::createImportedMorphology() {
 		cout << getId() << ": Error! Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 and v4.0 are currently supported." << endl;
 		setErrorMessage("Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 and v4.0 are currently supported.");
 		Error_found = true;
+		morphology_file.close();
 		return false;
 	}
-	getline(*Morphology_file, line);
+	getline(morphology_file, line);
 	length = atoi(line.c_str());
-	getline(*Morphology_file, line);
+	getline(morphology_file, line);
 	width = atoi(line.c_str());
-	getline(*Morphology_file, line);
+	getline(morphology_file, line);
 	height = atoi(line.c_str());
 	if (lattice.getLength() != length || lattice.getWidth() != width || lattice.getHeight() != height) {
 		cout << getId() << ": Error! Morphology lattice dimensions do not match the lattice dimensions defined in the parameter file." << endl;
 		setErrorMessage("Morphology lattice dimensions do not match the lattice dimensions defined in the parameter file.");
 		Error_found = true;
+		morphology_file.close();
 		return false;
 	}
 	if (isV3) {
 		// Skip 3 lines (domain size1, domain size2, blend ratio)
-		getline(*Morphology_file, line);
-		getline(*Morphology_file, line);
-		getline(*Morphology_file, line);
+		getline(morphology_file, line);
+		getline(morphology_file, line);
+		getline(morphology_file, line);
 	}
 	else if (isV4) {
 		// skip boundary conditions
-		getline(*Morphology_file, line);
-		getline(*Morphology_file, line);
-		getline(*Morphology_file, line);
+		getline(morphology_file, line);
+		getline(morphology_file, line);
+		getline(morphology_file, line);
 		// number of site types
-		getline(*Morphology_file, line);
+		getline(morphology_file, line);
 		int N_types = atoi(line.c_str());
 		// skip domain size and mix fraction lines
 		for (int i = 0; i < 2 * N_types; i++) {
-			getline(*Morphology_file, line);
+			getline(morphology_file, line);
 		}
 	}
 	// Begin parsing morphology site data
@@ -1496,13 +1511,14 @@ bool OSC_Sim::createImportedMorphology() {
 		for (int y = 0; y < lattice.getWidth(); y++) {
 			for (int z = 0; z < lattice.getHeight(); z++) {
 				if (site_count == 0) {
-					if (!(*Morphology_file).good()) {
+					if (!(morphology_file).good()) {
 						cout << "Error parsing file.  End of file reached before expected." << endl;
 						setErrorMessage("Error parsing imported morphology file.  End of file reached before expected.");
 						Error_found = true;
+						morphology_file.close();
 						return false;
 					}
-					getline(*Morphology_file, line);
+					getline(morphology_file, line);
 					type = (short)atoi(line.substr(0, 1).c_str());
 					site_count = atoi(line.substr(1).c_str());
 				}
@@ -1518,6 +1534,8 @@ bool OSC_Sim::createImportedMorphology() {
 			}
 		}
 	}
+	// Close the morphology file
+	morphology_file.close();
 	// Check for unassigned sites
 	for (auto const &item : sites) {
 		if (item.getType() == (short)0) {
