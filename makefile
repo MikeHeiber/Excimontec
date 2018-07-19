@@ -68,4 +68,5 @@ test/test.o : test/test.cpp $(GTEST_HEADERS) $(OBJS)
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -c $< -o $@
 	
 clean:
+	$(MAKE) -C KMC_Lattice clean
 	-rm src/*.o src/*.gcno* src/*.gcda test/*.o test/*.gcno* test/*.gcda *~ Excimontec.exe test/Excimontec_tests.exe
