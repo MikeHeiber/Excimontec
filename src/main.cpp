@@ -18,7 +18,6 @@ using namespace Excimontec;
 
 struct Parameters_main {
 	bool Enable_import_morphology_single;
-	string Morphology_filename;
 	bool Enable_import_morphology_set;
 	string Morphology_set_format;
 	int N_test_morphologies;
@@ -35,7 +34,6 @@ int main(int argc, char *argv[]) {
 	bool End_sim = false;
 	// File declaration
 	ifstream parameterfile;
-	ifstream morphologyfile;
 	ofstream logfile;
 	ofstream resultsfile;
 	ofstream analysisfile;
@@ -124,24 +122,10 @@ int main(int argc, char *argv[]) {
 		string prefix = params_main.Morphology_set_format.substr(0, pos);
 		string suffix = params_main.Morphology_set_format.substr(pos + 1);
 		cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
-		params_main.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
-		cout << procid << ": " << params_main.Morphology_filename << " selected." << endl;
+		params_opv.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
+		cout << procid << ": " << params_opv.Morphology_filename << " selected." << endl;
 		// Cleanup
 		delete[] selected_morphologies;
-	}
-	if (params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set) {
-		params_opv.Enable_import_morphology = true;
-		morphologyfile.open(params_main.Morphology_filename.c_str(), ifstream::in);
-		if (morphologyfile.good()) {
-			params_opv.Morphology_file = &morphologyfile;
-		}
-		else {
-			cout << procid << ": Error opening morphology file for importing." << endl;
-			return 0;
-		}
-	}
-	else {
-		params_opv.Enable_import_morphology = false;
 	}
 	// Setup file output
 	cout << procid << ": Creating output files..." << endl;
@@ -686,7 +670,7 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 		return false;
 	}
 	i++;
-	params_main.Morphology_filename = stringvars[i];
+	params.Morphology_filename = stringvars[i];
 	i++;
 	params_main.Enable_import_morphology_set = importBooleanParam(stringvars[i], error_status);
 	if (error_status) {
@@ -700,6 +684,12 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params_main.N_morphology_set_size = atoi(stringvars[i].c_str());
 	i++;
+	if (params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set) {
+		params.Enable_import_morphology = true;
+	}
+	else {
+		params.Enable_import_morphology = false;
+	}
 	// Test Parameters
 	params.N_tests = atoi(stringvars[i].c_str());
 	i++;

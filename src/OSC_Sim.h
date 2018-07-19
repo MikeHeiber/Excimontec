@@ -26,7 +26,7 @@ namespace Excimontec {
 		bool Enable_random_blend;
 		double Acceptor_conc;
 		bool Enable_import_morphology;
-		std::ifstream* Morphology_file;
+		std::string Morphology_filename;
 		// Test Parameters
 		int N_tests;
 		bool Enable_exciton_diffusion_test;
@@ -312,7 +312,7 @@ namespace Excimontec {
 		bool Enable_random_blend;
 		double Acceptor_conc;
 		bool Enable_import_morphology;
-		std::ifstream* Morphology_file;
+		std::string Morphology_filename;
 		// Test Parameters
 		int N_tests;
 		bool Enable_exciton_diffusion_test;
