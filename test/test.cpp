@@ -264,6 +264,31 @@ namespace OSC_SimTests {
 		double dim = 3.0;
 		double expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		// Electron ToF test on neat should not be allowed
+		sim = OSC_Sim();
+		params = params_default;
+		params.Enable_periodic_z = false;
+		params.Height = 200;
+		params.Internal_potential = -4.0;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_ToF_test = true;
+		params.ToF_polaron_type = false;
+		params.N_tests = 1000;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Electron ToF test on random blend should work
+		sim = OSC_Sim();
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.99; // Dilute blend should behave like a neat electron transport material might
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		transit_time_data = sim.getTransitTimeData();
+		mobility_data = sim.calculateMobilityData(transit_time_data);
+		dim = 3.0;
+		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
+		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
 	}
 
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
