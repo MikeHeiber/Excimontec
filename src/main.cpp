@@ -4,6 +4,7 @@
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 #include "OSC_Sim.h"
+#include "Version.h"
 #include <mpi.h>
 #include <fstream>
 #include <iostream>
@@ -29,7 +30,6 @@ struct Parameters_main {
 bool importParameters(ifstream& inputfile, Parameters_main& params_main, Parameters_OPV& params);
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0-beta.5";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
@@ -261,7 +261,7 @@ int main(int argc, char *argv[]) {
 	}
 	// Output result summary for each processor
 	resultsfile.open("results" + to_string(procid) + ".txt");
-	resultsfile << "Excimontec " << version << " Results:\n";
+	resultsfile << "Excimontec " << current_version.getVersion() << " Results:\n";
 	resultsfile << "Calculation time elapsed is " << (double)elapsedtime / 60 << " minutes.\n";
 	resultsfile << sim.getTime() << " seconds have been simulated.\n";
 	resultsfile << sim.getN_events_executed() << " events have been executed.\n";
@@ -338,7 +338,7 @@ int main(int argc, char *argv[]) {
 	MPI_Reduce(&elapsedtime, &elapsedtime_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 	if (procid == 0) {
 		analysisfile.open("analysis_summary.txt");
-		analysisfile << "Excimontec " << version << " Results Summary:\n";
+		analysisfile << "Excimontec " << current_version.getVersion() << " Results Summary:\n";
 		analysisfile << "Simulation was performed on " << nproc << " processors.\n";
 		analysisfile << "Average calculation time was " << (double)elapsedtime_sum / (60 * nproc) << " minutes.\n";
 		if (error_found == (char)1) {

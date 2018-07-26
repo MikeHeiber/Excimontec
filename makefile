@@ -54,17 +54,23 @@ ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
 endif
 
 test_coverage : FLAGS = -fprofile-arcs -ftest-coverage -std=c++11 -Wall -Wextra -I. -Isrc -IKMC_Lattice/src
-test_coverage : test/Excimontec_tests.exe
+test_coverage : test/Excimontec_tests.exe test/Version_tests.exe
 
-test : test/Excimontec_tests.exe	
+test : test/Excimontec_tests.exe test/Version_tests.exe
 	
 test/Excimontec_tests.exe : test/test.o test/gtest-all.o $(OBJS) KMC_Lattice/libKMC.a
 	mpicxx $(GTEST_FLAGS) $(FLAGS) $^ KMC_Lattice/libKMC.a -lpthread -o $@
+
+test/Version_tests.exe : test/test_version.o test/gtest-all.o
+	mpicxx $(GTEST_FLAGS) $(FLAGS) $^ -o $@
 
 test/gtest-all.o : $(GTEST_SRCS_)
 	mpicxx $(GTEST_FLAGS) -I$(GTEST_DIR) $(FLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 			
 test/test.o : test/test.cpp $(GTEST_HEADERS) $(OBJS)
+	mpicxx $(GTEST_FLAGS) $(FLAGS) -c $< -o $@
+	
+test/test_version.o : test/test_version.cpp $(GTEST_HEADERS)
 	mpicxx $(GTEST_FLAGS) $(FLAGS) -c $< -o $@
 	
 clean:
