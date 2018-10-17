@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Michael C. Heiber
+// Copyright (c) 2017-2018 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -9,7 +9,7 @@
 #include "Utils.h"
 
 using namespace std;
-using namespace Utils;
+using namespace KMC_Lattice;
 using namespace Excimontec;
 
 namespace OSC_SimTests {
@@ -260,6 +260,10 @@ namespace OSC_SimTests {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		auto transit_time_data = sim.getTransitTimeData();
+		// Check that the transit time probability distribution integrates to 1
+		auto transit_time_dist = sim.calculateTransitTimeDist(transit_time_data,(int)transit_time_data.size());
+		EXPECT_NEAR(1.0, integrateData(transit_time_dist), 1e-4);
+		// Check the mobility compared to analytical expectation
 		auto mobility_data = sim.calculateMobilityData(transit_time_data);
 		double dim = 3.0;
 		double expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
