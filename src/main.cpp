@@ -405,8 +405,8 @@ int main(int argc, char *argv[]) {
 			transientfile.close();
 			// ToF transit time distribution output
 			ofstream transitdistfile;
-			transitdistfile.open("ToF_transit_time_dist.txt");
-			auto transit_dist = sim.calculateTransitTimeDist(transit_times_all, transit_attempts_total);
+			transitdistfile.open("ToF_transit_time_hist.txt");
+			auto transit_dist = sim.calculateTransitTimeHist(transit_times_all, transit_attempts_total);
 			transitdistfile << "Transit Time (s),Probability" << endl;
 			for (int i = 0; i < (int)transit_dist.size(); i++) {
 				transitdistfile << transit_dist[i].first << "," << transit_dist[i].second << endl;

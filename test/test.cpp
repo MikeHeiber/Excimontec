@@ -185,9 +185,9 @@ namespace OSC_SimTests {
 		params.Width = 200;
 		params.Height = 200;
 		// Test incorrect filename
-		params.Morphology_filename = "test_morphology123.txt";
+		params.Morphology_filename = "./test/test_morphology123.txt";
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Morphology_filename = "test_morphology.txt";
+		params.Morphology_filename = "./test/test_morphology.txt";
 		// Test incorrect dimensions
 		sim = OSC_Sim();
 		params.Height = 100;
@@ -213,10 +213,10 @@ namespace OSC_SimTests {
 		EXPECT_TRUE(time_data.size() == singlet_data.size());
 		vector<pair<double, double>> transient_data(time_data.size());
 		for (int i = 0; i < (int)time_data.size(); i++) {
-			transient_data[i] = pair<double, double>(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
+			transient_data[i] = make_pair(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-3*params.Dynamics_initial_exciton_conc);
-		EXPECT_NEAR(params.Dynamics_initial_exciton_conc / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor), 5e-2*params.Dynamics_initial_exciton_conc / exp(1));
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor)/params.Dynamics_initial_exciton_conc, 5e-2);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
@@ -260,9 +260,10 @@ namespace OSC_SimTests {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		auto transit_time_data = sim.getTransitTimeData();
-		// Check that the transit time probability distribution integrates to 1
-		auto transit_time_dist = sim.calculateTransitTimeDist(transit_time_data,(int)transit_time_data.size());
-		EXPECT_NEAR(1.0, integrateData(transit_time_dist), 1e-4);
+		// Check that the transit time probability histogram sums to 1
+		auto hist = sim.calculateTransitTimeHist(transit_time_data,(int)transit_time_data.size());
+		auto cum_hist = calculateCumulativeHist(hist);
+		EXPECT_NEAR(1.0, cum_hist.back().second, 1e-3);
 		// Check the mobility compared to analytical expectation
 		auto mobility_data = sim.calculateMobilityData(transit_time_data);
 		double dim = 3.0;
@@ -310,6 +311,6 @@ namespace OSC_SimTests {
 int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Redirect cout to NULL to suppress command line output during the tests
-	cout.rdbuf(NULL);
+	//cout.rdbuf(NULL);
 	return RUN_ALL_TESTS();
 }

@@ -401,7 +401,7 @@ namespace Excimontec {
 		return mobilities;
 	}
 
-	vector<pair<double, double>> OSC_Sim::calculateTransitTimeDist(const vector<double>& data, const int counts) const {
+	vector<pair<double, double>> OSC_Sim::calculateTransitTimeHist(const vector<double>& data, const int counts) const {
 		double step_size = 1.0 / (double)Transient_pnts_per_decade;
 		vector<pair<double, double>> dist(transient_times.size(), { 0.0,0.0 });
 		for (auto const &item : data) {
@@ -2169,7 +2169,7 @@ namespace Excimontec {
 		transient_hole_energies_prev.clear();
 		N_transient_cycles++;
 		int num = 0;
-		if (N_transient_cycles % 5 == 0) {
+		if (N_transient_cycles % 10 == 0) {
 			cout << getId() << ": Dynamics transient cycle " << N_transient_cycles << ": Generating " << N_initial_excitons << " initial excitons." << endl;
 		}
 		while (num < N_initial_excitons) {
@@ -2216,7 +2216,7 @@ namespace Excimontec {
 		Transient_creation_time = getTime();
 		Transient_index_prev = -1;
 		N_transient_cycles++;
-		if (N_transient_cycles % 5 == 0) {
+		if (N_transient_cycles % 10 == 0) {
 			cout << getId() << ": ToF transient cycle " << N_transient_cycles << ": Generating " << ToF_initial_polarons << " initial polarons." << endl;
 		}
 		int num = 0;

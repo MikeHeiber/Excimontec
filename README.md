@@ -73,7 +73,7 @@ If you wish, you can also install MPI on your own personal workstation and then 
 - MPICH, http://www.mpich.org/
 - MVAPICH, http://mvapich.cse.ohio-state.edu/
 
-Once you have an MPI library installed, to build Excimontec, first copy the Excimontec directory to your machine.  On linux this can be done using the command,
+Once you have an MPI library installed, to build Excimontec, first copy the Excimontec directory to your machine.  On Linux this can be done using the command,
 
 ```git clone --recurse-submodules https://github.com/MikeHeiber/Excimontec```
 
@@ -91,13 +91,9 @@ Build the testing executable by running
 
 ```make test```
 
-Once the test build is complete, navigate to the testing directory,
+Once the test build is complete, run the test suite.
 
-```cd test```
-
-and run the test suite.
-
-```./Excimontec_tests.exe```
+```./test/Excimontec_tests.exe```
 
 Please report any build or testing errors in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 
@@ -125,7 +121,7 @@ Excimontec will create a number of different output files depending which test i
 - analysis_summary.txt -- When MPI is enabled, this text file will contain average final results from all of the processors.
 - dynamics_average_transients.txt -- When performing a dynamics test, calculated exciton, electron, and hole transients will be output to this file.
 - ToF_average_transients.txt -- When performing a time-of-flight charge transport test, calculated current transients, mobility relaxation transients, and energy relaxation transients will be output to this file.
-- ToF_transit_time_dist.txt -- When performing a time-of-flight charge transport test, the resulting polaron transit time probability distribution will be output to this file.
+- ToF_transit_time_hist.txt -- When performing a time-of-flight charge transport test, the resulting polaron transit time probability histogram will be output to this file.
 - ToF_results.txt -- When performing a time-of-flight charge transport test, the resulting quantitative results are put into this parsable delimited results file.
 - Charge_extraction_map#.txt -- When performing a time-of-flight or IQE test, the x-y locations where charges are extracted from the lattice are saving into this map file.
 - DOS_correlation_data#.txt -- When a correlated density of states model is enabled, data showing the statistical correlation of site energies vs. distance is output into this file.

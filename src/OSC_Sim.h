@@ -136,7 +136,7 @@ namespace Excimontec {
 		void calculateAllEvents();
 		void calculateDOSCorrelation();
 		void calculateDOSCorrelation(const double cutoff_radius);
-		std::vector<std::pair<double, double>> calculateTransitTimeDist(const std::vector<double>& data, const int counts) const;
+		std::vector<std::pair<double, double>> calculateTransitTimeHist(const std::vector<double>& data, const int counts) const;
 		std::vector<double> calculateMobilityData(const std::vector<double>& transit_times) const;
 		bool checkFinished() const;
 		bool checkParameters(const Parameters_OPV& params) const;
