@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Michael C. Heiber
+// Copyright (c) 2017-2018 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -15,7 +15,7 @@
 
 namespace Excimontec {
 
-	struct Parameters_OPV : Parameters_Simulation {
+	struct Parameters_OPV : KMC_Lattice::Parameters_Simulation {
 		// Additional General Parameters
 		double Internal_potential;
 		// Morphology Parameters
@@ -115,7 +115,7 @@ namespace Excimontec {
 		int Coulomb_cutoff; // nm
 	};
 
-	class Site_OSC : public Site {
+	class Site_OSC : public KMC_Lattice::Site {
 	public:
 		double getEnergy() const { return *energy_it; }
 		short getType() const { return type; }
@@ -127,7 +127,7 @@ namespace Excimontec {
 		short type = 0; //  type 1 represent donor, type 2 represents acceptor
 	};
 
-	class OSC_Sim : public Simulation {
+	class OSC_Sim : public KMC_Lattice::Simulation {
 	public:
 		// Functions
 		OSC_Sim();
@@ -136,13 +136,13 @@ namespace Excimontec {
 		void calculateAllEvents();
 		void calculateDOSCorrelation();
 		void calculateDOSCorrelation(const double cutoff_radius);
-		std::vector<double> calculateTransitTimeDist(const std::vector<double>& data, const int counts) const;
+		std::vector<std::pair<double, double>> calculateTransitTimeHist(const std::vector<double>& data, const int counts) const;
 		std::vector<double> calculateMobilityData(const std::vector<double>& transit_times) const;
 		bool checkFinished() const;
 		bool checkParameters(const Parameters_OPV& params) const;
-		void createExciton(const Coords& coords, const bool spin);
-		void createElectron(const Coords& coords);
-		void createHole(const Coords& coords);
+		void createExciton(const KMC_Lattice::Coords& coords, const bool spin);
+		void createElectron(const KMC_Lattice::Coords& coords);
+		void createHole(const KMC_Lattice::Coords& coords);
 		bool executeNextEvent();
 		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
 		std::vector<double> getDynamicsExcitonEnergies() const;
@@ -156,7 +156,7 @@ namespace Excimontec {
 		std::vector<double> getDynamicsExcitonMSDV() const;
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
-		std::vector<Event> getEvents() const;
+		std::vector<KMC_Lattice::Event> getEvents() const;
 		std::vector<double> getExcitonDiffusionData() const;
 		std::vector<int> getExcitonHopLengthData() const;
 		std::vector<double> getExcitonLifetimeData() const;
@@ -427,7 +427,7 @@ namespace Excimontec {
 		std::list<Polaron> holes;
 		// Event Data Structures
 		std::list<Exciton_Creation> exciton_creation_events;
-		std::list<Event*>::const_iterator exciton_creation_it;
+		std::list<KMC_Lattice::Event*>::const_iterator exciton_creation_it;
 		std::list<Exciton_Hop> exciton_hop_events;
 		std::list<Exciton_Recombination> exciton_recombination_events;
 		std::list<Exciton_Dissociation> exciton_dissociation_events;
@@ -504,42 +504,42 @@ namespace Excimontec {
 		int N_hole_surface_recombinations = 0;
 		int N_transient_cycles = 0;
 		// Additional Functions
-		double calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const Coords& coords) const;
-		double calculateCoulomb(const bool charge, const Coords& coords) const;
-		Coords calculateExcitonCreationCoords();
+		double calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const KMC_Lattice::Coords& coords) const;
+		double calculateCoulomb(const bool charge, const KMC_Lattice::Coords& coords) const;
+		KMC_Lattice::Coords calculateExcitonCreationCoords();
 		void calculateExcitonEvents(Exciton* exciton_ptr);
-		void calculateObjectListEvents(const std::vector<Object*>& object_ptr_vec);
+		void calculateObjectListEvents(const std::vector<KMC_Lattice::Object*>& object_ptr_vec);
 		void calculatePolaronEvents(Polaron* polaron_ptr);
 		void createCorrelatedDOS(const double correlation_length);
 		bool createImportedMorphology();
-		void deleteObject(Object* object_ptr);
+		void deleteObject(KMC_Lattice::Object* object_ptr);
 		// Exciton Event Execution Functions
 		bool executeExcitonCreation();
-		bool executeExcitonHop(const std::list<Event*>::const_iterator event_it);
-		bool executeExcitonRecombination(const std::list<Event*>::const_iterator event_it);
-		bool executeExcitonDissociation(const std::list<Event*>::const_iterator event_it);
-		bool executeExcitonIntersystemCrossing(const std::list<Event*>::const_iterator event_it);
-		bool executeExcitonExcitonAnnihilation(const std::list<Event*>::const_iterator event_it);
-		bool executeExcitonPolaronAnnihilation(const std::list<Event*>::const_iterator event_it);
+		bool executeExcitonHop(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executeExcitonRecombination(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executeExcitonDissociation(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executeExcitonIntersystemCrossing(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executeExcitonExcitonAnnihilation(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executeExcitonPolaronAnnihilation(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
 		// General Event Functions
-		bool executeObjectHop(const std::list<Event*>::const_iterator event_it);
+		bool executeObjectHop(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
 		// Polaron Event Execution Functions
-		bool executePolaronHop(const std::list<Event*>::const_iterator event_it);
-		bool executePolaronRecombination(const std::list<Event*>::const_iterator event_it);
-		bool executePolaronExtraction(const std::list<Event*>::const_iterator event_it);
-		Coords generateExciton();
-		void generateExciton(const Coords& coords, const bool spin, int tag);
-		void generateElectron(const Coords& coords, int tag);
-		void generateHole(const Coords& coords, int tag);
+		bool executePolaronHop(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executePolaronRecombination(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		bool executePolaronExtraction(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
+		KMC_Lattice::Coords generateExciton();
+		void generateExciton(const KMC_Lattice::Coords& coords, const bool spin, int tag);
+		void generateElectron(const KMC_Lattice::Coords& coords, int tag);
+		void generateHole(const KMC_Lattice::Coords& coords, int tag);
 		void generateDynamicsExcitons();
 		void generateToFPolarons();
-		std::list<Exciton>::iterator getExcitonIt(const Object* object_ptr);
-		std::list<Polaron>::iterator getPolaronIt(const Object* object_ptr);
-		double getSiteEnergy(const Coords& coords) const;
-		short getSiteType(const Coords& coords) const;
+		std::list<Exciton>::iterator getExcitonIt(const KMC_Lattice::Object* object_ptr);
+		std::list<Polaron>::iterator getPolaronIt(const KMC_Lattice::Object* object_ptr);
+		double getSiteEnergy(const KMC_Lattice::Coords& coords) const;
+		short getSiteType(const KMC_Lattice::Coords& coords) const;
 		bool initializeArchitecture();
 		void removeExciton(std::list<Exciton>::iterator exciton_it);
-		bool siteContainsHole(const Coords& coords);
+		bool siteContainsHole(const KMC_Lattice::Coords& coords);
 		void updateTransientData();
 	};
 
