@@ -406,10 +406,10 @@ int main(int argc, char *argv[]) {
 			// ToF transit time distribution output
 			ofstream transitdistfile;
 			transitdistfile.open("ToF_transit_time_dist.txt");
-			vector<double> transit_dist = sim.calculateTransitTimeDist(transit_times_all, transit_attempts_total);
+			auto transit_dist = sim.calculateTransitTimeDist(transit_times_all, transit_attempts_total);
 			transitdistfile << "Transit Time (s),Probability" << endl;
 			for (int i = 0; i < (int)transit_dist.size(); i++) {
-				transitdistfile << times[i] << "," << transit_dist[i] << endl;
+				transitdistfile << transit_dist[i].first << "," << transit_dist[i].second << endl;
 			}
 			transitdistfile.close();
 			// Analysis Output
@@ -572,7 +572,7 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	string var;
 	size_t pos;
 	vector<string> stringvars;
-	bool error_status = false;
+	bool Error_found = false;
 	while (inputfile.good()) {
 		getline(inputfile, line);
 		if ((line.substr(0, 2)).compare("--") != 0 && (line.substr(0, 2)).compare("##") != 0 && line.compare("") != 0) {
@@ -586,45 +586,63 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	// Simulation Parameters
 	params.Enable_logging = false;
 	// KMC Algorithm Parameters
-	params.Enable_FRM = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_FRM = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting first reaction method option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_selective_recalc = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_selective_recalc = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting selective recalculation method option." << endl;
-		return false;
+		Error_found = false;
 	}
 	i++;
 	params.Recalc_cutoff = atoi(stringvars[i].c_str());
 	i++;
-	params.Enable_full_recalc = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_full_recalc = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting full recalculation method option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	//enable_periodic_x
-	params.Enable_periodic_x = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_periodic_x = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting x-periodic boundary options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	//enable_periodic_y
-	params.Enable_periodic_y = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_periodic_y = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting y-periodic boundary options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	//enable_periodic_z
-	params.Enable_periodic_z = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_periodic_z = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting z-periodic boundary options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Length = atoi(stringvars[i].c_str());
@@ -640,42 +658,57 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	params.Internal_potential = atof(stringvars[i].c_str());
 	i++;
 	// Film Architecture Parameters
-	params.Enable_neat = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_neat = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling neat film architecture." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_bilayer = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_bilayer = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling bilayer film architecture." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Thickness_donor = atoi(stringvars[i].c_str());
 	i++;
 	params.Thickness_acceptor = atoi(stringvars[i].c_str());
 	i++;
-	params.Enable_random_blend = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_random_blend = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling random blend film architecture." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Acceptor_conc = atof(stringvars[i].c_str());;
 	i++;
-	params_main.Enable_import_morphology_single = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params_main.Enable_import_morphology_single = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling morphology import." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Morphology_filename = stringvars[i];
 	i++;
-	params_main.Enable_import_morphology_set = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params_main.Enable_import_morphology_set = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling morphology set import." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params_main.Morphology_set_format = stringvars[i];
@@ -693,16 +726,22 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	// Test Parameters
 	params.N_tests = atoi(stringvars[i].c_str());
 	i++;
-	params.Enable_exciton_diffusion_test = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_exciton_diffusion_test = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling the exciton diffusion test." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_ToF_test = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_ToF_test = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling the time-of-flight polaron transport test." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	if (stringvars[i].compare("electron") == 0) {
@@ -718,16 +757,22 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params.ToF_initial_polarons = atoi(stringvars[i].c_str());
 	i++;
-	params.Enable_ToF_random_placement = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_ToF_random_placement = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling ToF random placement option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_ToF_energy_placement = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_ToF_energy_placement = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling ToF low energy placement option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.ToF_placement_energy = atof(stringvars[i].c_str());
@@ -738,30 +783,42 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params.ToF_pnts_per_decade = atoi(stringvars[i].c_str());
 	i++;
-	params.Enable_IQE_test = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_IQE_test = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling the internal quantum efficiency test." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.IQE_time_cutoff = atof(stringvars[i].c_str());
 	i++;
-	params_main.Enable_extraction_map_output = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params_main.Enable_extraction_map_output = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting charge extraction map output settings." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_dynamics_test = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_dynamics_test = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error enabling the dynamics test." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_dynamics_extraction = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_dynamics_extraction = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting dynamics test extraction option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Dynamics_initial_exciton_conc = atof(stringvars[i].c_str());
@@ -801,8 +858,11 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params.Triplet_localization_acceptor = atof(stringvars[i].c_str());
 	i++;
-	params.Enable_FRET_triplet_annihilation = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_FRET_triplet_annihilation = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting FRET triplet annihilation option." << endl;
 		return false;
 	}
@@ -840,10 +900,13 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	params.E_exciton_ST_acceptor = atof(stringvars[i].c_str());
 	i++;
 	// Polaron Parameters
-	params.Enable_phase_restriction = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_phase_restriction = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting polaron phase restriction option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.R_polaron_hopping_donor = atof(stringvars[i].c_str());
@@ -854,16 +917,22 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
 	i++;
-	params.Enable_miller_abrahams = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_miller_abrahams = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Miller-Abrahams polaron hopping model options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
-	params.Enable_marcus = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_marcus = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Marcus polaron hopping model options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Reorganization_donor = atof(stringvars[i].c_str());
@@ -874,10 +943,13 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
 	i++;
-	params.Enable_gaussian_polaron_delocalization = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_gaussian_polaron_delocalization = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Gaussian polaron delocalization option." << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Polaron_delocalization_length = atof(stringvars[i].c_str());
@@ -892,10 +964,13 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	params.Lumo_acceptor = atof(stringvars[i].c_str());
 	i++;
 	//enable_gaussian_dos
-	params.Enable_gaussian_dos = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_gaussian_dos = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Gaussian DOS options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Energy_stdev_donor = atof(stringvars[i].c_str());
@@ -903,10 +978,13 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	params.Energy_stdev_acceptor = atof(stringvars[i].c_str());
 	i++;
 	//enable_exponential_dos
-	params.Enable_exponential_dos = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_exponential_dos = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Exponential DOS options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Energy_urbach_donor = atof(stringvars[i].c_str());
@@ -914,26 +992,35 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
 	i++;
 	//enable_correlated_disorder
-	params.Enable_correlated_disorder = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_correlated_disorder = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Correlated Disorder options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Disorder_correlation_length = atof(stringvars[i].c_str());
 	i++;
 	//enable_gaussian_kernel
-	params.Enable_gaussian_kernel = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_gaussian_kernel = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	//enable_power_kernel
-	params.Enable_power_kernel = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	try {
+		params.Enable_power_kernel = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Power_kernel_exponent = atoi(stringvars[i].c_str());
@@ -944,17 +1031,25 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	params.Dielectric_acceptor = atof(stringvars[i].c_str());
 	i++;
 	//enable_coulomb_maximum
-	bool Enable_Coulomb_maximum = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	bool Enable_Coulomb_maximum;
+	try {
+		Enable_Coulomb_maximum = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Coulomb interaction options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	//enable_coulomb_cutoff
-	bool Enable_Coulomb_cutoff = importBooleanParam(stringvars[i], error_status);
-	if (error_status) {
+	bool Enable_Coulomb_cutoff;
+	try {
+		Enable_Coulomb_cutoff = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
 		cout << "Error setting Coulomb interaction options" << endl;
-		return false;
+		Error_found = true;
 	}
 	i++;
 	params.Coulomb_cutoff = atoi(stringvars[i].c_str());
@@ -970,6 +1065,9 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	if (Enable_Coulomb_maximum) {
 		auto vec = { params.Length, params.Width, params.Height };
 		params.Coulomb_cutoff = (int)floor(*min_element(vec.begin(), vec.end()) / 2.0);
+	}
+	if (Error_found) {
+		return false;
 	}
 	return true;
 }

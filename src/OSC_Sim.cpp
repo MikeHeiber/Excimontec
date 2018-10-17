@@ -401,15 +401,19 @@ namespace Excimontec {
 		return mobilities;
 	}
 
-	vector<double> OSC_Sim::calculateTransitTimeDist(const vector<double>& data, const int counts) const {
+	vector<pair<double, double>> OSC_Sim::calculateTransitTimeDist(const vector<double>& data, const int counts) const {
 		double step_size = 1.0 / (double)Transient_pnts_per_decade;
-		vector<double> dist(transient_times.size(), 0);
+		vector<pair<double, double>> dist(transient_times.size(), { 0.0,0.0 });
 		for (auto const &item : data) {
 			for (int j = 0; j < (int)transient_times.size(); j++) {
 				if (item > pow(10, log10(transient_times[j]) - 0.5*step_size) && item < pow(10, log10(transient_times[j]) + 0.5*step_size)) {
-					dist[j] += 1.0 / counts;
+					dist[j].second += 1.0;
 				}
 			}
+		}
+		for (int j = 0; j < (int)dist.size(); j++) {
+			dist[j].first = transient_times[j];
+			dist[j].second /= (double)counts;
 		}
 		return dist;
 	}
