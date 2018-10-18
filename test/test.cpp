@@ -203,7 +203,7 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
-		params.N_tests = 5000;
+		params.N_tests = 3000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
@@ -216,7 +216,7 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-3*params.Dynamics_initial_exciton_conc);
-		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor)/params.Dynamics_initial_exciton_conc, 5e-2);
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 5e-2);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
@@ -261,7 +261,7 @@ namespace OSC_SimTests {
 		}
 		auto transit_time_data = sim.getTransitTimeData();
 		// Check that the transit time probability histogram sums to 1
-		auto hist = sim.calculateTransitTimeHist(transit_time_data,(int)transit_time_data.size());
+		auto hist = sim.calculateTransitTimeHist(transit_time_data, (int)transit_time_data.size());
 		auto cum_hist = calculateCumulativeHist(hist);
 		EXPECT_NEAR(1.0, cum_hist.back().second, 1e-3);
 		// Check the mobility compared to analytical expectation
