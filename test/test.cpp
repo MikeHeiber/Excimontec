@@ -71,17 +71,16 @@ namespace OSC_SimTests {
 			params_default.Exciton_generation_rate_acceptor = 1e18;
 			params_default.Singlet_lifetime_donor = 1e-9;
 			params_default.Singlet_lifetime_acceptor = 1e-9;
-			params_default.Triplet_lifetime_donor = 1e-6;
-			params_default.Triplet_lifetime_acceptor = 1e-6;
+			params_default.Triplet_lifetime_donor = 1e-8;
+			params_default.Triplet_lifetime_acceptor = 1e-8;
 			params_default.R_singlet_hopping_donor = 1e11;
 			params_default.R_singlet_hopping_acceptor = 1e11;
 			params_default.Singlet_localization_donor = 1.0;
 			params_default.Singlet_localization_acceptor = 1.0;
-			params_default.R_singlet_hopping_acceptor = 1e12;
-			params_default.R_triplet_hopping_donor = 1e12;
-			params_default.R_triplet_hopping_acceptor = 1e12;
-			params_default.Triplet_localization_donor = 2.0;
-			params_default.Triplet_localization_acceptor = 2.0;
+			params_default.R_triplet_hopping_donor = 1e11;
+			params_default.R_triplet_hopping_acceptor = 1e11;
+			params_default.Triplet_localization_donor = 1.0;
+			params_default.Triplet_localization_acceptor = 1.0;
 			params_default.Enable_FRET_triplet_annihilation = false;
 			params_default.R_exciton_exciton_annihilation_donor = 1e1;
 			params_default.R_exciton_exciton_annihilation_acceptor = 1e1;
@@ -198,7 +197,8 @@ namespace OSC_SimTests {
 		EXPECT_TRUE(sim.init(params, 0));
 	}
 
-	TEST_F(OSC_SimTest, ExcitonDynamicsTest) {
+	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {
+		// Singlet exciton lifetime test
 		sim = OSC_Sim();
 		Parameters_OPV params = params_default;
 		params.Enable_exciton_diffusion_test = false;
@@ -216,10 +216,30 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-3*params.Dynamics_initial_exciton_conc);
-		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 5e-2);
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 2.5e-2);
+		// Triplet exciton lifetime test
+		sim = OSC_Sim();
+		params = params_default;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_dynamics_test = true;
+		params.R_exciton_isc_donor = 1e16;
+		params.N_tests = 3000;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		time_data = sim.getDynamicsTransientTimes();
+		auto triplet_data = sim.getDynamicsTransientTriplets();
+		EXPECT_TRUE(time_data.size() == triplet_data.size());
+		transient_data.resize(time_data.size());
+		for (int i = 0; i < (int)time_data.size(); i++) {
+			transient_data[i] = make_pair(time_data[i], (double)triplet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
+		}
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 2.5e-2);
 	}
 
-	TEST_F(OSC_SimTest, ExcitonDiffusionTest) {
+	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
+		// Singlet exciton diffusion test
 		sim = OSC_Sim();
 		Parameters_OPV params = params_default;
 		params.N_tests = 5000;
@@ -236,16 +256,40 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(params.Singlet_lifetime_donor, vector_avg(lifetime_data), 5e-2*params.Singlet_lifetime_donor);
 		EXPECT_DOUBLE_EQ(1.0, vector_avg(sim.getExcitonHopLengthData()));
 		auto displacement_data = sim.getExcitonDiffusionData();
-		auto ratio_data(displacement_data);
+		auto ratio_data = displacement_data;
 		transform(displacement_data.begin(), displacement_data.end(), lifetime_data.begin(), ratio_data.begin(), [params](double& displacement_element, double& lifetime_element) {
 			return displacement_element / sqrt(6 * params.R_singlet_hopping_donor*lifetime_element);
 		});
 		double dim = 3.0;
 		double expected_ratio = sqrt(2.0 / dim)*(tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0));
 		EXPECT_NEAR(expected_ratio, vector_avg(ratio_data), 2e-2*expected_ratio);
+		// Triplet exciton diffusion test
+		sim = OSC_Sim();
+		params = params_default;
+		params.R_exciton_isc_donor = 1e16;
+		params.N_tests = 5000;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			success = sim.executeNextEvent();
+			EXPECT_TRUE(success);
+			if (!success) {
+				cout << sim.getErrorMessage() << endl;
+			}
+		}
+		lifetime_data = sim.getExcitonLifetimeData();
+		EXPECT_NEAR(params.Triplet_lifetime_donor, vector_avg(lifetime_data), 5e-2*params.Triplet_lifetime_donor);
+		EXPECT_DOUBLE_EQ(1.0, vector_avg(sim.getExcitonHopLengthData()));
+		displacement_data = sim.getExcitonDiffusionData();
+		ratio_data = displacement_data;
+		transform(displacement_data.begin(), displacement_data.end(), lifetime_data.begin(), ratio_data.begin(), [params](double& displacement_element, double& lifetime_element) {
+			return displacement_element / sqrt(6 * params.R_triplet_hopping_donor * exp(-2.0 * params.Triplet_localization_donor) * lifetime_element);
+		});
+		dim = 3.0;
+		expected_ratio = sqrt(2.0 / dim)*(tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0));
+		EXPECT_NEAR(expected_ratio, vector_avg(ratio_data), 2e-2*expected_ratio);
 	}
 
-	TEST_F(OSC_SimTest, ToFTest) {
+	TEST_F(OSC_SimTest, ToFTests) {
 		// Hole ToF test
 		sim = OSC_Sim();
 		Parameters_OPV params = params_default;
