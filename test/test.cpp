@@ -108,7 +108,7 @@ namespace OSC_SimTests {
 			params_default.Enable_marcus = false;
 			params_default.Reorganization_donor = 0.2;
 			params_default.Reorganization_acceptor = 0.2;
-			params_default.R_polaron_recombination = 1e12;
+			params_default.R_polaron_recombination = 1e10;
 			params_default.Polaron_hopping_cutoff = 1;
 			params_default.Enable_gaussian_polaron_delocalization = false;
 			params_default.Polaron_delocalization_length = 1.0;
@@ -297,11 +297,14 @@ namespace OSC_SimTests {
 		params.Enable_neat = false;
 		params.Enable_periodic_z = false;
 		params.Enable_bilayer = true;
-		params.Height = 50;
-		params.Thickness_donor = 25;
-		params.Thickness_acceptor = 25;
+		params.Height = 40;
+		params.Thickness_donor = 20;
+		params.Thickness_acceptor = 20;
+		params.FRET_cutoff = 4;
+		params.Polaron_hopping_cutoff = 3;
+		params.Recalc_cutoff = 4;
 		params.Internal_potential = -1.0;
-		params.N_tests = 5000;
+		params.N_tests = 1000;
 		bool success;
 		// Baseline bilayer IQE test
 		sim = OSC_Sim();
@@ -313,7 +316,7 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
-		double IQE1 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created());
+		double IQE1 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		// Check for field activated charge separation
 		params.Internal_potential = -2.0;
 		sim = OSC_Sim();
@@ -325,7 +328,7 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
-		double IQE2 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created());
+		double IQE2 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE2, IQE1);
 		// Check for thermally activated charge separation
 		params.Internal_potential = -1.0;
@@ -339,7 +342,7 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
-		double IQE3 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created());
+		double IQE3 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE3, IQE1);
 		// Check for delocalization enhanced charge separation
 		params.Temperature = 300;
@@ -354,11 +357,11 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
-		double IQE4 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created());
+		double IQE4 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE4, IQE1);
 		// Check for recombination rate dependent charge separation
 		params.Enable_gaussian_polaron_delocalization = false;
-		params.R_polaron_recombination = 1e11;
+		params.R_polaron_recombination = 1e9;
 		sim = OSC_Sim();
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -368,7 +371,7 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
-		double IQE5 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created());
+		double IQE5 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE5, IQE1);
 	}
 
