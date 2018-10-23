@@ -304,7 +304,7 @@ namespace OSC_SimTests {
 		params.Polaron_hopping_cutoff = 3;
 		params.Recalc_cutoff = 4;
 		params.Internal_potential = -1.0;
-		params.N_tests = 1000;
+		params.N_tests = 500;
 		bool success;
 		// Baseline bilayer IQE test
 		sim = OSC_Sim();
