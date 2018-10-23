@@ -136,38 +136,261 @@ namespace OSC_SimTests {
 	};
 
 	TEST_F(OSC_SimTest, ParameterCheckTests) {
-		Parameters_OPV params = params_default;
+		sim = OSC_Sim();
 		// Check that default parameters are valid
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params_default, 0));
+		// Check various invalid parameter sets
+		Parameters_OPV params;
+		// Check that a device architecture is defined
+		params.Enable_neat = false;
+		EXPECT_FALSE(sim.init(params, 0));
 		// Check for multiple enabled morphologies
+		params = params_default;
 		params.Enable_neat = true;
 		params.Enable_random_blend = true;
 		EXPECT_FALSE(sim.init(params, 0));
-		// Check for ToF test boundary conditions, films architectures, and test conditions
-		sim = OSC_Sim();
+		// Check for valid bilayer thicknesses
 		params = params_default;
-		params.Enable_exciton_diffusion_test = false;
-		params.Enable_ToF_test = true;
-		params.Enable_periodic_z = false;
-		EXPECT_TRUE(sim.init(params, 0));
-		params.Enable_periodic_z = true;
-		EXPECT_FALSE(sim.init(params, 0));
-		params.Enable_periodic_z = false;
-		params.Enable_bilayer = true;
 		params.Enable_neat = false;
+		params.Enable_bilayer = true;
+		params.Thickness_donor = 20;
+		params.Thickness_acceptor = 20;
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Enable_neat = true;
-		params.Enable_bilayer = false;
-		params.Enable_ToF_random_placement = false;
-		params.Enable_ToF_energy_placement = false;
+		// Check for invalid lattice dimensions
+		params = params_default;
+		params.Height = 0;
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Enable_ToF_random_placement = true;
-		params.ToF_polaron_type = false;
+		// Check for invalid unit size
+		params = params_default;
+		params.Unit_size = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for invalid temp
+		params = params_default;
+		params.Temperature = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for valid selection of KMC algorithm
+		params = params_default;
+		// Check for multiple KMC algorithms enabled
+		params.Enable_FRM = true;
+		params.Enable_selective_recalc = true;
+		params.Enable_full_recalc = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_FRM = true;
+		params.Enable_selective_recalc = false;
+		params.Enable_full_recalc = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_FRM = false;
+		params.Enable_selective_recalc = true;
+		params.Enable_full_recalc = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for no KMC algorithm specified
+		params.Enable_FRM = false;
+		params.Enable_selective_recalc = false;
+		params.Enable_full_recalc = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check recalculation radius when using the selective recalc method
+		params.Enable_selective_recalc = true;
+		params.Recalc_cutoff = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Recalc_cutoff = 1;
+		params.FRET_cutoff = 2;
+		params.Exciton_dissociation_cutoff = 1;
+		params.Polaron_hopping_cutoff = 1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Recalc_cutoff = 1;
+		params.FRET_cutoff = 1;
+		params.Exciton_dissociation_cutoff = 2;
+		params.Polaron_hopping_cutoff = 1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Recalc_cutoff = 1;
+		params.FRET_cutoff = 1;
+		params.Exciton_dissociation_cutoff = 1;
+		params.Polaron_hopping_cutoff = 2;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check for multiple enabled tests
 		params = params_default;
 		params.Enable_dynamics_test = true;
 		params.Enable_exciton_diffusion_test = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for no tests enabled
+		params.Enable_dynamics_test = false;
+		params.Enable_exciton_diffusion_test = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for invalid test duration
+		params.Enable_exciton_diffusion_test = true;
+		params.N_tests = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for valid ToF test options
+		// Check valid parameters
+		params = params_default;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_ToF_test = true;
+		params.Enable_periodic_z = false;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check for invalid z boundary conditions
+		params.Enable_periodic_z = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for invalid morphology
+		params.Enable_periodic_z = false;
+		params.Enable_bilayer = true;
+		params.Enable_neat = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for valid placement option
+		params.Enable_neat = true;
+		params.Enable_bilayer = false;
+		params.Enable_ToF_random_placement = false;
+		params.Enable_ToF_energy_placement = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for invalid polaron type
+		params.Enable_ToF_random_placement = true;
+		params.ToF_polaron_type = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for valid IQE test options
+		// Check valid parameters
+		params = params_default;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_IQE_test = true;
+		params.Enable_periodic_z = false;
+		params.Enable_neat = false;
+		params.Enable_bilayer = true;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check invalid boundary conditions
+		params.Enable_periodic_z = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check invalid device architecture
+		params.Enable_periodic_z = false;
+		params.Enable_neat = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for valid Dynamics test options
+		params = params_default;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_dynamics_test = true;
+		// Check for dynamics extraction test and internal potential
+		params.Enable_dynamics_extraction = false;
+		params.Enable_periodic_z = false;
+		params.Internal_potential = -1.0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for dynamics extraction test and z boundary conditions
+		params.Enable_dynamics_extraction = false;
+		params.Enable_periodic_z = true;
+		params.Internal_potential = -1.0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check exciton parameter values
+		params = params_default;
+		params.Exciton_generation_rate_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Singlet_lifetime_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Triplet_lifetime_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_singlet_hopping_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Singlet_localization_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_triplet_hopping_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Triplet_localization_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_exciton_exciton_annihilation_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_exciton_polaron_annihilation_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.FRET_cutoff = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.E_exciton_binding_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_exciton_dissociation_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Exciton_dissociation_cutoff = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_exciton_isc_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_exciton_risc_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.E_exciton_ST_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check polaron parameter values
+		params = params_default;
+		params.R_polaron_hopping_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Polaron_localization_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_miller_abrahams = true;
+		params.Enable_marcus = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_miller_abrahams = false;
+		params.Enable_marcus = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Reorganization_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.R_polaron_recombination = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Polaron_hopping_cutoff = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Polaron_delocalization_length = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check lattice site parameters
+		params = params_default;
+		params.Homo_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Lumo_acceptor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_gaussian_dos = true;
+		params.Enable_exponential_dos = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_exponential_dos = true;
+		params.Energy_urbach_donor = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_gaussian_dos = false;
+		params.Enable_correlated_disorder = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_gaussian_dos = true;
+		params.Enable_correlated_disorder = true;
+		params.Disorder_correlation_length = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Enable_gaussian_dos = true;
+		params.Enable_correlated_disorder = true;
+		params.Enable_gaussian_kernel = true;
+		params.Disorder_correlation_length = 2.5;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Coulomb calculation options
+		params = params_default;
+		params.Dielectric_donor = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params = params_default;
+		params.Coulomb_cutoff = 0;
 		EXPECT_FALSE(sim.init(params, 0));
 	}
 
@@ -216,7 +439,7 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-3*params.Dynamics_initial_exciton_conc);
-		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 2.5e-2);
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 3e-2);
 		// Triplet exciton lifetime test
 		sim = OSC_Sim();
 		params = params_default;
@@ -235,7 +458,7 @@ namespace OSC_SimTests {
 		for (int i = 0; i < (int)time_data.size(); i++) {
 			transient_data[i] = make_pair(time_data[i], (double)triplet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
-		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 2.5e-2);
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 3e-2);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
@@ -252,6 +475,11 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		// Check exciton creation statistics
+		EXPECT_EQ(params.N_tests, sim.getN_excitons_created());
+		EXPECT_EQ(params.N_tests, sim.getN_excitons_created((char)1));
+		EXPECT_EQ(0, sim.getN_excitons_created((char)2));
+		// Check exciton diffusion results
 		auto lifetime_data = sim.getExcitonLifetimeData();
 		EXPECT_NEAR(params.Singlet_lifetime_donor, vector_avg(lifetime_data), 5e-2*params.Singlet_lifetime_donor);
 		EXPECT_DOUBLE_EQ(1.0, vector_avg(sim.getExcitonHopLengthData()));
