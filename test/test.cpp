@@ -59,7 +59,7 @@ namespace OSC_SimTests {
 			params_default.ToF_transient_end = 1e-4;
 			params_default.ToF_pnts_per_decade = 20;
 			params_default.Enable_IQE_test = false;
-			params_default.IQE_time_cutoff = 1e-4;
+			params_default.IQE_time_cutoff = 1e-3;
 			params_default.Enable_dynamics_test = false;
 			params_default.Enable_dynamics_extraction = false;
 			params_default.Dynamics_initial_exciton_conc = 1e16;
@@ -525,12 +525,16 @@ namespace OSC_SimTests {
 		params.Enable_neat = false;
 		params.Enable_periodic_z = false;
 		params.Enable_bilayer = true;
+		params.Length = 50;
+		params.Width = 50;
 		params.Height = 40;
+		params.Coulomb_cutoff = 25;
 		params.Thickness_donor = 20;
 		params.Thickness_acceptor = 20;
-		params.FRET_cutoff = 2;
-		params.Polaron_hopping_cutoff = 2;
 		params.Recalc_cutoff = 2;
+		params.FRET_cutoff = 2;
+		params.Exciton_dissociation_cutoff = 2;
+		params.Polaron_hopping_cutoff = 2;
 		params.Internal_potential = -1.0;
 		params.N_tests = 500;
 		bool success;
@@ -602,12 +606,9 @@ namespace OSC_SimTests {
 		double IQE5 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE5, IQE1);
 		// Check for higher order losses
-		params.Length = 50;
-		params.Width = 50;
 		params.Height = 80;
 		params.Thickness_donor = 40;
 		params.Thickness_acceptor = 40;
-		params.Coulomb_cutoff = 25;
 		params.Triplet_lifetime_donor = 1e-7;
 		params.Triplet_lifetime_acceptor = 1e-7;
 		params.R_exciton_exciton_annihilation_donor = 1e14;
@@ -621,6 +622,8 @@ namespace OSC_SimTests {
 		params.Polaron_delocalization_length = 4.0;
 		params.Exciton_generation_rate_donor = 1e24;
 		params.Exciton_generation_rate_donor = 1e24;
+		params.Internal_potential = -1.0;
+		params.N_tests = 1000;
 		sim = OSC_Sim();
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
