@@ -528,9 +528,9 @@ namespace OSC_SimTests {
 		params.Height = 40;
 		params.Thickness_donor = 20;
 		params.Thickness_acceptor = 20;
-		params.FRET_cutoff = 4;
-		params.Polaron_hopping_cutoff = 3;
-		params.Recalc_cutoff = 4;
+		params.FRET_cutoff = 2;
+		params.Polaron_hopping_cutoff = 2;
+		params.Recalc_cutoff = 2;
 		params.Internal_potential = -1.0;
 		params.N_tests = 500;
 		bool success;
@@ -601,6 +601,56 @@ namespace OSC_SimTests {
 		}
 		double IQE5 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE5, IQE1);
+		// Check for higher order losses
+		params.Length = 50;
+		params.Width = 50;
+		params.Height = 80;
+		params.Thickness_donor = 40;
+		params.Thickness_acceptor = 40;
+		params.Coulomb_cutoff = 25;
+		params.Triplet_lifetime_donor = 1e-7;
+		params.Triplet_lifetime_acceptor = 1e-7;
+		params.R_exciton_exciton_annihilation_donor = 1e14;
+		params.R_exciton_exciton_annihilation_acceptor = 1e14;
+		params.R_exciton_polaron_annihilation_donor = 1e14;
+		params.R_exciton_polaron_annihilation_acceptor = 1e14;
+		params.R_exciton_isc_donor = 1e9;
+		params.R_exciton_isc_acceptor = 1e9;
+		params.R_polaron_recombination = 1e12;
+		params.Enable_gaussian_polaron_delocalization = true;
+		params.Polaron_delocalization_length = 4.0;
+		params.Exciton_generation_rate_donor = 1e24;
+		params.Exciton_generation_rate_donor = 1e24;
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			success = sim.executeNextEvent();
+			EXPECT_TRUE(success);
+			if (!success) {
+				cout << sim.getErrorMessage() << endl;
+			}
+		}
+		int N_exciton_exciton_annihilations1 = sim.getN_singlet_singlet_annihilations() + sim.getN_singlet_triplet_annihilations() + sim.getN_triplet_triplet_annihilations();
+		int N_exciton_polaron_annihilations1 = sim.getN_singlet_polaron_annihilations();
+		int N_bimolecular_recombinations1 = sim.getN_bimolecular_recombinations();
+		// Check that higher order losses increase at higher generation rates
+		params.Exciton_generation_rate_donor = 1e25;
+		params.Exciton_generation_rate_donor = 1e25;
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			success = sim.executeNextEvent();
+			EXPECT_TRUE(success);
+			if (!success) {
+				cout << sim.getErrorMessage() << endl;
+			}
+		}
+		int N_exciton_exciton_annihilations2 = sim.getN_singlet_singlet_annihilations() + sim.getN_singlet_triplet_annihilations() + sim.getN_triplet_triplet_annihilations();
+		int N_exciton_polaron_annihilations2 = sim.getN_singlet_polaron_annihilations();
+		int N_bimolecular_recombinations2 = sim.getN_bimolecular_recombinations();
+		EXPECT_GT(N_exciton_exciton_annihilations2, N_exciton_exciton_annihilations1);
+		EXPECT_GT(N_exciton_polaron_annihilations2, N_exciton_polaron_annihilations1);
+		EXPECT_GT(N_bimolecular_recombinations2, N_bimolecular_recombinations1);
 	}
 
 	TEST_F(OSC_SimTest, ToFTests) {
