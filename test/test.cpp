@@ -247,7 +247,6 @@ namespace OSC_SimTests {
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check for valid IQE test options
 		// Check valid parameters
-<<<<<<< HEAD
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
@@ -265,25 +264,6 @@ namespace OSC_SimTests {
 		// Check for valid Dynamics test options
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
-=======
-		params = params_default;
-		params.Enable_exciton_diffusion_test = false;
-		params.Enable_IQE_test = true;
-		params.Enable_periodic_z = false;
-		params.Enable_neat = false;
-		params.Enable_bilayer = true;
-		EXPECT_TRUE(sim.init(params, 0));
-		// Check invalid boundary conditions
-		params.Enable_periodic_z = true;
-		EXPECT_FALSE(sim.init(params, 0));
-		// Check invalid device architecture
-		params.Enable_periodic_z = false;
-		params.Enable_neat = true;
-		EXPECT_FALSE(sim.init(params, 0));
-		// Check for valid Dynamics test options
-		params = params_default;
-		params.Enable_exciton_diffusion_test = false;
->>>>>>> development
 		params.Enable_dynamics_test = true;
 		// Check for dynamics extraction test and internal potential
 		params.Enable_dynamics_extraction = false;
