@@ -611,6 +611,7 @@ namespace OSC_SimTests {
 		params.Thickness_acceptor = 40;
 		params.Triplet_lifetime_donor = 1e-7;
 		params.Triplet_lifetime_acceptor = 1e-7;
+		params.Enable_FRET_triplet_annihilation = true;
 		params.R_exciton_exciton_annihilation_donor = 1e14;
 		params.R_exciton_exciton_annihilation_acceptor = 1e14;
 		params.R_exciton_polaron_annihilation_donor = 1e14;
@@ -634,7 +635,7 @@ namespace OSC_SimTests {
 			}
 		}
 		int N_exciton_exciton_annihilations1 = sim.getN_singlet_singlet_annihilations() + sim.getN_singlet_triplet_annihilations() + sim.getN_triplet_triplet_annihilations();
-		int N_exciton_polaron_annihilations1 = sim.getN_singlet_polaron_annihilations();
+		int N_exciton_polaron_annihilations1 = sim.getN_singlet_polaron_annihilations() + sim.getN_triplet_polaron_annihilations();
 		int N_bimolecular_recombinations1 = sim.getN_bimolecular_recombinations();
 		// Check that higher order losses increase at higher generation rates
 		params.Exciton_generation_rate_donor = 1e25;
@@ -649,7 +650,7 @@ namespace OSC_SimTests {
 			}
 		}
 		int N_exciton_exciton_annihilations2 = sim.getN_singlet_singlet_annihilations() + sim.getN_singlet_triplet_annihilations() + sim.getN_triplet_triplet_annihilations();
-		int N_exciton_polaron_annihilations2 = sim.getN_singlet_polaron_annihilations();
+		int N_exciton_polaron_annihilations2 = sim.getN_singlet_polaron_annihilations() + sim.getN_triplet_polaron_annihilations();
 		int N_bimolecular_recombinations2 = sim.getN_bimolecular_recombinations();
 		EXPECT_GT(N_exciton_exciton_annihilations2, N_exciton_exciton_annihilations1);
 		EXPECT_GT(N_exciton_polaron_annihilations2, N_exciton_polaron_annihilations1);

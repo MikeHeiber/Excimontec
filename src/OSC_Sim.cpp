@@ -1753,7 +1753,8 @@ namespace Excimontec {
 
 	bool OSC_Sim::executeExcitonHop(const list<Event*>::const_iterator event_it) {
 		if (lattice.isOccupied((*event_it)->getDestCoords())) {
-			cout << getId() << ": Error! Exciton hop cannot be executed. Destination site is already occupied." << endl;
+			cout << getId() << ": Error! Exciton hop cannot be executed. Destination site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << " is already occupied." << endl;
+			outputStatus();
 			setErrorMessage("Exciton hop cannot be executed. Destination site is already occupied.");
 			Error_found = true;
 			return false;
@@ -1993,7 +1994,8 @@ namespace Excimontec {
 
 	bool OSC_Sim::executePolaronHop(const list<Event*>::const_iterator event_it) {
 		if (lattice.isOccupied((*event_it)->getDestCoords())) {
-			cout << getId() << ": Error! Polaron hop cannot be executed. Destination site is already occupied." << endl;
+			cout << getId() << ": Error! Polaron hop cannot be executed. Destination site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << " is already occupied." << endl;
+			outputStatus();
 			setErrorMessage("Polaron hop cannot be executed. Destination site is already occupied.");
 			Error_found = true;
 			return false;
