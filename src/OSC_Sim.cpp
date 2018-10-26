@@ -1454,6 +1454,7 @@ namespace Excimontec {
 		int site_count = 0;
 		bool isV3 = false;
 		bool isV4 = false;
+		bool isCompressed = false;
 		// Open morphology file
 		ifstream morphology_file(Morphology_filename.c_str(), ifstream::in);
 		// Check if morphology file exists and is accessible
@@ -1464,23 +1465,42 @@ namespace Excimontec {
 			morphology_file.close();
 			return false;
 		}
-		// Get input morphology file information
+		// Get input morphology file information from header line
 		getline(morphology_file, line);
 		file_info = line;
-		// Parse file info
-		if (file_info.find("Ising_OPV v3.2 - compressed format") != string::npos) {
-			isV3 = true;
-		}
-		else if (file_info.find("Ising_OPV v4.0") != string::npos && file_info.find("compressed") != string::npos && file_info.find("uncompressed") == string::npos) {
-			isV4 = true;
+		// Analyze file header line
+		if (file_info.substr(0, 9).compare("Ising_OPV") == 0) {
+			// extract version string
+			string version_str = file_info;
+			version_str.erase(0, version_str.find('v') + 1);
+			version_str = version_str.substr(0, version_str.find(' '));
+			Version file_version(version_str);
+			// check if morphology file version is greater than or equal to the minimum version
+			Version min_version("3.2");
+			if (file_version < min_version) {
+				cout << getId() << ": Error! Morphology file format not recognized. Only morphologies created using Ising_OPV v3.2 and v4.0 or greater are currently supported." << endl;
+				setErrorMessage("Morphology file format not recognized. Only morphologies created using Ising_OPV v3.2 and v4.0 or greater are currently supported.");
+				Error_found = true;
+				morphology_file.close();
+				return false;
+			}
+			if (file_version == min_version) {
+				isV3 = true;
+			}
+			else if (file_version >= Version("4.0.0-beta.1")) {
+				isV4 = true;
+			}
+			// Check if file is in compressed format or not
+			isCompressed = (file_info.find("uncompressed") == string::npos);
 		}
 		else {
-			cout << getId() << ": Error! Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 and v4.0 are currently supported." << endl;
-			setErrorMessage("Morphology file format not recognized. Only compressed morphologies created using Ising_OPV v3.2 and v4.0 are currently supported.");
+			cout << getId() << ": Error! Morphology file format not recognized. Only morphologies created using Ising_OPV v3.2 and v4.0 or greater are currently supported." << endl;
+			setErrorMessage("Morphology file format not recognized. Only morphologies created using Ising_OPV v3.2 and v4.0 or greater are currently supported.");
 			Error_found = true;
 			morphology_file.close();
 			return false;
 		}
+		// Parse file info
 		getline(morphology_file, line);
 		length = atoi(line.c_str());
 		getline(morphology_file, line);
@@ -1514,30 +1534,53 @@ namespace Excimontec {
 			}
 		}
 		// Begin parsing morphology site data
-		for (int x = 0; x < lattice.getLength(); x++) {
-			for (int y = 0; y < lattice.getWidth(); y++) {
-				for (int z = 0; z < lattice.getHeight(); z++) {
-					if (site_count == 0) {
-						if (!(morphology_file).good()) {
-							cout << "Error parsing file.  End of file reached before expected." << endl;
-							setErrorMessage("Error parsing imported morphology file.  End of file reached before expected.");
-							Error_found = true;
-							morphology_file.close();
-							return false;
+		if (!isCompressed) {
+			while (getline(morphology_file, line)) {
+				stringstream linestream(line);
+				string item;
+				vector<int> values;
+				values.reserve(4);
+				while (getline(linestream, item, ',')) {
+					values.push_back(atoi(item.c_str()));
+				}
+				coords.setXYZ(values[0], values[1], values[2]);
+				sites[lattice.getSiteIndex(coords)].setType((char)values[3]);
+				if (values[3] == 1) {
+					N_donor_sites++;
+				}
+				else if (values[3] == 2) {
+					N_acceptor_sites++;
+				}
+			}
+		}
+		else {
+			int site_count = 0;
+			char type = 0;
+			for (int x = 0; x < lattice.getLength(); x++) {
+				for (int y = 0; y < lattice.getWidth(); y++) {
+					for (int z = 0; z < lattice.getHeight(); z++) {
+						if (site_count == 0) {
+							getline(morphology_file, line);
+							if (!(morphology_file).good()) {
+								cout << "Error parsing file.  End of file reached before expected." << endl;
+								setErrorMessage("Error parsing imported morphology file.  End of file reached before expected.");
+								Error_found = true;
+								morphology_file.close();
+								return false;
+							}
+							type = (short)atoi(line.substr(0, 1).c_str());
+							site_count = atoi(line.substr(1).c_str());
 						}
-						getline(morphology_file, line);
-						type = (short)atoi(line.substr(0, 1).c_str());
-						site_count = atoi(line.substr(1).c_str());
+						coords.setXYZ(x, y, z);
+						sites[lattice.getSiteIndex(coords)].setType(type);
+						if (type == (short)1) {
+							N_donor_sites++;
+						}
+						else if (type == (short)2) {
+							N_acceptor_sites++;
+						}
+						site_count--;
 					}
-					coords.setXYZ(x, y, z);
-					sites[lattice.getSiteIndex(coords)].setType(type);
-					if (type == (short)1) {
-						N_donor_sites++;
-					}
-					else if (type == (short)2) {
-						N_acceptor_sites++;
-					}
-					site_count--;
 				}
 			}
 		}
