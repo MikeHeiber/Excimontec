@@ -399,25 +399,54 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		EXPECT_TRUE(sim.init(params, 0));
 		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
+	}
+
+	TEST_F(OSC_SimTest, MorphologyImportTests) {
+		auto params = params_default;
 		// Test morphology import
 		sim = OSC_Sim();
 		params.Enable_neat = false;
 		params.Enable_import_morphology = true;
-		params.Length = 200;
-		params.Width = 200;
-		params.Height = 200;
+		params.Length = 50;
+		params.Width = 50;
+		params.Height = 50;
 		// Test incorrect filename
 		params.Morphology_filename = "./test/test_morphology123.txt";
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Morphology_filename = "./test/test_morphology.txt";
 		// Test incorrect dimensions
 		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_v4-0_compressed.txt";
 		params.Height = 100;
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Height = 200;
-		// Test correct import
+		params.Height = 50;
+		// Test correct import of v3.2 compressed
 		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_v3-2_compressed.txt";
 		EXPECT_TRUE(sim.init(params, 0));
+		// Test correct import of v3.2 uncompressed
+		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_v3-2_uncompressed.txt";
+		EXPECT_TRUE(sim.init(params, 0));
+		// Test correct import of v4.0 compressed
+		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_v4-0_compressed.txt";
+		EXPECT_TRUE(sim.init(params, 0));
+		// Test correct import of v4.0 uncompressed
+		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_v4-0_uncompressed.txt";
+		EXPECT_TRUE(sim.init(params, 0));
+		// Test behavior when there is missing data
+		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_v4-0_missing_data.txt";
+		EXPECT_FALSE(sim.init(params, 0));
+		// Test behavior when there is no header line
+		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_no_version.txt";
+		EXPECT_FALSE(sim.init(params, 0));
+		// Test behavior when the version is too old
+		sim = OSC_Sim();
+		params.Morphology_filename = "./test/morphology_old_version.txt";
+		EXPECT_FALSE(sim.init(params, 0));
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {

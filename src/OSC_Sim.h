@@ -10,6 +10,7 @@
 #include "Site.h"
 #include "Exciton.h"
 #include "Polaron.h"
+#include "Version.h"
 #include <algorithm>
 #include <numeric>
 
