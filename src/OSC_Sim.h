@@ -157,6 +157,7 @@ namespace Excimontec {
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
 		std::vector<KMC_Lattice::Event> getEvents() const;
+		std::vector<int> getExcitonAnnihilationLengthData() const;
 		std::vector<double> getExcitonDiffusionData() const;
 		std::vector<int> getExcitonHopLengthData() const;
 		std::vector<double> getExcitonLifetimeData() const;
@@ -448,6 +449,7 @@ namespace Excimontec {
 		std::vector<double> exciton_lifetimes;
 		std::vector<double> exciton_diffusion_distances;
 		std::vector<int> exciton_hop_distances; // saved in lattice units squared
+		std::vector<int> exciton_annihilation_distances; // saved in lattice units
 		std::vector<int> transient_exciton_tags;
 		std::vector<int> transient_electron_tags;
 		std::vector<int> transient_hole_tags;

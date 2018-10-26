@@ -1688,6 +1688,8 @@ namespace Excimontec {
 		bool spin_state_target = (getExcitonIt((*event_it)->getObjectTargetPtr()))->getSpin();
 		Coords coords_initial = exciton_it->getCoords();
 		Coords coords_dest = (*event_it)->getDestCoords();
+		// Log annihilation distance
+		exciton_annihilation_distances.push_back(sqrt(lattice.calculateLatticeDistanceSquared(((*event_it)->getObjectPtr())->getCoords(), (*event_it)->getDestCoords())));
 		// Triplet-triplet annihilation
 		if (!spin_state && !spin_state_target) {
 			// Target triplet exciton becomes a singlet exciton
@@ -2341,6 +2343,10 @@ namespace Excimontec {
 			events.push_back(*item);
 		}
 		return events;
+	}
+
+	vector<int> OSC_Sim::getExcitonAnnihilationLengthData() const {
+		return exciton_annihilation_distances;
 	}
 
 	vector<double> OSC_Sim::getExcitonDiffusionData() const {

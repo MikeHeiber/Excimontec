@@ -459,6 +459,33 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)triplet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 3e-2);
+		// Exciton-exciton annihilation test
+		//sim = OSC_Sim();
+		//params = params_default;
+		//params.Recalc_cutoff = 4;
+		//params.Enable_exciton_diffusion_test = false;
+		//params.Enable_dynamics_test = true;
+		//params.Dynamics_initial_exciton_conc = 5e16;
+		//params_default.Dynamics_transient_end = 1e-7;
+		//params.Singlet_lifetime_donor = 1e-5;
+		//params.R_exciton_exciton_annihilation_donor = 1e16;
+		//params.FRET_cutoff = 4;
+		//params.N_tests = 1000;
+		//EXPECT_TRUE(sim.init(params, 0));
+		//while (!sim.checkFinished()) {
+		//	EXPECT_TRUE(sim.executeNextEvent());
+		//}
+		//double reaction_distance = params.Unit_size * 1e-7 * vector_avg(sim.getExcitonAnnihilationLengthData());
+		//time_data = sim.getDynamicsTransientTimes();
+		//singlet_data = sim.getDynamicsTransientSinglets();
+		//EXPECT_TRUE(time_data.size() == singlet_data.size());
+		//transient_data.resize(time_data.size());
+		//for (int i = 0; i < (int)time_data.size(); i++) {
+		//	transient_data[i] = make_pair(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
+		//}
+		//double diffusion_coef = (1.0 / 6.0)*intpow(1e-7, 2) * 6 * params.R_singlet_hopping_donor;
+		//double rec_lifetime = 1 / (params.Dynamics_initial_exciton_conc * 4 * Pi * diffusion_coef * reaction_distance);
+		//EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, rec_lifetime) / params.Dynamics_initial_exciton_conc, 3e-2);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
