@@ -15,6 +15,8 @@ namespace Excimontec {
 	OSC_Sim::~OSC_Sim() {}
 
 	bool OSC_Sim::init(const Parameters_OPV& params, const int id) {
+		// Reset error status
+		Error_found = false;
 		// Check parameters for errors
 		if (!checkParameters(params)) {
 			Error_found = true;
@@ -995,6 +997,10 @@ namespace Excimontec {
 			cout << "Error! Only one of the first reaction method, the selective recalculation method, or the full recalculation method can be enabled." << endl;
 			return false;
 		}
+		if (KMC_algs == 0) {
+			cout << "Error! One of the first reaction method, the selective recalculation method, or the full recalculation method must be enabled." << endl;
+			return false;
+		}
 		if (params.Enable_selective_recalc && !(params.Recalc_cutoff > 0)) {
 			cout << "Error! The event recalculation cutoff radius must be greater than zero." << endl;
 			return false;
@@ -1163,8 +1169,8 @@ namespace Excimontec {
 			cout << "Error! The exciton reverse intersystem crossing rate of the donor and acceptor must be greater than zero." << endl;
 			return false;
 		}
-		if (!(params.E_exciton_ST_donor > 0) || !(params.E_exciton_ST_acceptor > 0)) {
-			cout << "Error! The exciton singlet-triplet splitting energy of the donor and acceptor must be greater than zero." << endl;
+		if (params.E_exciton_ST_donor < 0 || params.E_exciton_ST_acceptor < 0) {
+			cout << "Error! The exciton singlet-triplet splitting energy of the donor and acceptor must not be negative." << endl;
 			return false;
 		}
 		// Check polaron parameters
@@ -1747,7 +1753,8 @@ namespace Excimontec {
 
 	bool OSC_Sim::executeExcitonHop(const list<Event*>::const_iterator event_it) {
 		if (lattice.isOccupied((*event_it)->getDestCoords())) {
-			cout << getId() << ": Error! Exciton hop cannot be executed. Destination site is already occupied." << endl;
+			cout << getId() << ": Error! Exciton hop cannot be executed. Destination site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << " is already occupied." << endl;
+			outputStatus();
 			setErrorMessage("Exciton hop cannot be executed. Destination site is already occupied.");
 			Error_found = true;
 			return false;
@@ -1756,7 +1763,7 @@ namespace Excimontec {
 			if (isLoggingEnabled()) {
 				*Logfile << "Exciton " << ((*event_it)->getObjectPtr())->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
 			}
-			// Log information aobut the top when the exciton diffusion test is enabled
+			// Log information about the hop when the exciton diffusion test is enabled
 			if (Enable_exciton_diffusion_test) {
 				exciton_hop_distances.push_back(lattice.calculateLatticeDistanceSquared(((*event_it)->getObjectPtr())->getCoords(), (*event_it)->getDestCoords()));
 			}
@@ -1987,7 +1994,8 @@ namespace Excimontec {
 
 	bool OSC_Sim::executePolaronHop(const list<Event*>::const_iterator event_it) {
 		if (lattice.isOccupied((*event_it)->getDestCoords())) {
-			cout << getId() << ": Error! Polaron hop cannot be executed. Destination site is already occupied." << endl;
+			cout << getId() << ": Error! Polaron hop cannot be executed. Destination site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << " is already occupied." << endl;
+			outputStatus();
 			setErrorMessage("Polaron hop cannot be executed. Destination site is already occupied.");
 			Error_found = true;
 			return false;
@@ -2169,7 +2177,7 @@ namespace Excimontec {
 		transient_hole_energies_prev.clear();
 		N_transient_cycles++;
 		int num = 0;
-		if (N_transient_cycles % 10 == 0) {
+		if (N_transient_cycles % 10 == 0 || N_transient_cycles == 1) {
 			cout << getId() << ": Dynamics transient cycle " << N_transient_cycles << ": Generating " << N_initial_excitons << " initial excitons." << endl;
 		}
 		while (num < N_initial_excitons) {

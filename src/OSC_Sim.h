@@ -447,7 +447,7 @@ namespace Excimontec {
 		std::vector<std::pair<double, double>> DOS_correlation_data;
 		std::vector<double> exciton_lifetimes;
 		std::vector<double> exciton_diffusion_distances;
-		std::vector<int> exciton_hop_distances; // saved as lattice units squared
+		std::vector<int> exciton_hop_distances; // saved in lattice units squared
 		std::vector<int> transient_exciton_tags;
 		std::vector<int> transient_electron_tags;
 		std::vector<int> transient_hole_tags;
