@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['exciton_2ecpp',['Exciton.cpp',['../_exciton_8cpp.html',1,'']]],
-  ['exciton_2eh',['Exciton.h',['../_exciton_8h.html',1,'']]]
+  ['code_5fof_5fconduct_2emd',['CODE_OF_CONDUCT.md',['../_c_o_d_e___o_f___c_o_n_d_u_c_t_8md.html',1,'']]]
 ];
