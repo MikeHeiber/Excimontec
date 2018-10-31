@@ -24,7 +24,11 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "Excimontec", "index.html", [
+    [ "Contributor Covenant Code of Conduct", "md__c_o_d_e__o_f__c_o_n_d_u_c_t.html", null ],
     [ "Excimontec", "md__r_e_a_d_m_e.html", null ],
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -48,7 +52,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_exciton_8cpp.html",
-"struct_parameters___o_p_v.html#ad61e54053c0644fca200f803197a4550"
+"struct_excimontec_1_1_parameters___o_p_v.html#ad4a4ee2cde2056d12278f96d5d5761ce"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
