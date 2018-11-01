@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['polaron',['Polaron',['../class_polaron.html#a7392b742eec8c5bf4438198901c570a9',1,'Polaron']]],
-  ['polaron_5fextraction',['Polaron_Extraction',['../class_polaron___extraction.html#a2ac84785d2265bc1ee0e23a7fbcee03f',1,'Polaron_Extraction::Polaron_Extraction()'],['../class_polaron___extraction.html#ad3fd4585a4caf22be10c8730540b23db',1,'Polaron_Extraction::Polaron_Extraction(Simulation *simulation_ptr)']]],
-  ['polaron_5fhop',['Polaron_Hop',['../class_polaron___hop.html#ae8da015929a00a85dc56bc694cd62fa4',1,'Polaron_Hop::Polaron_Hop()'],['../class_polaron___hop.html#abaedc081f619b8e63363fac7f036b09f',1,'Polaron_Hop::Polaron_Hop(Simulation *simulation_ptr)']]],
-  ['polaron_5frecombination',['Polaron_Recombination',['../class_polaron___recombination.html#a653484a1c11e4bc0a744875184fdaf98',1,'Polaron_Recombination::Polaron_Recombination()'],['../class_polaron___recombination.html#abdb1e837d36802564eaaa6053ccb697c',1,'Polaron_Recombination::Polaron_Recombination(Simulation *simulation_ptr)']]]
+  ['polaron',['Polaron',['../class_excimontec_1_1_polaron.html#ac46cc4cc8c4ec7ec212c914d5785f1dc',1,'Excimontec::Polaron']]],
+  ['polaron_5fextraction',['Polaron_Extraction',['../class_excimontec_1_1_polaron___extraction.html#af92986bb1454b133a62fda32f480637a',1,'Excimontec::Polaron_Extraction::Polaron_Extraction()'],['../class_excimontec_1_1_polaron___extraction.html#af805a2383b8a0b505f22a62a829b8073',1,'Excimontec::Polaron_Extraction::Polaron_Extraction(KMC_Lattice::Simulation *simulation_ptr)']]],
+  ['polaron_5fhop',['Polaron_Hop',['../class_excimontec_1_1_polaron___hop.html#a99012e15129a9e7b7ff323fdf9f73b5c',1,'Excimontec::Polaron_Hop::Polaron_Hop()'],['../class_excimontec_1_1_polaron___hop.html#a38b744f976586a048033f293c96366be',1,'Excimontec::Polaron_Hop::Polaron_Hop(KMC_Lattice::Simulation *simulation_ptr)']]],
+  ['polaron_5frecombination',['Polaron_Recombination',['../class_excimontec_1_1_polaron___recombination.html#a8fdd0cfcb9287355493763be0455abec',1,'Excimontec::Polaron_Recombination::Polaron_Recombination()'],['../class_excimontec_1_1_polaron___recombination.html#a07f3466a102aa5083164d54d57327295',1,'Excimontec::Polaron_Recombination::Polaron_Recombination(KMC_Lattice::Simulation *simulation_ptr)']]]
 ];
