@@ -1359,9 +1359,7 @@ namespace Excimontec {
 		string line;
 		stringstream ss;
 		Coords coords;
-		short type = 0;
 		int length, width, height;
-		int site_count = 0;
 		bool isV3 = false;
 		bool isV4 = false;
 		bool isCompressed = false;
