@@ -128,6 +128,9 @@ namespace OSC_SimTests {
 			params_default.Enable_gaussian_kernel = false;
 			params_default.Enable_power_kernel = false;
 			params_default.Power_kernel_exponent = -2;
+			params_default.Enable_interfacial_energy_shift = false;
+			params_default.Energy_shift_donor = 0.0;
+			params_default.Energy_shift_acceptor = 0.0;
 			// Coulomb Calculation Parameters
 			params_default.Dielectric_donor = 3.5;
 			params_default.Dielectric_acceptor = 3.5;
@@ -384,6 +387,11 @@ namespace OSC_SimTests {
 		params.Enable_correlated_disorder = true;
 		params.Enable_gaussian_kernel = true;
 		params.Disorder_correlation_length = 2.5;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check invalid interfacial energy shift params
+		params = params_default;
+		params.Enable_interfacial_energy_shift = true;
+		params.Energy_shift_donor = -1;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Coulomb calculation options
 		params = params_default;
@@ -735,6 +743,40 @@ namespace OSC_SimTests {
 		dim = 3.0;
 		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+	}
+
+	TEST_F(OSC_SimTest, InterfacialEnergyShiftTests) {
+		// Test energy shift on bilayer without energetic disorder
+		sim = OSC_Sim();
+		auto params = params_default;
+		params.Enable_neat = false;
+		params.Enable_periodic_z = false;
+		params.Enable_bilayer = true;
+		params.Length = 100;
+		params.Width = 100;
+		params.Height = 40;
+		params.Thickness_donor = 20;
+		params.Thickness_acceptor = 20;
+		params.Enable_interfacial_energy_shift = true;
+		params.Energy_shift_donor = 0.01;
+		params.Energy_shift_acceptor = 0.01;
+		sim.init(params, 0);
+		double expected_energy = params.Energy_shift_donor + (params.Energy_shift_donor * 4 / sqrt(2)) + (params.Energy_shift_donor * 4 / sqrt(3));
+		EXPECT_DOUBLE_EQ(expected_energy, sim.getSiteEnergy(Coords(params.Length / 2, params.Width / 2, params.Height/2)));
+		// Test energy shift on bilayer with energetic disorder
+		sim = OSC_Sim();
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.05;
+		params.Energy_stdev_acceptor = 0.05;
+		sim.init(params, 0);
+		vector<double> energies;
+		for (int x = 0; x < params.Length; x++) {
+			for (int y = 0; y < params.Width; y++) {
+				energies.push_back(sim.getSiteEnergy(Coords(x, y, params.Height/2)));
+			}
+		}
+		double expected_energy_avg = params.Energy_shift_donor + (params.Energy_shift_donor * 4 / sqrt(2)) + (params.Energy_shift_donor * 4 / sqrt(3));
+		EXPECT_NEAR(expected_energy_avg, vector_avg(energies),5e-3);
 	}
 
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
