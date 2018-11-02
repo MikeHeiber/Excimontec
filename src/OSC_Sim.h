@@ -313,7 +313,6 @@ namespace Excimontec {
 		double Transient_start;
 		double Transient_end;
 		int Transient_pnts_per_decade;
-		double R_polaron_recombination;
 		bool isLightOn;
 		double R_exciton_generation_donor;
 		double R_exciton_generation_acceptor;
