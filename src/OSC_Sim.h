@@ -113,6 +113,8 @@ namespace Excimontec {
 		bool Enable_interfacial_energy_shift;
 		double Energy_shift_donor;
 		double Energy_shift_acceptor;
+		bool Enable_import_energies;
+		std::string Energies_import_filename;
 		// Coulomb Calculation Parameters
 		double Dielectric_donor;
 		double Dielectric_acceptor;
@@ -148,6 +150,7 @@ namespace Excimontec {
 		void createElectron(const KMC_Lattice::Coords& coords);
 		void createHole(const KMC_Lattice::Coords& coords);
 		bool executeNextEvent();
+		void exportEnergies(std::string filename);
 		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
 		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
 		std::vector<double> getDynamicsExcitonEnergies() const;

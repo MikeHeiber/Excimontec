@@ -1025,6 +1025,32 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 	i++;
 	params.Power_kernel_exponent = atoi(stringvars[i].c_str());
 	i++;
+	//enable_interfacial_energy_shift
+	try {
+		params.Enable_interfacial_energy_shift = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
+		cout << "Error setting the interfacial energy shift options" << endl;
+		Error_found = true;
+	}
+	i++;
+	params.Energy_shift_donor = atof(stringvars[i].c_str());
+	i++;
+	params.Energy_shift_acceptor = atof(stringvars[i].c_str());
+	i++;
+	//enable_import_energies
+	try {
+		params.Enable_import_energies = str2bool(stringvars[i]);
+	}
+	catch (invalid_argument& exception) {
+		cout << exception.what() << endl;
+		cout << "Error setting the import site energies options" << endl;
+		Error_found = true;
+	}
+	i++;
+	params.Energies_import_filename = stringvars[i];
+	i++;
 	// Coulomb Calculation Parameters
 	params.Dielectric_donor = atof(stringvars[i].c_str());
 	//i++;

@@ -1164,6 +1164,18 @@ namespace Excimontec {
 			cout << "Error! When enabling the interfacial energy shift model, the energy shift factor for the donor and the acceptor phases must not be negative." << endl;
 			return false;
 		}
+		if (params.Enable_import_energies && (params.Enable_gaussian_dos || params.Enable_exponential_dos)) {
+			cout << "Error! When importing site energies from a file, the Gaussian and exponential density of states models must not be enabled." << endl;
+			return false;
+		}
+		if (params.Enable_import_energies && (params.Enable_gaussian_dos || params.Enable_exponential_dos)) {
+			cout << "Error! When importing site energies from a file, the interfacial energy shift model must not be enabled." << endl;
+			return false;
+		}
+		if (params.Enable_import_energies && (int)params.Energies_import_filename.size() == 0) {
+			cout << "Error! When importing site energies from a file, a valid filename must be provided." << endl;
+			return false;
+		}
 		// Check Coulomb interaction parameters
 		if (!(params.Coulomb_cutoff > 0)) {
 			cout << "Error! The Coulomb cutoff radius must be greater than zero." << endl;
@@ -1998,6 +2010,21 @@ namespace Excimontec {
 		return true;
 	}
 
+	void OSC_Sim::exportEnergies(std::string filename) {
+		ofstream outfile(filename);
+		outfile << lattice.getLength() << endl;
+		outfile << lattice.getWidth() << endl;
+		outfile << lattice.getHeight() << endl;
+		for (int x = 0; x < lattice.getLength(); x++) {
+			for (int y = 0; y < lattice.getWidth(); y++) {
+				for (int z = 0; z < lattice.getHeight(); z++) {
+					outfile << getSiteEnergy(Coords(x, y, z)) << "\n";
+				}
+			}
+		}
+		outfile.close();
+	}
+
 	Coords OSC_Sim::generateExciton() {
 		// Determine coords
 		Coords coords = calculateExcitonCreationCoords();
@@ -2618,7 +2645,7 @@ namespace Excimontec {
 			createExponentialDOSVector(site_energies_donor, 0, params_opv.Energy_urbach_donor, generator);
 			createExponentialDOSVector(site_energies_acceptor, 0, params_opv.Energy_urbach_acceptor, generator);
 		}
-		else {
+		else if (!params_opv.Enable_import_energies) {
 			site_energies_donor.push_back(0);
 			site_energies_acceptor.push_back(0);
 		}
@@ -2638,6 +2665,7 @@ namespace Excimontec {
 					cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
 					setErrorMessage("Undefined site type detected while assigning site energies.");
 					Error_found = true;
+					return;
 				}
 			}
 			else {
@@ -2651,6 +2679,7 @@ namespace Excimontec {
 					cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
 					setErrorMessage("Undefined site type detected while assigning site energies.");
 					Error_found = true;
+					return;
 				}
 			}
 		}
@@ -2717,10 +2746,83 @@ namespace Excimontec {
 						cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
 						setErrorMessage("Undefined site type detected while assigning site energies.");
 						Error_found = true;
-						break;
+						return;
 					}
 				}
 			}
+		}
+		if (params_opv.Enable_import_energies) {
+			ifstream infile(params_opv.Energies_import_filename);
+			// Check if energies file exists and is accessible
+			if (!infile.good()) {
+				cout << getId() << ": Error opening site energies file for importing." << endl;
+				setErrorMessage("Site energies file could not be opened for importing.");
+				Error_found = true;
+				infile.close();
+				return;
+			}
+			// Copy all fine lines into a string vector
+			string line;
+			vector<string> lines;
+			while (getline(infile, line)) {
+				lines.push_back(line);
+			}
+			// Check that the file contains at least 3 lines for the lattice dimensions
+			int length = -1;
+			int width = -1;
+			int height = -1;
+			if (lines.size() > 3) {
+				// Read in the lattice dimensions
+				length = stoi(lines[0]);
+				width = stoi(lines[1]);
+				height = stoi(lines[2]);
+			}
+			// Check that valid lattice dimensions were read from the file
+			if (length <= 0 || width <= 0 || height <= 0) {
+				cout << getId() << ": Error importing the site energies, lattice dimensions imported from file are not valid." << endl;
+				setErrorMessage("Error importing the site energies, lattice dimensions importd from file are not valid.");
+				Error_found = true;
+				return;
+			}
+			// Check that the lattice dimensions in the file match the size of the lattice
+			if (length != lattice.getLength() || width != lattice.getWidth() || height != lattice.getHeight()) {
+				cout << getId() << ": Error importing the site energies, dimensions in file do not match the lattice dimensions." << endl;
+				setErrorMessage("Error importing the site energies, dimensions in file do not match the lattice dimensions.");
+				Error_found = true;
+				return;
+			}
+			// Check that the number of read lines corresponds to the correct number of lattice sites
+			if (lines.size() != (length*width*height + 3)) {
+				cout << getId() << ": Error importing the site energies, the number of energies does not equal the number of sites." << endl;
+				setErrorMessage("Error importing the site energies file,  the number of energies does not equal the number of sites.");
+				Error_found = true;
+				return;
+			}
+			int i = 3;
+			for (int x = 0; x < length; x++) {
+				for (int y = 0; y < width; y++) {
+					for (int z = 0; z < height; z++) {
+						double energy = stod(lines[i]);
+						long int index = lattice.getSiteIndex(Coords(x, y, z));
+						if (sites[index].getType() == (short)1) {
+							site_energies_donor.push_back(energy);
+							sites[index].setEnergyIt(std::prev(site_energies_donor.end()));
+						}
+						else if (sites[index].getType() == (short)2) {
+							site_energies_acceptor.push_back(energy);
+							sites[index].setEnergyIt(std::prev(site_energies_acceptor.end()));
+						}
+						else {
+							cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
+							setErrorMessage("Undefined site type detected while assigning site energies.");
+							Error_found = true;
+							return;
+						}
+						i++;
+					}
+				}
+			}
+
 		}
 	}
 
