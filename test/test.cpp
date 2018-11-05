@@ -131,6 +131,8 @@ namespace OSC_SimTests {
 			params_default.Enable_interfacial_energy_shift = false;
 			params_default.Energy_shift_donor = 0.0;
 			params_default.Energy_shift_acceptor = 0.0;
+			params_default.Enable_import_energies = false;
+			params_default.Energies_import_filename = "energies.txt";
 			// Coulomb Calculation Parameters
 			params_default.Dielectric_donor = 3.5;
 			params_default.Dielectric_acceptor = 3.5;
@@ -393,6 +395,19 @@ namespace OSC_SimTests {
 		params.Enable_interfacial_energy_shift = true;
 		params.Energy_shift_donor = -1;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check invalid energy import conditions
+		// Check missing filename
+		params = params_default;
+		params.Enable_import_energies = true;
+		params.Energies_import_filename = "";
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check conflicting options
+		params.Energies_import_filename = "energies.txt";
+		params.Enable_gaussian_dos = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Enable_gaussian_dos = false;
+		params.Enable_interfacial_energy_shift = true;
+		EXPECT_FALSE(sim.init(params, 0));
 		// Coulomb calculation options
 		params = params_default;
 		params.Dielectric_donor = 0;
@@ -407,6 +422,44 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		EXPECT_TRUE(sim.init(params, 0));
 		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
+	}
+
+	TEST_F(OSC_SimTest, EnergiesImportTests) {
+		// Create sample energies file
+		sim = OSC_Sim();
+		auto params = params_default;
+		params.Length = 30;
+		params.Width = 30;
+		params.Height = 30;
+		params.Enable_gaussian_dos = true;
+		EXPECT_TRUE(sim.init(params, 0));
+		double energies_stdev1 = vector_stdev(sim.getSiteEnergies(1));
+		sim.exportEnergies("./test/energies.txt");
+		// Test valid import operation
+		sim = OSC_Sim();
+		params.Enable_gaussian_dos = false;
+		params.Enable_import_energies = true;
+		params.Energies_import_filename = "./test/energies.txt";
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check imported energies
+		auto site_energies = sim.getSiteEnergies(1);
+		EXPECT_NEAR(0, vector_avg(site_energies), 5e-3);
+		EXPECT_NEAR(energies_stdev1, vector_stdev(site_energies), 1e-4);
+		// Test missing energies file
+		params.Energies_import_filename = "energies.txt";
+		EXPECT_FALSE(sim.init(params, 0));
+		// Test energies file with missing data
+		params.Energies_import_filename = "./test/energies_missing_data.txt";
+		EXPECT_FALSE(sim.init(params, 0));
+		// Test energy file with no dimensions
+		params.Energies_import_filename = "./test/energies_missing_dims.txt";
+		EXPECT_FALSE(sim.init(params, 0));
+		// Test energy file with improper dimensions
+		params.Length = 50;
+		params.Width = 50;
+		params.Height = 50;
+		params.Energies_import_filename = "./test/energies.txt";
+		EXPECT_FALSE(sim.init(params, 0));
 	}
 
 	TEST_F(OSC_SimTest, MorphologyImportTests) {
@@ -762,7 +815,7 @@ namespace OSC_SimTests {
 		params.Energy_shift_acceptor = 0.01;
 		sim.init(params, 0);
 		double expected_energy = params.Energy_shift_donor + (params.Energy_shift_donor * 4 / sqrt(2)) + (params.Energy_shift_donor * 4 / sqrt(3));
-		EXPECT_DOUBLE_EQ(expected_energy, sim.getSiteEnergy(Coords(params.Length / 2, params.Width / 2, params.Height/2)));
+		EXPECT_DOUBLE_EQ(expected_energy, sim.getSiteEnergy(Coords(params.Length / 2, params.Width / 2, params.Height / 2)));
 		// Test energy shift on bilayer with energetic disorder
 		sim = OSC_Sim();
 		params.Enable_gaussian_dos = true;
@@ -772,11 +825,11 @@ namespace OSC_SimTests {
 		vector<double> energies;
 		for (int x = 0; x < params.Length; x++) {
 			for (int y = 0; y < params.Width; y++) {
-				energies.push_back(sim.getSiteEnergy(Coords(x, y, params.Height/2)));
+				energies.push_back(sim.getSiteEnergy(Coords(x, y, params.Height / 2)));
 			}
 		}
 		double expected_energy_avg = params.Energy_shift_donor + (params.Energy_shift_donor * 4 / sqrt(2)) + (params.Energy_shift_donor * 4 / sqrt(3));
-		EXPECT_NEAR(expected_energy_avg, vector_avg(energies),5e-3);
+		EXPECT_NEAR(expected_energy_avg, vector_avg(energies), 5e-3);
 	}
 
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
