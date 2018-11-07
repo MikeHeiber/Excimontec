@@ -182,12 +182,14 @@ namespace Excimontec {
 		int getN_electrons_created() const;
 		int getN_electrons_collected() const;
 		int getN_electrons_recombined() const;
+		long int getN_events_executed() const;
 		int getN_holes_created() const;
 		int getN_holes_collected() const;
 		int getN_holes_recombined() const;
 		int getN_geminate_recombinations() const;
 		int getN_bimolecular_recombinations() const;
 		int getN_transient_cycles() const;
+		std::string getPreviousEventType() const;
 		std::vector<double> getSiteEnergies(const short site_type) const;
 		double getSiteEnergy(const KMC_Lattice::Coords& coords) const;
 		short getSiteType(const KMC_Lattice::Coords& coords) const;
@@ -337,6 +339,7 @@ namespace Excimontec {
 		std::list<Polaron> electrons;
 		std::list<Polaron> holes;
 		// Event Data Structures
+		std::string previous_event_type = "";
 		std::list<Exciton_Creation> exciton_creation_events;
 		std::list<KMC_Lattice::Event*>::const_iterator exciton_creation_it;
 		std::list<Exciton_Hop> exciton_hop_events;
@@ -405,6 +408,7 @@ namespace Excimontec {
 		int N_electrons_recombined = 0;
 		int N_electrons_collected = 0;
 		int N_electrons = 0;
+		long int N_events_executed = 0;
 		int N_holes_created = 0;
 		int N_holes_recombined = 0;
 		int N_holes_collected = 0;

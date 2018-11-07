@@ -336,22 +336,38 @@ namespace Excimontec {
 		else {
 			type_target = 2;
 		}
-		Coords dest_coords;
+		// Faster method of choosing a random site.  This becomes slow when the lattice has high occupancy.
+		// Use faster method when lattice is less than 50% occupied.
 		int N_tries = 0;
-		while (N_tries < (lattice.getHeight()*lattice.getWidth()*lattice.getHeight())) {
-			dest_coords = lattice.generateRandomCoords();
-			if (isLoggingEnabled()) {
-				*Logfile << "Attempting to create exciton at " << dest_coords.x << "," << dest_coords.y << "," << dest_coords.z << "." << endl;
-			}
-			N_tries++;
+		while ((N_excitons + N_electrons + N_holes) < (0.5*lattice.getLength()*lattice.getWidth()*lattice.getHeight()) && N_tries < 10) {
+			auto dest_coords = lattice.generateRandomCoords();
 			if (!lattice.isOccupied(dest_coords) && getSiteType(dest_coords) == type_target) {
 				return dest_coords;
 			}
+			N_tries++;
 		}
-		cout << getId() << ": Error! An empty site for exciton creation could not be found." << endl;
-		setErrorMessage("An empty site for exciton creation could not be found.");
-		Error_found = true;
-		return dest_coords;
+		// Method of choosing one of the empty sites.  This is slowish becuase it must loop through all sites first
+		// Get vector of possible creation sites
+		vector<long int> indices;
+		indices.reserve(lattice.getLength()*lattice.getWidth()*lattice.getHeight());
+		for (int x = 0; x < lattice.getLength(); x++) {
+			for (int y = 0; y < lattice.getWidth(); y++) {
+				for (int z = 0; z < lattice.getHeight(); z++) {
+					Coords dest_coords(x, y, z);
+					if (!lattice.isOccupied(dest_coords) && getSiteType(dest_coords) == type_target) {
+						indices.push_back(lattice.getSiteIndex(dest_coords));
+					}
+				}
+			}
+		}
+		if ((int)indices.size() == 0) {
+			cout << getId() << ": Error! An empty site for exciton creation could not be found." << endl;
+			setErrorMessage("An empty site for exciton creation could not be found.");
+			Error_found = true;
+			return Coords(-1, -1, -1);
+		}
+		uniform_int_distribution<long int> distn(0, (long int)indices.size());
+		return lattice.getSiteCoords(indices[distn(generator)]);
 	}
 
 	void OSC_Sim::calculateExcitonEvents(Exciton* exciton_ptr) {
@@ -1855,8 +1871,10 @@ namespace Excimontec {
 		}
 		string event_type = (*event_it)->getEventType();
 		if (isLoggingEnabled()) {
-			*Logfile << "Executing " << event_type << " event" << endl;
+			*Logfile << "Event " << N_events_executed << ": Executing " << event_type << " event" << endl;
 		}
+		previous_event_type = event_type;
+		N_events_executed++;
 		// Update simulation time
 		setTime((*event_it)->getExecutionTime());
 		// Execute the chosen event
@@ -2363,6 +2381,10 @@ namespace Excimontec {
 		return N_electrons_recombined;
 	}
 
+	long int OSC_Sim::getN_events_executed() const {
+		return N_events_executed;
+	}
+
 	int OSC_Sim::getN_excitons_created() const {
 		return N_excitons_created;
 	}
@@ -2446,6 +2468,10 @@ namespace Excimontec {
 			Error_found = true;
 		}
 		return it;
+	}
+
+	std::string OSC_Sim::getPreviousEventType() const {
+		return previous_event_type;
 	}
 
 	vector<double> OSC_Sim::getSiteEnergies(const short site_type) const {
@@ -2593,14 +2619,14 @@ namespace Excimontec {
 		cout << getId() << ": Time = " << getTime() << " seconds.\n";
 		if (params_opv.Enable_ToF_test) {
 			if (!params_opv.ToF_polaron_type) {
-				cout << getId() << ": " << N_electrons_collected << " out of " << N_electrons_created << " electrons have been collected and " << getN_events_executed() << " events have been executed.\n";
+				cout << getId() << ": " << N_electrons_collected << " out of " << N_electrons_created << " electrons have been collected and " << N_events_executed << " events have been executed.\n";
 				cout << getId() << ": There are currently " << N_electrons << " electrons in the lattice:\n";
 				for (auto const &item : electrons) {
 					cout << getId() << ": Electron " << item.getTag() << " is at " << item.getCoords().x << "," << item.getCoords().y << "," << item.getCoords().z << ".\n";
 				}
 			}
 			else {
-				cout << getId() << ": " << N_holes_collected << " out of " << N_holes_created << " holes have been collected and " << getN_events_executed() << " events have been executed.\n";
+				cout << getId() << ": " << N_holes_collected << " out of " << N_holes_created << " holes have been collected and " << N_events_executed << " events have been executed.\n";
 				cout << getId() << ": There are currently " << N_holes << " holes in the lattice:\n";
 				for (auto const &item : holes) {
 					cout << getId() << ": Hole " << item.getTag() << " is at " << item.getCoords().x << "," << item.getCoords().y << "," << item.getCoords().z << ".\n";
@@ -2608,14 +2634,14 @@ namespace Excimontec {
 			}
 		}
 		if (params_opv.Enable_exciton_diffusion_test) {
-			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << getN_events_executed() << " events have been executed.\n";
+			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << N_events_executed << " events have been executed.\n";
 			cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
 			for (auto const &item : excitons) {
 				cout << getId() << ": Exciton " << item.getTag() << " is at " << item.getCoords().x << "," << item.getCoords().y << "," << item.getCoords().z << ".\n";
 			}
 		}
 		if (params_opv.Enable_IQE_test || params_opv.Enable_dynamics_test) {
-			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << getN_events_executed() << " events have been executed.\n";
+			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << N_events_executed << " events have been executed.\n";
 			cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
 			for (auto const &item : excitons) {
 				cout << getId() << ": Exciton " << item.getTag() << " is at " << item.getCoords().x << "," << item.getCoords().y << "," << item.getCoords().z << ".\n";
@@ -2792,7 +2818,7 @@ namespace Excimontec {
 				return;
 			}
 			// Check that the number of read lines corresponds to the correct number of lattice sites
-			if (lines.size() != (length*width*height + 3)) {
+			if ((int)lines.size() != (length*width*height + 3)) {
 				cout << getId() << ": Error importing the site energies, the number of energies does not equal the number of sites." << endl;
 				setErrorMessage("Error importing the site energies file,  the number of energies does not equal the number of sites.");
 				Error_found = true;
