@@ -145,7 +145,7 @@ namespace OSC_SimTests {
 		// Check that default parameters are valid
 		EXPECT_TRUE(sim.init(params_default, 0));
 		// Check various invalid parameter sets
-		Parameters_OPV params;
+		auto params = params_default;
 		// Check that a device architecture is defined
 		params.Enable_neat = false;
 		EXPECT_FALSE(sim.init(params, 0));
@@ -263,6 +263,7 @@ namespace OSC_SimTests {
 		params.Enable_periodic_z = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check invalid device architecture
+		params.Enable_bilayer = false;
 		params.Enable_periodic_z = false;
 		params.Enable_neat = true;
 		EXPECT_FALSE(sim.init(params, 0));
@@ -276,7 +277,7 @@ namespace OSC_SimTests {
 		params.Internal_potential = -1.0;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check for dynamics extraction test and z boundary conditions
-		params.Enable_dynamics_extraction = false;
+		params.Enable_dynamics_extraction = true;
 		params.Enable_periodic_z = true;
 		params.Internal_potential = -1.0;
 		EXPECT_FALSE(sim.init(params, 0));
@@ -375,20 +376,49 @@ namespace OSC_SimTests {
 		params.Enable_exponential_dos = true;
 		params.Energy_urbach_donor = -1;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check enabled correlated disorder without specifying a DOS model
 		params = params_default;
 		params.Enable_gaussian_dos = false;
 		params.Enable_correlated_disorder = true;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check enabled correlated disorder with exponential DOS model
+		params = params_default;
+		params.Enable_gaussian_dos = false;
+		params.Enable_exponential_dos = true;
+		params.Enable_correlated_disorder = true;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check correlated disorder correlation length minimum
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Enable_correlated_disorder = true;
 		params.Disorder_correlation_length = 0;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check correlated disorder correlation length maximum
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Enable_correlated_disorder = true;
 		params.Enable_gaussian_kernel = true;
 		params.Disorder_correlation_length = 2.5;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check correlated disorder with different disorders
+		params = params_default;
+		params.Enable_neat = false;
+		params.Enable_bilayer = true;
+		params.Enable_gaussian_dos = true;
+		params.Enable_correlated_disorder = true;
+		params.Enable_gaussian_kernel = true;
+		params.Disorder_correlation_length = 1.0;
+		params.Energy_stdev_donor = 0.05;
+		params.Energy_stdev_acceptor = 0.025;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check correlated disorder power kernel exponent value
+		params = params_default;
+		params.Enable_gaussian_dos = true;
+		params.Enable_correlated_disorder = true;
+		params.Enable_power_kernel = true;
+		params.Power_kernel_exponent = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Power_kernel_exponent = -3;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check invalid interfacial energy shift params
 		params = params_default;
@@ -418,36 +448,114 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, SetupTests) {
+		// Check default parameters
 		sim = OSC_Sim();
-		Parameters_OPV params = params_default;
+		auto params = params_default;
 		EXPECT_TRUE(sim.init(params, 0));
 		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
 	}
 
+	TEST_F(OSC_SimTest, ObjectCreationTests) {
+		sim = OSC_Sim();
+		auto params = params_default;
+		params.Enable_neat = false;
+		params.Enable_bilayer = true;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_IQE_test = true;
+		params.Enable_periodic_z = false;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Create exciton
+		sim.createExciton(Coords(10, 10, 10), true);
+		// redirect cout to file
+		ofstream outfile("./test/status.txt");
+		auto old_buf = cout.rdbuf(outfile.rdbuf());
+		sim.outputStatus();
+		cout.rdbuf(old_buf);
+		outfile.close();
+		// Read status file
+		ifstream infile("./test/status.txt");
+		string line;
+		vector<string> lines;
+		while (getline(infile, line)) {
+			lines.push_back(line);
+		}
+		infile.close();
+		EXPECT_EQ(6, (int)lines.size());
+		EXPECT_STREQ(lines[3].c_str(), "0: Exciton 1 is at 10,10,10.");
+		// Try executing an event
+		sim.calculateAllEvents();
+		sim.executeNextEvent();
+		// redirect cout to file
+		ofstream outfile2("./test/status.txt");
+		old_buf = cout.rdbuf(outfile2.rdbuf());
+		sim.outputStatus();
+		cout.rdbuf(old_buf);
+		outfile2.close();
+		// Read status file
+		ifstream infile2("./test/status.txt");
+		lines.clear();
+		while (getline(infile2, line)) {
+			lines.push_back(line);
+		}
+		infile2.close();
+		EXPECT_EQ(6, (int)lines.size());
+		EXPECT_STREQ(lines[1].c_str(), "0: 1 excitons have been created and 1 events have been executed.");
+		// Create electron and create hole
+		sim.createElectron(Coords(10, 10, 49));
+		sim.createHole(Coords(10, 10, 50));
+		// redirect cout to file
+		ofstream outfile3("./test/status.txt");
+		old_buf = cout.rdbuf(outfile3.rdbuf());
+		sim.outputStatus();
+		cout.rdbuf(old_buf);
+		outfile3.close();
+		// Read status file
+		ifstream infile3("./test/status.txt");
+		lines.clear();
+		while (getline(infile3, line)) {
+			lines.push_back(line);
+		}
+		infile3.close();
+		EXPECT_EQ(8, (int)lines.size());
+		EXPECT_EQ(lines[5], "0: Electron 1 is at 10,10,49.");
+		EXPECT_EQ(lines[7], "0: Hole 1 is at 10,10,50.");
+	}
+
 	TEST_F(OSC_SimTest, LoggingTests) {
 		sim = OSC_Sim();
-		Parameters_OPV params = params_default;
+		auto params = params_default;
 		// Enable logging
 		params.Enable_logging = true;
-		ofstream logfile("log.txt");
+		ofstream logfile("./test/log.txt");
 		params.Logfile = &logfile;
 		// Run a simple random blend IQE test to test a variety of event types
 		params.Enable_neat = false;
 		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.3;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
 		params.Enable_periodic_z = false;
 		params.Internal_potential = -1.0;
+		params.R_exciton_exciton_annihilation_donor = 1e14;
+		params.R_exciton_exciton_annihilation_acceptor = 1e14;
+		params.R_exciton_polaron_annihilation_donor = 1e14;
+		params.R_exciton_polaron_annihilation_acceptor = 1e14;
+		params.R_exciton_isc_donor = 1e9;
+		params.R_exciton_isc_acceptor = 1e9;
+		params.R_exciton_risc_donor = 1e9;
+		params.R_exciton_risc_acceptor = 1e9;
+		params.E_exciton_ST_donor = 0.1;
+		params.E_exciton_ST_acceptor = 0.1;
 		EXPECT_TRUE(sim.init(params, 0));
-		// Execute 100 events and save events executed
+		// Execute 1000 events and save events executed
 		vector<string> event_types;
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			sim.executeNextEvent();
 			event_types.push_back(sim.getPreviousEventType());
 		}
 		logfile.close();
 		// Extract the events executed lines from the log
-		ifstream infile("log.txt");
+		ifstream infile("./test/log.txt");
 		string line;
 		vector<string> event_lines;
 		int n = 0;
@@ -457,6 +565,7 @@ namespace OSC_SimTests {
 				n++;
 			}
 		}
+		infile.close();
 		// Check that the extracted event lines from the log match the vector of event types
 		EXPECT_EQ(event_lines.size(), event_types.size());
 		if (event_lines.size() == event_types.size()) {
@@ -558,6 +667,7 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
+		params.Dynamics_transient_end = 1e-6;
 		params.N_tests = 3000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -667,6 +777,7 @@ namespace OSC_SimTests {
 		params.FRET_cutoff = 2;
 		params.Exciton_dissociation_cutoff = 2;
 		params.Polaron_hopping_cutoff = 2;
+		params.R_polaron_recombination = 1e10;
 		params.Internal_potential = -1.0;
 		params.N_tests = 500;
 		bool success;
@@ -737,6 +848,22 @@ namespace OSC_SimTests {
 		}
 		double IQE5 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE5, IQE1);
+		// Check for heterojunction dependence using weakly donating/accepting bilayer
+		params.R_polaron_recombination = 1e10;
+		params.Enable_phase_restriction = false;
+		params.Homo_acceptor = params.Homo_donor + 0.1;
+		params.Lumo_acceptor = params.Lumo_acceptor + 0.1;
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			success = sim.executeNextEvent();
+			EXPECT_TRUE(success);
+			if (!success) {
+				cout << sim.getErrorMessage() << endl;
+			}
+		}
+		double IQE6 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
+		EXPECT_GT(IQE1, IQE6);
 		// Check for higher order losses
 		params.Height = 80;
 		params.Thickness_donor = 40;
@@ -750,6 +877,10 @@ namespace OSC_SimTests {
 		params.R_exciton_polaron_annihilation_acceptor = 1e14;
 		params.R_exciton_isc_donor = 1e9;
 		params.R_exciton_isc_acceptor = 1e9;
+		params.R_exciton_risc_donor = 1e9;
+		params.R_exciton_risc_acceptor = 1e9;
+		params.E_exciton_ST_donor = 0.1;
+		params.E_exciton_ST_acceptor = 0.1;
 		params.R_polaron_recombination = 1e12;
 		params.Enable_gaussian_polaron_delocalization = true;
 		params.Polaron_delocalization_length = 4.0;
@@ -811,7 +942,26 @@ namespace OSC_SimTests {
 		// Check the mobility compared to analytical expectation
 		auto mobility_data = sim.calculateMobilityData(transit_time_data);
 		double dim = 3.0;
-		double expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
+		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
+		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
+		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		// Hole ToF test with marcus hopping
+		sim = OSC_Sim();
+		params.Enable_miller_abrahams = false;
+		params.Enable_marcus = true;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		transit_time_data = sim.getTransitTimeData();
+		// Check that the transit time probability histogram sums to 1
+		hist = sim.calculateTransitTimeHist(transit_time_data, (int)transit_time_data.size());
+		cum_hist = calculateCumulativeHist(hist);
+		EXPECT_NEAR(1.0, cum_hist.back().second, 1e-3);
+		// Check the mobility compared to analytical expectation
+		mobility_data = sim.calculateMobilityData(transit_time_data);
+		rate_constant = (params.R_polaron_hopping_donor / sqrt(4.0*Pi*params.Reorganization_donor*K_b*params.Temperature))*exp(-2.0*params.Polaron_localization_donor)*exp(-intpow(params.Reorganization_donor + params.Internal_potential / params.Height, 2) / (4.0*params.Reorganization_donor*K_b*params.Temperature));
+		expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
 		// Electron ToF test on neat should not be allowed
 		sim = OSC_Sim();
@@ -828,7 +978,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params.Enable_neat = false;
 		params.Enable_random_blend = true;
-		params.Acceptor_conc = 0.99; // Dilute blend should behave like a neat electron transport material might
+		params.Acceptor_conc = 0.99; // Dilute blend should behave like a neat electron transport material
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
