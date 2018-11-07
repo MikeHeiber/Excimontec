@@ -424,6 +424,48 @@ namespace OSC_SimTests {
 		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
 	}
 
+	TEST_F(OSC_SimTest, LoggingTests) {
+		sim = OSC_Sim();
+		Parameters_OPV params = params_default;
+		// Enable logging
+		params.Enable_logging = true;
+		ofstream logfile("log.txt");
+		params.Logfile = &logfile;
+		// Run a simple random blend IQE test to test a variety of event types
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_IQE_test = true;
+		params.Enable_periodic_z = false;
+		params.Internal_potential = -1.0;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Execute 100 events and save events executed
+		vector<string> event_types;
+		for (int i = 0; i < 100; i++) {
+			sim.executeNextEvent();
+			event_types.push_back(sim.getPreviousEventType());
+		}
+		logfile.close();
+		// Extract the events executed lines from the log
+		ifstream infile("log.txt");
+		string line;
+		vector<string> event_lines;
+		int n = 0;
+		while (getline(infile, line)) {
+			if (line.find("Event " + to_string(n)) != string::npos) {
+				event_lines.push_back(line);
+				n++;
+			}
+		}
+		// Check that the extracted event lines from the log match the vector of event types
+		EXPECT_EQ(event_lines.size(), event_types.size());
+		if (event_lines.size() == event_types.size()) {
+			for (int i = 0; i < (int)event_lines.size(); i++) {
+				EXPECT_TRUE(event_lines[i].find(event_types[i]) != string::npos);
+			}
+		}
+	}
+
 	TEST_F(OSC_SimTest, EnergiesImportTests) {
 		// Create sample energies file
 		sim = OSC_Sim();

@@ -53,6 +53,29 @@ int main(int argc, char *argv[]) {
 	char error_found = (char)0;
 	// Start timer
 	time_start = time(NULL);
+	// Check command line arguments
+	if (argc < 2) {
+		cout << "Error! You must input the parameter file name as a command line argument." << endl;
+		return 0;
+	}
+	// Check for command line enabled logging
+	// Set default
+	params_opv.Enable_logging = false;
+	if (argc == 3) {
+		string argument(argv[2]);
+		if (argument.compare("-enable_logging") == 0) {
+			params_opv.Enable_logging = true;
+		}
+		else {
+			cout << "Error! Invalid command line argument." << endl;
+			return 0;
+		}
+	}
+	// Check for too many command line arguments
+	if (argc > 3) {
+		cout << "Error! Too many command line arguments." << endl;
+		return 0;
+	}
 	// Import parameters and options from parameter file and command line arguments
 	cout << "Loading input parameters from file... " << endl;
 	parameterfile.open(argv[1], ifstream::in);
@@ -583,8 +606,6 @@ bool importParameters(ifstream& inputfile, Parameters_main& params_main, Paramet
 		}
 	}
 	int i = 0;
-	// Simulation Parameters
-	params.Enable_logging = false;
 	// KMC Algorithm Parameters
 	try {
 		params.Enable_FRM = str2bool(stringvars[i]);
