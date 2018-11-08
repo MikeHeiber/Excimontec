@@ -807,12 +807,9 @@ namespace Excimontec {
 				possible_events.push_back(&(*extraction_event_it));
 			}
 		}
-		// If there are no possible events, return an error
+		// If there are no possible events, set the polaron event ptr to nullptr
 		if (possible_events.size() == 0) {
 			setObjectEvent(polaron_ptr, nullptr);
-			cout << getId() << ": Error! No valid polaron events could be calculated." << endl;
-			setErrorMessage("No valid polaronm events could be calculated.");
-			Error_found = true;
 			return;
 		}
 		// Determine the next event
