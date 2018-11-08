@@ -1181,7 +1181,7 @@ namespace Excimontec {
 			cout << "Error! When importing site energies from a file, the Gaussian and exponential density of states models must not be enabled." << endl;
 			return false;
 		}
-		if (params.Enable_import_energies && (params.Enable_gaussian_dos || params.Enable_exponential_dos)) {
+		if (params.Enable_import_energies && params.Enable_interfacial_energy_shift) {
 			cout << "Error! When importing site energies from a file, the interfacial energy shift model must not be enabled." << endl;
 			return false;
 		}
@@ -1333,50 +1333,58 @@ namespace Excimontec {
 
 	void OSC_Sim::createElectron(const Coords& coords) {
 		// Check that coords are valid
-		if (lattice.getSiteIndex(coords) < 0) {
+		try {
+			int index = lattice.getSiteIndex(coords);
+		}
+		catch (out_of_range exception) {
 			cout << "Error! Electron cannot be generated because the input coordinates are invalid." << endl;
 			setErrorMessage("Electron cannot be generated because the input coordinates are invalid.");
 			Error_found = true;
+			return;
 		}
 		// Check that the site type is valid
-		else if (params_opv.Enable_phase_restriction && getSiteType(coords) == 1) {
+		if (params_opv.Enable_phase_restriction && getSiteType(coords) == 1) {
 			cout << "Error! Electron cannot be generated on a donor site." << endl;
 			setErrorMessage("Electron cannot be generated on a donor site.");
 			Error_found = true;
+			return;
 		}
-		else {
-			generateElectron(coords, 0);
-		}
+		generateElectron(coords, 0);
 	}
 
 	void OSC_Sim::createExciton(const Coords& coords, const bool spin) {
 		// Check that coords are valid
-		if (lattice.getSiteIndex(coords) < 0) {
+		try {
+			int index = lattice.getSiteIndex(coords);
+		}
+		catch (out_of_range exception) {
 			cout << "Error! Exciton cannot be generated because the input coordinates are invalid." << endl;
 			setErrorMessage("Exciton cannot be generated because the input coordinates are invalid.");
 			Error_found = true;
+			return;
 		}
-		else {
-			generateExciton(coords, spin, 0);
-		}
+		generateExciton(coords, spin, 0);
 	}
 
 	void OSC_Sim::createHole(const Coords& coords) {
 		// Check that coords are valid
-		if (lattice.getSiteIndex(coords) < 0) {
+		try {
+			int index = lattice.getSiteIndex(coords);
+		}
+		catch (out_of_range exception) {
 			cout << "Error! Hole cannot be generated because the input coordinates are invalid." << endl;
 			setErrorMessage("Hole cannot be generated because the input coordinates are invalid.");
 			Error_found = true;
+			return;
 		}
 		// Check that the site type is valid
-		else if (params_opv.Enable_phase_restriction && getSiteType(coords) == 2) {
+		if (params_opv.Enable_phase_restriction && getSiteType(coords) == 2) {
 			cout << "Error! Hole cannot be generated on an acceptor site." << endl;
 			setErrorMessage("Hole cannot be generated on an acceptor site.");
 			Error_found = true;
+			return;
 		}
-		else {
-			generateHole(coords, 0);
-		}
+		generateHole(coords, 0);
 	}
 
 	bool OSC_Sim::createImportedMorphology() {

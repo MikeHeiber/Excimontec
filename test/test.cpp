@@ -380,12 +380,14 @@ namespace OSC_SimTests {
 		params = params_default;
 		params.Enable_gaussian_dos = false;
 		params.Enable_correlated_disorder = true;
+		params.Enable_gaussian_kernel = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check enabled correlated disorder with exponential DOS model
 		params = params_default;
 		params.Enable_gaussian_dos = false;
 		params.Enable_exponential_dos = true;
 		params.Enable_correlated_disorder = true;
+		params.Enable_gaussian_kernel = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check correlated disorder correlation length minimum
 		params = params_default;
@@ -464,8 +466,8 @@ namespace OSC_SimTests {
 		params.Enable_IQE_test = true;
 		params.Enable_periodic_z = false;
 		EXPECT_TRUE(sim.init(params, 0));
-		// Create exciton
-		sim.createExciton(Coords(10, 10, 10), true);
+		// Create triplet exciton
+		sim.createExciton(Coords(10, 10, 10), false);
 		// redirect cout to file
 		ofstream outfile("./test/status.txt");
 		auto old_buf = cout.rdbuf(outfile.rdbuf());
@@ -519,6 +521,36 @@ namespace OSC_SimTests {
 		EXPECT_EQ(8, (int)lines.size());
 		EXPECT_EQ(lines[5], "0: Electron 1 is at 10,10,49.");
 		EXPECT_EQ(lines[7], "0: Hole 1 is at 10,10,50.");
+		// Check attempt to create exciton on invalid Coords
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.createExciton(Coords(-1, 0, 0), true);
+		EXPECT_TRUE(sim.getErrorStatus());
+		EXPECT_EQ("Exciton cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
+		// Check attempt to create electron on invalid Coords
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.createElectron(Coords(0, params.Width+1, 0));
+		EXPECT_TRUE(sim.getErrorStatus());
+		EXPECT_EQ("Electron cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
+		// Check attempt to create hole on invalid Coords
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.createHole(Coords(0, 0, params.Height+1));
+		EXPECT_TRUE(sim.getErrorStatus());
+		EXPECT_EQ("Hole cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
+		// Check attempt to create electron on invalid site type
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.createElectron(Coords(10,10,50));
+		EXPECT_TRUE(sim.getErrorStatus());
+		EXPECT_EQ("Electron cannot be generated on a donor site.", sim.getErrorMessage());
+		// Check attempt to create hole on invalid Coords
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.createHole(Coords(10, 10, 49));
+		EXPECT_TRUE(sim.getErrorStatus());
+		EXPECT_EQ("Hole cannot be generated on an acceptor site.", sim.getErrorMessage());
 	}
 
 	TEST_F(OSC_SimTest, LoggingTests) {
@@ -570,7 +602,7 @@ namespace OSC_SimTests {
 		}
 		infile.close();
 		// Check that the extracted event lines from the log match the vector of event types
-		EXPECT_EQ(3000, event_lines.size());
+		EXPECT_EQ(sim.getN_events_executed(), event_lines.size());
 		if (event_lines.size() == event_types.size()) {
 			for (int i = 0; i < (int)event_lines.size(); i++) {
 				EXPECT_TRUE(event_lines[i].find(event_types[i]) != string::npos);
@@ -585,6 +617,10 @@ namespace OSC_SimTests {
 		params.Length = 30;
 		params.Width = 30;
 		params.Height = 30;
+		params.Enable_neat = false;
+		params.Enable_bilayer = true;
+		params.Thickness_donor = 15;
+		params.Thickness_acceptor = 15;
 		params.Enable_gaussian_dos = true;
 		EXPECT_TRUE(sim.init(params, 0));
 		double energies_stdev1 = vector_stdev(sim.getSiteEnergies(1));
@@ -611,7 +647,7 @@ namespace OSC_SimTests {
 		// Test energy file with improper dimensions
 		params.Length = 50;
 		params.Width = 50;
-		params.Height = 50;
+		params.Height = 30;
 		params.Energies_import_filename = "./test/energies.txt";
 		EXPECT_FALSE(sim.init(params, 0));
 	}
@@ -670,7 +706,7 @@ namespace OSC_SimTests {
 		Parameters_OPV params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
-		params.Dynamics_transient_end = 1e-6;
+		params.Dynamics_transient_end = 1e-5;
 		params.N_tests = 3000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
