@@ -2334,16 +2334,6 @@ namespace Excimontec {
 		return transient_times;
 	}
 
-	std::vector<Event> OSC_Sim::getEvents() const {
-		auto event_ptrs = getAllEventPtrs();
-		vector<Event> events;
-		events.reserve(event_ptrs.size());
-		for (auto item : event_ptrs) {
-			events.push_back(*item);
-		}
-		return events;
-	}
-
 	vector<double> OSC_Sim::getExcitonDiffusionData() const {
 		return exciton_diffusion_distances;
 	}
