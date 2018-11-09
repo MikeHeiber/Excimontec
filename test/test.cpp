@@ -1056,8 +1056,6 @@ namespace OSC_SimTests {
 		params.Enable_miller_abrahams = true;
 		params.Enable_marcus = false;
 		params.Enable_gaussian_dos = true;
-		params.Energy_stdev_donor = 0.05;
-		params.Energy_stdev_acceptor = 0.05;
 		params.Height = 200;
 		params.N_tests = 500;
 		EXPECT_TRUE(sim.init(params, 0));
@@ -1068,11 +1066,19 @@ namespace OSC_SimTests {
 		mobility_data = sim.calculateMobilityData(transit_time_data);
 		double mobility2 = vector_avg(mobility_data);
 		EXPECT_LT(mobility2, mobility1);
-		// Check that energy placement at the equilibrium energy reduces the mobility
+		// Check the DOOS relaxation behavior
+		auto energy_transient = sim.getToFTransientEnergies();
+		auto counts_data = sim.getToFTransientCounts();
+		auto energy_avg = energy_transient;
+		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg.begin(), std::divides<double>());
+		auto target_it = --find_if(counts_data.begin(), counts_data.end(), [](int item) {return item <= 100; });
+		int index = distance(counts_data.begin(), target_it);
+		// Check that the carriers relax into the tail during the transient
+		EXPECT_NEAR(0, energy_avg[0], 0.02);
+		EXPECT_LT(energy_avg[index], energy_avg[0]);
+		// Check the energy placement option
 		sim = OSC_Sim();
 		params.Enable_gaussian_dos = true;
-		params.Energy_stdev_donor = 0.05;
-		params.Energy_stdev_acceptor = 0.05;
 		params.Enable_ToF_random_placement = false;
 		params.Enable_ToF_energy_placement = true;
 		params.ToF_placement_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
@@ -1080,10 +1086,17 @@ namespace OSC_SimTests {
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
+		// Check that the mobilities are close
 		transit_time_data = sim.getTransitTimeData();
 		mobility_data = sim.calculateMobilityData(transit_time_data);
 		double mobility3 = vector_avg(mobility_data);
-		EXPECT_LT(mobility3, mobility2);
+		EXPECT_NEAR(mobility3, mobility2, 1e-1*mobility2);
+		energy_transient = sim.getToFTransientEnergies();
+		counts_data = sim.getToFTransientCounts();
+		energy_avg = energy_transient;
+		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg.begin(), std::divides<double>());
+		// Check that the initial occupation energy is near the specified energy
+		EXPECT_NEAR(params.ToF_placement_energy, energy_avg[0], 0.01);
 		// Electron ToF test on neat should not be allowed
 		sim = OSC_Sim();
 		params = params_default;
