@@ -164,7 +164,6 @@ namespace Excimontec {
 		std::vector<double> getDynamicsExcitonMSDV() const;
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
-		std::vector<KMC_Lattice::Event> getEvents() const;
 		std::vector<double> getExcitonDiffusionData() const;
 		std::vector<int> getExcitonHopLengthData() const;
 		std::vector<double> getExcitonLifetimeData() const;
