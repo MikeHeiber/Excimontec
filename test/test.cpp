@@ -726,13 +726,13 @@ namespace OSC_SimTests {
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
-		// Check that appropriate number of excitons are created and dissociation and that charges then all meet and recombine
+		// Check that appropriate number of excitons are created and dissociation and that the charges then meet and recombine
 		EXPECT_EQ(params.N_tests, sim.getN_excitons_created());
-		EXPECT_EQ(params.N_tests, sim.getN_excitons_dissociated());
-		EXPECT_EQ(params.N_tests, sim.getN_electrons_created());
-		EXPECT_EQ(params.N_tests, sim.getN_holes_created());
-		EXPECT_EQ(params.N_tests, sim.getN_electrons_recombined());
-		EXPECT_EQ(params.N_tests, sim.getN_holes_recombined());
+		EXPECT_NEAR(params.N_tests, sim.getN_excitons_dissociated(), 5);
+		EXPECT_NEAR(params.N_tests, sim.getN_electrons_created(), 5);
+		EXPECT_NEAR(params.N_tests, sim.getN_holes_created(), 5);
+		EXPECT_NEAR(params.N_tests, sim.getN_electrons_recombined(), 5);
+		EXPECT_NEAR(params.N_tests, sim.getN_holes_recombined(), 5);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {
@@ -781,7 +781,7 @@ namespace OSC_SimTests {
 		// Singlet exciton diffusion test
 		sim = OSC_Sim();
 		auto params = params_default;
-		params.N_tests = 4000;
+		params.N_tests = 5000;
 		EXPECT_TRUE(sim.init(params, 0));
 		bool success;
 		while (!sim.checkFinished()) {
@@ -814,7 +814,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params = params_default;
 		params.R_exciton_isc_donor = 1e16;
-		params.N_tests = 4000;
+		params.N_tests = 5000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
