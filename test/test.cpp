@@ -719,7 +719,9 @@ namespace OSC_SimTests {
 		params.Dynamics_transient_end = 1e-3;
 		params.Enable_miller_abrahams = false;
 		params.Enable_marcus = true;
-		params.N_tests = 1000;
+		params.R_singlet_hopping_donor = 1e12;
+		params.R_singlet_hopping_acceptor = 1e12;
+		params.N_tests = 5000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
