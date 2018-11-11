@@ -708,13 +708,38 @@ namespace OSC_SimTests {
 		EXPECT_FALSE(sim.init(params, 0));
 	}
 
+	TEST_F(OSC_SimTest, ChargeDynamicsTests) {
+		sim = OSC_Sim();
+		auto params = params_default;
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.5;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_dynamics_test = true;
+		params.Dynamics_transient_end = 1e-3;
+		params.Enable_miller_abrahams = false;
+		params.Enable_marcus = true;
+		params.N_tests = 1000;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check that appropriate number of excitons are created and dissociation and that charges then all meet and recombine
+		EXPECT_EQ(params.N_tests, sim.getN_excitons_created());
+		EXPECT_EQ(params.N_tests, sim.getN_excitons_dissociated());
+		EXPECT_EQ(params.N_tests, sim.getN_electrons_created());
+		EXPECT_EQ(params.N_tests, sim.getN_holes_created());
+		EXPECT_EQ(params.N_tests, sim.getN_electrons_recombined());
+		EXPECT_EQ(params.N_tests, sim.getN_holes_recombined());
+	}
+
 	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {
 		// Singlet exciton lifetime test
 		sim = OSC_Sim();
-		Parameters_OPV params = params_default;
+		auto params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
-		params.Dynamics_transient_end = 1e-7;
+		params.Dynamics_transient_end = 1e-8;
 		params.N_tests = 2000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -754,7 +779,7 @@ namespace OSC_SimTests {
 		// Singlet exciton diffusion test
 		sim = OSC_Sim();
 		auto params = params_default;
-		params.N_tests = 3000;
+		params.N_tests = 4000;
 		EXPECT_TRUE(sim.init(params, 0));
 		bool success;
 		while (!sim.checkFinished()) {
@@ -787,7 +812,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params = params_default;
 		params.R_exciton_isc_donor = 1e16;
-		params.N_tests = 3000;
+		params.N_tests = 4000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
@@ -813,7 +838,7 @@ namespace OSC_SimTests {
 		// Check that gaussian energetic disorder reduces the diffusion length
 		sim = OSC_Sim();
 		params = params_default;
-		params.N_tests = 3000;
+		params.N_tests = 2000;
 		params.Enable_gaussian_dos = true;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -829,7 +854,7 @@ namespace OSC_SimTests {
 		// Check that exponential energetic disorder reduces the diffusion length
 		sim = OSC_Sim();
 		params = params_default;
-		params.N_tests = 3000;
+		params.N_tests = 2000;
 		params.Enable_exponential_dos = true;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {

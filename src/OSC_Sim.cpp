@@ -1334,7 +1334,7 @@ namespace Excimontec {
 	void OSC_Sim::createElectron(const Coords& coords) {
 		// Check that coords are valid
 		try {
-			int index = lattice.getSiteIndex(coords);
+			lattice.getSiteIndex(coords);
 		}
 		catch (out_of_range exception) {
 			cout << "Error! Electron cannot be generated because the input coordinates are invalid." << endl;
@@ -1355,7 +1355,7 @@ namespace Excimontec {
 	void OSC_Sim::createExciton(const Coords& coords, const bool spin) {
 		// Check that coords are valid
 		try {
-			int index = lattice.getSiteIndex(coords);
+			lattice.getSiteIndex(coords);
 		}
 		catch (out_of_range exception) {
 			cout << "Error! Exciton cannot be generated because the input coordinates are invalid." << endl;
@@ -1369,7 +1369,7 @@ namespace Excimontec {
 	void OSC_Sim::createHole(const Coords& coords) {
 		// Check that coords are valid
 		try {
-			int index = lattice.getSiteIndex(coords);
+			lattice.getSiteIndex(coords);
 		}
 		catch (out_of_range exception) {
 			cout << "Error! Hole cannot be generated because the input coordinates are invalid." << endl;
