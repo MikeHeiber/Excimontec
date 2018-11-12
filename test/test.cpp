@@ -150,6 +150,43 @@ namespace OSC_SimTests {
 		if (params_file.good()) {
 			params.importParameters(params_file);
 		}
+		params_file.close();
+		// Check parameter files with typos in boolean values to check conversion of string to bool
+		ifstream params_file2("parameters_default.txt");
+		vector<string> file_data;
+		string line;
+		while (getline(params_file2, line)) {
+			file_data.push_back(line);
+		}
+		params_file2.close();
+		for (auto& item : file_data) {
+			// Find parameter lines with a boolean true value
+			if (item.substr(0, 4).compare("true") == 0) {
+				// Replace true with misspelled 'tue'
+				item.replace(item.find("true"), 4, "tue");
+				// Save file data vector to a new parameter file
+				outputVectorToFile(file_data, "./test/parameters_misspell_1.txt");
+				// Try to open and import new parameter file with misspelled true
+				ifstream params_file3("./test/parameters_misspell_1.txt");
+				EXPECT_FALSE(params.importParameters(params_file3));
+				params_file3.close();
+				// Reset mispelled tue back to true
+				item.replace(item.find("tue"), 3, "true");
+			}
+			// Find parameter lines with a boolean false value
+			else if (item.substr(0, 5).compare("false") == 0) {
+				// Replace false with misspelled 'fase'
+				item.replace(item.find("false"), 5, "fase");
+				// Save file data vector to a new parameter file
+				outputVectorToFile(file_data, "./test/parameters_misspell_2.txt");
+				// Try to open and import new parameter file with misspelled false
+				ifstream params_file4("./test/parameters_misspell_2.txt");
+				EXPECT_FALSE(params.importParameters(params_file4));
+				params_file4.close();
+				// Reset mispelled fase back to false
+				item.replace(item.find("fase"), 4, "false");
+			}
+		}
 		// Check that default parameters are valid
 		EXPECT_TRUE(sim.init(params_default, 0));
 		// Check various invalid parameter sets

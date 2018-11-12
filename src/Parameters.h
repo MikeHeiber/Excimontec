@@ -10,8 +10,6 @@
 #include "Simulation.h"
 #include "Utils.h"
 
-
-
 namespace Excimontec {
 
 	//! \brief This class extends the Object class to create an exciton object to represent a singlet or triplet exciton in an organic semiconductor.
@@ -21,12 +19,12 @@ namespace Excimontec {
 	class Parameters : public KMC_Lattice::Parameters_Simulation {
 	public:
 		// main parameters
-		bool Enable_import_morphology_single;
-		bool Enable_import_morphology_set;
-		std::string Morphology_set_format;
-		int N_test_morphologies;
-		int N_morphology_set_size;
-		bool Enable_extraction_map_output;
+		bool Enable_import_morphology_single = false;
+		bool Enable_import_morphology_set = false;
+		std::string Morphology_set_format = "";
+		int N_test_morphologies = 0;
+		int N_morphology_set_size = 0;
+		bool Enable_extraction_map_output = false;
 		// Additional General Parameters
 		double Internal_potential;
 		// Morphology Parameters
@@ -135,7 +133,7 @@ namespace Excimontec {
 		bool importParameters(std::ifstream& inputfile);
 
 	private:
-	
+
 	};
 
 }

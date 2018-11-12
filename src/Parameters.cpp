@@ -355,7 +355,7 @@ namespace Excimontec {
 		catch (invalid_argument& exception) {
 			cout << exception.what() << endl;
 			cout << "Error setting selective recalculation method option." << endl;
-			Error_found = false;
+			Error_found = true;
 		}
 		i++;
 		Recalc_cutoff = atoi(stringvars[i].c_str());
@@ -811,7 +811,7 @@ namespace Excimontec {
 		Dielectric_acceptor = atof(stringvars[i].c_str());
 		i++;
 		//enable_coulomb_maximum
-		bool Enable_Coulomb_maximum;
+		bool Enable_Coulomb_maximum = false;
 		try {
 			Enable_Coulomb_maximum = str2bool(stringvars[i]);
 		}
@@ -822,7 +822,7 @@ namespace Excimontec {
 		}
 		i++;
 		//enable_coulomb_cutoff
-		bool Enable_Coulomb_cutoff;
+		bool Enable_Coulomb_cutoff = false;
 		try {
 			Enable_Coulomb_cutoff = str2bool(stringvars[i]);
 		}
@@ -835,7 +835,7 @@ namespace Excimontec {
 		Coulomb_cutoff = atoi(stringvars[i].c_str());
 		i++;
 		if (Enable_Coulomb_maximum && Enable_Coulomb_cutoff) {
-			cout << "Error! Cannot enable both the maximum Coulomb cutoff and enable use of a sepcific cutoff distance." << endl;
+			cout << "Error! Cannot enable both the maximum Coulomb cutoff and enable use of a specific cutoff distance." << endl;
 			return false;
 		}
 		if (!Enable_Coulomb_maximum && !Enable_Coulomb_cutoff) {
