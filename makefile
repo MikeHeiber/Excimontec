@@ -29,7 +29,7 @@ src/main.o : src/main.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h src/Paramete
 src/OSC_Sim.o : src/OSC_Sim.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h src/Parameters.h KMC_Lattice/libKMC.a
 	mpicxx $(FLAGS) -c $< -o $@
 
-src/Polaron.o : src/Parameters.cpp src/Parameters.h KMC_Lattice/libKMC.a
+src/Parameters.o : src/Parameters.cpp src/Parameters.h KMC_Lattice/libKMC.a
 	mpicxx $(FLAGS) -c $< -o $@
 	
 src/Exciton.o : src/Exciton.cpp src/Exciton.h KMC_Lattice/libKMC.a
