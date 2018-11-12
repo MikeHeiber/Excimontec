@@ -4,6 +4,7 @@
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 #include "OSC_Sim.h"
+#include "Parameters.h"
 #include <mpi.h>
 #include <fstream>
 #include <iostream>
@@ -16,18 +17,6 @@ using namespace std;
 using namespace Excimontec;
 using namespace KMC_Lattice;
 
-struct Parameters_main {
-	bool Enable_import_morphology_single;
-	bool Enable_import_morphology_set;
-	string Morphology_set_format;
-	int N_test_morphologies;
-	int N_morphology_set_size;
-	bool Enable_extraction_map_output;
-};
-
-//Declare Functions
-bool importParameters(ifstream& inputfile, Parameters_main& params_main, Parameters_OPV& params);
-
 int main(int argc, char *argv[]) {
 	string version = "v1.0-beta.5";
 	// Parameters
@@ -39,8 +28,7 @@ int main(int argc, char *argv[]) {
 	ofstream analysisfile;
 	// Initialize variables
 	string logfilename;
-	Parameters_main params_main;
-	Parameters_OPV params_opv;
+	Parameters params;
 	int nproc = 1;
 	int procid = 0;
 	int elapsedtime;
@@ -60,11 +48,11 @@ int main(int argc, char *argv[]) {
 	}
 	// Check for command line enabled logging
 	// Set default
-	params_opv.Enable_logging = false;
+	params.Enable_logging = false;
 	if (argc == 3) {
 		string argument(argv[2]);
 		if (argument.compare("-enable_logging") == 0) {
-			params_opv.Enable_logging = true;
+			params.Enable_logging = true;
 		}
 		else {
 			cout << "Error! Invalid command line argument." << endl;
@@ -83,7 +71,7 @@ int main(int argc, char *argv[]) {
 		cout << "Error loading parameter file.  Program will now exit." << endl;
 		return 0;
 	}
-	success = importParameters(parameterfile, params_main, params_opv);
+	success = params.importParameters(parameterfile);
 	parameterfile.close();
 	if (!success) {
 		cout << "Error importing parameters from parameter file.  Program will now exit." << endl;
@@ -101,28 +89,28 @@ int main(int argc, char *argv[]) {
 	error_status_vec.assign(nproc, false);
 	error_messages.assign(nproc, "");
 	// Morphology set import handling
-	if (params_main.Enable_import_morphology_set && params_main.N_test_morphologies > nproc) {
+	if (params.Enable_import_morphology_set && params.N_test_morphologies > nproc) {
 		cout << "Error! The number of requested processors cannot be less than the number of morphologies tested." << endl;
-		cout << "You have requested " << nproc << " processors for " << params_main.N_test_morphologies << " morphologies." << endl;
+		cout << "You have requested " << nproc << " processors for " << params.N_test_morphologies << " morphologies." << endl;
 		return 0;
 	}
-	if (params_main.Enable_import_morphology_set && params_main.N_test_morphologies > params_main.N_morphology_set_size) {
+	if (params.Enable_import_morphology_set && params.N_test_morphologies > params.N_morphology_set_size) {
 		cout << "Error! The number of tested morphologies cannot be greater than the number of morphologies in the set." << endl;
-		cout << "You have asked to test " << params_main.N_test_morphologies << " morphologies out of a " << params_main.N_morphology_set_size << " morphology set." << endl;
+		cout << "You have asked to test " << params.N_test_morphologies << " morphologies out of a " << params.N_morphology_set_size << " morphology set." << endl;
 		return 0;
 	}
-	if (params_main.Enable_import_morphology_set) {
+	if (params.Enable_import_morphology_set) {
 		int* selected_morphologies = new int[nproc];
 		if (procid == 0) {
 			default_random_engine generator((int)time(0));
-			vector<int> morphology_set_original(params_main.N_test_morphologies);
+			vector<int> morphology_set_original(params.N_test_morphologies);
 			vector<int> morphology_set;
 			// Select morphologies from the morphology set
-			for (int n = 0; n < params_main.N_morphology_set_size; n++) {
+			for (int n = 0; n < params.N_morphology_set_size; n++) {
 				morphology_set.push_back(n);
 			}
 			shuffle(morphology_set.begin(), morphology_set.end(), generator);
-			for (int n = 0; n < params_main.N_test_morphologies; n++) {
+			for (int n = 0; n < params.N_test_morphologies; n++) {
 				morphology_set_original[n] = morphology_set[n];
 			}
 			// Assign morphologies to each processor
@@ -141,41 +129,41 @@ int main(int argc, char *argv[]) {
 		MPI_Barrier(MPI_COMM_WORLD);
 		MPI_Bcast(selected_morphologies, nproc, MPI_INT, 0, MPI_COMM_WORLD);
 		// Parse input morphology set file format
-		int pos = (int)params_main.Morphology_set_format.find("#");
-		string prefix = params_main.Morphology_set_format.substr(0, pos);
-		string suffix = params_main.Morphology_set_format.substr(pos + 1);
+		int pos = (int)params.Morphology_set_format.find("#");
+		string prefix = params.Morphology_set_format.substr(0, pos);
+		string suffix = params.Morphology_set_format.substr(pos + 1);
 		cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
-		params_opv.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
-		cout << procid << ": " << params_opv.Morphology_filename << " selected." << endl;
+		params.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
+		cout << procid << ": " << params.Morphology_filename << " selected." << endl;
 		// Cleanup
 		delete[] selected_morphologies;
 	}
 	// Setup file output
 	cout << procid << ": Creating output files..." << endl;
-	if (params_opv.Enable_logging) {
+	if (params.Enable_logging) {
 		logfilename = "log" + to_string(procid) + ".txt";
 		logfile.open(logfilename);
 	}
-	params_opv.Logfile = &logfile;
+	params.Logfile = &logfile;
 	// Initialize Simulation
 	cout << procid << ": Initializing simulation " << procid << "..." << endl;
 	OSC_Sim sim;
-	success = sim.init(params_opv, procid);
+	success = sim.init(params, procid);
 	if (!success) {
 		cout << procid << ": Initialization failed, simulation will now terminate." << endl;
 		return 0;
 	}
 	cout << procid << ": Simulation initialization complete" << endl;
-	if (params_opv.Enable_exciton_diffusion_test) {
+	if (params.Enable_exciton_diffusion_test) {
 		cout << procid << ": Starting exciton diffusion test..." << endl;
 	}
-	else if (params_opv.Enable_dynamics_test) {
+	else if (params.Enable_dynamics_test) {
 		cout << procid << ": Starting dynamics test..." << endl;
 	}
-	else if (params_opv.Enable_ToF_test) {
+	else if (params.Enable_ToF_test) {
 		cout << procid << ": Starting time-of-flight charge transport test..." << endl;
 	}
-	else if (params_opv.Enable_IQE_test) {
+	else if (params.Enable_IQE_test) {
 		cout << procid << ": Starting internal quantum efficiency test..." << endl;
 	}
 	// Begin Simulation loop
@@ -263,7 +251,7 @@ int main(int argc, char *argv[]) {
 				sim.outputStatus();
 			}
 			// Reset logfile
-			if (params_opv.Enable_logging) {
+			if (params.Enable_logging) {
 				if (sim.getN_events_executed() % 1000 == 0) {
 					logfile.close();
 					logfile.open(logfilename);
@@ -271,14 +259,14 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	if (params_opv.Enable_logging) {
+	if (params.Enable_logging) {
 		logfile.close();
 	}
 	cout << procid << ": Simulation finished." << endl;
 	time_end = time(NULL);
 	elapsedtime = (int)difftime(time_end, time_start);
 	// Output disorder correlation information if correlated disorder is enabled
-	if (params_opv.Enable_correlated_disorder) {
+	if (params.Enable_correlated_disorder) {
 		auto dos_correlation_data = sim.getDOSCorrelationData();
 		outputVectorToFile(dos_correlation_data, "DOS_correlation_data" + to_string(procid) + ".txt");
 	}
@@ -293,16 +281,16 @@ int main(int argc, char *argv[]) {
 		resultsfile << sim.getErrorMessage() << endl;
 	}
 	else {
-		if (params_opv.Enable_exciton_diffusion_test) {
+		if (params.Enable_exciton_diffusion_test) {
 			resultsfile << "Exciton diffusion test results:\n";
 			resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
 			resultsfile << "Exciton diffusion length is " << vector_avg(sim.getExcitonDiffusionData()) << " ± " << vector_stdev(sim.getExcitonDiffusionData()) << " nm.\n";
 			resultsfile << "Exciton hop distance is " << vector_avg(sim.getExcitonHopLengthData()) << " ± " << vector_stdev(sim.getExcitonHopLengthData()) << " nm.\n";
 			resultsfile << "Exciton lifetime is " << vector_avg(sim.getExcitonLifetimeData()) << " ± " << vector_stdev(sim.getExcitonLifetimeData()) << " s.\n";
 		}
-		else if (params_opv.Enable_ToF_test) {
+		else if (params.Enable_ToF_test) {
 			resultsfile << "Time-of-flight charge transport test results:\n";
-			if (!params_opv.ToF_polaron_type) {
+			if (!params.ToF_polaron_type) {
 				resultsfile << sim.getN_electrons_collected() << " of " << sim.getN_electrons_created() << " electrons have been collected.\n";
 			}
 			else {
@@ -311,15 +299,15 @@ int main(int argc, char *argv[]) {
 			resultsfile << "Transit time is " << vector_avg(sim.getTransitTimeData()) << " ± " << vector_stdev(sim.getTransitTimeData()) << " s.\n";
 			resultsfile << "Charge carrier mobility is " << vector_avg(sim.calculateMobilityData(sim.getTransitTimeData())) << " ± " << vector_stdev(sim.calculateMobilityData(sim.getTransitTimeData())) << " cm^2 V^-1 s^-1.\n";
 		}
-		if (params_opv.Enable_dynamics_test) {
+		if (params.Enable_dynamics_test) {
 			resultsfile << "Dynamics test results:\n";
 			resultsfile << sim.getN_excitons_created() << " initial excitons were created.\n";
 		}
-		if (params_opv.Enable_IQE_test) {
+		if (params.Enable_IQE_test) {
 			resultsfile << "Internal quantum efficiency test results:\n";
 			resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
 		}
-		if (params_opv.Enable_IQE_test || params_opv.Enable_dynamics_test) {
+		if (params.Enable_IQE_test || params.Enable_dynamics_test) {
 			resultsfile << sim.getN_excitons_created((short)1) << " excitons were created on donor sites.\n";
 			resultsfile << sim.getN_excitons_created((short)2) << " excitons were created on acceptor sites.\n";
 			resultsfile << 100 * (double)sim.getN_excitons_dissociated() / (double)sim.getN_excitons_created() << "% of excitons have dissociated.\n";
@@ -334,20 +322,20 @@ int main(int argc, char *argv[]) {
 			resultsfile << 100 * (double)sim.getN_bimolecular_recombinations() / (double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to bimolecular recombination.\n";
 			resultsfile << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_dissociated()) << "% of photogenerated charges were extracted.\n";
 		}
-		if (params_opv.Enable_IQE_test) {
-			resultsfile << "IQE = " << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created()) << "% with an internal potential of " << params_opv.Internal_potential << " V." << endl;
+		if (params.Enable_IQE_test) {
+			resultsfile << "IQE = " << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created()) << "% with an internal potential of " << params.Internal_potential << " V." << endl;
 		}
 		resultsfile << endl;
 	}
 	resultsfile.close();
 	// Output charge extraction map data
-	if (success && params_main.Enable_extraction_map_output && (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test)) {
-		if (params_opv.Enable_ToF_test) {
+	if (success && params.Enable_extraction_map_output && (params.Enable_ToF_test || params.Enable_IQE_test)) {
+		if (params.Enable_ToF_test) {
 			string filename = "Charge_extraction_map" + to_string(procid) + ".txt";
-			vector<string> extraction_data = sim.getChargeExtractionMap(params_opv.ToF_polaron_type);
+			vector<string> extraction_data = sim.getChargeExtractionMap(params.ToF_polaron_type);
 			outputVectorToFile(extraction_data, filename);
 		}
-		if (params_opv.Enable_IQE_test) {
+		if (params.Enable_IQE_test) {
 			string filename = "Electron_extraction_map" + to_string(procid) + ".txt";
 			vector<string> extraction_data = sim.getChargeExtractionMap(false);
 			outputVectorToFile(extraction_data, filename);
@@ -373,7 +361,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	if (error_found == (char)0 && params_opv.Enable_exciton_diffusion_test) {
+	if (error_found == (char)0 && params.Enable_exciton_diffusion_test) {
 		vector<double> exciton_diffusion_data;
 		vector<int> exciton_hop_length_data;
 		vector<double> exciton_lifetime_data;
@@ -384,11 +372,11 @@ int main(int argc, char *argv[]) {
 			analysisfile << "\nOverall exciton diffusion test results:\n";
 			analysisfile << nproc * (sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
 			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ± " << vector_stdev(exciton_diffusion_data) << " nm.\n";
-			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params_opv.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params_opv.Unit_size << " nm.\n";
+			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params.Unit_size << " nm.\n";
 			analysisfile << "Exciton lifetime is " << vector_avg(exciton_lifetime_data) << " ± " << vector_stdev(exciton_lifetime_data) << " s.\n";
 		}
 	}
-	if (error_found == (char)0 && params_opv.Enable_ToF_test) {
+	if (error_found == (char)0 && params.Enable_ToF_test) {
 		int N_transient_cycles = sim.getN_transient_cycles();
 		int N_transient_cycles_sum;
 		MPI_Reduce(&N_transient_cycles, &N_transient_cycles_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -437,7 +425,7 @@ int main(int argc, char *argv[]) {
 			transitdistfile.close();
 			// Analysis Output
 			analysisfile << "\nOverall time-of-flight charge transport test results:\n";
-			if (!params_opv.ToF_polaron_type) {
+			if (!params.ToF_polaron_type) {
 				analysisfile << nproc * sim.getN_electrons_collected() << " total electrons collected out of " << transit_attempts_total << " total attempts.\n";
 			}
 			else {
@@ -448,7 +436,7 @@ int main(int argc, char *argv[]) {
 			analysisfile << "Charge carrier mobility is " << vector_avg(mobility_data_all) << " ± " << vector_stdev(mobility_data_all) << " cm^2 V^-1 s^-1.\n";
 		}
 	}
-	if (error_found == (char)0 && params_opv.Enable_dynamics_test) {
+	if (error_found == (char)0 && params.Enable_dynamics_test) {
 		int N_transient_cycles = sim.getN_transient_cycles();
 		int N_transient_cycles_sum;
 		MPI_Reduce(&N_transient_cycles, &N_transient_cycles_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -505,7 +493,7 @@ int main(int argc, char *argv[]) {
 			transientfile.close();
 		}
 	}
-	if (error_found == (char)0 && (params_opv.Enable_dynamics_test || params_opv.Enable_IQE_test || params_opv.Enable_exciton_diffusion_test)) {
+	if (error_found == (char)0 && (params.Enable_dynamics_test || params.Enable_IQE_test || params.Enable_exciton_diffusion_test)) {
 		int excitons_created = sim.getN_excitons_created();
 		int excitons_created_total;
 		MPI_Reduce(&excitons_created, &excitons_created_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -551,13 +539,13 @@ int main(int argc, char *argv[]) {
 		int holes_collected = sim.getN_holes_collected();
 		int holes_collected_total;
 		MPI_Reduce(&holes_collected, &holes_collected_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-		if (procid == 0 && params_opv.Enable_dynamics_test) {
+		if (procid == 0 && params.Enable_dynamics_test) {
 			analysisfile << "Overall dynamics test results:\n";
 		}
-		if (procid == 0 && params_opv.Enable_IQE_test) {
+		if (procid == 0 && params.Enable_IQE_test) {
 			analysisfile << "Overall internal quantum efficiency test results:\n";
 		}
-		if (procid == 0 && params_opv.Enable_exciton_diffusion_test) {
+		if (procid == 0 && params.Enable_exciton_diffusion_test) {
 			analysisfile << "\nOverall exciton mechanism statistics:\n";
 		}
 		if (procid == 0) {
@@ -578,8 +566,8 @@ int main(int argc, char *argv[]) {
 				analysisfile << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_dissociated_total) << "% of total photogenerated charges were extracted.\n";
 			}
 		}
-		if (procid == 0 && params_opv.Enable_IQE_test) {
-			analysisfile << "IQE = " << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_created_total) << "% with an internal potential of " << params_opv.Internal_potential << " V." << endl;
+		if (procid == 0 && params.Enable_IQE_test) {
+			analysisfile << "IQE = " << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_created_total) << "% with an internal potential of " << params.Internal_potential << " V." << endl;
 		}
 	}
 	if (procid == 0) {
@@ -589,534 +577,3 @@ int main(int argc, char *argv[]) {
 	MPI_Finalize();
 	return 0;
 }
-
-bool importParameters(ifstream& inputfile, Parameters_main& params_main, Parameters_OPV& params) {
-	string line;
-	string var;
-	size_t pos;
-	vector<string> stringvars;
-	bool Error_found = false;
-	while (inputfile.good()) {
-		getline(inputfile, line);
-		if ((line.substr(0, 2)).compare("--") != 0 && (line.substr(0, 2)).compare("##") != 0 && line.compare("") != 0) {
-			pos = line.find_first_of("/", 0);
-			var = line.substr(0, pos);
-			var = removeWhitespace(var);
-			stringvars.push_back(var);
-		}
-	}
-	int i = 0;
-	// KMC Algorithm Parameters
-	try {
-		params.Enable_FRM = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting first reaction method option." << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_selective_recalc = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting selective recalculation method option." << endl;
-		Error_found = false;
-	}
-	i++;
-	params.Recalc_cutoff = atoi(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_full_recalc = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting full recalculation method option." << endl;
-		Error_found = true;
-	}
-	i++;
-	//enable_periodic_x
-	try {
-		params.Enable_periodic_x = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting x-periodic boundary options" << endl;
-		Error_found = true;
-	}
-	i++;
-	//enable_periodic_y
-	try {
-		params.Enable_periodic_y = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting y-periodic boundary options" << endl;
-		Error_found = true;
-	}
-	i++;
-	//enable_periodic_z
-	try {
-		params.Enable_periodic_z = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting z-periodic boundary options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Length = atoi(stringvars[i].c_str());
-	i++;
-	params.Width = atoi(stringvars[i].c_str());
-	i++;
-	params.Height = atoi(stringvars[i].c_str());
-	i++;
-	params.Unit_size = atof(stringvars[i].c_str());
-	i++;
-	params.Temperature = atoi(stringvars[i].c_str());
-	i++;
-	params.Internal_potential = atof(stringvars[i].c_str());
-	i++;
-	// Film Architecture Parameters
-	try {
-		params.Enable_neat = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling neat film architecture." << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_bilayer = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling bilayer film architecture." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Thickness_donor = atoi(stringvars[i].c_str());
-	i++;
-	params.Thickness_acceptor = atoi(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_random_blend = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling random blend film architecture." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Acceptor_conc = atof(stringvars[i].c_str());;
-	i++;
-	try {
-		params_main.Enable_import_morphology_single = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling morphology import." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Morphology_filename = stringvars[i];
-	i++;
-	try {
-		params_main.Enable_import_morphology_set = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling morphology set import." << endl;
-		Error_found = true;
-	}
-	i++;
-	params_main.Morphology_set_format = stringvars[i];
-	i++;
-	params_main.N_test_morphologies = atoi(stringvars[i].c_str());
-	i++;
-	params_main.N_morphology_set_size = atoi(stringvars[i].c_str());
-	i++;
-	if (params_main.Enable_import_morphology_single || params_main.Enable_import_morphology_set) {
-		params.Enable_import_morphology = true;
-	}
-	else {
-		params.Enable_import_morphology = false;
-	}
-	// Test Parameters
-	params.N_tests = atoi(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_exciton_diffusion_test = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling the exciton diffusion test." << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_ToF_test = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling the time-of-flight polaron transport test." << endl;
-		Error_found = true;
-	}
-	i++;
-	if (stringvars[i].compare("electron") == 0) {
-		params.ToF_polaron_type = false;
-	}
-	else if (stringvars[i].compare("hole") == 0) {
-		params.ToF_polaron_type = true;
-	}
-	else {
-		cout << "Error setting polaron type for the time-of-flight test." << endl;
-		return false;
-	}
-	i++;
-	params.ToF_initial_polarons = atoi(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_ToF_random_placement = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling ToF random placement option." << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_ToF_energy_placement = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling ToF low energy placement option." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.ToF_placement_energy = atof(stringvars[i].c_str());
-	i++;
-	params.ToF_transient_start = atof(stringvars[i].c_str());
-	i++;
-	params.ToF_transient_end = atof(stringvars[i].c_str());
-	i++;
-	params.ToF_pnts_per_decade = atoi(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_IQE_test = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling the internal quantum efficiency test." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.IQE_time_cutoff = atof(stringvars[i].c_str());
-	i++;
-	try {
-		params_main.Enable_extraction_map_output = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting charge extraction map output settings." << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_dynamics_test = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error enabling the dynamics test." << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_dynamics_extraction = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting dynamics test extraction option." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Dynamics_initial_exciton_conc = atof(stringvars[i].c_str());
-	i++;
-	params.Dynamics_transient_start = atof(stringvars[i].c_str());
-	i++;
-	params.Dynamics_transient_end = atof(stringvars[i].c_str());
-	i++;
-	params.Dynamics_pnts_per_decade = atoi(stringvars[i].c_str());
-	i++;
-	// Exciton Parameters
-	params.Exciton_generation_rate_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Exciton_generation_rate_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Singlet_lifetime_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Singlet_lifetime_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Triplet_lifetime_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Triplet_lifetime_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.R_singlet_hopping_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_singlet_hopping_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Singlet_localization_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Singlet_localization_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.R_triplet_hopping_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_triplet_hopping_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Triplet_localization_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Triplet_localization_acceptor = atof(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_FRET_triplet_annihilation = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting FRET triplet annihilation option." << endl;
-		return false;
-	}
-	i++;
-	params.R_exciton_exciton_annihilation_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_exciton_annihilation_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_polaron_annihilation_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_polaron_annihilation_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.FRET_cutoff = atoi(stringvars[i].c_str());
-	i++;
-	params.E_exciton_binding_donor = atof(stringvars[i].c_str());
-	i++;
-	params.E_exciton_binding_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_dissociation_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_dissociation_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Exciton_dissociation_cutoff = atoi(stringvars[i].c_str());
-	i++;
-	params.R_exciton_isc_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_isc_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_risc_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_exciton_risc_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.E_exciton_ST_donor = atof(stringvars[i].c_str());
-	i++;
-	params.E_exciton_ST_acceptor = atof(stringvars[i].c_str());
-	i++;
-	// Polaron Parameters
-	try {
-		params.Enable_phase_restriction = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting polaron phase restriction option." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.R_polaron_hopping_donor = atof(stringvars[i].c_str());
-	i++;
-	params.R_polaron_hopping_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Polaron_localization_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Polaron_localization_acceptor = atof(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_miller_abrahams = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Miller-Abrahams polaron hopping model options" << endl;
-		Error_found = true;
-	}
-	i++;
-	try {
-		params.Enable_marcus = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Marcus polaron hopping model options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Reorganization_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Reorganization_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.R_polaron_recombination = atof(stringvars[i].c_str());
-	i++;
-	params.Polaron_hopping_cutoff = atoi(stringvars[i].c_str());
-	i++;
-	try {
-		params.Enable_gaussian_polaron_delocalization = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Gaussian polaron delocalization option." << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Polaron_delocalization_length = atof(stringvars[i].c_str());
-	i++;
-	// Lattice Parameters
-	params.Homo_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Lumo_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Homo_acceptor = atof(stringvars[i].c_str());
-	i++;
-	params.Lumo_acceptor = atof(stringvars[i].c_str());
-	i++;
-	//enable_gaussian_dos
-	try {
-		params.Enable_gaussian_dos = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Gaussian DOS options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Energy_stdev_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Energy_stdev_acceptor = atof(stringvars[i].c_str());
-	i++;
-	//enable_exponential_dos
-	try {
-		params.Enable_exponential_dos = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Exponential DOS options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Energy_urbach_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Energy_urbach_acceptor = atof(stringvars[i].c_str());
-	i++;
-	//enable_correlated_disorder
-	try {
-		params.Enable_correlated_disorder = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Correlated Disorder options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Disorder_correlation_length = atof(stringvars[i].c_str());
-	i++;
-	//enable_gaussian_kernel
-	try {
-		params.Enable_gaussian_kernel = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
-		Error_found = true;
-	}
-	i++;
-	//enable_power_kernel
-	try {
-		params.Enable_power_kernel = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Power_kernel_exponent = atoi(stringvars[i].c_str());
-	i++;
-	//enable_interfacial_energy_shift
-	try {
-		params.Enable_interfacial_energy_shift = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting the interfacial energy shift options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Energy_shift_donor = atof(stringvars[i].c_str());
-	i++;
-	params.Energy_shift_acceptor = atof(stringvars[i].c_str());
-	i++;
-	//enable_import_energies
-	try {
-		params.Enable_import_energies = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting the import site energies options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Energies_import_filename = stringvars[i];
-	i++;
-	// Coulomb Calculation Parameters
-	params.Dielectric_donor = atof(stringvars[i].c_str());
-	//i++;
-	params.Dielectric_acceptor = atof(stringvars[i].c_str());
-	i++;
-	//enable_coulomb_maximum
-	bool Enable_Coulomb_maximum;
-	try {
-		Enable_Coulomb_maximum = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Coulomb interaction options" << endl;
-		Error_found = true;
-	}
-	i++;
-	//enable_coulomb_cutoff
-	bool Enable_Coulomb_cutoff;
-	try {
-		Enable_Coulomb_cutoff = str2bool(stringvars[i]);
-	}
-	catch (invalid_argument& exception) {
-		cout << exception.what() << endl;
-		cout << "Error setting Coulomb interaction options" << endl;
-		Error_found = true;
-	}
-	i++;
-	params.Coulomb_cutoff = atoi(stringvars[i].c_str());
-	i++;
-	if (Enable_Coulomb_maximum && Enable_Coulomb_cutoff) {
-		cout << "Error! Cannot enable both the maximum Coulomb cutoff and enable use of a sepcific cutoff distance." << endl;
-		return false;
-	}
-	if (!Enable_Coulomb_maximum && !Enable_Coulomb_cutoff) {
-		cout << "Error! One of the Coulomb interactions calculation options must be enabled." << endl;
-		return false;
-	}
-	if (Enable_Coulomb_maximum) {
-		auto vec = { params.Length, params.Width, params.Height };
-		params.Coulomb_cutoff = (int)floor(*min_element(vec.begin(), vec.end()) / 2.0);
-	}
-	if (Error_found) {
-		return false;
-	}
-	return true;
-}
-
-

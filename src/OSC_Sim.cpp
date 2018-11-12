@@ -14,11 +14,11 @@ namespace Excimontec {
 
 	OSC_Sim::~OSC_Sim() {}
 
-	bool OSC_Sim::init(const Parameters_OPV& params, const int id) {
+	bool OSC_Sim::init(const Parameters& params_in, const int id) {
 		// Reset error status
 		Error_found = false;
 		// Check parameters for errors
-		if (!checkParameters(params)) {
+		if (!params_in.checkParameters()) {
 			Error_found = true;
 			cout << id << ": Error with input parameters." << endl;
 			setErrorMessage("Error with the input parameters.");
@@ -26,19 +26,19 @@ namespace Excimontec {
 		}
 		bool success;
 		// Set parameters of Simulation base class
-		Simulation::init(params, id);
+		Simulation::init(params_in, id);
 		// Initialize parameters object
-		params_opv = params;
+		params = params_in;
 		// Initialize derived parameters
-		if (params_opv.Enable_ToF_test) {
-			Transient_start = params_opv.ToF_transient_start;
-			Transient_end = params_opv.ToF_transient_end;
-			Transient_pnts_per_decade = params_opv.ToF_pnts_per_decade;
+		if (params.Enable_ToF_test) {
+			Transient_start = params.ToF_transient_start;
+			Transient_end = params.ToF_transient_end;
+			Transient_pnts_per_decade = params.ToF_pnts_per_decade;
 		}
-		if (params_opv.Enable_dynamics_test) {
-			Transient_start = params_opv.Dynamics_transient_start;
-			Transient_end = params_opv.Dynamics_transient_end;
-			Transient_pnts_per_decade = params_opv.Dynamics_pnts_per_decade;
+		if (params.Enable_dynamics_test) {
+			Transient_start = params.Dynamics_transient_start;
+			Transient_end = params.Dynamics_transient_end;
+			Transient_pnts_per_decade = params.Dynamics_pnts_per_decade;
 		}
 		// Initialize Sites
 		Site_OSC site;
@@ -54,30 +54,30 @@ namespace Excimontec {
 		// Assign energies to each site in the sites vector
 		reassignSiteEnergies();
 		// Initialize Coulomb interactions lookup table
-		AvgDielectric = (params_opv.Dielectric_donor + params_opv.Dielectric_acceptor) / 2;
+		AvgDielectric = (params.Dielectric_donor + params.Dielectric_acceptor) / 2;
 		Image_interaction_prefactor = (Elementary_charge / (16 * Pi*AvgDielectric*Vacuum_permittivity))*1e9;
 		double Unit_size = lattice.getUnitSize();
-		int range = (int)ceil(intpow(params_opv.Coulomb_cutoff / lattice.getUnitSize(), 2));
+		int range = (int)ceil(intpow(params.Coulomb_cutoff / lattice.getUnitSize(), 2));
 		Coulomb_table.assign(range + 1, 0);
 		for (int i = 1, imax = (int)Coulomb_table.size(); i < imax; i++) {
 			Coulomb_table[i] = ((Coulomb_constant*Elementary_charge) / AvgDielectric) / (1e-9*Unit_size*sqrt((double)i));
-			if (params_opv.Enable_gaussian_polaron_delocalization) {
-				Coulomb_table[i] *= erf((Unit_size*sqrt((double)i)) / (params_opv.Polaron_delocalization_length*sqrt(2)));
+			if (params.Enable_gaussian_polaron_delocalization) {
+				Coulomb_table[i] *= erf((Unit_size*sqrt((double)i)) / (params.Polaron_delocalization_length*sqrt(2)));
 			}
 		}
-		Coulomb_range = (int)ceil((params_opv.Coulomb_cutoff / lattice.getUnitSize())*(params_opv.Coulomb_cutoff / lattice.getUnitSize()));
+		Coulomb_range = (int)ceil((params.Coulomb_cutoff / lattice.getUnitSize())*(params.Coulomb_cutoff / lattice.getUnitSize()));
 		// Initialize electrical potential vector
 		E_potential.assign(lattice.getHeight(), 0);
 		for (int i = 0; i < lattice.getHeight(); i++) {
-			E_potential[i] = (params_opv.Internal_potential*lattice.getHeight() / (lattice.getHeight() + 1)) - (params_opv.Internal_potential / (lattice.getHeight() + 1))*i;
+			E_potential[i] = (params.Internal_potential*lattice.getHeight() / (lattice.getHeight() + 1)) - (params.Internal_potential / (lattice.getHeight() + 1))*i;
 		}
 		// Initialize event calculation data
 		exciton_event_calc_vars = ExcitonEventCalcVars(this);
 		polaron_event_calc_vars = PolaronEventCalcVars(this);
 		// Initialize exciton creation event
-		R_exciton_generation_donor = ((params_opv.Exciton_generation_rate_donor*N_donor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
-		R_exciton_generation_acceptor = ((params_opv.Exciton_generation_rate_acceptor*N_acceptor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
-		if (params_opv.Enable_exciton_diffusion_test || params_opv.Enable_IQE_test) {
+		R_exciton_generation_donor = ((params.Exciton_generation_rate_donor*N_donor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
+		R_exciton_generation_acceptor = ((params.Exciton_generation_rate_acceptor*N_acceptor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
+		if (params.Enable_exciton_diffusion_test || params.Enable_IQE_test) {
 			isLightOn = true;
 			//Simulation* sim_ptr = this;
 			Exciton_Creation exciton_creation_event(this);
@@ -86,10 +86,10 @@ namespace Excimontec {
 			exciton_creation_events.assign(1, exciton_creation_event);
 			exciton_creation_it = addEvent(&exciton_creation_events.front());
 		}
-		else if (params_opv.Enable_dynamics_test) {
+		else if (params.Enable_dynamics_test) {
 			isLightOn = false;
 			// Initialize parameters
-			N_initial_excitons = (int)ceil(params_opv.Dynamics_initial_exciton_conc*lattice.getVolume());
+			N_initial_excitons = (int)ceil(params.Dynamics_initial_exciton_conc*lattice.getVolume());
 			// Initialize data structures
 			Transient_step_size = 1.0 / (double)Transient_pnts_per_decade;
 			int num_steps = (int)floor((log10(Transient_end) - log10(Transient_start)) / Transient_step_size) + 1;
@@ -110,7 +110,7 @@ namespace Excimontec {
 			// Create initial test excitons
 			generateDynamicsExcitons();
 		}
-		else if (params_opv.Enable_ToF_test) {
+		else if (params.Enable_ToF_test) {
 			isLightOn = false;
 			// Initialize data structures
 			Transient_step_size = 1.0 / (double)Transient_pnts_per_decade;
@@ -120,7 +120,7 @@ namespace Excimontec {
 				transient_times[i] = pow(10, log10(Transient_start) + i * Transient_step_size);
 			}
 			transient_velocities.assign(num_steps, 0);
-			if (!params_opv.ToF_polaron_type) {
+			if (!params.ToF_polaron_type) {
 				transient_electron_energies.assign(num_steps, 0);
 				transient_electron_counts.assign(num_steps, 0);
 			}
@@ -133,7 +133,7 @@ namespace Excimontec {
 			// Create initial test polarons
 			generateToFPolarons();
 		}
-		if (params_opv.Enable_IQE_test) {
+		if (params.Enable_IQE_test) {
 			electron_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
 			hole_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
 		}
@@ -186,13 +186,13 @@ namespace Excimontec {
 			}
 		}
 		// Add electrode image charge interactions
-		if (!lattice.isZPeriodic() && !params_opv.Enable_ToF_test) {
+		if (!lattice.isZPeriodic() && !params.Enable_ToF_test) {
 			distance = lattice.getUnitSize()*((double)(lattice.getHeight() - coords.z) - 0.5);
-			if (!((distance - 0.0001) > params_opv.Coulomb_cutoff)) {
+			if (!((distance - 0.0001) > params.Coulomb_cutoff)) {
 				Energy -= Image_interaction_prefactor / distance;
 			}
 			distance = lattice.getUnitSize()*((double)(coords.z + 1) - 0.5);
-			if (!((distance - 0.0001) > params_opv.Coulomb_cutoff)) {
+			if (!((distance - 0.0001) > params.Coulomb_cutoff)) {
 				Energy -= Image_interaction_prefactor / distance;
 			}
 		}
@@ -231,11 +231,11 @@ namespace Excimontec {
 		// Add electrode image charge interactions
 		if (!lattice.isZPeriodic()) {
 			distance = lattice.getUnitSize()*((double)(lattice.getHeight() - coords.z) - 0.5);
-			if (!((distance - 0.0001) > params_opv.Coulomb_cutoff)) {
+			if (!((distance - 0.0001) > params.Coulomb_cutoff)) {
 				Energy -= Image_interaction_prefactor / distance;
 			}
 			distance = lattice.getUnitSize()*((double)(coords.z + 1) - 0.5);
-			if (!((distance - 0.0001) > params_opv.Coulomb_cutoff)) {
+			if (!((distance - 0.0001) > params.Coulomb_cutoff)) {
 				Energy -= Image_interaction_prefactor / distance;
 			}
 		}
@@ -303,7 +303,7 @@ namespace Excimontec {
 	vector<double> OSC_Sim::calculateMobilityData(const vector<double>& transit_times) const {
 		vector<double> mobilities = transit_times;
 		for (int i = 0; i < (int)mobilities.size(); i++) {
-			mobilities[i] = (1e-7*lattice.getUnitSize()*lattice.getHeight()) / (fabs(params_opv.Internal_potential)*transit_times[i]);
+			mobilities[i] = (1e-7*lattice.getUnitSize()*lattice.getHeight()) / (fabs(params.Internal_potential)*transit_times[i]);
 			mobilities[i] *= 1e-7*lattice.getUnitSize()*lattice.getHeight();
 		}
 		return mobilities;
@@ -408,23 +408,23 @@ namespace Excimontec {
 								// Exciton is starting from a donor site
 								if (getSiteType(object_coords) == (short)1) {
 									// Triplet Dexter mechanism
-									if (!exciton_it->getSpin() && !params_opv.Enable_FRET_triplet_annihilation) {
-										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_exciton_annihilation_donor, params_opv.Triplet_localization_donor, exciton_event_calc_vars.distances[index]);
+									if (!exciton_it->getSpin() && !params.Enable_FRET_triplet_annihilation) {
+										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params.R_exciton_exciton_annihilation_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index]);
 									}
 									// FRET mechanism
 									else {
-										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_exciton_annihilation_donor, exciton_event_calc_vars.distances[index]);
+										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params.R_exciton_exciton_annihilation_donor, exciton_event_calc_vars.distances[index]);
 									}
 								}
 								// Exciton is starting from an acceptor site
 								else {
 									// Triplet Dexter mechanism
-									if (!exciton_it->getSpin() && !params_opv.Enable_FRET_triplet_annihilation) {
-										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_exciton_annihilation_acceptor, params_opv.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index]);
+									if (!exciton_it->getSpin() && !params.Enable_FRET_triplet_annihilation) {
+										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params.R_exciton_exciton_annihilation_acceptor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index]);
 									}
 									// FRET mechanism
 									else {
-										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_exciton_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
+										exciton_event_calc_vars.ee_annihilations_temp[index].calculateRateConstant(params.R_exciton_exciton_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
 									}
 								}
 								// Save the calculated exciton-exciton annihilation event as a possible event
@@ -438,23 +438,23 @@ namespace Excimontec {
 								// Exciton is starting from a donor site
 								if (getSiteType(object_coords) == (short)1) {
 									// Triplet Dexter mechanism
-									if (!exciton_it->getSpin() && !params_opv.Enable_FRET_triplet_annihilation) {
-										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_polaron_annihilation_donor, params_opv.Triplet_localization_donor, exciton_event_calc_vars.distances[index]);
+									if (!exciton_it->getSpin() && !params.Enable_FRET_triplet_annihilation) {
+										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params.R_exciton_polaron_annihilation_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index]);
 									}
 									// FRET mechanism
 									else {
-										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_polaron_annihilation_donor, exciton_event_calc_vars.distances[index]);
+										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params.R_exciton_polaron_annihilation_donor, exciton_event_calc_vars.distances[index]);
 									}
 								}
 								// Exciton is starting from an acceptor site
 								else {
 									// Triplet Dexter mechanism
-									if (!exciton_it->getSpin() && !params_opv.Enable_FRET_triplet_annihilation) {
-										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_polaron_annihilation_acceptor, params_opv.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index]);
+									if (!exciton_it->getSpin() && !params.Enable_FRET_triplet_annihilation) {
+										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params.R_exciton_polaron_annihilation_acceptor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index]);
 									}
 									// FRET mechanism
 									else {
-										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params_opv.R_exciton_polaron_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
+										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params.R_exciton_polaron_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
 									}
 								}
 								// Save the calculated exciton-polaorn annihilation event as a possible event
@@ -471,50 +471,50 @@ namespace Excimontec {
 							// Exciton is starting from a donor site
 							if (getSiteType(object_coords) == (short)1) {
 								Coulomb_final = calculateCoulomb(true, object_coords) + calculateCoulomb(false, dest_coords) - Coulomb_table[i*i + j * j + k * k];
-								E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords)) - (params_opv.Lumo_acceptor - params_opv.Lumo_donor) + (Coulomb_final + params_opv.E_exciton_binding_donor) + (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+								E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords)) - (params.Lumo_acceptor - params.Lumo_donor) + (Coulomb_final + params.E_exciton_binding_donor) + (E_potential[dest_coords.z] - E_potential[object_coords.z]);
 								// Singlet
 								if (exciton_ptr->getSpin()) {
-									if (params_opv.Enable_miller_abrahams) {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_donor, params_opv.Singlet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
+									if (params.Enable_miller_abrahams) {
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_donor, params.Singlet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
 									}
 									else {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_donor, params_opv.Singlet_localization_donor, exciton_event_calc_vars.distances[index], E_delta, params_opv.Reorganization_donor);
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_donor, params.Singlet_localization_donor, exciton_event_calc_vars.distances[index], E_delta, params.Reorganization_donor);
 									}
 								}
 								// Triplet
 								else {
 									// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
-									E_delta += params_opv.E_exciton_ST_donor;
-									if (params_opv.Enable_miller_abrahams) {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_donor, params_opv.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
+									E_delta += params.E_exciton_ST_donor;
+									if (params.Enable_miller_abrahams) {
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
 									}
 									else {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_donor, params_opv.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta, params_opv.Reorganization_donor);
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta, params.Reorganization_donor);
 									}
 								}
 							}
 							// Exciton is starting from an acceptor site
 							else {
 								Coulomb_final = calculateCoulomb(false, object_coords) + calculateCoulomb(true, dest_coords) - Coulomb_table[i*i + j * j + k * k];
-								E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords)) + (params_opv.Homo_donor - params_opv.Homo_acceptor) + (Coulomb_final + params_opv.E_exciton_binding_donor) - (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+								E_delta = (getSiteEnergy(dest_coords) - getSiteEnergy(object_coords)) + (params.Homo_donor - params.Homo_acceptor) + (Coulomb_final + params.E_exciton_binding_donor) - (E_potential[dest_coords.z] - E_potential[object_coords.z]);
 								// Singlet
 								if (exciton_ptr->getSpin()) {
-									if (params_opv.Enable_miller_abrahams) {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_acceptor, params_opv.Singlet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
+									if (params.Enable_miller_abrahams) {
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_acceptor, params.Singlet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 									}
 									else {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_acceptor, params_opv.Singlet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta, params_opv.Reorganization_acceptor);
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_acceptor, params.Singlet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta, params.Reorganization_acceptor);
 									}
 								}
 								// Triplet
 								else {
 									// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
-									E_delta += params_opv.E_exciton_ST_acceptor;
-									if (params_opv.Enable_miller_abrahams) {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_acceptor, params_opv.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
+									E_delta += params.E_exciton_ST_acceptor;
+									if (params.Enable_miller_abrahams) {
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_acceptor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 									}
 									else {
-										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params_opv.R_exciton_dissociation_acceptor, params_opv.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta, params_opv.Reorganization_acceptor);
+										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_acceptor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta, params.Reorganization_acceptor);
 									}
 								}
 							}
@@ -531,25 +531,25 @@ namespace Excimontec {
 								if (getSiteType(object_coords) == (short)1) {
 									// donor-to-acceptor energy modification
 									if (getSiteType(dest_coords) == (short)2) {
-										E_delta += (params_opv.Homo_acceptor - params_opv.Lumo_acceptor - params_opv.E_exciton_binding_acceptor) - (params_opv.Homo_donor - params_opv.Lumo_donor - params_opv.E_exciton_binding_donor);
+										E_delta += (params.Homo_acceptor - params.Lumo_acceptor - params.E_exciton_binding_acceptor) - (params.Homo_donor - params.Lumo_donor - params.E_exciton_binding_donor);
 									}
-									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_singlet_hopping_donor, exciton_event_calc_vars.distances[index], E_delta);
+									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_singlet_hopping_donor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 								else {
 									// acceptor-to-donor energy modification
 									if (getSiteType(dest_coords) == (short)1) {
-										E_delta += (params_opv.Homo_donor - params_opv.Lumo_donor - params_opv.E_exciton_binding_donor) - (params_opv.Homo_acceptor - params_opv.Lumo_acceptor - params_opv.E_exciton_binding_acceptor);
+										E_delta += (params.Homo_donor - params.Lumo_donor - params.E_exciton_binding_donor) - (params.Homo_acceptor - params.Lumo_acceptor - params.E_exciton_binding_acceptor);
 									}
-									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_singlet_hopping_acceptor, exciton_event_calc_vars.distances[index], E_delta);
+									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_singlet_hopping_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 							}
 							// Dexter hopping is only donor-to-donor and acceptor-to-acceptor
 							else {
 								if (getSiteType(object_coords) == (short)1) {
-									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_triplet_hopping_donor, params_opv.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
+									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_triplet_hopping_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 								else {
-									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_triplet_hopping_donor, params_opv.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
+									exciton_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_triplet_hopping_donor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
 								}
 							}
 							// Save the calculated exciton hop event as a possible event
@@ -563,18 +563,18 @@ namespace Excimontec {
 		auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton_Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
 		if (exciton_it->getSpin()) {
 			if (getSiteType(object_coords) == (short)1) {
-				rate = 1.0 / params_opv.Singlet_lifetime_donor;
+				rate = 1.0 / params.Singlet_lifetime_donor;
 			}
 			else if (getSiteType(object_coords) == (short)2) {
-				rate = 1.0 / params_opv.Singlet_lifetime_acceptor;
+				rate = 1.0 / params.Singlet_lifetime_acceptor;
 			}
 		}
 		else {
 			if (getSiteType(object_coords) == (short)1) {
-				rate = 1.0 / params_opv.Triplet_lifetime_donor;
+				rate = 1.0 / params.Triplet_lifetime_donor;
 			}
 			else if (getSiteType(object_coords) == (short)2) {
-				rate = 1.0 / params_opv.Triplet_lifetime_acceptor;
+				rate = 1.0 / params.Triplet_lifetime_acceptor;
 			}
 		}
 		recombination_event_it->calculateRateConstant(rate);
@@ -585,19 +585,19 @@ namespace Excimontec {
 		// ISC
 		if (exciton_it->getSpin()) {
 			if (getSiteType(object_coords) == (short)1) {
-				intersystem_crossing_event_it->calculateRateConstant(params_opv.R_exciton_isc_donor, 0.0);
+				intersystem_crossing_event_it->calculateRateConstant(params.R_exciton_isc_donor, 0.0);
 			}
 			else if (getSiteType(object_coords) == (short)2) {
-				intersystem_crossing_event_it->calculateRateConstant(params_opv.R_exciton_isc_acceptor, 0.0);
+				intersystem_crossing_event_it->calculateRateConstant(params.R_exciton_isc_acceptor, 0.0);
 			}
 		}
 		// RISC
 		else {
 			if (getSiteType(object_coords) == (short)1) {
-				intersystem_crossing_event_it->calculateRateConstant(params_opv.R_exciton_risc_donor, params_opv.E_exciton_ST_donor);
+				intersystem_crossing_event_it->calculateRateConstant(params.R_exciton_risc_donor, params.E_exciton_ST_donor);
 			}
 			else if (getSiteType(object_coords) == (short)2) {
-				intersystem_crossing_event_it->calculateRateConstant(params_opv.R_exciton_risc_acceptor, params_opv.E_exciton_ST_acceptor);
+				intersystem_crossing_event_it->calculateRateConstant(params.R_exciton_risc_acceptor, params.E_exciton_ST_acceptor);
 			}
 		}
 		// Save the calculated exciton ISC/RISC event as a possible event
@@ -677,13 +677,13 @@ namespace Excimontec {
 				*Logfile << "Calculating events for hole " << polaron_it->getTag() << " at site " << object_coords.x << "," << object_coords.y << "," << object_coords.z << "." << endl;
 			}
 		}
-		if (params_opv.Enable_phase_restriction && !polaron_it->getCharge() && getSiteType(object_coords) == (short)1) {
+		if (params.Enable_phase_restriction && !polaron_it->getCharge() && getSiteType(object_coords) == (short)1) {
 			cout << "Error! Electron is on a donor site and should not be with phase restriction enabled." << endl;
 			setErrorMessage("Electron is on a donor site and should not be with phase restriction enabled.");
 			Error_found = true;
 			return;
 		}
-		if (params_opv.Enable_phase_restriction && polaron_it->getCharge() && getSiteType(object_coords) == (short)2) {
+		if (params.Enable_phase_restriction && polaron_it->getCharge() && getSiteType(object_coords) == (short)2) {
 			cout << "Error! Hole is on an acceptor site and should not be with phase restriction enabled." << endl;
 			setErrorMessage("Hole is on an acceptor site and should not be with phase restriction enabled.");
 			Error_found = true;
@@ -711,10 +711,10 @@ namespace Excimontec {
 					// If destination site is occupied by a hole Polaron and the main Polaron is an electron, check for a possible recombination event
 					if (lattice.isOccupied(dest_coords) && !polaron_it->getCharge() && siteContainsHole(dest_coords)) {
 						if (getSiteType(object_coords) == (short)1) {
-							polaron_event_calc_vars.recombinations_temp[index].calculateRateConstant(params_opv.R_polaron_recombination, params_opv.Polaron_localization_donor, polaron_event_calc_vars.distances[index], 0);
+							polaron_event_calc_vars.recombinations_temp[index].calculateRateConstant(params.R_polaron_recombination, params.Polaron_localization_donor, polaron_event_calc_vars.distances[index], 0);
 						}
 						else if (getSiteType(object_coords) == (short)2) {
-							polaron_event_calc_vars.recombinations_temp[index].calculateRateConstant(params_opv.R_polaron_recombination, params_opv.Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], 0);
+							polaron_event_calc_vars.recombinations_temp[index].calculateRateConstant(params.R_polaron_recombination, params.Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], 0);
 						}
 						polaron_event_calc_vars.recombinations_temp[index].setObjectPtr(polaron_ptr);
 						polaron_event_calc_vars.recombinations_temp[index].setDestCoords(dest_coords);
@@ -723,7 +723,7 @@ namespace Excimontec {
 					}
 					// Hop events
 					// If destination site is unoccupied and either phase restriction is disabled or the starting site and destination sites have the same type, check for a possible hop event
-					if (!lattice.isOccupied(dest_coords) && (!params_opv.Enable_phase_restriction || getSiteType(object_coords) == getSiteType(dest_coords))) {
+					if (!lattice.isOccupied(dest_coords) && (!params.Enable_phase_restriction || getSiteType(object_coords) == getSiteType(dest_coords))) {
 						polaron_event_calc_vars.E_deltas[index] = (getSiteEnergy(dest_coords) - E_site_i);
 						polaron_event_calc_vars.E_deltas[index] += (calculateCoulomb(polaron_it, dest_coords) - Coulomb_i);
 						if (!polaron_it->getCharge()) {
@@ -735,33 +735,33 @@ namespace Excimontec {
 						if (getSiteType(object_coords) == (short)1) {
 							if (getSiteType(dest_coords) == (short)2) {
 								if (!polaron_it->getCharge()) {
-									polaron_event_calc_vars.E_deltas[index] -= (params_opv.Lumo_acceptor - params_opv.Lumo_donor);
+									polaron_event_calc_vars.E_deltas[index] -= (params.Lumo_acceptor - params.Lumo_donor);
 								}
 								else {
-									polaron_event_calc_vars.E_deltas[index] -= (params_opv.Homo_acceptor - params_opv.Homo_donor);
+									polaron_event_calc_vars.E_deltas[index] -= (params.Homo_acceptor - params.Homo_donor);
 								}
 							}
-							if (params_opv.Enable_miller_abrahams) {
-								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_polaron_hopping_donor, params_opv.Polaron_localization_donor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index]);
+							if (params.Enable_miller_abrahams) {
+								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_polaron_hopping_donor, params.Polaron_localization_donor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index]);
 							}
 							else {
-								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_polaron_hopping_donor, params_opv.Polaron_localization_donor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index], params_opv.Reorganization_donor);
+								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_polaron_hopping_donor, params.Polaron_localization_donor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index], params.Reorganization_donor);
 							}
 						}
 						else if (getSiteType(object_coords) == (short)2) {
 							if (getSiteType(dest_coords) == (short)1) {
 								if (!polaron_it->getCharge()) {
-									polaron_event_calc_vars.E_deltas[index] -= (params_opv.Lumo_donor - params_opv.Lumo_acceptor);
+									polaron_event_calc_vars.E_deltas[index] -= (params.Lumo_donor - params.Lumo_acceptor);
 								}
 								else {
-									polaron_event_calc_vars.E_deltas[index] -= (params_opv.Homo_donor - params_opv.Homo_acceptor);
+									polaron_event_calc_vars.E_deltas[index] -= (params.Homo_donor - params.Homo_acceptor);
 								}
 							}
-							if (params_opv.Enable_miller_abrahams) {
-								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_polaron_hopping_acceptor, params_opv.Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index]);
+							if (params.Enable_miller_abrahams) {
+								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_polaron_hopping_acceptor, params.Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index]);
 							}
 							else {
-								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params_opv.R_polaron_hopping_acceptor, params_opv.Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index], params_opv.Reorganization_acceptor);
+								polaron_event_calc_vars.hops_temp[index].calculateRateConstant(params.R_polaron_hopping_acceptor, params.Polaron_localization_acceptor, polaron_event_calc_vars.distances[index], polaron_event_calc_vars.E_deltas[index], params.Reorganization_acceptor);
 							}
 						}
 						polaron_event_calc_vars.hops_temp[index].setObjectPtr(polaron_ptr);
@@ -775,14 +775,14 @@ namespace Excimontec {
 		// Calculate possible polaron extraction event
 		// Electrons are extracted at the bottom of the lattice (z=-1)
 		// Holes are extracted at the top of the lattice (z=Height)
-		if (!params_opv.Enable_dynamics_test || params_opv.Enable_dynamics_extraction) {
+		if (!params.Enable_dynamics_test || params.Enable_dynamics_extraction) {
 			bool Extraction_valid = false;
 			list<Polaron_Extraction>::iterator extraction_event_it;
 			double distance;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
 				distance = lattice.getUnitSize()*((double)(object_coords.z + 1) - 0.5);
-				if (!((distance - 0.0001) > params_opv.Polaron_hopping_cutoff)) {
+				if (!((distance - 0.0001) > params.Polaron_hopping_cutoff)) {
 					extraction_event_it = electron_extraction_events.begin();
 					std::advance(extraction_event_it, std::distance(electrons.begin(), polaron_it));
 					Extraction_valid = true;
@@ -791,7 +791,7 @@ namespace Excimontec {
 			// If hole, charge is true
 			else {
 				distance = lattice.getUnitSize()*((double)(lattice.getHeight() - object_coords.z) - 0.5);
-				if (!((distance - 0.0001) > params_opv.Polaron_hopping_cutoff)) {
+				if (!((distance - 0.0001) > params.Polaron_hopping_cutoff)) {
 					extraction_event_it = hole_extraction_events.begin();
 					std::advance(extraction_event_it, std::distance(holes.begin(), polaron_it));
 					Extraction_valid = true;
@@ -799,10 +799,10 @@ namespace Excimontec {
 			}
 			if (Extraction_valid) {
 				if (getSiteType(object_coords) == (short)1) {
-					extraction_event_it->calculateRateConstant(params_opv.R_polaron_hopping_donor, distance, params_opv.Polaron_localization_donor, 0);
+					extraction_event_it->calculateRateConstant(params.R_polaron_hopping_donor, distance, params.Polaron_localization_donor, 0);
 				}
 				else if (getSiteType(object_coords) == (short)2) {
-					extraction_event_it->calculateRateConstant(params_opv.R_polaron_hopping_acceptor, distance, params_opv.Polaron_localization_acceptor, 0);
+					extraction_event_it->calculateRateConstant(params.R_polaron_hopping_acceptor, distance, params.Polaron_localization_acceptor, 0);
 				}
 				possible_events.push_back(&(*extraction_event_it));
 			}
@@ -866,20 +866,20 @@ namespace Excimontec {
 			cout << getId() << ": An error has been detected and the simulation will now end." << endl;
 			return true;
 		}
-		if (params_opv.Enable_exciton_diffusion_test) {
-			return ((N_singlet_excitons_recombined + N_triplet_excitons_recombined) == params_opv.N_tests);
+		if (params.Enable_exciton_diffusion_test) {
+			return ((N_singlet_excitons_recombined + N_triplet_excitons_recombined) == params.N_tests);
 		}
-		if (params_opv.Enable_dynamics_test) {
-			return (N_excitons == 0 && N_electrons == 0 && N_holes == 0 && N_excitons_created >= params_opv.N_tests);
+		if (params.Enable_dynamics_test) {
+			return (N_excitons == 0 && N_electrons == 0 && N_holes == 0 && N_excitons_created >= params.N_tests);
 		}
-		if (params_opv.Enable_ToF_test) {
-			return ((N_electrons == 0 && N_electrons_created >= params_opv.N_tests) || (N_holes == 0 && N_holes_created >= params_opv.N_tests));
+		if (params.Enable_ToF_test) {
+			return ((N_electrons == 0 && N_electrons_created >= params.N_tests) || (N_holes == 0 && N_holes_created >= params.N_tests));
 		}
-		if (params_opv.Enable_IQE_test) {
-			if (N_excitons_created == params_opv.N_tests && N_excitons == 0 && N_electrons == 0 && N_holes == 0) {
+		if (params.Enable_IQE_test) {
+			if (N_excitons_created == params.N_tests && N_excitons == 0 && N_electrons == 0 && N_holes == 0) {
 				return true;
 			}
-			if (N_excitons_created == params_opv.N_tests && getTime() > params_opv.IQE_time_cutoff) {
+			if (N_excitons_created == params.N_tests && getTime() > params.IQE_time_cutoff) {
 				return true;
 			}
 			return false;
@@ -888,329 +888,16 @@ namespace Excimontec {
 		return true;
 	}
 
-	bool OSC_Sim::checkParameters(const Parameters_OPV& params) const {
-		// Check lattice parameters and other general parameters
-		if (!(params.Length > 0) || !(params.Width > 0) || !(params.Height > 0)) {
-			cout << "Error! All lattice dimensions must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Unit_size > 0)) {
-			cout << "Error! The lattice unit size must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Temperature > 0)) {
-			cout << "Error! The temperature must be greater than zero." << endl;
-			return false;
-		}
-		int KMC_algs = 0;
-		if (params.Enable_FRM) {
-			KMC_algs++;
-		}
-		if (params.Enable_selective_recalc) {
-			KMC_algs++;
-		}
-		if (params.Enable_full_recalc) {
-			KMC_algs++;
-		}
-		if (KMC_algs > 1) {
-			cout << "Error! Only one of the first reaction method, the selective recalculation method, or the full recalculation method can be enabled." << endl;
-			return false;
-		}
-		if (KMC_algs == 0) {
-			cout << "Error! One of the first reaction method, the selective recalculation method, or the full recalculation method must be enabled." << endl;
-			return false;
-		}
-		if (params.Enable_selective_recalc && !(params.Recalc_cutoff > 0)) {
-			cout << "Error! The event recalculation cutoff radius must be greater than zero." << endl;
-			return false;
-		}
-		if (params.Enable_selective_recalc && params.Recalc_cutoff < params.FRET_cutoff) {
-			cout << "Error! The event recalculation cutoff radius must not be less than the FRET cutoff radius." << endl;
-			return false;
-		}
-		if (params.Enable_selective_recalc && params.Recalc_cutoff < params.Polaron_hopping_cutoff) {
-			cout << "Error! The event recalculation cutoff radius must not be less than the polaron hopping cutoff radius." << endl;
-			return false;
-		}
-		if (params.Enable_selective_recalc && params.Recalc_cutoff < params.Exciton_dissociation_cutoff) {
-			cout << "Error! The event recalculation cutoff radius must not be less than the exciton dissociation cutoff radius." << endl;
-			return false;
-		}
-		// Check film architecture parameters
-		if (params.Enable_bilayer && params.Thickness_donor + params.Thickness_acceptor != params.Height) {
-			cout << "Error! When using the bilayer film architecture, the sum of the donor and the acceptor thicknesses must equal the lattice height." << endl;
-			return false;
-		}
-		// Possible device architectures:
-		// Neat
-		// Bilayer
-		// Random Blend
-		// Import morphology
-		int N_architectures_enabled = 0;
-		if (params.Enable_neat) {
-			N_architectures_enabled++;
-		}
-		if (params.Enable_bilayer) {
-			N_architectures_enabled++;
-		}
-		if (params.Enable_random_blend) {
-			N_architectures_enabled++;
-		}
-		if (params.Enable_import_morphology) {
-			N_architectures_enabled++;
-		}
-		if (N_architectures_enabled == 0) {
-			cout << "Error! A film architecture must be enabled." << endl;
-			return false;
-		}
-		if (N_architectures_enabled > 1) {
-			cout << "Error! Only one film architecture can be enabled." << endl;
-			return false;
-		}
-		// Check test parameters
-		if (params.Enable_ToF_test && ((params.Enable_ToF_random_placement && params.Enable_ToF_energy_placement) || (!params.Enable_ToF_random_placement && !params.Enable_ToF_energy_placement))) {
-			cout << "Error! For a time-of-flight charge transport test either the random placement or the low energy placement option must be enabled." << endl;
-			return false;
-		}
-		if (params.Enable_ToF_test && params.Enable_bilayer) {
-			cout << "Error! The bilayer film architecture cannot be used with the time-of-flight charge transport test." << endl;
-			return false;
-		}
-		if (params.Enable_ToF_test && params.Enable_periodic_z) {
-			cout << "Error! The z-direction periodic boundary must be disabled in order to run the time-of-flight charge transport test." << endl;
-			return false;
-		}
-		if (params.Enable_ToF_test && !params.ToF_polaron_type && params.Enable_neat) {
-			cout << "Error! The time-of-flight charge transport test cannot be performed with electrons on a neat film architecture. Use holes instead." << endl;
-			return false;
-		}
-		if (params.Enable_IQE_test && params.Enable_periodic_z) {
-			cout << "Error! The z-direction periodic boundary must be disabled in order to run the internal quantum efficiency test." << endl;
-			return false;
-		}
-		if (params.Enable_neat && params.Enable_IQE_test) {
-			cout << "Error! The neat film architecture cannot be used with the internal quantum efficiency test." << endl;
-			return false;
-		}
-		if (!(params.N_tests > 0)) {
-			cout << "Error! The number of tests must be greater than zero." << endl;
-			return false;
-		}
-		// Possible simulation tests:
-		// Exciton diffusion test
-		// ToF test
-		// IQE test
-		// Dynamics test
-		int N_tests_enabled = 0;
-		if (params.Enable_exciton_diffusion_test)
-			N_tests_enabled++;
-		if (params.Enable_ToF_test)
-			N_tests_enabled++;
-		if (params.Enable_IQE_test)
-			N_tests_enabled++;
-		if (params.Enable_dynamics_test)
-			N_tests_enabled++;
-		if (N_tests_enabled > 1) {
-			cout << "Error! Only one test can be enabled." << endl;
-			return false;
-		}
-		if (N_tests_enabled == 0) {
-			cout << "Error! One of the tests must be enabled." << endl;
-			return false;
-		}
-		// Check dynamics test conditions
-		if (params.Enable_dynamics_test && !params.Enable_dynamics_extraction && params.Internal_potential != 0) {
-			cout << "Error! When running a dynamics test without extraction, the internal potential must be set to zero." << endl;
-			return false;
-		}
-		if (params.Enable_dynamics_test && params.Enable_dynamics_extraction && params.Enable_periodic_z) {
-			cout << "Error! When running a dynamics test with extraction, z-direction periodic boundaries cannot be used." << endl;
-			return false;
-		}
-		// Check exciton parameters
-		if (params.Exciton_generation_rate_donor < 0 || params.Exciton_generation_rate_acceptor < 0) {
-			cout << "Error! The exciton generation rate of the donor and acceptor must not be negative." << endl;
-			return false;
-		}
-		if (!(params.Singlet_lifetime_donor > 0) || !(params.Singlet_lifetime_acceptor > 0)) {
-			cout << "Error! The singlet exciotn lifetime of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Triplet_lifetime_donor > 0) || !(params.Triplet_lifetime_acceptor > 0)) {
-			cout << "Error! The triplet exciton lifetime of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.R_singlet_hopping_donor > 0) || !(params.R_singlet_hopping_acceptor > 0)) {
-			cout << "Error! The singlet exciton hopping rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Singlet_localization_donor > 0) || !(params.Singlet_localization_acceptor > 0)) {
-			cout << "Error! The singlet exciton localization parameter of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.R_triplet_hopping_donor > 0) || !(params.R_triplet_hopping_acceptor > 0)) {
-			cout << "Error! The triplet exciton hopping rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Triplet_localization_donor > 0) || !(params.Triplet_localization_acceptor > 0)) {
-			cout << "Error! The triplet exciton localization parameter of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.R_exciton_exciton_annihilation_donor > 0) || !(params.R_exciton_exciton_annihilation_acceptor > 0)) {
-			cout << "Error! The exciton-exciton annihilation rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.R_exciton_polaron_annihilation_donor > 0) || !(params.R_exciton_polaron_annihilation_acceptor > 0)) {
-			cout << "Error! The exciton-polaron annihilation rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.FRET_cutoff > 0)) {
-			cout << "Error! The FRET cutoff radius must be greater than zero." << endl;
-			return false;
-		}
-		if (params.E_exciton_binding_donor < 0 || params.E_exciton_binding_acceptor < 0) {
-			cout << "Error! The exciton binding energy of the donor and acceptor cannot be negative." << endl;
-			return false;
-		}
-		if (!(params.R_exciton_dissociation_donor > 0) || !(params.R_exciton_dissociation_acceptor > 0)) {
-			cout << "Error! The exciton dissociation rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Exciton_dissociation_cutoff > 0)) {
-			cout << "Error! The exciton dissociation cutoff radius must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.R_exciton_isc_donor > 0) || !(params.R_exciton_isc_acceptor > 0)) {
-			cout << "Error! The exciton intersystem crossing rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.R_exciton_risc_donor > 0) || !(params.R_exciton_risc_acceptor > 0)) {
-			cout << "Error! The exciton reverse intersystem crossing rate of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (params.E_exciton_ST_donor < 0 || params.E_exciton_ST_acceptor < 0) {
-			cout << "Error! The exciton singlet-triplet splitting energy of the donor and acceptor must not be negative." << endl;
-			return false;
-		}
-		// Check polaron parameters
-		if (!(params.R_polaron_hopping_donor > 0) || !(params.R_polaron_hopping_acceptor > 0)) {
-			cout << "Error! The polaron hopping rate of the donor and accpetor must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Polaron_localization_donor > 0) || !(params.Polaron_localization_acceptor > 0)) {
-			cout << "Error! The polaron localization parameter of the donor and acceptor must be greater than zero." << endl;
-			return false;
-		}
-		if (params.Enable_miller_abrahams && params.Enable_marcus) {
-			cout << "Error! The Miller-Abrahams and the Marcus polaron hopping models cannot both be enabled." << endl;
-			return false;
-		}
-		if (!params.Enable_miller_abrahams && !params.Enable_marcus) {
-			cout << "Error! Either the Miller-Abrahams or the Marcus polaron hopping model must be enabled." << endl;
-			return false;
-		}
-		if (params.Reorganization_donor < 0 || params.Reorganization_acceptor < 0) {
-			cout << "Error! The polaron reorganization energy of the donor and acceptor must not be negative." << endl;
-			return false;
-		}
-		if (!(params.R_polaron_recombination > 0)) {
-			cout << "Error! The polaron recombination rate must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Polaron_hopping_cutoff > 0)) {
-			cout << "Error! The polaron hopping cutoff radius must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Polaron_delocalization_length > 0)) {
-			cout << "Error! The polaron delocalization length must be greater than zero." << endl;
-			return false;
-		}
-		// Check lattice site parameters
-		if (params.Homo_donor < 0 || params.Lumo_donor < 0) {
-			cout << "Error! The HOMO and LUMO parameters of the donor must not be negative." << endl;
-			return false;
-		}
-		if (params.Homo_acceptor < 0 || params.Lumo_acceptor < 0) {
-			cout << "Error! The HOMO and LUMO parameters of the acceptor must not be negative." << endl;
-			return false;
-		}
-		if (params.Enable_gaussian_dos && params.Enable_exponential_dos) {
-			cout << "Error! The Gaussian and exponential disorder models cannot both be enabled." << endl;
-			return false;
-		}
-		if (params.Enable_gaussian_dos && (params.Energy_stdev_donor < 0 || params.Energy_stdev_acceptor < 0)) {
-			cout << "Error! When using the Gaussian disorder model, the standard deviation cannot be negative." << endl;
-			return false;
-		}
-		if (params.Enable_exponential_dos && (params.Energy_urbach_donor < 0 || params.Energy_urbach_acceptor < 0)) {
-			cout << "Error! When using the exponential disorder model, the Urbach energy cannot be negative." << endl;
-			return false;
-		}
-		int kernel_counter = 0;
-		if (params.Enable_correlated_disorder && params.Enable_gaussian_kernel) {
-			kernel_counter++;
-		}
-		if (params.Enable_correlated_disorder && params.Enable_power_kernel) {
-			kernel_counter++;
-		}
-		if (params.Enable_correlated_disorder && kernel_counter != 1) {
-			cout << "Error! When using the correlated disorder model, you must enable one and only one kernel. You have " << kernel_counter << " kernels enabled." << endl;
-			return false;
-		}
-		if (params.Enable_correlated_disorder && params.Enable_power_kernel && !(params.Power_kernel_exponent == -1 || params.Power_kernel_exponent == -2)) {
-			cout << "Error! When using the correlated disorder model with the power kernel, the power kernel exponent must be either -1 or -2." << endl;
-			return false;
-		}
-		if (params.Enable_correlated_disorder && (params.Disorder_correlation_length < 0.999 || params.Disorder_correlation_length > 2.001)) {
-			cout << "Error! When using the correlated disorder model, the disorder correlation length must be in the range between 1.0 and 2.0." << endl;
-			return false;
-		}
-		if (params.Enable_correlated_disorder && !params.Enable_neat && params.Energy_stdev_donor != params.Energy_stdev_acceptor) {
-			cout << "Error! When using the correlated disorder model, the standard deviation of the donor and acceptor Gaussian DOS must be equal." << endl;
-			return false;
-		}
-		if (params.Enable_correlated_disorder && !params.Enable_gaussian_dos) {
-			cout << "Error! The correlated disorder model can only be used with a Gaussian density of states." << endl;
-			return false;
-		}
-		if (params.Enable_interfacial_energy_shift && (params.Energy_shift_donor < 0 || params.Energy_shift_acceptor < 0)) {
-			cout << "Error! When enabling the interfacial energy shift model, the energy shift factor for the donor and the acceptor phases must not be negative." << endl;
-			return false;
-		}
-		if (params.Enable_import_energies && (params.Enable_gaussian_dos || params.Enable_exponential_dos)) {
-			cout << "Error! When importing site energies from a file, the Gaussian and exponential density of states models must not be enabled." << endl;
-			return false;
-		}
-		if (params.Enable_import_energies && params.Enable_interfacial_energy_shift) {
-			cout << "Error! When importing site energies from a file, the interfacial energy shift model must not be enabled." << endl;
-			return false;
-		}
-		if (params.Enable_import_energies && (int)params.Energies_import_filename.size() == 0) {
-			cout << "Error! When importing site energies from a file, a valid filename must be provided." << endl;
-			return false;
-		}
-		// Check Coulomb interaction parameters
-		if (!(params.Coulomb_cutoff > 0)) {
-			cout << "Error! The Coulomb cutoff radius must be greater than zero." << endl;
-			return false;
-		}
-		if (!(params.Dielectric_donor > 0) || !(params.Dielectric_acceptor > 0)) {
-			cout << "Error! The dielectric constant of the donor and the acceptor must be greater than zero." << endl;
-			return false;
-		}
-		return true;
-	}
-
 	void OSC_Sim::createCorrelatedDOS(const double correlation_length) {
 		double stdev, percent_diff;
 		double scale_factor = 1;
-		if (params_opv.Enable_gaussian_kernel) {
+		if (params.Enable_gaussian_kernel) {
 			scale_factor = -0.07*exp((correlation_length - 1) / -0.21) - 0.09*exp((correlation_length - 1) / -0.9);
 		}
-		if (params_opv.Enable_power_kernel && params_opv.Power_kernel_exponent == -1) {
+		if (params.Enable_power_kernel && params.Power_kernel_exponent == -1) {
 			scale_factor = 0.7 + 3.1*pow(correlation_length, -1.55);
 		}
-		if (params_opv.Enable_power_kernel && params_opv.Power_kernel_exponent == -2) {
+		if (params.Enable_power_kernel && params.Power_kernel_exponent == -2) {
 			scale_factor = -0.4 + 2.2*pow(correlation_length, -0.74);
 			scale_factor = pow(scale_factor, 2);
 		}
@@ -1273,17 +960,17 @@ namespace Excimontec {
 						}
 					}
 				}
-				if (params_opv.Enable_gaussian_kernel) {
+				if (params.Enable_gaussian_kernel) {
 					for (int m = 0; m < vec_size; m++) {
 						energies_temp[m] = isAble[m] * energies_temp[m] * exp(scale_factor * distances[m] * distances[m]);
 					}
 				}
-				if (params_opv.Enable_power_kernel && params_opv.Power_kernel_exponent == -1) {
+				if (params.Enable_power_kernel && params.Power_kernel_exponent == -1) {
 					for (int m = 0; m < vec_size; m++) {
 						energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m]);
 					}
 				}
-				if (params_opv.Enable_power_kernel && params_opv.Power_kernel_exponent == -2) {
+				if (params.Enable_power_kernel && params.Power_kernel_exponent == -2) {
 					for (int m = 0; m < vec_size; m++) {
 						energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m] * distances[m]);
 					}
@@ -1304,7 +991,7 @@ namespace Excimontec {
 			}
 			// Normalize energies to reach desired disorder
 			stdev = vector_stdev(new_energies);
-			percent_diff = (stdev - params_opv.Energy_stdev_donor) / params_opv.Energy_stdev_donor;
+			percent_diff = (stdev - params.Energy_stdev_donor) / params.Energy_stdev_donor;
 			double norm_factor = 1 + percent_diff;
 			for (auto &item : new_energies) {
 				item /= norm_factor;
@@ -1343,7 +1030,7 @@ namespace Excimontec {
 			return;
 		}
 		// Check that the site type is valid
-		if (params_opv.Enable_phase_restriction && getSiteType(coords) == 1) {
+		if (params.Enable_phase_restriction && getSiteType(coords) == 1) {
 			cout << "Error! Electron cannot be generated on a donor site." << endl;
 			setErrorMessage("Electron cannot be generated on a donor site.");
 			Error_found = true;
@@ -1378,7 +1065,7 @@ namespace Excimontec {
 			return;
 		}
 		// Check that the site type is valid
-		if (params_opv.Enable_phase_restriction && getSiteType(coords) == 2) {
+		if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
 			cout << "Error! Hole cannot be generated on an acceptor site." << endl;
 			setErrorMessage("Hole cannot be generated on an acceptor site.");
 			Error_found = true;
@@ -1397,7 +1084,7 @@ namespace Excimontec {
 		bool isV4 = false;
 		bool isCompressed = false;
 		// Open morphology file
-		ifstream morphology_file(params_opv.Morphology_filename.c_str(), ifstream::in);
+		ifstream morphology_file(params.Morphology_filename.c_str(), ifstream::in);
 		// Check if morphology file exists and is accessible
 		if (!morphology_file.good()) {
 			cout << getId() << ": Error opening morphology file for importing." << endl;
@@ -1748,7 +1435,7 @@ namespace Excimontec {
 				*Logfile << "Exciton " << ((*event_it)->getObjectPtr())->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
 			}
 			// Log information about the hop when the exciton diffusion test is enabled
-			if (params_opv.Enable_exciton_diffusion_test) {
+			if (params.Enable_exciton_diffusion_test) {
 				exciton_hop_distances.push_back(lattice.calculateLatticeDistanceSquared(((*event_it)->getObjectPtr())->getCoords(), (*event_it)->getDestCoords()));
 			}
 			return executeObjectHop(event_it);
@@ -1816,14 +1503,14 @@ namespace Excimontec {
 
 	bool OSC_Sim::executeNextEvent() {
 		// Check or when to stop generating excitons in the IQE test before executing the next event
-		if (params_opv.Enable_IQE_test) {
-			if (isLightOn && N_excitons_created == params_opv.N_tests) {
+		if (params.Enable_IQE_test) {
+			if (isLightOn && N_excitons_created == params.N_tests) {
 				removeEvent(&exciton_creation_events.front());
 				isLightOn = false;
 			}
 		}
 		// Perform Transients test analysis
-		if (params_opv.Enable_dynamics_test || params_opv.Enable_ToF_test) {
+		if (params.Enable_dynamics_test || params.Enable_ToF_test) {
 			updateTransientData();
 			// If none of the excitons or polarons can move or the cycle has reached the transient cutoff
 			if (getN_events() == 0 || (getTime() - Transient_creation_time) > Transient_end) {
@@ -1849,10 +1536,10 @@ namespace Excimontec {
 			}
 			// Check if new excitons or polarons need to be created
 			if (N_excitons == 0 && N_holes == 0 && N_electrons == 0 && !checkFinished()) {
-				if (params_opv.Enable_ToF_test) {
+				if (params.Enable_ToF_test) {
 					generateToFPolarons();
 				}
-				if (params_opv.Enable_dynamics_test) {
+				if (params.Enable_dynamics_test) {
 					generateDynamicsExcitons();
 				}
 			}
@@ -1942,10 +1629,10 @@ namespace Excimontec {
 		int polaron_tag = ((*event_it)->getObjectPtr())->getTag();
 		Coords coords_initial = ((*event_it)->getObjectPtr())->getCoords();
 		// Save transit time and extraction location info
-		if (params_opv.Enable_ToF_test) {
+		if (params.Enable_ToF_test) {
 			transit_times.push_back(getTime() - ((*event_it)->getObjectPtr())->getCreationTime());
 		}
-		if (params_opv.Enable_ToF_test || params_opv.Enable_IQE_test) {
+		if (params.Enable_ToF_test || params.Enable_IQE_test) {
 			if (!charge) {
 				electron_extraction_data[lattice.getWidth()*coords_initial.x + coords_initial.y]++;
 			}
@@ -2128,7 +1815,7 @@ namespace Excimontec {
 			*Logfile << "Created electron " << electron_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
 		}
 		// Update transient data
-		if (params_opv.Enable_dynamics_test) {
+		if (params.Enable_dynamics_test) {
 			transient_electron_tags.push_back(electrons.back().getTag());
 			transient_electron_energies_prev.push_back(0);
 		}
@@ -2158,7 +1845,7 @@ namespace Excimontec {
 			*Logfile << "Created hole " << hole_new.getTag() << " at site " << coords.x << "," << coords.y << "," << coords.z << "." << endl;
 		}
 		// Update transient data
-		if (params_opv.Enable_dynamics_test) {
+		if (params.Enable_dynamics_test) {
 			transient_hole_tags.push_back(holes.back().getTag());
 			transient_hole_energies_prev.push_back(0);
 		}
@@ -2203,7 +1890,7 @@ namespace Excimontec {
 			reassignSiteEnergies();
 		}
 		// Create electrons at the top plane of the lattice
-		if (!params_opv.ToF_polaron_type) {
+		if (!params.ToF_polaron_type) {
 			coords.z = lattice.getHeight() - 1;
 		}
 		// Create holes at the bottom plane of the lattice
@@ -2211,22 +1898,22 @@ namespace Excimontec {
 			coords.z = 0;
 		}
 		// Initialize transient data vectors
-		if (!params_opv.ToF_polaron_type) {
-			transient_electron_tags.assign(params_opv.ToF_initial_polarons, -1);
-			transient_electron_energies_prev.assign(params_opv.ToF_initial_polarons, 0);
-			Transient_electron_counts_prev = params_opv.ToF_initial_polarons;
+		if (!params.ToF_polaron_type) {
+			transient_electron_tags.assign(params.ToF_initial_polarons, -1);
+			transient_electron_energies_prev.assign(params.ToF_initial_polarons, 0);
+			Transient_electron_counts_prev = params.ToF_initial_polarons;
 		}
 		else {
-			transient_hole_tags.assign(params_opv.ToF_initial_polarons, -1);
-			transient_hole_energies_prev.assign(params_opv.ToF_initial_polarons, 0);
-			Transient_hole_counts_prev = params_opv.ToF_initial_polarons;
+			transient_hole_tags.assign(params.ToF_initial_polarons, -1);
+			transient_hole_energies_prev.assign(params.ToF_initial_polarons, 0);
+			Transient_hole_counts_prev = params.ToF_initial_polarons;
 		}
-		ToF_positions_prev.assign(params_opv.ToF_initial_polarons, coords.z);
+		ToF_positions_prev.assign(params.ToF_initial_polarons, coords.z);
 		Transient_creation_time = getTime();
 		Transient_index_prev = -1;
 		N_transient_cycles++;
 		if (N_transient_cycles % 10 == 0) {
-			cout << getId() << ": ToF transient cycle " << N_transient_cycles << ": Generating " << params_opv.ToF_initial_polarons << " initial polarons." << endl;
+			cout << getId() << ": ToF transient cycle " << N_transient_cycles << ": Generating " << params.ToF_initial_polarons << " initial polarons." << endl;
 		}
 		int num = 0;
 		// Determine unique coords for each new polaron
@@ -2237,41 +1924,41 @@ namespace Excimontec {
 				coords.x = x;
 				coords.y = y;
 				// If phase restriction is enabled, electrons cannot be created on donor sites
-				if (params_opv.Enable_phase_restriction && !params_opv.ToF_polaron_type && getSiteType(coords) == (short)1) {
+				if (params.Enable_phase_restriction && !params.ToF_polaron_type && getSiteType(coords) == (short)1) {
 					continue;
 				}
 				// If phase restriction is enabled, holes cannot be created on acceptor sites
-				if (params_opv.Enable_phase_restriction && params_opv.ToF_polaron_type && getSiteType(coords) == (short)2) {
+				if (params.Enable_phase_restriction && params.ToF_polaron_type && getSiteType(coords) == (short)2) {
 					continue;
 				}
 				coords_vect.push_back(coords);
 			}
 		}
 		// Check to make sure there are enough possible sites
-		if ((int)coords_vect.size() < params_opv.ToF_initial_polarons) {
-			cout << "Error! " << params_opv.ToF_initial_polarons << " sites were not available to place the initial ToF polarons." << endl;
+		if ((int)coords_vect.size() < params.ToF_initial_polarons) {
+			cout << "Error! " << params.ToF_initial_polarons << " sites were not available to place the initial ToF polarons." << endl;
 			setErrorMessage("Initial ToF polarons could not be created.");
 			Error_found = true;
 		}
 		// Randomly select from the total possible sites
-		if (params_opv.Enable_ToF_random_placement) {
+		if (params.Enable_ToF_random_placement) {
 			shuffle(coords_vect.begin(), coords_vect.end(), generator);
 			// Resize the vector to only keep the appropriate number of sites
-			coords_vect.resize(params_opv.ToF_initial_polarons);
+			coords_vect.resize(params.ToF_initial_polarons);
 		}
 		// Only select the lowest energy sites
-		else if (params_opv.Enable_ToF_energy_placement) {
+		else if (params.Enable_ToF_energy_placement) {
 			// Sort vector by site energy from closest to the target energy to furthest
 			sort(coords_vect.begin(), coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
-				return fabs(getSiteEnergy(a) - params_opv.ToF_placement_energy) < fabs(getSiteEnergy(b) - params_opv.ToF_placement_energy);
+				return fabs(getSiteEnergy(a) - params.ToF_placement_energy) < fabs(getSiteEnergy(b) - params.ToF_placement_energy);
 			});
 			// Resize vector to only keep the the lowest energy sites
-			coords_vect.resize(params_opv.ToF_initial_polarons);
+			coords_vect.resize(params.ToF_initial_polarons);
 		}
 		// Generate the polarons in the selected sites
 		num = 0;
 		for (auto const &item : coords_vect) {
-			if (!params_opv.ToF_polaron_type) {
+			if (!params.ToF_polaron_type) {
 				generateElectron(item);
 				transient_electron_tags[num] = electrons.back().getTag();
 				transient_electron_energies_prev[num] = getSiteEnergy(item);
@@ -2357,7 +2044,7 @@ namespace Excimontec {
 	}
 
 	double OSC_Sim::getInternalField() const {
-		return params_opv.Internal_potential / (1e-7*lattice.getHeight()*lattice.getUnitSize());
+		return params.Internal_potential / (1e-7*lattice.getHeight()*lattice.getUnitSize());
 	}
 
 	int OSC_Sim::getN_bimolecular_recombinations() const {
@@ -2524,7 +2211,7 @@ namespace Excimontec {
 	}
 
 	vector<int> OSC_Sim::getToFTransientCounts() const {
-		if (!params_opv.ToF_polaron_type) {
+		if (!params.ToF_polaron_type) {
 			return transient_electron_counts;
 		}
 		else {
@@ -2533,7 +2220,7 @@ namespace Excimontec {
 	}
 
 	vector<double> OSC_Sim::getToFTransientEnergies() const {
-		if (!params_opv.ToF_polaron_type) {
+		if (!params.ToF_polaron_type) {
 			return transient_electron_energies;
 		}
 		else {
@@ -2557,20 +2244,20 @@ namespace Excimontec {
 		bool success;
 		N_donor_sites = 0;
 		N_acceptor_sites = 0;
-		if (params_opv.Enable_neat) {
+		if (params.Enable_neat) {
 			N_donor_sites = lattice.getNumSites();
 			N_acceptor_sites = 0;
 			for (auto &item : sites) {
 				item.setType(1);
 			}
 		}
-		else if (params_opv.Enable_bilayer) {
+		else if (params.Enable_bilayer) {
 			Coords coords;
 			for (int x = 0; x < lattice.getLength(); x++) {
 				for (int y = 0; y < lattice.getWidth(); y++) {
 					for (int z = 0; z < lattice.getHeight(); z++) {
 						coords.setXYZ(x, y, z);
-						if (z < params_opv.Thickness_acceptor) {
+						if (z < params.Thickness_acceptor) {
 							sites[lattice.getSiteIndex(coords)].setType(2);
 							N_acceptor_sites++;
 						}
@@ -2582,10 +2269,10 @@ namespace Excimontec {
 				}
 			}
 		}
-		else if (params_opv.Enable_random_blend) {
+		else if (params.Enable_random_blend) {
 			vector<short> site_types;
 			site_types.assign(lattice.getNumSites(), 1);
-			for (int i = 0; i < (int)lattice.getNumSites()*params_opv.Acceptor_conc; i++) {
+			for (int i = 0; i < (int)lattice.getNumSites()*params.Acceptor_conc; i++) {
 				site_types[i] = 2;
 				N_acceptor_sites++;
 			}
@@ -2595,7 +2282,7 @@ namespace Excimontec {
 				sites[i].setType(site_types[i]);
 			}
 		}
-		else if (params_opv.Enable_import_morphology) {
+		else if (params.Enable_import_morphology) {
 			success = createImportedMorphology();
 			if (!success) {
 				return false;
@@ -2612,8 +2299,8 @@ namespace Excimontec {
 
 	void OSC_Sim::outputStatus() {
 		cout << getId() << ": Time = " << getTime() << " seconds.\n";
-		if (params_opv.Enable_ToF_test) {
-			if (!params_opv.ToF_polaron_type) {
+		if (params.Enable_ToF_test) {
+			if (!params.ToF_polaron_type) {
 				cout << getId() << ": " << N_electrons_collected << " out of " << N_electrons_created << " electrons have been collected and " << N_events_executed << " events have been executed.\n";
 				cout << getId() << ": There are currently " << N_electrons << " electrons in the lattice:\n";
 				for (auto const &item : electrons) {
@@ -2628,14 +2315,14 @@ namespace Excimontec {
 				}
 			}
 		}
-		if (params_opv.Enable_exciton_diffusion_test) {
+		if (params.Enable_exciton_diffusion_test) {
 			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << N_events_executed << " events have been executed.\n";
 			cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
 			for (auto const &item : excitons) {
 				cout << getId() << ": Exciton " << item.getTag() << " is at " << item.getCoords().x << "," << item.getCoords().y << "," << item.getCoords().z << ".\n";
 			}
 		}
-		if (params_opv.Enable_IQE_test || params_opv.Enable_dynamics_test) {
+		if (params.Enable_IQE_test || params.Enable_dynamics_test) {
 			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << N_events_executed << " events have been executed.\n";
 			cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
 			for (auto const &item : excitons) {
@@ -2654,26 +2341,26 @@ namespace Excimontec {
 	}
 
 	void OSC_Sim::reassignSiteEnergies() {
-		if (params_opv.Enable_gaussian_dos) {
+		if (params.Enable_gaussian_dos) {
 			site_energies_donor.assign(N_donor_sites, 0);
 			site_energies_acceptor.assign(N_acceptor_sites, 0);
-			createGaussianDOSVector(site_energies_donor, 0, params_opv.Energy_stdev_donor, generator);
-			createGaussianDOSVector(site_energies_acceptor, 0, params_opv.Energy_stdev_acceptor, generator);
+			createGaussianDOSVector(site_energies_donor, 0, params.Energy_stdev_donor, generator);
+			createGaussianDOSVector(site_energies_acceptor, 0, params.Energy_stdev_acceptor, generator);
 		}
-		else if (params_opv.Enable_exponential_dos) {
+		else if (params.Enable_exponential_dos) {
 			site_energies_donor.assign(N_donor_sites, 0);
 			site_energies_acceptor.assign(N_acceptor_sites, 0);
-			createExponentialDOSVector(site_energies_donor, 0, params_opv.Energy_urbach_donor, generator);
-			createExponentialDOSVector(site_energies_acceptor, 0, params_opv.Energy_urbach_acceptor, generator);
+			createExponentialDOSVector(site_energies_donor, 0, params.Energy_urbach_donor, generator);
+			createExponentialDOSVector(site_energies_acceptor, 0, params.Energy_urbach_acceptor, generator);
 		}
-		else if (!params_opv.Enable_import_energies) {
+		else if (!params.Enable_import_energies) {
 			site_energies_donor.push_back(0);
 			site_energies_acceptor.push_back(0);
 		}
 		int donor_count = 0;
 		int acceptor_count = 0;
 		for (auto& site : sites) {
-			if (params_opv.Enable_gaussian_dos || params_opv.Enable_exponential_dos) {
+			if (params.Enable_gaussian_dos || params.Enable_exponential_dos) {
 				if (site.getType() == (short)1) {
 					site.setEnergyIt(site_energies_donor.begin() + donor_count);
 					donor_count++;
@@ -2704,10 +2391,10 @@ namespace Excimontec {
 				}
 			}
 		}
-		if (params_opv.Enable_correlated_disorder) {
-			createCorrelatedDOS(params_opv.Disorder_correlation_length);
+		if (params.Enable_correlated_disorder) {
+			createCorrelatedDOS(params.Disorder_correlation_length);
 		}
-		if (params_opv.Enable_interfacial_energy_shift) {
+		if (params.Enable_interfacial_energy_shift) {
 			for (int n = 0; n < lattice.getNumSites(); n++) {
 				Coords coords_i = lattice.getSiteCoords(n);
 				int counts_first = 0;
@@ -2741,25 +2428,25 @@ namespace Excimontec {
 				if (counts_first > 0 || counts_second > 0 || counts_third > 0) {
 					double energy_new = 0;
 					if (sites[n].getType() == (short)1) {
-						if (!params_opv.Enable_gaussian_dos && !params_opv.Enable_exponential_dos) {
-							energy_new = (counts_first * params_opv.Energy_shift_donor) + (counts_second * params_opv.Energy_shift_donor / sqrt(2)) + (counts_third * params_opv.Energy_shift_donor / sqrt(3));
+						if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
+							energy_new = (counts_first * params.Energy_shift_donor) + (counts_second * params.Energy_shift_donor / sqrt(2)) + (counts_third * params.Energy_shift_donor / sqrt(3));
 							site_energies_donor.push_back(energy_new);
 							sites[n].setEnergyIt(std::prev(site_energies_donor.end()));
 						}
 						else {
-							energy_new = sites[n].getEnergy() + (counts_first * params_opv.Energy_shift_donor) + (counts_second * params_opv.Energy_shift_donor / sqrt(2)) + (counts_third * params_opv.Energy_shift_donor / sqrt(3));
+							energy_new = sites[n].getEnergy() + (counts_first * params.Energy_shift_donor) + (counts_second * params.Energy_shift_donor / sqrt(2)) + (counts_third * params.Energy_shift_donor / sqrt(3));
 							sites[n].setEnergy(energy_new);
 						}
 
 					}
 					else if (sites[n].getType() == (short)2) {
-						if (!params_opv.Enable_gaussian_dos && !params_opv.Enable_exponential_dos) {
-							energy_new = (counts_first * params_opv.Energy_shift_acceptor) + (counts_second * params_opv.Energy_shift_acceptor / sqrt(2)) + (counts_third * params_opv.Energy_shift_acceptor / sqrt(3));
+						if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
+							energy_new = (counts_first * params.Energy_shift_acceptor) + (counts_second * params.Energy_shift_acceptor / sqrt(2)) + (counts_third * params.Energy_shift_acceptor / sqrt(3));
 							site_energies_acceptor.push_back(energy_new);
 							sites[n].setEnergyIt(std::prev(site_energies_acceptor.end()));
 						}
 						else {
-							energy_new = sites[n].getEnergy() + (counts_first * params_opv.Energy_shift_acceptor) + (counts_second * params_opv.Energy_shift_acceptor / sqrt(2)) + (counts_third * params_opv.Energy_shift_acceptor / sqrt(3));
+							energy_new = sites[n].getEnergy() + (counts_first * params.Energy_shift_acceptor) + (counts_second * params.Energy_shift_acceptor / sqrt(2)) + (counts_third * params.Energy_shift_acceptor / sqrt(3));
 							sites[n].setEnergy(energy_new);
 						}
 					}
@@ -2772,8 +2459,8 @@ namespace Excimontec {
 				}
 			}
 		}
-		if (params_opv.Enable_import_energies) {
-			ifstream infile(params_opv.Energies_import_filename);
+		if (params.Enable_import_energies) {
+			ifstream infile(params.Energies_import_filename);
 			// Check if energies file exists and is accessible
 			if (!infile.good()) {
 				cout << getId() << ": Error opening site energies file for importing." << endl;
@@ -2849,7 +2536,7 @@ namespace Excimontec {
 
 	void OSC_Sim::removeExciton(list<Exciton>::iterator exciton_it) {
 		// Output diffusion distance
-		if (params_opv.Enable_exciton_diffusion_test) {
+		if (params.Enable_exciton_diffusion_test) {
 			exciton_diffusion_distances.push_back(lattice.getUnitSize()*exciton_it->calculateDisplacement());
 			exciton_lifetimes.push_back(getTime() - exciton_it->getCreationTime());
 		}
@@ -2878,7 +2565,7 @@ namespace Excimontec {
 	void OSC_Sim::updateTransientData() {
 		// ToF_positions_prev is a vector that stores the z-position of each charge carrier at the previous time interval
 		// Transient_xxxx_energies_prev is a vector that stores the energies of each object at the previous time interval
-		if (params_opv.Enable_ToF_test) {
+		if (params.Enable_ToF_test) {
 			// Cheeck if enough time has passed since the previous time interval
 			if ((getTime() - Transient_creation_time) > transient_times[Transient_index_prev + 1]) {
 				int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / Transient_step_size);
@@ -2888,7 +2575,7 @@ namespace Excimontec {
 				// Update info for any previous timesteps that have elapsed already but were not accounted for
 				while (index != 0 && Transient_index_prev < index - 1 && (Transient_index_prev + 1) < (int)transient_times.size()) {
 					// electrons
-					if (!params_opv.ToF_polaron_type) {
+					if (!params.ToF_polaron_type) {
 						transient_electron_counts[Transient_index_prev + 1] += Transient_electron_counts_prev;
 						for (auto const &item : electrons) {
 							int electron_index = distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
@@ -2909,7 +2596,7 @@ namespace Excimontec {
 				}
 				// Update info for the current timestep
 				// electrons
-				if (!params_opv.ToF_polaron_type) {
+				if (!params.ToF_polaron_type) {
 					transient_electron_counts[index] += N_electrons;
 					Transient_electron_counts_prev = N_electrons;
 					for (auto const &item : electrons) {
@@ -2937,7 +2624,7 @@ namespace Excimontec {
 				Transient_index_prev = index;
 			}
 		}
-		else if (params_opv.Enable_dynamics_test) {
+		else if (params.Enable_dynamics_test) {
 			// Calculate data for next time step if enough time has elapsed
 			if ((getTime() - Transient_creation_time) > transient_times[Transient_index_prev + 1]) {
 				int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / Transient_step_size);

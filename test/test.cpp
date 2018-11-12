@@ -5,6 +5,7 @@
 
 #include "gtest/gtest.h"
 #include "OSC_Sim.h"
+#include "Parameters.h"
 #include "Exciton.h"
 #include "Utils.h"
 
@@ -16,7 +17,7 @@ namespace OSC_SimTests {
 
 	class OSC_SimTest : public ::testing::Test {
 	protected:
-		Parameters_OPV params_default;
+		Parameters params_default;
 		Parameters_Simulation params_base;
 		OSC_Sim sim;
 		void SetUp() {
@@ -140,12 +141,56 @@ namespace OSC_SimTests {
 		}
 	};
 
-	TEST_F(OSC_SimTest, ParameterCheckTests) {
+	TEST_F(OSC_SimTest, ParameterTests) {
 		sim = OSC_Sim();
+		// Check that the default parameters file can be loaded and are valid
+		ifstream params_file("parameters_default.txt");
+		Parameters params;
+		EXPECT_TRUE(params_file.good());
+		if (params_file.good()) {
+			params.importParameters(params_file);
+		}
+		params_file.close();
+		// Check parameter files with typos in boolean values to check conversion of string to bool
+		ifstream params_file2("parameters_default.txt");
+		vector<string> file_data;
+		string line;
+		while (getline(params_file2, line)) {
+			file_data.push_back(line);
+		}
+		params_file2.close();
+		for (auto& item : file_data) {
+			// Find parameter lines with a boolean true value
+			if (item.substr(0, 4).compare("true") == 0) {
+				// Replace true with misspelled 'tue'
+				item.replace(item.find("true"), 4, "tue");
+				// Save file data vector to a new parameter file
+				outputVectorToFile(file_data, "./test/parameters_misspell_1.txt");
+				// Try to open and import new parameter file with misspelled true
+				ifstream params_file3("./test/parameters_misspell_1.txt");
+				EXPECT_FALSE(params.importParameters(params_file3));
+				params_file3.close();
+				// Reset mispelled tue back to true
+				item.replace(item.find("tue"), 3, "true");
+			}
+			// Find parameter lines with a boolean false value
+			else if (item.substr(0, 5).compare("false") == 0) {
+				// Replace false with misspelled 'fase'
+				item.replace(item.find("false"), 5, "fase");
+				// Save file data vector to a new parameter file
+				outputVectorToFile(file_data, "./test/parameters_misspell_2.txt");
+				// Try to open and import new parameter file with misspelled false
+				ifstream params_file4("./test/parameters_misspell_2.txt");
+				EXPECT_FALSE(params.importParameters(params_file4));
+				params_file4.close();
+				// Reset mispelled fase back to false
+				item.replace(item.find("fase"), 4, "false");
+			}
+		}
 		// Check that default parameters are valid
 		EXPECT_TRUE(sim.init(params_default, 0));
 		// Check various invalid parameter sets
-		auto params = params_default;
+		params = params_default;
 		// Check that a device architecture is defined
 		params.Enable_neat = false;
 		EXPECT_FALSE(sim.init(params, 0));
@@ -873,7 +918,7 @@ namespace OSC_SimTests {
 
 	TEST_F(OSC_SimTest, IQETests) {
 		// Setup starting parameters
-		Parameters_OPV params = params_default;
+		auto params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
 		params.Enable_neat = false;
@@ -1037,7 +1082,7 @@ namespace OSC_SimTests {
 	TEST_F(OSC_SimTest, ToFTests) {
 		// Hole ToF test
 		sim = OSC_Sim();
-		Parameters_OPV params = params_default;
+		auto params = params_default;
 		params.Enable_periodic_z = false;
 		params.Internal_potential = -4.0;
 		params.Enable_exciton_diffusion_test = false;
@@ -1187,7 +1232,7 @@ namespace OSC_SimTests {
 
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
 		sim = OSC_Sim();
-		Parameters_OPV params = params_default;
+		auto params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		params.Energy_stdev_acceptor = 0.05;
