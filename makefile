@@ -10,7 +10,7 @@ ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
 	FLAGS += -O2 -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc -IKMC_Lattice/src
 endif
 
-OBJS = src/OSC_Sim.o src/Exciton.o src/Polaron.o
+OBJS = src/OSC_Sim.o src/Exciton.o src/Parameters.o src/Polaron.o
 
 all : Excimontec.exe
 ifndef FLAGS
@@ -23,16 +23,19 @@ Excimontec.exe : src/main.o $(OBJS) KMC_Lattice/libKMC.a
 KMC_Lattice/libKMC.a : KMC_Lattice/src/*.h
 	$(MAKE) -C KMC_Lattice 
 
-src/main.o : src/main.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h
+src/main.o : src/main.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h src/Parameters.h KMC_Lattice/libKMC.a
 	mpicxx $(FLAGS) -c $< -o $@
 	
-src/OSC_Sim.o : src/OSC_Sim.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h
+src/OSC_Sim.o : src/OSC_Sim.cpp src/OSC_Sim.h src/Exciton.h src/Polaron.h src/Parameters.h KMC_Lattice/libKMC.a
 	mpicxx $(FLAGS) -c $< -o $@
 
-src/Exciton.o : src/Exciton.cpp src/Exciton.h
+src/Polaron.o : src/Parameters.cpp src/Parameters.h KMC_Lattice/libKMC.a
+	mpicxx $(FLAGS) -c $< -o $@
+	
+src/Exciton.o : src/Exciton.cpp src/Exciton.h KMC_Lattice/libKMC.a
 	mpicxx $(FLAGS) -c $< -o $@
 
-src/Polaron.o : src/Polaron.cpp src/Polaron.h
+src/Polaron.o : src/Polaron.cpp src/Polaron.h KMC_Lattice/libKMC.a
 	mpicxx $(FLAGS) -c $< -o $@
 
 #
