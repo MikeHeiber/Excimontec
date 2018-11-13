@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- CHANGELOG.md - New file detailing the changes for each release
+- README.md - Link to new Changelog file
 - README.md - Copyright statement
 - slurm_script.sh - Copyright statement
 - Parameters - New class to store all parameters used by the simulation and to contain functions for parsing the parameter file and checking for parameter validity
@@ -28,13 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - parameters_default.txt - Two new parameters (Enable_import_energies, Energies_import_filename) for importing site energies from a file
 - Parameters - The two new parameters for the site energy import feature
 - Parameters (importParameters) - Code to read the site energy import parameters from the parameter file
-- Parameters (checkParameters) - Validity checks for the new site enegies import parameters
+- Parameters (checkParameters) - Validity checks for the new site energies import parameters
 - OSC_Sim (exportEnergies) - New function that creates a site energies file
 - OSC_Sim (reassignSiteEnergies) - Code section that imports the energies from the specified file when the site energy import feature is enabled
 - New site energies files that have improper format to check for handling of invalid site energies files during testing
 - test.cpp - The two new site energies import parameters to the default parameters struct
 - testp.cpp - (ParameterTests) - Tests to check response of OSC_Sim to initialization with invalid site energies import parameter combinations
-- test.cpp (EnergiesImportTests) - New test function checking the export and import of valid energies file and to check how the program handles energies file with improper formator missing data
+- test.cpp (EnergiesImportTests) - New test function checking the export and import of valid energies file and to check how the program handles energies file with improper format or missing data
 - Feature allowing users to enable event logging for debugging purposes by adding -enable_logging as a command line argument after the parameter file name
 - main.cpp (main) - Code to check command line arguments and enable logging if the -enable_logging argument is passed after the parameter file name
 - OSC_Sim - New N_events_executed counter and getN_events_executed function to overwrite the the one in the base Simulation class to separately keep track oh how many events have been executed
@@ -66,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - makefile - Copyright to show correct years, 2017-2018
 - OSC_Sim (calculateExcitonCreationCoords) - Refactored code to be more robust and be guaranteed to find an appropriate empty site for creation if one exists
 - KMC_Lattice - Submodule to latest development branch version that fixes the chooseNextEvent and removeObject bugs that occurred when an object does not have a valid event
-- OSC_Sim (createElectron, createExciton, CreateHole) - Code to catch out_of_range exceptions from the lattice class as the method for checking for invalid input Coords
+- OSC_Sim (createElectron, createExciton, CreateHole) - Code to catch out_of_range exceptions from the lattice class as the method for checking for invalid input coordinates
 - test.cpp (EnergiesImportTests) - Test to use a bilayer so that it tests assignment of site energies to both donor and acceptor type sites
 - test.cpp (ExcitonDiffusionTests) - Updated test by increasing N_tests to gather more statistics for checking the numerical accuracy of the lifetime and reducing N_tests when simply checking for relative changes in the diffusion length
 - test.cpp (ExcitonDynamicsTests) - Updated test to use reduced Dynamics_transient_end and check how the program handles cutting off the tail end of the transient
