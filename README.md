@@ -33,6 +33,7 @@ This software package uses object-oriented design and extends the [KMC_Lattice](
 The current release, Excimontec
 [![GitHub (pre-)release](https://img.shields.io/github/release/MikeHeiber/Excimontec/all.svg?style=flat-square)](https://github.com/MikeHeiber/Excimontec/releases)
 , is built with KMC_Lattice [![GitHub (pre-)release](https://img.shields.io/github/release/MikeHeiber/KMC_Lattice/all.svg?style=flat-square)](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 
 All major planned features that are to be included in v1.0 are now implemented and have undergone preliminary testing. 
 However, this software tool is still under development, and as such, there may still be bugs that need to be squashed. 
 Please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
