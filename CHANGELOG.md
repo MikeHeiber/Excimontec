@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (reassignSiteEnergies) - Code section that imports the energies from the specified file when the site energy import feature is enabled
 - New site energies files that have improper format to check for handling of invalid site energies files during testing
 - test.cpp - The two new site energies import parameters to the default parameters struct
-- testp.cpp - (ParameterTests) - Tests to check response of OSC_Sim to initialization with invalid site energies import parameter combinations
+- test.cpp - (ParameterTests) - Tests to check response of OSC_Sim to initialization with invalid site energies import parameter combinations
 - test.cpp (EnergiesImportTests) - New test function checking the export and import of valid energies file and to check how the program handles energies file with improper format or missing data
 - Feature allowing users to enable event logging for debugging purposes by adding -enable_logging as a command line argument after the parameter file name
 - main.cpp (main) - Code to check command line arguments and enable logging if the -enable_logging argument is passed after the parameter file name
@@ -128,7 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (calculateTransitTimeDist) - Function to output vector of pairs to match the format of the rest of the software package
 - OSC_Sim (calculateTransitTimeDist) - Renamed function to calculateTransitTimeHist to be more descriptive about the data that it produces
 - OSC_Sim (generateDynamicsExcitons) - Reduced frequency of command line status output for dynamics simulations
-- OSC_Sim (genenrateToFPolaroins) - Reduced frequency of command line status output for ToF simulations
+- OSC_Sim (generateToFPolarons) - Reduced frequency of command line status output for ToF simulations
 - OSC_Sim (generateDynamicsExcitons) - Dynamics simulation command line output to print info when starting the first transient cycle
 - OSC_Sim (executeExcitonHop, executePolaronHop) - Command line error output to give more details about the event when there is an error
 - .travis.yml - Method for running the test executable
