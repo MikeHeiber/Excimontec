@@ -1,4 +1,4 @@
-## OPV Parameters for Excimontec v1.0-beta.5
+## OPV Parameters for Excimontec v1.0.0-rc.1
 --------------------------------------------------------------
 ## Kinetic Monte Carlo Algorithm Parameters
 false //Enable_FRM
@@ -52,6 +52,9 @@ false //Enable_dynamics_extraction
 1e-13 //Dynamics_transient_start (s)
 1e-5 //Dynamics_transient_end (s)
 10 //Dynamics_pnts_per_decade
+true //Enable_steady_transport_test
+1e15 //Steady_carrier_density (cm^-3)
+10000 //N_equilibration_events
 --------------------------------------------------------------
 ## Exciton Parameters
 1e22 //Exciton_generation_rate_donor (cm^-3 s^-1)

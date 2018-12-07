@@ -133,6 +133,11 @@ namespace Excimontec {
 			// Create initial test polarons
 			generateToFPolarons();
 		}
+		else if (params.Enable_steady_transport_test) {
+			isLightOn = false;
+			// Create test polarons
+			generateSteadyPolarons();
+		}
 		if (params.Enable_IQE_test) {
 			electron_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
 			hole_extraction_data.assign(lattice.getLength()*lattice.getWidth(), 0);
@@ -690,7 +695,6 @@ namespace Excimontec {
 			return;
 		}
 		Coords dest_coords;
-		//double E_delta;
 		int index;
 		double E_site_i = getSiteEnergy(object_coords);
 		double Coulomb_i = calculateCoulomb(polaron_it, object_coords);
@@ -726,11 +730,18 @@ namespace Excimontec {
 					if (!lattice.isOccupied(dest_coords) && (!params.Enable_phase_restriction || getSiteType(object_coords) == getSiteType(dest_coords))) {
 						polaron_event_calc_vars.E_deltas[index] = (getSiteEnergy(dest_coords) - E_site_i);
 						polaron_event_calc_vars.E_deltas[index] += (calculateCoulomb(polaron_it, dest_coords) - Coulomb_i);
+						double E_potential_change = (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+						if (lattice.calculateDZ(object_coords, dest_coords) < 0) {
+							E_potential_change -= params.Internal_potential;
+						}
+						if (lattice.calculateDZ(object_coords, dest_coords) > 0) {
+							E_potential_change += params.Internal_potential;
+						}
 						if (!polaron_it->getCharge()) {
-							polaron_event_calc_vars.E_deltas[index] += (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+							polaron_event_calc_vars.E_deltas[index] += E_potential_change;
 						}
 						else {
-							polaron_event_calc_vars.E_deltas[index] -= (E_potential[dest_coords.z] - E_potential[object_coords.z]);
+							polaron_event_calc_vars.E_deltas[index] -= E_potential_change;
 						}
 						if (getSiteType(object_coords) == (short)1) {
 							if (getSiteType(dest_coords) == (short)2) {
@@ -775,7 +786,7 @@ namespace Excimontec {
 		// Calculate possible polaron extraction event
 		// Electrons are extracted at the bottom of the lattice (z=-1)
 		// Holes are extracted at the top of the lattice (z=Height)
-		if (!params.Enable_dynamics_test || params.Enable_dynamics_extraction) {
+		if ((params.Enable_dynamics_test && params.Enable_dynamics_extraction) || (!params.Enable_dynamics_test && !params.Enable_steady_transport_test)) {
 			bool Extraction_valid = false;
 			list<Polaron_Extraction>::iterator extraction_event_it;
 			double distance;
@@ -884,6 +895,9 @@ namespace Excimontec {
 			}
 			return false;
 		}
+		if (params.Enable_steady_transport_test) {
+			return (N_events_executed == (params.N_equilibration_events + params.N_tests));
+		}
 		cout << getId() << ": Error checking simulation finish conditions.  The simulation will now end." << endl;
 		return true;
 	}
@@ -902,17 +916,17 @@ namespace Excimontec {
 			scale_factor = pow(scale_factor, 2);
 		}
 		// Save original site energies
-		vector<double> original_energies((int)sites.size(), 0.0);
+		vector<float> original_energies((int)sites.size());
 		for (int n = 0; n < (int)sites.size(); n++) {
 			original_energies[n] = sites[n].getEnergy();
 		}
-		vector<double> new_energies((int)sites.size(), 0.0);
+		vector<float> new_energies((int)sites.size());
 		int range = 2;
 		while (1) {
 			// Create and calculates distances and range check vectors
 			int dim = 2 * range + 1;
 			int vec_size = dim * dim*dim;
-			vector<double> distances(vec_size, 0.0);
+			vector<float> distances(vec_size, 0.0f);
 			vector<bool> isInRange(vec_size, false);
 			vector<int> distance_indices(vec_size, 0);
 			for (int i = -range; i <= range; i++) {
@@ -920,9 +934,9 @@ namespace Excimontec {
 					for (int k = -range; k <= range; k++) {
 						int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
 						distance_indices[index] = i * i + j * j + k * k;
-						distances[index] = lattice.getUnitSize()*sqrt((double)(i*i + j * j + k * k));
+						distances[index] = (float)lattice.getUnitSize()*sqrt((float)(i*i + j * j + k * k));
 						if (i == 0 && j == 0 && k == 0) {
-							distances[index] = -1.0;
+							distances[index] = -1.0f;
 						}
 						else if (distance_indices[index] < range*range) {
 							isInRange[index] = true;
@@ -931,19 +945,14 @@ namespace Excimontec {
 				}
 			}
 			// Impart correlation
-			vector<double> isAble(vec_size, 0.0);
-			vector<double> energies_temp(vec_size, 0.0);
+			vector<float> isAble(vec_size, 0.0f);
+			vector<float> energies_temp(vec_size, 0.0f);
 			vector<int> counts(range*range + 1, 0);
 			for (int n = 0, nmax = (int)sites.size(); n < nmax; n++) {
-				isAble.assign(vec_size, 0.0);
-				energies_temp.assign(vec_size, 0.0);
+				isAble.assign(vec_size, 0.0f);
+				energies_temp.assign(vec_size, 0.0f);
 				Coords coords = lattice.getSiteCoords(n);
 				// Get nearby site energies and determine if able
-
-#if defined(_OPENMP)
-#pragma loop(hint_parallel(2))
-#pragma loop(ivdep)
-#endif
 				for (int i = -range; i <= range; i++) {
 					for (int j = -range; j <= range; j++) {
 						for (int k = -range; k <= range; k++) {
@@ -955,35 +964,35 @@ namespace Excimontec {
 							int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
 							if (isInRange[index]) {
 								energies_temp[index] = getSiteEnergy(dest_coords);
-								isAble[index] = 1.0;
+								isAble[index] = 1.0f;
 							}
 						}
 					}
 				}
 				if (params.Enable_gaussian_kernel) {
 					for (int m = 0; m < vec_size; m++) {
-						energies_temp[m] = isAble[m] * energies_temp[m] * exp(scale_factor * distances[m] * distances[m]);
+						energies_temp[m] = isAble[m] * energies_temp[m] * exp((float)scale_factor * distances[m] * distances[m]);
 					}
 				}
 				if (params.Enable_power_kernel && params.Power_kernel_exponent == -1) {
 					for (int m = 0; m < vec_size; m++) {
-						energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m]);
+						energies_temp[m] = isAble[m] * energies_temp[m] / ((float)scale_factor * distances[m]);
 					}
 				}
 				if (params.Enable_power_kernel && params.Power_kernel_exponent == -2) {
 					for (int m = 0; m < vec_size; m++) {
-						energies_temp[m] = isAble[m] * energies_temp[m] / (scale_factor * distances[m] * distances[m]);
+						energies_temp[m] = isAble[m] * energies_temp[m] / ((float)scale_factor * distances[m] * distances[m]);
 					}
 				}
 				// Normalize energies by site count
 				counts.assign(range*range + 1, 0);
 				for (int m = 0; m < vec_size; m++) {
-					if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
+					if (isAble[m] > 0.1f && distance_indices[m] < (int)counts.size()) {
 						counts[distance_indices[m]] ++;
 					}
 				}
 				for (int m = 0; m < vec_size; m++) {
-					if (isAble[m] > 0.1 && distance_indices[m] < (int)counts.size()) {
+					if (isAble[m] > 0.1f && distance_indices[m] < (int)counts.size()) {
 						energies_temp[m] /= counts[distance_indices[m]];
 					}
 				}
@@ -994,7 +1003,7 @@ namespace Excimontec {
 			percent_diff = (stdev - params.Energy_stdev_donor) / params.Energy_stdev_donor;
 			double norm_factor = 1 + percent_diff;
 			for (auto &item : new_energies) {
-				item /= norm_factor;
+				item /= (float)norm_factor;
 			}
 			// Assign new energies to the sites
 			for (int n = 0; n < (int)sites.size(); n++) {
@@ -1183,7 +1192,7 @@ namespace Excimontec {
 		}
 		else {
 			int site_count = 0;
-			char type = 0;
+			short type = 0;
 			for (int x = 0; x < lattice.getLength(); x++) {
 				for (int y = 0; y < lattice.getWidth(); y++) {
 					for (int z = 0; z < lattice.getHeight(); z++) {
@@ -1547,6 +1556,11 @@ namespace Excimontec {
 				return true;
 			}
 		}
+		// Perform steady transport test analysis
+		if (params.Enable_steady_transport_test) {
+			updateSteadyData();
+		}
+		// Choose the next event
 		auto event_it = chooseNextEvent();
 		// Check for errors
 		if (*event_it == nullptr) {
@@ -1566,6 +1580,7 @@ namespace Excimontec {
 			*Logfile << "Event " << N_events_executed << ": Executing " << event_type << " event" << endl;
 		}
 		previous_event_type = event_type;
+		previous_event_time = getTime();
 		N_events_executed++;
 		// Update simulation time
 		setTime((*event_it)->getExecutionTime());
@@ -1684,7 +1699,16 @@ namespace Excimontec {
 					*Logfile << "Hole " << polaron_it->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
 				}
 			}
-			//cout << getSiteEnergy((*event_it)->getDestCoords()) << endl;
+			// Record data for the steady transport test
+			if (params.Enable_steady_transport_test) {
+				int displacement = polaron_it->getCoords().z - (*event_it)->getDestCoords().z;
+				if (displacement > 0) {
+					double velocity = (double)displacement / (getTime() - previous_event_time);
+					double energy_avg = (getSiteEnergy(polaron_it->getCoords()) + getSiteEnergy((*event_it)->getDestCoords())) / 2.0;
+					Transport_energy_weighted_sum += energy_avg * velocity;
+					Transport_energy_sum_of_weights += velocity;
+				}
+			}
 			return executeObjectHop(event_it);
 		}
 	}
@@ -1880,6 +1904,45 @@ namespace Excimontec {
 		Transient_triplet_counts_prev = N_triplets;
 		Transient_electron_counts_prev = N_electrons;
 		Transient_hole_counts_prev = N_holes;
+		calculateAllEvents();
+	}
+
+	void OSC_Sim::generateSteadyPolarons() {
+		// Check to make sure there are enough possible sites
+		int N_polarons = round_int(params.Steady_carrier_density*lattice.getVolume());
+		if (N_donor_sites < N_polarons) {
+			cout << "Error! " << N_polarons << " sites were not available to place the initial steady transport test polarons." << endl;
+			setErrorMessage("Steady transport test polarons could not be created.");
+			Error_found = true;
+			return;
+		}
+		// Construct vector of coordinates for all possible sites
+		vector<Coords> coords_vect;
+		coords_vect.reserve(N_donor_sites);
+		Coords coords;
+		for (int x = 0; x < lattice.getLength(); x++) {
+			for (int y = 0; y < lattice.getWidth(); y++) {
+				for (int z = 0; z < lattice.getHeight(); z++) {
+					coords.x = x;
+					coords.y = y;
+					coords.z = z;
+					// Only add donor sites
+					if (getSiteType(coords) == (short)1) {
+						coords_vect.push_back(coords);
+					}
+				}
+			}
+		}
+		// Sort subrange of coords vect based on the site energy at the coords
+		partial_sort(coords_vect.begin(), coords_vect.begin() + N_polarons, coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
+			return (getSiteEnergy(a) < getSiteEnergy(b));
+		});
+		// Resize vector to only keep the the lowest energy sites
+		coords_vect.resize(N_polarons);
+		// Generate the polarons in the selected sites
+		for (auto const &item : coords_vect) {
+			generateHole(item);
+		}
 		calculateAllEvents();
 	}
 
@@ -2156,8 +2219,8 @@ namespace Excimontec {
 		return previous_event_type;
 	}
 
-	vector<double> OSC_Sim::getSiteEnergies(const short site_type) const {
-		vector<double> energies;
+	vector<float> OSC_Sim::getSiteEnergies(const short site_type) const {
+		vector<float> energies;
 		for (int i = 0; i < lattice.getNumSites(); i++) {
 			if (sites[i].getType() == site_type) {
 				energies.push_back(sites[i].getEnergy());
@@ -2166,7 +2229,7 @@ namespace Excimontec {
 		return energies;
 	}
 
-	double OSC_Sim::getSiteEnergy(const Coords& coords) const {
+	float OSC_Sim::getSiteEnergy(const Coords& coords) const {
 		return sites[lattice.getSiteIndex(coords)].getEnergy();
 	}
 
@@ -2208,6 +2271,44 @@ namespace Excimontec {
 			}
 		}
 		return output_data;
+	}
+
+	double OSC_Sim::getSteadyEquilibrationEnergy() const {
+		if ((int)holes.size() > 0) {
+			return Steady_equilibration_energy_sum / (double)(holes.size()*(params.N_tests / 100));
+		}
+		else {
+			return NAN;
+		}
+	}
+
+	double OSC_Sim::getSteadyFermiEnergy() const {
+		auto energies = getSiteEnergies(1);
+		if ((int)holes.size() > 0) {
+			nth_element(energies.begin(), energies.begin() + (int)holes.size() - 1, energies.end());
+			return energies[(int)holes.size() - 1];
+		}
+		else {
+			return NAN;
+		}
+	}
+
+	double OSC_Sim::getSteadyMobility() const {
+		double average_displacement = 0.0;
+		for (auto const &item : holes) {
+			average_displacement += item.calculateDisplacement(3);
+		}
+		average_displacement *= (lattice.getUnitSize()*1e-7 / holes.size());
+		return abs(average_displacement) / ((getTime() - Steady_equilibration_time) * abs(getInternalField()));
+	}
+
+	double OSC_Sim::getSteadyTransportEnergy() const {
+		if (Transport_energy_sum_of_weights > 0) {
+			return (Transport_energy_weighted_sum / Transport_energy_sum_of_weights);
+		}
+		else {
+			return NAN;
+		}
 	}
 
 	vector<int> OSC_Sim::getToFTransientCounts() const {
@@ -2341,6 +2442,8 @@ namespace Excimontec {
 	}
 
 	void OSC_Sim::reassignSiteEnergies() {
+		vector<float> site_energies_donor;
+		vector<float> site_energies_acceptor;
 		if (params.Enable_gaussian_dos) {
 			site_energies_donor.assign(N_donor_sites, 0);
 			site_energies_acceptor.assign(N_acceptor_sites, 0);
@@ -2353,20 +2456,16 @@ namespace Excimontec {
 			createExponentialDOSVector(site_energies_donor, 0, params.Energy_urbach_donor, generator);
 			createExponentialDOSVector(site_energies_acceptor, 0, params.Energy_urbach_acceptor, generator);
 		}
-		else if (!params.Enable_import_energies) {
-			site_energies_donor.push_back(0);
-			site_energies_acceptor.push_back(0);
-		}
 		int donor_count = 0;
 		int acceptor_count = 0;
 		for (auto& site : sites) {
 			if (params.Enable_gaussian_dos || params.Enable_exponential_dos) {
 				if (site.getType() == (short)1) {
-					site.setEnergyIt(site_energies_donor.begin() + donor_count);
+					site.setEnergy(*(site_energies_donor.begin() + donor_count));
 					donor_count++;
 				}
 				else if (site.getType() == (short)2) {
-					site.setEnergyIt(site_energies_acceptor.begin() + acceptor_count);
+					site.setEnergy(*(site_energies_acceptor.begin() + acceptor_count));
 					acceptor_count++;
 				}
 				else {
@@ -2378,10 +2477,10 @@ namespace Excimontec {
 			}
 			else {
 				if (site.getType() == (short)1) {
-					site.setEnergyIt(site_energies_donor.begin());
+					site.setEnergy(0.0);
 				}
 				else if (site.getType() == (short)2) {
-					site.setEnergyIt(site_energies_acceptor.begin());
+					site.setEnergy(0.0);
 				}
 				else {
 					cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
@@ -2426,27 +2525,25 @@ namespace Excimontec {
 					}
 				}
 				if (counts_first > 0 || counts_second > 0 || counts_third > 0) {
-					double energy_new = 0;
+					float energy_new = 0;
 					if (sites[n].getType() == (short)1) {
 						if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
-							energy_new = (counts_first * params.Energy_shift_donor) + (counts_second * params.Energy_shift_donor / sqrt(2)) + (counts_third * params.Energy_shift_donor / sqrt(3));
-							site_energies_donor.push_back(energy_new);
-							sites[n].setEnergyIt(std::prev(site_energies_donor.end()));
+							energy_new = (counts_first * (float)params.Energy_shift_donor) + (counts_second * (float)params.Energy_shift_donor / sqrt(2.0f)) + (counts_third * (float)params.Energy_shift_donor / sqrt(3.0f));
+							sites[n].setEnergy(energy_new);
 						}
 						else {
-							energy_new = sites[n].getEnergy() + (counts_first * params.Energy_shift_donor) + (counts_second * params.Energy_shift_donor / sqrt(2)) + (counts_third * params.Energy_shift_donor / sqrt(3));
+							energy_new = sites[n].getEnergy() + (counts_first * (float)params.Energy_shift_donor) + (counts_second * (float)params.Energy_shift_donor / sqrt(2.0f)) + (counts_third * (float)params.Energy_shift_donor / sqrt(3.0f));
 							sites[n].setEnergy(energy_new);
 						}
 
 					}
 					else if (sites[n].getType() == (short)2) {
 						if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
-							energy_new = (counts_first * params.Energy_shift_acceptor) + (counts_second * params.Energy_shift_acceptor / sqrt(2)) + (counts_third * params.Energy_shift_acceptor / sqrt(3));
-							site_energies_acceptor.push_back(energy_new);
-							sites[n].setEnergyIt(std::prev(site_energies_acceptor.end()));
+							energy_new = (counts_first * (float)params.Energy_shift_acceptor) + (counts_second * (float)params.Energy_shift_acceptor / sqrt(2.0f)) + (counts_third * (float)params.Energy_shift_acceptor / sqrt(3.0f));
+							sites[n].setEnergy(energy_new);
 						}
 						else {
-							energy_new = sites[n].getEnergy() + (counts_first * params.Energy_shift_acceptor) + (counts_second * params.Energy_shift_acceptor / sqrt(2)) + (counts_third * params.Energy_shift_acceptor / sqrt(3));
+							energy_new = sites[n].getEnergy() + (counts_first * (float)params.Energy_shift_acceptor) + (counts_second * (float)params.Energy_shift_acceptor / sqrt(2.0f)) + (counts_third * (float)params.Energy_shift_acceptor / sqrt(3.0f));
 							sites[n].setEnergy(energy_new);
 						}
 					}
@@ -2510,15 +2607,13 @@ namespace Excimontec {
 			for (int x = 0; x < length; x++) {
 				for (int y = 0; y < width; y++) {
 					for (int z = 0; z < height; z++) {
-						double energy = stod(lines[i]);
+						float energy = stof(lines[i]);
 						long int index = lattice.getSiteIndex(Coords(x, y, z));
 						if (sites[index].getType() == (short)1) {
-							site_energies_donor.push_back(energy);
-							sites[index].setEnergyIt(std::prev(site_energies_donor.end()));
+							sites[index].setEnergy(energy);
 						}
 						else if (sites[index].getType() == (short)2) {
-							site_energies_acceptor.push_back(energy);
-							sites[index].setEnergyIt(std::prev(site_energies_acceptor.end()));
+							sites[index].setEnergy(energy);
 						}
 						else {
 							cout << getId() << ": Error! Undefined site type detected while assigning site energies." << endl;
@@ -2562,6 +2657,28 @@ namespace Excimontec {
 		return false;
 	}
 
+	void OSC_Sim::updateSteadyData() {
+		// Check if equilibration step is complete
+		if (N_events_executed == params.N_equilibration_events) {
+			// Mark time
+			Steady_equilibration_time = getTime();
+			// Reset displacement of polarons
+			for (auto &item : holes) {
+				item.resetInitialCoords(item.getCoords());
+			}
+			// Reset transport energy data
+			Transport_energy_weighted_sum = 0.0;
+			Transport_energy_sum_of_weights = 0.0;
+		}
+		if (N_events_executed > params.N_equilibration_events) {
+			if ((N_events_executed - params.N_equilibration_events) % 100 == 0) {
+				for (const auto &item : holes) {
+					Steady_equilibration_energy_sum += getSiteEnergy(item.getCoords());
+				}
+			}
+		}
+	}
+
 	void OSC_Sim::updateTransientData() {
 		// ToF_positions_prev is a vector that stores the z-position of each charge carrier at the previous time interval
 		// Transient_xxxx_energies_prev is a vector that stores the energies of each object at the previous time interval
@@ -2578,7 +2695,7 @@ namespace Excimontec {
 					if (!params.ToF_polaron_type) {
 						transient_electron_counts[Transient_index_prev + 1] += Transient_electron_counts_prev;
 						for (auto const &item : electrons) {
-							int electron_index = distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
+							int electron_index = (int)distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
 							// transient_velocities[index_prev+1] += 0;
 							transient_electron_energies[Transient_index_prev + 1] += transient_electron_energies_prev[electron_index];
 						}
@@ -2587,7 +2704,7 @@ namespace Excimontec {
 					else {
 						transient_hole_counts[Transient_index_prev + 1] += Transient_hole_counts_prev;
 						for (auto const &item : holes) {
-							int hole_index = distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
+							int hole_index = (int)distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
 							// transient_velocities[index_prev+1] += 0;
 							transient_hole_energies[Transient_index_prev + 1] += transient_hole_energies_prev[hole_index];
 						}
@@ -2601,7 +2718,7 @@ namespace Excimontec {
 					Transient_electron_counts_prev = N_electrons;
 					for (auto const &item : electrons) {
 						// Get electron site energy and position for previous timestep
-						int electron_index = distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
+						int electron_index = (int)distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
 						transient_velocities[index] += (1e-7*lattice.getUnitSize()*(item.getCoords().z - ToF_positions_prev[electron_index])) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 						transient_electron_energies[index] += getSiteEnergy(item.getCoords());
 						transient_electron_energies_prev[electron_index] = getSiteEnergy(item.getCoords());
@@ -2614,7 +2731,7 @@ namespace Excimontec {
 					Transient_hole_counts_prev = N_holes;
 					for (auto const &item : holes) {
 						// Get hole site energy and position for previous timestep
-						int hole_index = distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
+						int hole_index = (int)distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
 						transient_velocities[index] += (1e-7*lattice.getUnitSize()*(item.getCoords().z - ToF_positions_prev[hole_index])) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 						transient_hole_energies[index] += getSiteEnergy(item.getCoords());
 						transient_hole_energies_prev[hole_index] = getSiteEnergy(item.getCoords());
@@ -2638,15 +2755,15 @@ namespace Excimontec {
 					transient_electron_counts[Transient_index_prev + 1] += Transient_electron_counts_prev;
 					transient_hole_counts[Transient_index_prev + 1] += Transient_hole_counts_prev;
 					for (auto const &item : excitons) {
-						int exciton_index = distance(transient_exciton_tags.begin(), find(transient_exciton_tags.begin(), transient_exciton_tags.end(), item.getTag()));
+						int exciton_index = (int)distance(transient_exciton_tags.begin(), find(transient_exciton_tags.begin(), transient_exciton_tags.end(), item.getTag()));
 						transient_exciton_energies[Transient_index_prev + 1] += transient_exciton_energies_prev[exciton_index];
 					}
 					for (auto const &item : electrons) {
-						int electron_index = distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
+						int electron_index = (int)distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
 						transient_electron_energies[Transient_index_prev + 1] += transient_electron_energies_prev[electron_index];
 					}
 					for (auto const &item : holes) {
-						int hole_index = distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
+						int hole_index = (int)distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
 						transient_hole_energies[Transient_index_prev + 1] += transient_hole_energies_prev[hole_index];
 					}
 					Transient_index_prev++;
@@ -2662,7 +2779,7 @@ namespace Excimontec {
 				Transient_hole_counts_prev = N_holes;
 				for (auto &item : excitons) {
 					// Get polaron site energy and position for previous timestep
-					int exciton_index = distance(transient_exciton_tags.begin(), find(transient_exciton_tags.begin(), transient_exciton_tags.end(), item.getTag()));
+					int exciton_index = (int)distance(transient_exciton_tags.begin(), find(transient_exciton_tags.begin(), transient_exciton_tags.end(), item.getTag()));
 					transient_exciton_msdv[index] += intpow(1e-7*lattice.getUnitSize()*item.calculateDisplacement(), 2) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 					item.resetInitialCoords(item.getCoords());
 					transient_exciton_energies[index] += getSiteEnergy(item.getCoords());
@@ -2670,7 +2787,7 @@ namespace Excimontec {
 				}
 				for (auto &item : electrons) {
 					// Get polaron site energy and position for previous timestep
-					int electron_index = distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
+					int electron_index = (int)distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
 					transient_electron_msdv[index] += intpow(1e-7*lattice.getUnitSize()*item.calculateDisplacement(), 2) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 					item.resetInitialCoords(item.getCoords());
 					transient_electron_energies[index] += getSiteEnergy(item.getCoords());
@@ -2678,7 +2795,7 @@ namespace Excimontec {
 				}
 				for (auto &item : holes) {
 					// Get polaron site energy and position for previous timestep
-					int hole_index = distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
+					int hole_index = (int)distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
 					transient_hole_msdv[index] += intpow(1e-7*lattice.getUnitSize()*item.calculateDisplacement(), 2) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 					item.resetInitialCoords(item.getCoords());
 					transient_hole_energies[index] += getSiteEnergy(item.getCoords());

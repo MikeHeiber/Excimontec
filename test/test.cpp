@@ -27,13 +27,13 @@ namespace OSC_SimTests {
 			params_default.Recalc_cutoff = 1;
 			params_default.Enable_full_recalc = false;
 			params_default.Enable_logging = false;
-			params_default.Enable_periodic_x = true;
-			params_default.Enable_periodic_y = true;
-			params_default.Enable_periodic_z = true;
-			params_default.Length = 100;
-			params_default.Width = 100;
-			params_default.Height = 100;
-			params_default.Unit_size = 1.0;
+			params_default.Params_lattice.Enable_periodic_x = true;
+			params_default.Params_lattice.Enable_periodic_y = true;
+			params_default.Params_lattice.Enable_periodic_z = true;
+			params_default.Params_lattice.Length = 100;
+			params_default.Params_lattice.Width = 100;
+			params_default.Params_lattice.Height = 100;
+			params_default.Params_lattice.Unit_size = 1.0;
 			params_default.Temperature = 300;
 			// Output files
 			params_default.Logfile = NULL;
@@ -67,6 +67,9 @@ namespace OSC_SimTests {
 			params_default.Dynamics_transient_start = 1e-13;
 			params_default.Dynamics_transient_end = 1e-5;
 			params_default.Dynamics_pnts_per_decade = 20;
+			params_default.Enable_steady_transport_test = false;
+			params_default.Steady_carrier_density = 1e15;
+			params_default.N_equilibration_events = 100000;
 			// Exciton Parameters
 			params_default.Exciton_generation_rate_donor = 1e18;
 			params_default.Exciton_generation_rate_acceptor = 1e18;
@@ -151,6 +154,7 @@ namespace OSC_SimTests {
 			params.importParameters(params_file);
 		}
 		params_file.close();
+		EXPECT_TRUE(params.checkParameters());
 		// Check parameter files with typos in boolean values to check conversion of string to bool
 		ifstream params_file2("parameters_default.txt");
 		vector<string> file_data;
@@ -206,47 +210,12 @@ namespace OSC_SimTests {
 		params.Thickness_donor = 20;
 		params.Thickness_acceptor = 20;
 		EXPECT_FALSE(sim.init(params, 0));
-		// Check for invalid lattice dimensions
-		params = params_default;
-		params.Height = 0;
-		EXPECT_FALSE(sim.init(params, 0));
-		// Check for invalid unit size
-		params = params_default;
-		params.Unit_size = 0;
-		EXPECT_FALSE(sim.init(params, 0));
-		// Check for invalid temp
-		params = params_default;
-		params.Temperature = 0;
-		EXPECT_FALSE(sim.init(params, 0));
-		// Check for valid selection of KMC algorithm
-		params = params_default;
-		// Check for multiple KMC algorithms enabled
-		params.Enable_FRM = true;
-		params.Enable_selective_recalc = true;
-		params.Enable_full_recalc = false;
-		EXPECT_FALSE(sim.init(params, 0));
-		params.Enable_FRM = true;
-		params.Enable_selective_recalc = false;
-		params.Enable_full_recalc = true;
-		EXPECT_FALSE(sim.init(params, 0));
-		params.Enable_FRM = false;
-		params.Enable_selective_recalc = true;
-		params.Enable_full_recalc = true;
-		EXPECT_FALSE(sim.init(params, 0));
-		// Check for no KMC algorithm specified
-		params.Enable_FRM = false;
-		params.Enable_selective_recalc = false;
-		params.Enable_full_recalc = false;
-		EXPECT_FALSE(sim.init(params, 0));
 		// Check recalculation radius when using the selective recalc method
-		params.Enable_selective_recalc = true;
-		params.Recalc_cutoff = 0;
-		EXPECT_FALSE(sim.init(params, 0));
 		params.Recalc_cutoff = 1;
 		params.FRET_cutoff = 2;
 		params.Exciton_dissociation_cutoff = 1;
 		params.Polaron_hopping_cutoff = 1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(params.checkParameters());
 		params.Recalc_cutoff = 1;
 		params.FRET_cutoff = 1;
 		params.Exciton_dissociation_cutoff = 2;
@@ -275,13 +244,13 @@ namespace OSC_SimTests {
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_ToF_test = true;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		EXPECT_TRUE(sim.init(params, 0));
 		// Check for invalid z boundary conditions
-		params.Enable_periodic_z = true;
+		params.Params_lattice.Enable_periodic_z = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check for invalid morphology
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_bilayer = true;
 		params.Enable_neat = false;
 		EXPECT_FALSE(sim.init(params, 0));
@@ -300,16 +269,16 @@ namespace OSC_SimTests {
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_neat = false;
 		params.Enable_bilayer = true;
 		EXPECT_TRUE(sim.init(params, 0));
 		// Check invalid boundary conditions
-		params.Enable_periodic_z = true;
+		params.Params_lattice.Enable_periodic_z = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check invalid device architecture
 		params.Enable_bilayer = false;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_neat = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check for valid Dynamics test options
@@ -318,13 +287,37 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_test = true;
 		// Check for dynamics extraction test and internal potential
 		params.Enable_dynamics_extraction = false;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Internal_potential = -1.0;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check for dynamics extraction test and z boundary conditions
 		params.Enable_dynamics_extraction = true;
-		params.Enable_periodic_z = true;
+		params.Params_lattice.Enable_periodic_z = true;
 		params.Internal_potential = -1.0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for steady transport test and z boundary conditions
+		params.Enable_dynamics_test = false;
+		params.Enable_steady_transport_test = true;
+		params.Params_lattice.Enable_periodic_z = false;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for steady transport test and internal potential
+		params.Params_lattice.Enable_periodic_z = true;
+		params.Internal_potential = 0.0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for steady transport test and steady carrier density
+		params.Internal_potential = -1.0;
+		params.Steady_carrier_density = 0.0;
+		EXPECT_FALSE(sim.init(params, 0));
+		params.Steady_carrier_density = 1.0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for steady transport test and N_equilibration_events
+		params.Steady_carrier_density = 1e15;
+		params.N_equilibration_events = -1;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check for steady transport test and bilayer
+		params.N_equilibration_events = 100;
+		params.Enable_neat = false;
+		params.Enable_bilayer = true;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Check exciton parameter values
 		params = params_default;
@@ -499,7 +492,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		auto params = params_default;
 		EXPECT_TRUE(sim.init(params, 0));
-		EXPECT_EQ(params.Length*params.Width*params.Height*1e-21, sim.getVolume());
+		EXPECT_EQ(params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height*1e-21, sim.getVolume());
 	}
 
 	TEST_F(OSC_SimTest, ObjectCreationTests) {
@@ -509,7 +502,7 @@ namespace OSC_SimTests {
 		params.Enable_bilayer = true;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		EXPECT_TRUE(sim.init(params, 0));
 		// Create triplet exciton
 		sim.createExciton(Coords(10, 10, 10), false);
@@ -579,14 +572,14 @@ namespace OSC_SimTests {
 		// Check attempt to create electron on invalid Coords
 		sim = OSC_Sim();
 		EXPECT_TRUE(sim.init(params, 0));
-		sim.createElectron(Coords(0, params.Width + 1, 0));
+		sim.createElectron(Coords(0, params.Params_lattice.Width + 1, 0));
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Electron cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
 		// Check attempt to create hole on invalid Coords
 		sim = OSC_Sim();
 		EXPECT_TRUE(sim.init(params, 0));
-		sim.createHole(Coords(0, 0, params.Height + 1));
+		sim.createHole(Coords(0, 0, params.Params_lattice.Height + 1));
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Hole cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
@@ -667,9 +660,9 @@ namespace OSC_SimTests {
 		// Create sample energies file
 		sim = OSC_Sim();
 		auto params = params_default;
-		params.Length = 30;
-		params.Width = 30;
-		params.Height = 30;
+		params.Params_lattice.Length = 30;
+		params.Params_lattice.Width = 30;
+		params.Params_lattice.Height = 30;
 		params.Enable_neat = false;
 		params.Enable_bilayer = true;
 		params.Thickness_donor = 15;
@@ -698,9 +691,9 @@ namespace OSC_SimTests {
 		params.Energies_import_filename = "./test/energies_missing_dims.txt";
 		EXPECT_FALSE(sim.init(params, 0));
 		// Test energy file with improper dimensions
-		params.Length = 50;
-		params.Width = 50;
-		params.Height = 30;
+		params.Params_lattice.Length = 50;
+		params.Params_lattice.Width = 50;
+		params.Params_lattice.Height = 30;
 		params.Energies_import_filename = "./test/energies.txt";
 		EXPECT_FALSE(sim.init(params, 0));
 	}
@@ -711,18 +704,18 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params.Enable_neat = false;
 		params.Enable_import_morphology = true;
-		params.Length = 50;
-		params.Width = 50;
-		params.Height = 50;
+		params.Params_lattice.Length = 50;
+		params.Params_lattice.Width = 50;
+		params.Params_lattice.Height = 50;
 		// Test incorrect filename
 		params.Morphology_filename = "./test/test_morphology123.txt";
 		EXPECT_FALSE(sim.init(params, 0));
 		// Test incorrect dimensions
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v4-0_compressed.txt";
-		params.Height = 100;
+		params.Params_lattice.Height = 100;
 		EXPECT_FALSE(sim.init(params, 0));
-		params.Height = 50;
+		params.Params_lattice.Height = 50;
 		// Test correct import of v3.2 compressed
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v3-2_compressed.txt";
@@ -922,11 +915,11 @@ namespace OSC_SimTests {
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
 		params.Enable_neat = false;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_bilayer = true;
-		params.Length = 50;
-		params.Width = 50;
-		params.Height = 40;
+		params.Params_lattice.Length = 50;
+		params.Params_lattice.Width = 50;
+		params.Params_lattice.Height = 40;
 		params.Coulomb_cutoff = 25;
 		params.Thickness_donor = 20;
 		params.Thickness_acceptor = 20;
@@ -942,7 +935,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		EXPECT_TRUE(sim.init(params, 0));
 		// Check internal field
-		EXPECT_EQ(params.Internal_potential / (params.Height*1e-7), sim.getInternalField());
+		EXPECT_EQ(params.Internal_potential / (params.Params_lattice.Height*1e-7), sim.getInternalField());
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1024,7 +1017,7 @@ namespace OSC_SimTests {
 		double IQE6 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		EXPECT_GT(IQE1, IQE6);
 		// Check for higher order losses
-		params.Height = 80;
+		params.Params_lattice.Height = 80;
 		params.Thickness_donor = 40;
 		params.Thickness_acceptor = 40;
 		params.Triplet_lifetime_donor = 1e-7;
@@ -1079,15 +1072,78 @@ namespace OSC_SimTests {
 		EXPECT_GT(N_bimolecular_recombinations2, N_bimolecular_recombinations1);
 	}
 
+	TEST_F(OSC_SimTest, SteadyTransportTests) {
+		// Steady transport test without disorder
+		sim = OSC_Sim();
+		auto params = params_default;
+		params.Params_lattice.Length = 200;
+		params.Params_lattice.Width = 200;
+		params.Params_lattice.Height = 200;
+		params.Coulomb_cutoff = 100;
+		params.Internal_potential = -4.0;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_steady_transport_test = true;
+		params.N_equilibration_events = 100000;
+		params.N_tests = 100000;
+		// Check output of steady transport energies when the simulation has not been run
+		EXPECT_TRUE(isnan(sim.getSteadyEquilibrationEnergy()));
+		EXPECT_TRUE(isnan(sim.getSteadyFermiEnergy()));
+		EXPECT_TRUE(isnan(sim.getSteadyTransportEnergy()));
+		// Run the simulation
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check the steady energies
+		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyEquilibrationEnergy());
+		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyFermiEnergy());
+		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyTransportEnergy());
+		// Check steady state mobility
+		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
+		double dim = 3.0;
+		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
+		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1e-1*expected_mobility);
+		// Steady transport test with Gaussian disorder
+		sim = OSC_Sim();
+		params = params_default;
+		params.Params_lattice.Length = 500;
+		params.Params_lattice.Width = 500;
+		params.Params_lattice.Height = 500;
+		params.Coulomb_cutoff = 100;
+		params.Temperature = 300;
+		params.Internal_potential = -0.00001;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_steady_transport_test = true;
+		params.N_equilibration_events = 1000000;
+		params.Steady_carrier_density = 1e14;
+		params.N_tests = 1000000;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.05;
+		// Initialize the test
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check that at least 10 holes have been created
+		EXPECT_GT(sim.getN_holes_created(), 10);
+		// Run the simulation
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check the steady energies
+		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 5e-2*abs(expected_energy));
+		double fermi_energy = sim.getSteadyFermiEnergy();
+		EXPECT_GT(sim.getSteadyEquilibrationEnergy() - fermi_energy, 5*K_b*params.Temperature);
+		EXPECT_GT(sim.getSteadyTransportEnergy(), sim.getSteadyEquilibrationEnergy());
+	}
+
 	TEST_F(OSC_SimTest, ToFTests) {
 		// Hole ToF test
 		sim = OSC_Sim();
 		auto params = params_default;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Internal_potential = -4.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_ToF_test = true;
-		params.Height = 200;
+		params.Params_lattice.Height = 200;
 		params.N_tests = 1000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -1120,7 +1176,7 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(1.0, cum_hist.back().second, 1e-3);
 		// Check the mobility compared to analytical expectation
 		mobility_data = sim.calculateMobilityData(transit_time_data);
-		rate_constant = (params.R_polaron_hopping_donor / sqrt(4.0*Pi*params.Reorganization_donor*K_b*params.Temperature))*exp(-2.0*params.Polaron_localization_donor)*exp(-intpow(params.Reorganization_donor + params.Internal_potential / params.Height, 2) / (4.0*params.Reorganization_donor*K_b*params.Temperature));
+		rate_constant = (params.R_polaron_hopping_donor / sqrt(4.0*Pi*params.Reorganization_donor*K_b*params.Temperature))*exp(-2.0*params.Polaron_localization_donor)*exp(-intpow(params.Reorganization_donor + params.Internal_potential / params.Params_lattice.Height, 2) / (4.0*params.Reorganization_donor*K_b*params.Temperature));
 		expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
 		// Check that energetic disorder reduces the mobility
@@ -1128,7 +1184,7 @@ namespace OSC_SimTests {
 		params.Enable_miller_abrahams = true;
 		params.Enable_marcus = false;
 		params.Enable_gaussian_dos = true;
-		params.Height = 200;
+		params.Params_lattice.Height = 200;
 		params.N_tests = 500;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -1144,7 +1200,7 @@ namespace OSC_SimTests {
 		auto energy_avg = energy_transient;
 		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg.begin(), std::divides<double>());
 		auto target_it = --find_if(counts_data.begin(), counts_data.end(), [](int item) {return item <= 100; });
-		int index = distance(counts_data.begin(), target_it);
+		int index = (int)distance(counts_data.begin(), target_it);
 		// Check that the carriers relax into the tail during the transient
 		EXPECT_NEAR(0, energy_avg[0], 0.02);
 		EXPECT_LT(energy_avg[index], energy_avg[0]);
@@ -1172,12 +1228,12 @@ namespace OSC_SimTests {
 		// Electron ToF test on neat should not be allowed
 		sim = OSC_Sim();
 		params = params_default;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Internal_potential = -4.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_ToF_test = true;
 		params.ToF_polaron_type = false;
-		params.Height = 200;
+		params.Params_lattice.Height = 200;
 		params.N_tests = 1000;
 		EXPECT_FALSE(sim.init(params, 0));
 		// Electron ToF test on random blend should work
@@ -1192,7 +1248,7 @@ namespace OSC_SimTests {
 		transit_time_data = sim.getTransitTimeData();
 		mobility_data = sim.calculateMobilityData(transit_time_data);
 		dim = 3.0;
-		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
+		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1.0 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
 	}
 
@@ -1201,32 +1257,32 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
-		params.Enable_periodic_z = false;
+		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_bilayer = true;
-		params.Length = 100;
-		params.Width = 100;
-		params.Height = 40;
+		params.Params_lattice.Length = 100;
+		params.Params_lattice.Width = 100;
+		params.Params_lattice.Height = 40;
 		params.Thickness_donor = 20;
 		params.Thickness_acceptor = 20;
 		params.Enable_interfacial_energy_shift = true;
 		params.Energy_shift_donor = 0.01;
 		params.Energy_shift_acceptor = 0.01;
 		sim.init(params, 0);
-		double expected_energy = params.Energy_shift_donor + (params.Energy_shift_donor * 4 / sqrt(2)) + (params.Energy_shift_donor * 4 / sqrt(3));
-		EXPECT_DOUBLE_EQ(expected_energy, sim.getSiteEnergy(Coords(params.Length / 2, params.Width / 2, params.Height / 2)));
+		float expected_energy = (float)params.Energy_shift_donor + ((float)params.Energy_shift_donor * 4.0f / sqrt(2.0f)) + ((float)params.Energy_shift_donor * 4.0f / sqrt(3.0f));
+		EXPECT_FLOAT_EQ(expected_energy, sim.getSiteEnergy(Coords(params.Params_lattice.Length / 2, params.Params_lattice.Width / 2, params.Params_lattice.Height / 2)));
 		// Test energy shift on bilayer with energetic disorder
 		sim = OSC_Sim();
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		params.Energy_stdev_acceptor = 0.05;
 		sim.init(params, 0);
-		vector<double> energies;
-		for (int x = 0; x < params.Length; x++) {
-			for (int y = 0; y < params.Width; y++) {
-				energies.push_back(sim.getSiteEnergy(Coords(x, y, params.Height / 2)));
+		vector<float> energies;
+		for (int x = 0; x < params.Params_lattice.Length; x++) {
+			for (int y = 0; y < params.Params_lattice.Width; y++) {
+				energies.push_back(sim.getSiteEnergy(Coords(x, y, params.Params_lattice.Height / 2)));
 			}
 		}
-		double expected_energy_avg = params.Energy_shift_donor + (params.Energy_shift_donor * 4 / sqrt(2)) + (params.Energy_shift_donor * 4 / sqrt(3));
+		double expected_energy_avg = params.Energy_shift_donor + (params.Energy_shift_donor * 4.0 / sqrt(2.0)) + (params.Energy_shift_donor * 4.0 / sqrt(3.0));
 		EXPECT_NEAR(expected_energy_avg, vector_avg(energies), 5e-3);
 	}
 
@@ -1240,9 +1296,9 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_kernel = true;
 		params.Enable_power_kernel = false;
 		// correlation length = 1.0, Unit_size = 0.8
-		params.Length = 40;
-		params.Width = 40;
-		params.Height = 40;
+		params.Params_lattice.Length = 40;
+		params.Params_lattice.Width = 40;
+		params.Params_lattice.Height = 40;
 		params.Disorder_correlation_length = 1.1;
 		sim.init(params, 0);
 		auto energies = sim.getSiteEnergies(1);
@@ -1252,10 +1308,10 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(1 / exp(1), interpolateData(correlation_data, 1.1), 0.05);
 		// correlation length = 1.3, Unit_size = 1.2
 		sim = OSC_Sim();
-		params.Unit_size = 1.2;
-		params.Length = 40;
-		params.Width = 40;
-		params.Height = 40;
+		params.Params_lattice.Unit_size = 1.2;
+		params.Params_lattice.Length = 40;
+		params.Params_lattice.Width = 40;
+		params.Params_lattice.Height = 40;
 		params.Disorder_correlation_length = 1.3;
 		sim.init(params, 0);
 		energies = sim.getSiteEnergies(1);
