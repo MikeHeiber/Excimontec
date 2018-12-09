@@ -52,7 +52,7 @@ false //Enable_dynamics_extraction
 1e-13 //Dynamics_transient_start (s)
 1e-5 //Dynamics_transient_end (s)
 10 //Dynamics_pnts_per_decade
-true //Enable_steady_transport_test
+false //Enable_steady_transport_test
 1e15 //Steady_carrier_density (cm^-3)
 10000 //N_equilibration_events
 --------------------------------------------------------------
