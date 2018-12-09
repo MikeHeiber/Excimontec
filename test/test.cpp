@@ -8,6 +8,7 @@
 #include "Parameters.h"
 #include "Exciton.h"
 #include "Utils.h"
+#include <cmath>
 
 using namespace std;
 using namespace KMC_Lattice;
@@ -314,11 +315,17 @@ namespace OSC_SimTests {
 		params.Steady_carrier_density = 1e15;
 		params.N_equilibration_events = -1;
 		EXPECT_FALSE(sim.init(params, 0));
-		// Check for steady transport test and bilayer
+		// Check for steady transport test and neat
 		params.N_equilibration_events = 100;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check for steady transport test and bilayer
 		params.Enable_neat = false;
 		params.Enable_bilayer = true;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check for steady transport test and random blend
+		params.Enable_bilayer = false;
+		params.Enable_random_blend = true;
+		EXPECT_TRUE(sim.init(params, 0));
 		// Check exciton parameter values
 		params = params_default;
 		params.Exciton_generation_rate_donor = -1;
