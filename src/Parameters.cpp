@@ -133,7 +133,7 @@ namespace Excimontec {
 			cout << "Error! When running a steady transport test, the number of equilibration events cannot be negative." << endl;
 			return false;
 		}
-		if (Enable_steady_transport_test && ((int)floor(Steady_carrier_density*Params_lattice.Length*Params_lattice.Width*Params_lattice.Height*intpow(Params_lattice.Unit_size*1e-7,3)) <= 0)) {
+		if (Enable_steady_transport_test && round_int(Steady_carrier_density*Params_lattice.Length*Params_lattice.Width*Params_lattice.Height*intpow(Params_lattice.Unit_size*1e-7,3)) < 1) {
 			cout << "Error! When running a steady transport test, the steady carrier density must be large enough that there is at least one polaron in the lattice." << endl;
 			return false;
 		}
