@@ -1096,7 +1096,7 @@ namespace OSC_SimTests {
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
 		params.N_equilibration_events = 50000;
-		params.N_tests = 200000;
+		params.N_tests = 500000;
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyFermiEnergy()));
