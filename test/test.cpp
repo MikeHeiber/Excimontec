@@ -1093,9 +1093,9 @@ namespace OSC_SimTests {
 		params.N_equilibration_events = 100000;
 		params.N_tests = 100000;
 		// Check output of steady transport energies when the simulation has not been run
-		EXPECT_TRUE(isnan(sim.getSteadyEquilibrationEnergy()));
-		EXPECT_TRUE(isnan(sim.getSteadyFermiEnergy()));
-		EXPECT_TRUE(isnan(sim.getSteadyTransportEnergy()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyFermiEnergy()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy()));
 		// Run the simulation
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
