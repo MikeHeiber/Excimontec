@@ -321,6 +321,9 @@ namespace Excimontec {
 		size_t pos;
 		vector<string> stringvars;
 		bool Error_found = false;
+		if (!inputfile.is_open() || !inputfile) {
+			throw invalid_argument("Error importing parameter file because ifstream cannot read the parameter file.");
+		}
 		while (inputfile.good()) {
 			getline(inputfile, line);
 			if ((line.substr(0, 2)).compare("--") != 0 && (line.substr(0, 2)).compare("##") != 0 && line.compare("") != 0) {

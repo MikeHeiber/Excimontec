@@ -147,13 +147,18 @@ namespace OSC_SimTests {
 
 	TEST_F(OSC_SimTest, ParameterTests) {
 		sim = OSC_Sim();
+		Parameters params;
+		// Check that importing an uninitialized ifstream throws an exception
+		ifstream uninitialized_ifstream;
+		EXPECT_THROW(params.importParameters(uninitialized_ifstream), invalid_argument);
+		// Check that importing a closed parameter file throws an excepton
+		ifstream closed_file("parameters_default.txt");
+		closed_file.close();
+		EXPECT_THROW(params.importParameters(closed_file), invalid_argument);
 		// Check that the default parameters file can be loaded and are valid
 		ifstream params_file("parameters_default.txt");
-		Parameters params;
 		EXPECT_TRUE(params_file.good());
-		if (params_file.good()) {
-			params.importParameters(params_file);
-		}
+		params.importParameters(params_file);
 		params_file.close();
 		EXPECT_TRUE(params.checkParameters());
 		// Check parameter files with typos in boolean values to check conversion of string to bool
