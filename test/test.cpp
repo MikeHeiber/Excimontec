@@ -805,7 +805,7 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)singlet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(params.Dynamics_initial_exciton_conc, transient_data[0].second, 1e-3*params.Dynamics_initial_exciton_conc);
-		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 3e-2);
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Singlet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 1e-1 / exp(1));
 		// Triplet exciton lifetime test
 		sim = OSC_Sim();
 		params = params_default;
@@ -824,7 +824,7 @@ namespace OSC_SimTests {
 		for (int i = 0; i < (int)time_data.size(); i++) {
 			transient_data[i] = make_pair(time_data[i], (double)triplet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
-		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 3e-2);
+		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 1e-1 / exp(1));
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
@@ -1095,8 +1095,8 @@ namespace OSC_SimTests {
 		params.Internal_potential = -4.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
-		params.N_equilibration_events = 100000;
-		params.N_tests = 100000;
+		params.N_equilibration_events = 50000;
+		params.N_tests = 200000;
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyFermiEnergy()));
@@ -1126,9 +1126,9 @@ namespace OSC_SimTests {
 		params.Internal_potential = -0.00001;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
-		params.N_equilibration_events = 1000000;
-		params.Steady_carrier_density = 1e14;
-		params.N_tests = 1000000;
+		params.N_equilibration_events = 2000000;
+		params.Steady_carrier_density = 2e14;
+		params.N_tests = 500000;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		// Initialize the test
@@ -1143,7 +1143,7 @@ namespace OSC_SimTests {
 		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
 		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 5e-2*abs(expected_energy));
 		double fermi_energy = sim.getSteadyFermiEnergy();
-		EXPECT_GT(sim.getSteadyEquilibrationEnergy() - fermi_energy, 5*K_b*params.Temperature);
+		EXPECT_GT(sim.getSteadyEquilibrationEnergy() - fermi_energy, 5 * K_b*params.Temperature);
 		EXPECT_GT(sim.getSteadyTransportEnergy(), sim.getSteadyEquilibrationEnergy());
 	}
 
