@@ -53,6 +53,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (ToFTests) - New tests to check that increased energetic disorder reduces the mobility, which also tests activated polaron hopping functionality
 - test.cpp (ToFTests) - New test that checks the behavior of the ToF_placement_energy feature
 - test.cpp (ToFTests) - New tests that get and analyze the transient energy relaxation data and test various aspects of this behavior
+- README - New information about the interfacial energy shift model, the site energy import capability, and the steady transport test
+- makefile - New PGI compiler flag enablng output of compiler warnings
+- parameters_default.txt - New parameters for the steady transport test: Enable_steady_transport_test, Steady_carrier_density, and N_equilibration_events
+- main.cpp (main) - Command line output and results file output for the steady transport test
+- OSC_Sim - New public functions for the steady transport test: getSteadyEquilibrationEnergy, getSteadyFermiEnergy, getSteadyMobility, and getSteadyTransportEnergy
+- OSC_Sim- New private member variables to store data needed to calculate the final steady transport test results: Steady_equilibration_energy_sum, Steady_equilibration_time, Transport_energy_weighted_sum, and Transport_energy_sum_of_weights
+- OSC_Sim - New generateSteadyPolarons function for creating initial polarons a the beginning of the steady transport test
+- OSC_Sim - New updateSteadyData function to updating the steady transport test data variables each event iteration
+- OSC_Sim (init) - Call to the new generateSteadyPolarons function when the steady transport test is enabled
+- OSC_Sim (calculatePolaronEvents) - Code to determine when polarons are triyng to cross the z periodic boundary and adjust the potentia energy change accordingly
+- OSC_Sim (calculatePolaronEvents) - Code to disable calculation of polaron extraction events when the steady transport test is enabled
+- OSC_Sim (checkFinished) - Code to check for the test termination conditions for the steady transport test
+- OSC_Sim (executeNextEvent) - Call to the new updateSteadyData function before executing each event when the steady transport test is enabled
+- OSC_Sim (executePolaronHop) - Code to record the transport energy data when the steady transport test is enabled
+- OSC_Sim (updateTransientData) - Code to cast the return of the distance function as an int to prevent compiler warnings
+- Parameters - New parameters for the steady transport test: Enable_steady_transport_test, Steady_carrier_density, and N_equilibration_events
+- Parameters (checkParameters) - Call to the base class checkParameters function
+- Parameters (checkParameters) - New checks for the steady transport test parameter combinations
+- Parameters (importParameters) - Code to import new steady transport test parameters from the parameter file
+- Parameters (importParameters) - Code to check the status of the input ifstream and throw an exception if there is a problem
+- test.cpp - Default parameter values for the new parameters for the steady transport test: Enable_steady_transport_test, Steady_carrier_density, and N_equilibration_events
+- test.cpp (ParameterTests) - New tests checking the validity of the parameters when enabling the steady transport test
+- test.cpp - New test function SteadyTransportTests that check the output of the steady transport test
+- test.cpp (ParameterTests) - New tests for attemping to import parameters using an uninitialized or close ifstream
 
 ### Changed
 - main.cpp (main) - Refactored code to use the new Parameters class
@@ -67,12 +91,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LICENSE - Copyright to show correct years, 2017-2018
 - makefile - Copyright to show correct years, 2017-2018
 - OSC_Sim (calculateExcitonCreationCoords) - Refactored code to be more robust and be guaranteed to find an appropriate empty site for creation if one exists
-- KMC_Lattice - Submodule to latest development branch version that fixes the chooseNextEvent and removeObject bugs that occurred when an object does not have a valid event
+- KMC_Lattice - Submodule to latest version that fixes the chooseNextEvent and removeObject bugs that occurred when an object does not have a valid event
 - OSC_Sim (createElectron, createExciton, CreateHole) - Code to catch out_of_range exceptions from the lattice class as the method for checking for invalid input coordinates
 - test.cpp (EnergiesImportTests) - Test to use a bilayer so that it tests assignment of site energies to both donor and acceptor type sites
 - test.cpp (ExcitonDiffusionTests) - Updated test by increasing N_tests to gather more statistics for checking the numerical accuracy of the lifetime and reducing N_tests when simply checking for relative changes in the diffusion length
 - test.cpp (ExcitonDynamicsTests) - Updated test to use reduced Dynamics_transient_end and check how the program handles cutting off the tail end of the transient
 - test.cpp (ExcitonDynamicsTests) - Updated test by reducing N_tests to shorten the test time
+- Doxyfile - Updated the release number to v1.0.0-rc.1
+- KMC_Lattice - Updated to latest version that has additional features needed by the steady transport test
+- parameters_default.txt - Updated the version number to v1.0.0-rc.1
+- main.cpp (main) - Updated version string to v1.0.0-rc.1
+- main.cpp (main) - Updated Parameters object usage to use new format from the updated KMC_Lattice submodule
+- Site_OSC - Storage of site energies using pointers to now directly storing a float
+- OSC_Sim - Updated all appropriate functions to use float datatype for site energies instead of double to save memory
+- Parameters - Update base class from the struct used by the old KMC_Lattice submodule version to the new Parameters_Simulation class in the latest KMC_Lattice submodule version
+- Parameters (importParameters) - Updated function to use format from new Parameters_Simulation base class in the latest KMC_Lattice version
+- test.cpp - Updated functions to use format from new Parameters_Simulation base class in the latest KMC_Lattice version
+- test.cpp (InterfacialEnergyShiftTests) - Updated site energies to use float datatype instead of double
+- test.cpp (ExcitonDynamicsTests) - Increased the lifetime tests tolerance to reduce lilelihood of test failure
 
 ### Removed
 - main.cpp (Parameters_main) - the Parameters_main struct because these parameters are now stored on the Parameters class
@@ -82,6 +118,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (checkParameters) - the checkParameters function because this function is now contained in the Parameters class
 - OSC_Sim (createImportedMorphology) - Several unused local variables
 - OSC_Sim (getEvents) - The function had no immediate purpose
+- Parameters (checkParameters) - Several parameter checks that are now performed by the base Parameters_Simulation class
+test.cpp (ParameterTests) - Several tests that are now handled by the KMC_Lattice submodule
+
 
 ### Fixed
 - OSC_Sim (calculatePolaronEvents) - Update code so an error is not generated if no valid events are calculated because sometimes polarons can be trapped on sites where there are no valid events

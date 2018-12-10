@@ -18,7 +18,7 @@ using namespace Excimontec;
 using namespace KMC_Lattice;
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0-beta.5";
+	string version = "v1.0.0-rc.1";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
@@ -166,6 +166,9 @@ int main(int argc, char *argv[]) {
 	else if (params.Enable_IQE_test) {
 		cout << procid << ": Starting internal quantum efficiency test..." << endl;
 	}
+	else if (params.Enable_steady_transport_test) {
+		cout << procid << ": Starting steady state charge transport test..." << endl;
+	}
 	// Begin Simulation loop
 	// Simulation ends for all procs with procid >0 when End_sim is true
 	// Proc 0 only ends when End_sim is true and all_finished is true
@@ -275,7 +278,7 @@ int main(int argc, char *argv[]) {
 	resultsfile << "Excimontec " << version << " Results:\n";
 	resultsfile << "Calculation time elapsed is " << (double)elapsedtime / 60 << " minutes.\n";
 	resultsfile << sim.getTime() << " seconds have been simulated.\n";
-	resultsfile << sim.getN_events_executed() << " events have been executed.\n";
+	resultsfile << sim.getN_events_executed() << " events have been executed.\n\n";
 	if (!success) {
 		resultsfile << "An error occurred during the simulation:" << endl;
 		resultsfile << sim.getErrorMessage() << endl;
@@ -325,6 +328,17 @@ int main(int argc, char *argv[]) {
 		if (params.Enable_IQE_test) {
 			resultsfile << "IQE = " << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created()) << "% with an internal potential of " << params.Internal_potential << " V." << endl;
 		}
+		if (params.Enable_steady_transport_test) {
+			resultsfile << "Steady state charge transport test results:\n";
+			resultsfile << "Under the conditions:\n";
+			resultsfile << "Temperature = " << sim.getTemp() << endl;
+			resultsfile << "Charge carrier density = " << params.Steady_carrier_density << " cm^-3.\n";
+			resultsfile << "Internal electric field = " << fabs(sim.getInternalField()) << " V cm^-1.\n\n";
+			resultsfile << "Charge carrier mobility = " << sim.getSteadyMobility() << " cm^2 V^-1 s^-1.\n";
+			resultsfile << "Fermi energy = " << sim.getSteadyFermiEnergy() << " eV.\n";
+			resultsfile << "Equilibration energy = " << sim.getSteadyEquilibrationEnergy() << " eV.\n";
+			resultsfile << "Transport energy = " << sim.getSteadyTransportEnergy() << " eV.\n";
+		}
 		resultsfile << endl;
 	}
 	resultsfile.close();
@@ -351,7 +365,7 @@ int main(int argc, char *argv[]) {
 		analysisfile.open("analysis_summary.txt");
 		analysisfile << "Excimontec " << version << " Results Summary:\n";
 		analysisfile << "Simulation was performed on " << nproc << " processors.\n";
-		analysisfile << "Average calculation time was " << (double)elapsedtime_sum / (60 * nproc) << " minutes.\n";
+		analysisfile << "Average calculation time was " << (double)elapsedtime_sum / (60 * nproc) << " minutes.\n\n";
 		if (error_found == (char)1) {
 			analysisfile << endl << "An error occurred on one or more processors:" << endl;
 			for (int i = 0; i < nproc; i++) {
@@ -369,10 +383,10 @@ int main(int argc, char *argv[]) {
 		exciton_hop_length_data = MPI_gatherVectors(sim.getExcitonHopLengthData());
 		exciton_lifetime_data = MPI_gatherVectors(sim.getExcitonLifetimeData());
 		if (procid == 0) {
-			analysisfile << "\nOverall exciton diffusion test results:\n";
+			analysisfile << "Overall exciton diffusion test results:\n";
 			analysisfile << nproc * (sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
 			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ± " << vector_stdev(exciton_diffusion_data) << " nm.\n";
-			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params.Unit_size << " nm.\n";
+			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params.Params_lattice.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params.Params_lattice.Unit_size << " nm.\n";
 			analysisfile << "Exciton lifetime is " << vector_avg(exciton_lifetime_data) << " ± " << vector_stdev(exciton_lifetime_data) << " s.\n";
 		}
 	}
@@ -424,7 +438,7 @@ int main(int argc, char *argv[]) {
 			}
 			transitdistfile.close();
 			// Analysis Output
-			analysisfile << "\nOverall time-of-flight charge transport test results:\n";
+			analysisfile << "Overall time-of-flight charge transport test results:\n";
 			if (!params.ToF_polaron_type) {
 				analysisfile << nproc * sim.getN_electrons_collected() << " total electrons collected out of " << transit_attempts_total << " total attempts.\n";
 			}
@@ -546,7 +560,7 @@ int main(int argc, char *argv[]) {
 			analysisfile << "Overall internal quantum efficiency test results:\n";
 		}
 		if (procid == 0 && params.Enable_exciton_diffusion_test) {
-			analysisfile << "\nOverall exciton mechanism statistics:\n";
+			analysisfile << "Overall exciton mechanism statistics:\n";
 		}
 		if (procid == 0) {
 			analysisfile << excitons_created_total << " total excitons have been created.\n";
@@ -568,6 +582,31 @@ int main(int argc, char *argv[]) {
 		}
 		if (procid == 0 && params.Enable_IQE_test) {
 			analysisfile << "IQE = " << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_created_total) << "% with an internal potential of " << params.Internal_potential << " V." << endl;
+		}
+	}
+	if (error_found == (char)0 && params.Enable_steady_transport_test) {
+		// Gather results from all procs
+		auto mobilities = MPI_gatherValues(sim.getSteadyMobility());
+		auto fermi_energies = MPI_gatherValues(sim.getSteadyFermiEnergy());
+		auto equilibration_energies = MPI_gatherValues(sim.getSteadyEquilibrationEnergy());
+		auto transport_energies = MPI_gatherValues(sim.getSteadyTransportEnergy());
+		// Output overall results from all procs
+		if (procid == 0) {
+			analysisfile << "Overall steady state charge transport test results:\n";
+			analysisfile << "Under the conditions:\n";
+			analysisfile << "Temperature = " << sim.getTemp() << " K.\n";
+			analysisfile << "Charge carrier density = " << params.Steady_carrier_density << " cm^-3.\n";
+			analysisfile << "Electric field = " << fabs(sim.getInternalField()) << " V cm^-1.\n\n";
+			analysisfile << "Charge carrier mobility = " << vector_avg(mobilities) << " ± " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
+			analysisfile << "Fermi energy = " << vector_avg(fermi_energies) << " ± " << vector_stdev(fermi_energies) << " eV.\n";
+			analysisfile << "Equilibration energy = " << vector_avg(equilibration_energies) << " ± " << vector_stdev(equilibration_energies) << " eV.\n";
+			analysisfile << "Transport energy = " << vector_avg(transport_energies) << " ± " << vector_stdev(transport_energies) << " eV.\n\n";
+			analysisfile << "CSV formatted results:\n";
+			analysisfile << "Temperature (K),Charge Carrier Density (cm^-3),Electric Field (V cm^-1),Mobility Avg. (cm^2 V^-1 cm^-1),Mobility Stdev. (cm^2 V^-1 cm^-1),";
+			analysisfile << "Fermi Energy Avg. (eV), Fermi Energy Stdev. (eV), Equilibration Energy Avg. (eV), Equilibration Energy Stdev. (eV),Tranport Energy Avg. (eV),Transport Energy Stdev. (eV)\n";
+			analysisfile << sim.getTemp() << "," << params.Steady_carrier_density << "," << fabs(sim.getInternalField()) << "," << vector_avg(mobilities) << "," << vector_stdev(mobilities) << ",";
+			analysisfile << vector_avg(fermi_energies) << "," << vector_stdev(fermi_energies) << "," << vector_avg(equilibration_energies) << "," << vector_stdev(equilibration_energies) << ",";
+			analysisfile << vector_avg(transport_energies) << "," << vector_stdev(transport_energies) << endl;
 		}
 	}
 	if (procid == 0) {

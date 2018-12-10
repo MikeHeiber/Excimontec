@@ -12,38 +12,7 @@ namespace Excimontec {
 
 	bool Parameters::checkParameters() const {
 		// Check lattice parameters and other general parameters
-		if (!(Length > 0) || !(Width > 0) || !(Height > 0)) {
-			cout << "Error! All lattice dimensions must be greater than zero." << endl;
-			return false;
-		}
-		if (!(Unit_size > 0)) {
-			cout << "Error! The lattice unit size must be greater than zero." << endl;
-			return false;
-		}
-		if (!(Temperature > 0)) {
-			cout << "Error! The temperature must be greater than zero." << endl;
-			return false;
-		}
-		int KMC_algs = 0;
-		if (Enable_FRM) {
-			KMC_algs++;
-		}
-		if (Enable_selective_recalc) {
-			KMC_algs++;
-		}
-		if (Enable_full_recalc) {
-			KMC_algs++;
-		}
-		if (KMC_algs > 1) {
-			cout << "Error! Only one of the first reaction method, the selective recalculation method, or the full recalculation method can be enabled." << endl;
-			return false;
-		}
-		if (KMC_algs == 0) {
-			cout << "Error! One of the first reaction method, the selective recalculation method, or the full recalculation method must be enabled." << endl;
-			return false;
-		}
-		if (Enable_selective_recalc && !(Recalc_cutoff > 0)) {
-			cout << "Error! The event recalculation cutoff radius must be greater than zero." << endl;
+		if(!Parameters_Simulation::checkParameters()) {
 			return false;
 		}
 		if (Enable_selective_recalc && Recalc_cutoff < FRET_cutoff) {
@@ -59,7 +28,7 @@ namespace Excimontec {
 			return false;
 		}
 		// Check film architecture parameters
-		if (Enable_bilayer && Thickness_donor + Thickness_acceptor != Height) {
+		if (Enable_bilayer && Thickness_donor + Thickness_acceptor != Params_lattice.Height) {
 			cout << "Error! When using the bilayer film architecture, the sum of the donor and the acceptor thicknesses must equal the lattice height." << endl;
 			return false;
 		}
@@ -98,7 +67,7 @@ namespace Excimontec {
 			cout << "Error! The bilayer film architecture cannot be used with the time-of-flight charge transport test." << endl;
 			return false;
 		}
-		if (Enable_ToF_test && Enable_periodic_z) {
+		if (Enable_ToF_test && Params_lattice.Enable_periodic_z) {
 			cout << "Error! The z-direction periodic boundary must be disabled in order to run the time-of-flight charge transport test." << endl;
 			return false;
 		}
@@ -106,7 +75,7 @@ namespace Excimontec {
 			cout << "Error! The time-of-flight charge transport test cannot be performed with electrons on a neat film architecture. Use holes instead." << endl;
 			return false;
 		}
-		if (Enable_IQE_test && Enable_periodic_z) {
+		if (Enable_IQE_test && Params_lattice.Enable_periodic_z) {
 			cout << "Error! The z-direction periodic boundary must be disabled in order to run the internal quantum efficiency test." << endl;
 			return false;
 		}
@@ -132,6 +101,8 @@ namespace Excimontec {
 			N_tests_enabled++;
 		if (Enable_dynamics_test)
 			N_tests_enabled++;
+		if (Enable_steady_transport_test)
+			N_tests_enabled++;
 		if (N_tests_enabled > 1) {
 			cout << "Error! Only one test can be enabled." << endl;
 			return false;
@@ -145,8 +116,29 @@ namespace Excimontec {
 			cout << "Error! When running a dynamics test without extraction, the internal potential must be set to zero." << endl;
 			return false;
 		}
-		if (Enable_dynamics_test && Enable_dynamics_extraction && Enable_periodic_z) {
+		if (Enable_dynamics_test && Enable_dynamics_extraction && Params_lattice.Enable_periodic_z) {
 			cout << "Error! When running a dynamics test with extraction, z-direction periodic boundaries cannot be used." << endl;
+			return false;
+		}
+		// Check steady transport test parameters
+		if (Enable_steady_transport_test && !Params_lattice.Enable_periodic_z) {
+			cout << "Error! When running a steady transport test, z-direction periodic boundaries must be used." << endl;
+			return false;
+		}
+		if (Enable_steady_transport_test && abs(Internal_potential) < 1e-6) {
+			cout << "Error! When running a steady transport test, the internal potential must not be set to zero." << endl;
+			return false;
+		}
+		if (Enable_steady_transport_test && N_equilibration_events < 0) {
+			cout << "Error! When running a steady transport test, the number of equilibration events cannot be negative." << endl;
+			return false;
+		}
+		if (Enable_steady_transport_test && round_int(Steady_carrier_density*Params_lattice.Length*Params_lattice.Width*Params_lattice.Height*intpow(Params_lattice.Unit_size*1e-7,3)) < 1) {
+			cout << "Error! When running a steady transport test, the steady carrier density must be large enough that there is at least one polaron in the lattice." << endl;
+			return false;
+		}
+		if (Enable_steady_transport_test && Enable_bilayer) {
+			cout << "Error! When running a steady transport test, the bilayer device architecture cannot be used." << endl;
 			return false;
 		}
 		// Check exciton parameters
@@ -329,6 +321,9 @@ namespace Excimontec {
 		size_t pos;
 		vector<string> stringvars;
 		bool Error_found = false;
+		if (!inputfile.is_open() || !inputfile) {
+			throw invalid_argument("Error importing parameter file because ifstream cannot read the parameter file.");
+		}
 		while (inputfile.good()) {
 			getline(inputfile, line);
 			if ((line.substr(0, 2)).compare("--") != 0 && (line.substr(0, 2)).compare("##") != 0 && line.compare("") != 0) {
@@ -371,7 +366,7 @@ namespace Excimontec {
 		i++;
 		//enable_periodic_x
 		try {
-			Enable_periodic_x = str2bool(stringvars[i]);
+			Params_lattice.Enable_periodic_x = str2bool(stringvars[i]);
 		}
 		catch (invalid_argument& exception) {
 			cout << exception.what() << endl;
@@ -381,7 +376,7 @@ namespace Excimontec {
 		i++;
 		//enable_periodic_y
 		try {
-			Enable_periodic_y = str2bool(stringvars[i]);
+			Params_lattice.Enable_periodic_y = str2bool(stringvars[i]);
 		}
 		catch (invalid_argument& exception) {
 			cout << exception.what() << endl;
@@ -391,7 +386,7 @@ namespace Excimontec {
 		i++;
 		//enable_periodic_z
 		try {
-			Enable_periodic_z = str2bool(stringvars[i]);
+			Params_lattice.Enable_periodic_z = str2bool(stringvars[i]);
 		}
 		catch (invalid_argument& exception) {
 			cout << exception.what() << endl;
@@ -399,13 +394,13 @@ namespace Excimontec {
 			Error_found = true;
 		}
 		i++;
-		Length = atoi(stringvars[i].c_str());
+		Params_lattice.Length = atoi(stringvars[i].c_str());
 		i++;
-		Width = atoi(stringvars[i].c_str());
+		Params_lattice.Width = atoi(stringvars[i].c_str());
 		i++;
-		Height = atoi(stringvars[i].c_str());
+		Params_lattice.Height = atoi(stringvars[i].c_str());
 		i++;
-		Unit_size = atof(stringvars[i].c_str());
+		Params_lattice.Unit_size = atof(stringvars[i].c_str());
 		i++;
 		Temperature = atoi(stringvars[i].c_str());
 		i++;
@@ -582,6 +577,19 @@ namespace Excimontec {
 		Dynamics_transient_end = atof(stringvars[i].c_str());
 		i++;
 		Dynamics_pnts_per_decade = atoi(stringvars[i].c_str());
+		i++;
+		try {
+			Enable_steady_transport_test = str2bool(stringvars[i]);
+		}
+		catch (invalid_argument& exception) {
+			cout << exception.what() << endl;
+			cout << "Error enabling the steady transport test." << endl;
+			Error_found = true;
+		}
+		i++;
+		Steady_carrier_density = atof(stringvars[i].c_str());
+		i++;
+		N_equilibration_events = atoi(stringvars[i].c_str());
 		i++;
 		// Exciton Parameters
 		Exciton_generation_rate_donor = atof(stringvars[i].c_str());
@@ -843,7 +851,7 @@ namespace Excimontec {
 			return false;
 		}
 		if (Enable_Coulomb_maximum) {
-			auto vec = { Length, Width, Height };
+			auto vec = { Params_lattice.Length, Params_lattice.Width, Params_lattice.Height };
 			Coulomb_cutoff = (int)floor(*min_element(vec.begin(), vec.end()) / 2.0);
 		}
 		if (Error_found) {

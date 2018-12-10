@@ -19,13 +19,12 @@ namespace Excimontec {
 
 	class Site_OSC : public KMC_Lattice::Site {
 	public:
-		double getEnergy() const { return *energy_it; }
+		float getEnergy() const { return energy; }
 		short getType() const { return type; }
-		void setEnergy(const double energy) { *energy_it = energy; }
-		void setEnergyIt(const std::vector<double>::iterator it) { energy_it = it; }
+		void setEnergy(const float energy_input) { energy = energy_input; }
 		void setType(const short site_type) { type = site_type; }
 	private:
-		std::vector<double>::iterator energy_it;
+		float energy;
 		short type = 0; //  type 1 represent donor, type 2 represents acceptor
 	};
 
@@ -84,9 +83,13 @@ namespace Excimontec {
 		int getN_bimolecular_recombinations() const;
 		int getN_transient_cycles() const;
 		std::string getPreviousEventType() const;
-		std::vector<double> getSiteEnergies(const short site_type) const;
-		double getSiteEnergy(const KMC_Lattice::Coords& coords) const;
+		std::vector<float> getSiteEnergies(const short site_type) const;
+		float getSiteEnergy(const KMC_Lattice::Coords& coords) const;
 		short getSiteType(const KMC_Lattice::Coords& coords) const;
+		double getSteadyEquilibrationEnergy() const;
+		double getSteadyFermiEnergy() const;
+		double getSteadyMobility() const;
+		double getSteadyTransportEnergy() const;
 		std::vector<int> getToFTransientCounts() const;
 		std::vector<double> getToFTransientEnergies() const;
 		std::vector<double> getToFTransientTimes() const;
@@ -234,6 +237,7 @@ namespace Excimontec {
 		std::list<Polaron> holes;
 		// Event Data Structures
 		std::string previous_event_type = "";
+		double previous_event_time = 0;
 		std::list<Exciton_Creation> exciton_creation_events;
 		std::list<KMC_Lattice::Event*>::const_iterator exciton_creation_it;
 		std::list<Exciton_Hop> exciton_hop_events;
@@ -250,8 +254,6 @@ namespace Excimontec {
 		// Additional Data Structures
 		std::vector<double> Coulomb_table;
 		std::vector<double> E_potential;
-		std::vector<double> site_energies_donor;
-		std::vector<double> site_energies_acceptor;
 		std::vector<std::pair<double, double>> DOS_correlation_data;
 		std::vector<double> exciton_lifetimes;
 		std::vector<double> exciton_diffusion_distances;
@@ -278,9 +280,13 @@ namespace Excimontec {
 		std::vector<int> transient_triplet_counts;
 		std::vector<int> transient_electron_counts;
 		std::vector<int> transient_hole_counts;
+		double Steady_equilibration_energy_sum = 0.0;
+		double Steady_equilibration_time = 0.0;
+		double Transport_energy_weighted_sum = 0.0;
+		double Transport_energy_sum_of_weights = 0.0;
 		// Additional Counters
-		int N_donor_sites;
-		int N_acceptor_sites;
+		int N_donor_sites = 0;
+		int N_acceptor_sites = 0;
 		int N_excitons_created = 0;
 		int N_excitons_created_donor = 0;
 		int N_excitons_created_acceptor = 0;
@@ -341,12 +347,14 @@ namespace Excimontec {
 		void generateElectron(const KMC_Lattice::Coords& coords, int tag);
 		void generateHole(const KMC_Lattice::Coords& coords, int tag);
 		void generateDynamicsExcitons();
+		void generateSteadyPolarons();
 		void generateToFPolarons();
 		std::list<Exciton>::iterator getExcitonIt(const KMC_Lattice::Object* object_ptr);
 		std::list<Polaron>::iterator getPolaronIt(const KMC_Lattice::Object* object_ptr);
 		bool initializeArchitecture();
 		void removeExciton(std::list<Exciton>::iterator exciton_it);
 		bool siteContainsHole(const KMC_Lattice::Coords& coords);
+		void updateSteadyData();
 		void updateTransientData();
 	};
 

@@ -7,7 +7,7 @@
 #define PARAMETERS_H
 
 #include "Lattice.h"
-#include "Simulation.h"
+#include "Parameters_Simulation.h"
 #include "Utils.h"
 
 namespace Excimontec {
@@ -56,6 +56,9 @@ namespace Excimontec {
 		double Dynamics_transient_start;
 		double Dynamics_transient_end;
 		int Dynamics_pnts_per_decade;
+		bool Enable_steady_transport_test;
+		double Steady_carrier_density;
+		int N_equilibration_events;
 		// Exciton Parameters
 		double Exciton_generation_rate_donor;
 		double Exciton_generation_rate_acceptor;
