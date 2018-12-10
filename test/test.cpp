@@ -59,7 +59,7 @@ namespace OSC_SimTests {
 			params_default.Enable_ToF_energy_placement = false;
 			params_default.ToF_transient_start = 1e-10;
 			params_default.ToF_transient_end = 1e-4;
-			params_default.ToF_pnts_per_decade = 20;
+			params_default.ToF_pnts_per_decade = 10;
 			params_default.Enable_IQE_test = false;
 			params_default.IQE_time_cutoff = 1e-3;
 			params_default.Enable_dynamics_test = false;
@@ -67,7 +67,7 @@ namespace OSC_SimTests {
 			params_default.Dynamics_initial_exciton_conc = 1e16;
 			params_default.Dynamics_transient_start = 1e-13;
 			params_default.Dynamics_transient_end = 1e-5;
-			params_default.Dynamics_pnts_per_decade = 20;
+			params_default.Dynamics_pnts_per_decade = 10;
 			params_default.Enable_steady_transport_test = false;
 			params_default.Steady_carrier_density = 1e15;
 			params_default.N_equilibration_events = 100000;
@@ -609,6 +609,25 @@ namespace OSC_SimTests {
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Hole cannot be generated on an acceptor site.", sim.getErrorMessage());
+		// Test what happens with full lattice
+		params = params_default;
+		params.Params_lattice.Length = 1;
+		params.Params_lattice.Width = 1;
+		params.Params_lattice.Height = 1;
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		// Create first exciton that fills the lattice
+		sim.createExciton(false);
+		// Try to create another exciton
+		sim.createExciton(false);
+		EXPECT_TRUE(sim.getErrorStatus());
+		sim = OSC_Sim();
+		EXPECT_TRUE(sim.init(params, 0));
+		// Create first exciton that fills the lattice
+		sim.createExciton(false);
+		// Try to create another exciton
+		sim.createExciton(Coords(0, 0, 0), false);
+		EXPECT_TRUE(sim.getErrorStatus());
 	}
 
 	TEST_F(OSC_SimTest, LoggingTests) {
@@ -776,13 +795,28 @@ namespace OSC_SimTests {
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
-		// Check that appropriate number of excitons are created and dissociation and that the charges then meet and recombine
+		// Check that appropriate number of excitons are created and dissociated and that the charges then meet and recombine
 		EXPECT_EQ(params.N_tests, sim.getN_excitons_created());
-		EXPECT_NEAR(params.N_tests, sim.getN_excitons_dissociated(), 5);
+		EXPECT_NEAR(params.N_tests, sim.getN_singlet_excitons_dissociated() + sim.getN_triplet_excitons_dissociated(), 5);
 		EXPECT_NEAR(params.N_tests, sim.getN_electrons_created(), 5);
 		EXPECT_NEAR(params.N_tests, sim.getN_holes_created(), 5);
 		EXPECT_NEAR(params.N_tests, sim.getN_electrons_recombined(), 5);
 		EXPECT_NEAR(params.N_tests, sim.getN_holes_recombined(), 5);
+		// Check transient data outout
+		auto time_data = sim.getDynamicsTransientTimes();
+		auto electron_data = sim.getDynamicsTransientElectrons();
+		auto hole_data = sim.getDynamicsTransientHoles();
+		EXPECT_TRUE(time_data.size() == electron_data.size());
+		EXPECT_TRUE(time_data.size() == hole_data.size());
+		vector<pair<double, double>> transient_data(time_data.size());
+		for (int i = 0; i < (int)time_data.size(); i++) {
+			transient_data[i] = make_pair(time_data[i], (double)electron_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
+		}
+		// Find and check approximate time of polaron density maximum
+		auto it = max_element(electron_data.begin(), electron_data.end());
+		int index = (int)distance(electron_data.begin(), it);
+		double time_max = time_data[index];
+		EXPECT_NEAR(3e-10, time_max, 2e-10);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {
@@ -791,7 +825,7 @@ namespace OSC_SimTests {
 		auto params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
-		params.Dynamics_transient_end = 1e-8;
+		params.Dynamics_transient_end = 1e-9;
 		params.N_tests = 2000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -825,6 +859,57 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)triplet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 1e-1 / exp(1));
+		// Singet exciton relaxation test with Gaussian DOS
+		sim = OSC_Sim();
+		params = params_default;
+		params.Params_lattice.Length = 200;
+		params.Params_lattice.Width = 200;
+		params.Params_lattice.Height = 200;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_dynamics_test = true;
+		params.N_tests = 500;
+		params.Singlet_lifetime_donor = 1e-6;
+		params.Dynamics_transient_end = 1e-8;
+		params.Dynamics_initial_exciton_conc = 2e15;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.05;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check the exciton equilibration energy
+		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
+		singlet_data = sim.getDynamicsTransientSinglets();
+		triplet_data = sim.getDynamicsTransientTriplets();
+		int N_points = 5;
+		double N_excitons_avg = (double)(accumulate(singlet_data.end() - N_points, singlet_data.end(), 0) + accumulate(triplet_data.end() - N_points, triplet_data.end(), 0)) / (double)N_points;
+		auto energy_data = sim.getDynamicsExcitonEnergies();
+		double energy_avg = accumulate(energy_data.end() - N_points, energy_data.end(), 0.0) / N_points;
+		EXPECT_NEAR(expected_energy, energy_avg / N_excitons_avg, 5e-2*abs(expected_energy));
+		// Triplet dissociation dynamics
+		sim = OSC_Sim();
+		params = params_default;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_dynamics_test = true;
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.R_exciton_isc_donor = 1e16;
+		params.N_tests = 100;
+		// Check that triplet excitons are dissociating via the Miller-Abrahams mechanism
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		EXPECT_GT(sim.getN_triplet_excitons_dissociated(), 0);
+		// Check that triplet excitons are dissociating via the Marcus mechanism
+		sim = OSC_Sim();
+		params.Enable_miller_abrahams = false;
+		params.Enable_marcus = true;
+		EXPECT_TRUE(sim.init(params, 0));
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		EXPECT_GT(sim.getN_triplet_excitons_dissociated(), 0);
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
@@ -955,6 +1040,7 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		int N_geminate_recombs1 = sim.getN_geminate_recombinations();
 		double IQE1 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
 		// Check for field activated charge separation
 		params.Internal_potential = -2.0;
@@ -967,7 +1053,9 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		int N_geminate_recombs2 = sim.getN_geminate_recombinations();
 		double IQE2 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
+		EXPECT_LT(N_geminate_recombs2, N_geminate_recombs1);
 		EXPECT_GT(IQE2, IQE1);
 		// Check for thermally activated charge separation
 		params.Internal_potential = -1.0;
@@ -981,7 +1069,9 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		int N_geminate_recombs3 = sim.getN_geminate_recombinations();
 		double IQE3 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
+		EXPECT_LT(N_geminate_recombs3, N_geminate_recombs1);
 		EXPECT_GT(IQE3, IQE1);
 		// Check for delocalization enhanced charge separation
 		params.Temperature = 300;
@@ -996,7 +1086,9 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		int N_geminate_recombs4 = sim.getN_geminate_recombinations();
 		double IQE4 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
+		EXPECT_LT(N_geminate_recombs4, N_geminate_recombs1);
 		EXPECT_GT(IQE4, IQE1);
 		// Check for recombination rate dependent charge separation
 		params.Enable_gaussian_polaron_delocalization = false;
@@ -1010,7 +1102,9 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		int N_geminate_recombs5 = sim.getN_geminate_recombinations();
 		double IQE5 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
+		EXPECT_LT(N_geminate_recombs5, N_geminate_recombs1);
 		EXPECT_GT(IQE5, IQE1);
 		// Check for heterojunction dependence using weakly donating/accepting bilayer
 		params.R_polaron_recombination = 1e10;
@@ -1026,7 +1120,9 @@ namespace OSC_SimTests {
 				cout << sim.getErrorMessage() << endl;
 			}
 		}
+		int N_geminate_recombs6 = sim.getN_geminate_recombinations();
 		double IQE6 = 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2.0 * (double)sim.getN_excitons_created());
+		EXPECT_LT(N_geminate_recombs1, N_geminate_recombs6);
 		EXPECT_GT(IQE1, IQE6);
 		// Check for higher order losses
 		params.Params_lattice.Height = 80;
@@ -1085,9 +1181,20 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, SteadyTransportTests) {
-		// Steady transport test without disorder
+		// Test response when there are not enough donor sites to create the specified number of initial polarons
 		sim = OSC_Sim();
 		auto params = params_default;
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.9999;
+		params.Internal_potential = -1.0;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_steady_transport_test = true;
+		params.Steady_carrier_density = 1e18;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Steady transport test without disorder
+		sim = OSC_Sim();
+		params = params_default;
 		params.Params_lattice.Length = 200;
 		params.Params_lattice.Width = 200;
 		params.Params_lattice.Height = 200;
@@ -1148,9 +1255,21 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ToFTests) {
-		// Hole ToF test
+		// Test response when there are not enough donor sites to create the specified number of initial polarons
 		sim = OSC_Sim();
 		auto params = params_default;
+		params.Params_lattice.Enable_periodic_z = false;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_ToF_test = true;
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.9999;
+		params.Internal_potential = -1.0;
+		params.ToF_initial_polarons = 1000;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Hole ToF test
+		sim = OSC_Sim();
+		params = params_default;
 		params.Params_lattice.Enable_periodic_z = false;
 		params.Internal_potential = -4.0;
 		params.Enable_exciton_diffusion_test = false;
@@ -1173,6 +1292,15 @@ namespace OSC_SimTests {
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		// Check relaxed mobility value from the transient data
+		auto velocities = sim.getToFTransientVelocities();
+		auto counts = sim.getToFTransientCounts();
+		int N_points = 5;
+		auto counts_end_it = find(counts.begin(), counts.end(), 0);
+		auto velocities_end_it = velocities.begin();
+		advance(velocities_end_it, distance(counts.begin(), counts_end_it));
+		double mobility_relaxed_avg = abs((accumulate(velocities_end_it - N_points, velocities_end_it, 0.0) / accumulate(counts_end_it - N_points, counts_end_it, 0)) / sim.getInternalField());
+		EXPECT_NEAR(expected_mobility, mobility_relaxed_avg, 1e-1*expected_mobility);
 		// Hole ToF test with marcus hopping
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = false;
@@ -1262,6 +1390,15 @@ namespace OSC_SimTests {
 		dim = 3.0;
 		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1.0 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		// Check charge extraction map output
+		auto vec = sim.getChargeExtractionMap(false);
+		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
+		stringstream ss(vec[1]);
+		string val;
+		getline(ss, val, ',');
+		EXPECT_EQ(val, "0");
+		getline(ss, val, ',');
+		EXPECT_EQ(val, "0");
 	}
 
 	TEST_F(OSC_SimTest, InterfacialEnergyShiftTests) {
