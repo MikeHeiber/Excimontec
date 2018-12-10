@@ -197,6 +197,14 @@ namespace OSC_SimTests {
 				item.replace(item.find("fase"), 4, "false");
 			}
 		}
+		// Check invalid lattice parameters 
+		params = params_default;
+		params.Params_lattice.Length = 0;
+		EXPECT_FALSE(sim.init(params, 0));
+		// Check invalid Parameters_Simulation parameters 
+		params = params_default;
+		params.Temperature = -1;
+		EXPECT_FALSE(sim.init(params, 0));
 		// Check that default parameters are valid
 		EXPECT_TRUE(sim.init(params_default, 0));
 		// Check various invalid parameter sets
@@ -886,21 +894,33 @@ namespace OSC_SimTests {
 		auto energy_data = sim.getDynamicsExcitonEnergies();
 		double energy_avg = accumulate(energy_data.end() - N_points, energy_data.end(), 0.0) / N_points;
 		EXPECT_NEAR(expected_energy, energy_avg / N_excitons_avg, 5e-2*abs(expected_energy));
-		// Triplet dissociation dynamics
+		// Triplet dissociation and annihilation dynamics in a dilute blend with Gaussian DOS
 		sim = OSC_Sim();
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_dynamics_test = true;
 		params.Enable_neat = false;
 		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.1;
+		params.Triplet_lifetime_donor = 1e-6;
 		params.R_exciton_isc_donor = 1e16;
-		params.N_tests = 100;
-		// Check that triplet excitons are dissociating via the Miller-Abrahams mechanism
+		params.R_exciton_exciton_annihilation_donor = 1e16;
+		params.R_exciton_polaron_annihilation_donor = 1e16;
+		params.R_polaron_recombination = 1e1;
+		params.Dynamics_initial_exciton_conc = 5e17;
+		params.Dynamics_transient_end = 1e-9;
+		params.N_tests = 500;
+		params.Enable_gaussian_dos = true;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
+		// Check that triplet excitons are dissociating via the Miller-Abrahams mechanism
 		EXPECT_GT(sim.getN_triplet_excitons_dissociated(), 0);
+		// Check that triplet polaron annihilation occurs
+		EXPECT_GT(sim.getN_triplet_polaron_annihilations(), 0);
+		// Check that triplet triplet annihilation occurs
+		EXPECT_GT(sim.getN_triplet_triplet_annihilations(), 0);
 		// Check that triplet excitons are dissociating via the Marcus mechanism
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = false;
@@ -1221,7 +1241,7 @@ namespace OSC_SimTests {
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
-		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1.5e-1*expected_mobility);
 		// Steady transport test with Gaussian disorder
 		sim = OSC_Sim();
 		params = params_default;
@@ -1233,9 +1253,9 @@ namespace OSC_SimTests {
 		params.Internal_potential = -0.00001;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
-		params.N_equilibration_events = 2000000;
+		params.N_equilibration_events = 1000000;
 		params.Steady_carrier_density = 2e14;
-		params.N_tests = 500000;
+		params.N_tests = 1000000;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		// Initialize the test
@@ -1291,7 +1311,7 @@ namespace OSC_SimTests {
 		double dim = 3.0;
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
-		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1.5e-1*expected_mobility);
 		// Check relaxed mobility value from the transient data
 		auto velocities = sim.getToFTransientVelocities();
 		auto counts = sim.getToFTransientCounts();
@@ -1300,7 +1320,7 @@ namespace OSC_SimTests {
 		auto velocities_end_it = velocities.begin();
 		advance(velocities_end_it, distance(counts.begin(), counts_end_it));
 		double mobility_relaxed_avg = abs((accumulate(velocities_end_it - N_points, velocities_end_it, 0.0) / accumulate(counts_end_it - N_points, counts_end_it, 0)) / sim.getInternalField());
-		EXPECT_NEAR(expected_mobility, mobility_relaxed_avg, 1e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, mobility_relaxed_avg, 1.5e-1*expected_mobility);
 		// Hole ToF test with marcus hopping
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = false;
@@ -1318,7 +1338,7 @@ namespace OSC_SimTests {
 		mobility_data = sim.calculateMobilityData(transit_time_data);
 		rate_constant = (params.R_polaron_hopping_donor / sqrt(4.0*Pi*params.Reorganization_donor*K_b*params.Temperature))*exp(-2.0*params.Polaron_localization_donor)*exp(-intpow(params.Reorganization_donor + params.Internal_potential / params.Params_lattice.Height, 2) / (4.0*params.Reorganization_donor*K_b*params.Temperature));
 		expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
-		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1.5e-1*expected_mobility);
 		// Check that energetic disorder reduces the mobility
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = true;
@@ -1389,7 +1409,7 @@ namespace OSC_SimTests {
 		mobility_data = sim.calculateMobilityData(transit_time_data);
 		dim = 3.0;
 		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1.0 / (K_b*params.Temperature));
-		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1.5e-1*expected_mobility);
 		// Check charge extraction map output
 		auto vec = sim.getChargeExtractionMap(false);
 		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
