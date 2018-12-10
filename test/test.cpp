@@ -1296,7 +1296,7 @@ namespace OSC_SimTests {
 		auto velocities = sim.getToFTransientVelocities();
 		auto counts = sim.getToFTransientCounts();
 		int N_points = 5;
-		auto counts_end_it = find(counts.begin(), counts.end(), 0);
+		auto counts_end_it = find_if(counts.begin(), counts.end(), [](int val) {return val < 5;});
 		auto velocities_end_it = velocities.begin();
 		advance(velocities_end_it, distance(counts.begin(), counts_end_it));
 		double mobility_relaxed_avg = abs((accumulate(velocities_end_it - N_points, velocities_end_it, 0.0) / accumulate(counts_end_it - N_points, counts_end_it, 0)) / sim.getInternalField());
