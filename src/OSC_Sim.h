@@ -40,6 +40,7 @@ namespace Excimontec {
 		std::vector<std::pair<double, double>> calculateTransitTimeHist(const std::vector<double>& data, const int counts) const;
 		std::vector<double> calculateMobilityData(const std::vector<double>& transit_times) const;
 		bool checkFinished() const;
+		void createExciton(const bool spin);
 		void createExciton(const KMC_Lattice::Coords& coords, const bool spin);
 		void createElectron(const KMC_Lattice::Coords& coords);
 		void createHole(const KMC_Lattice::Coords& coords);
@@ -64,7 +65,8 @@ namespace Excimontec {
 		double getInternalField() const;
 		int getN_excitons_created() const;
 		int getN_excitons_created(const short site_type) const;
-		int getN_excitons_dissociated() const;
+		int getN_singlet_excitons_dissociated() const;
+		int getN_triplet_excitons_dissociated() const;
 		int getN_singlet_excitons_recombined() const;
 		int getN_triplet_excitons_recombined() const;
 		int getN_singlet_singlet_annihilations() const;
@@ -292,7 +294,8 @@ namespace Excimontec {
 		int N_excitons_created_acceptor = 0;
 		int N_singlet_excitons_recombined = 0;
 		int N_triplet_excitons_recombined = 0;
-		int N_excitons_dissociated = 0;
+		int N_singlet_excitons_dissociated = 0;
+		int N_triplet_excitons_dissociated = 0;
 		int N_singlet_singlet_annihilations = 0;
 		int N_singlet_triplet_annihilations = 0;
 		int N_triplet_triplet_annihilations = 0;
@@ -321,7 +324,7 @@ namespace Excimontec {
 		// Additional Functions
 		double calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const KMC_Lattice::Coords& coords) const;
 		double calculateCoulomb(const bool charge, const KMC_Lattice::Coords& coords) const;
-		KMC_Lattice::Coords calculateExcitonCreationCoords();
+		KMC_Lattice::Coords calculateRandomExcitonCreationCoords();
 		void calculateExcitonEvents(Exciton* exciton_ptr);
 		void calculateObjectListEvents(const std::vector<KMC_Lattice::Object*>& object_ptr_vec);
 		void calculatePolaronEvents(Polaron* polaron_ptr);

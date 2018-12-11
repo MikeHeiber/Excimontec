@@ -313,7 +313,7 @@ int main(int argc, char *argv[]) {
 		if (params.Enable_IQE_test || params.Enable_dynamics_test) {
 			resultsfile << sim.getN_excitons_created((short)1) << " excitons were created on donor sites.\n";
 			resultsfile << sim.getN_excitons_created((short)2) << " excitons were created on acceptor sites.\n";
-			resultsfile << 100 * (double)sim.getN_excitons_dissociated() / (double)sim.getN_excitons_created() << "% of excitons have dissociated.\n";
+			resultsfile << 100 * (double)(sim.getN_singlet_excitons_dissociated() + sim.getN_triplet_excitons_dissociated()) / (double)sim.getN_excitons_created() << "% of excitons have dissociated.\n";
 			resultsfile << 100 * (double)sim.getN_singlet_excitons_recombined() / (double)sim.getN_excitons_created() << "% of excitons relaxed to the ground state as singlets.\n";
 			resultsfile << 100 * (double)sim.getN_triplet_excitons_recombined() / (double)sim.getN_excitons_created() << "% of excitons relaxed to the ground state as triplets.\n";
 			resultsfile << 100 * (double)sim.getN_singlet_singlet_annihilations() / (double)sim.getN_excitons_created() << "% of excitons were lost to singlet-singlet annihilation.\n";
@@ -321,9 +321,9 @@ int main(int argc, char *argv[]) {
 			resultsfile << 100 * (double)sim.getN_triplet_triplet_annihilations() / (double)sim.getN_excitons_created() << "% of excitons were lost to triplet-triplet annihilation.\n";
 			resultsfile << 100 * (double)sim.getN_singlet_polaron_annihilations() / (double)sim.getN_excitons_created() << "% of excitons were lost to singlet-polaron annihilation.\n";
 			resultsfile << 100 * (double)sim.getN_triplet_polaron_annihilations() / (double)sim.getN_excitons_created() << "% of excitons were lost to triplet-polaron annihilation.\n";
-			resultsfile << 100 * (double)sim.getN_geminate_recombinations() / (double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to geminate recombination.\n";
-			resultsfile << 100 * (double)sim.getN_bimolecular_recombinations() / (double)sim.getN_excitons_dissociated() << "% of photogenerated charges were lost to bimolecular recombination.\n";
-			resultsfile << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_dissociated()) << "% of photogenerated charges were extracted.\n";
+			resultsfile << 100 * (double)sim.getN_geminate_recombinations() / (double)(sim.getN_singlet_excitons_dissociated() + sim.getN_triplet_excitons_dissociated()) << "% of photogenerated charges were lost to geminate recombination.\n";
+			resultsfile << 100 * (double)sim.getN_bimolecular_recombinations() / (double)(sim.getN_singlet_excitons_dissociated() + sim.getN_triplet_excitons_dissociated()) << "% of photogenerated charges were lost to bimolecular recombination.\n";
+			resultsfile << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)(sim.getN_singlet_excitons_dissociated() + sim.getN_triplet_excitons_dissociated())) << "% of photogenerated charges were extracted.\n";
 		}
 		if (params.Enable_IQE_test) {
 			resultsfile << "IQE = " << 100 * (double)(sim.getN_electrons_collected() + sim.getN_holes_collected()) / (2 * (double)sim.getN_excitons_created()) << "% with an internal potential of " << params.Internal_potential << " V." << endl;
@@ -517,7 +517,7 @@ int main(int argc, char *argv[]) {
 		int excitons_created_acceptor = sim.getN_excitons_created((short)2);
 		int excitons_created_acceptor_total;
 		MPI_Reduce(&excitons_created_acceptor, &excitons_created_acceptor_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-		int excitons_dissociated = sim.getN_excitons_dissociated();
+		int excitons_dissociated = sim.getN_singlet_excitons_dissociated() + sim.getN_triplet_excitons_dissociated();
 		int excitons_dissociated_total;
 		MPI_Reduce(&excitons_dissociated, &excitons_dissociated_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 		int singlet_excitons_recombined = sim.getN_singlet_excitons_recombined();

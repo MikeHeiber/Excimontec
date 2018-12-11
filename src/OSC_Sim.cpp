@@ -331,7 +331,7 @@ namespace Excimontec {
 		return dist;
 	}
 
-	Coords OSC_Sim::calculateExcitonCreationCoords() {
+	Coords OSC_Sim::calculateRandomExcitonCreationCoords() {
 		uniform_real_distribution<double> dist(0.0, R_exciton_generation_donor + R_exciton_generation_acceptor);
 		double num = dist(generator);
 		short type_target;
@@ -1048,6 +1048,14 @@ namespace Excimontec {
 		generateElectron(coords, 0);
 	}
 
+	void OSC_Sim::createExciton(const bool spin) {
+		auto coords = calculateRandomExcitonCreationCoords();
+		if (coords.x == -1 && coords.y == -1 && coords.z == -1) {
+			return;
+		}
+		generateExciton(coords, spin, 0);
+	}
+
 	void OSC_Sim::createExciton(const Coords& coords, const bool spin) {
 		// Check that coords are valid
 		try {
@@ -1056,6 +1064,12 @@ namespace Excimontec {
 		catch (out_of_range exception) {
 			cout << "Error! Exciton cannot be generated because the input coordinates are invalid." << endl;
 			setErrorMessage("Exciton cannot be generated because the input coordinates are invalid.");
+			Error_found = true;
+			return;
+		}
+		if (lattice.isOccupied(coords)) {
+			cout << "Error! Exciton cannot be generated because the input coordinates are occupied." << endl;
+			setErrorMessage("Exciton cannot be generated because the input coordinates are occupied.");
 			Error_found = true;
 			return;
 		}
@@ -1347,12 +1361,14 @@ namespace Excimontec {
 		// Update counters
 		if (spin_state) {
 			N_singlets--;
+			N_singlet_excitons_dissociated++;
 		}
 		else {
 			N_triplets--;
+			N_triplet_excitons_dissociated++;
 		}
 		N_excitons--;
-		N_excitons_dissociated++;
+		
 		// Update event list
 		auto recalc_objects = findRecalcObjects(coords_initial, coords_dest);
 		calculateObjectListEvents(recalc_objects);
@@ -1761,7 +1777,7 @@ namespace Excimontec {
 
 	Coords OSC_Sim::generateExciton() {
 		// Determine coords
-		Coords coords = calculateExcitonCreationCoords();
+		Coords coords = calculateRandomExcitonCreationCoords();
 		generateExciton(coords, true, 0);
 		return coords;
 	}
@@ -2002,6 +2018,7 @@ namespace Excimontec {
 			cout << "Error! " << params.ToF_initial_polarons << " sites were not available to place the initial ToF polarons." << endl;
 			setErrorMessage("Initial ToF polarons could not be created.");
 			Error_found = true;
+			return;
 		}
 		// Randomly select from the total possible sites
 		if (params.Enable_ToF_random_placement) {
@@ -2143,8 +2160,12 @@ namespace Excimontec {
 		}
 	}
 
-	int OSC_Sim::getN_excitons_dissociated() const {
-		return N_excitons_dissociated;
+	int OSC_Sim::getN_singlet_excitons_dissociated() const {
+		return N_singlet_excitons_dissociated;
+	}
+
+	int OSC_Sim::getN_triplet_excitons_dissociated() const {
+		return N_triplet_excitons_dissociated;
 	}
 
 	int OSC_Sim::getN_singlet_excitons_recombined() const {
@@ -2243,7 +2264,7 @@ namespace Excimontec {
 		int x, y;
 		output_data[0] = "X-Position,Y-Position,Extraction Probability";
 		if (!charge) {
-			for (int i = 1; i < (int)electron_extraction_data.size(); i++) {
+			for (int i = 0; i < (int)electron_extraction_data.size(); i++) {
 				x = i / lattice.getWidth();
 				y = i % lattice.getWidth();
 				if (N_electrons_collected > 0) {
@@ -2252,12 +2273,12 @@ namespace Excimontec {
 				else {
 					ss << x << "," << y << "," << 0;
 				}
-				output_data[i] = ss.str();
+				output_data[i+1] = ss.str();
 				ss.str("");
 			}
 		}
 		else {
-			for (int i = 1; i < (int)hole_extraction_data.size(); i++) {
+			for (int i = 0; i < (int)hole_extraction_data.size(); i++) {
 				x = i / lattice.getWidth();
 				y = i % lattice.getWidth();
 				if (N_holes_collected > 0) {
@@ -2266,7 +2287,7 @@ namespace Excimontec {
 				else {
 					ss << x << "," << y << "," << 0;
 				}
-				output_data[i] = ss.str();
+				output_data[i+1] = ss.str();
 				ss.str("");
 			}
 		}
