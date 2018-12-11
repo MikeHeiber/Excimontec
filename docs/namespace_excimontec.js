@@ -9,7 +9,7 @@ var namespace_excimontec =
     [ "Exciton_Polaron_Annihilation", "class_excimontec_1_1_exciton___polaron___annihilation.html", "class_excimontec_1_1_exciton___polaron___annihilation" ],
     [ "Exciton_Recombination", "class_excimontec_1_1_exciton___recombination.html", "class_excimontec_1_1_exciton___recombination" ],
     [ "OSC_Sim", "class_excimontec_1_1_o_s_c___sim.html", "class_excimontec_1_1_o_s_c___sim" ],
-    [ "Parameters_OPV", "struct_excimontec_1_1_parameters___o_p_v.html", "struct_excimontec_1_1_parameters___o_p_v" ],
+    [ "Parameters", "class_excimontec_1_1_parameters.html", "class_excimontec_1_1_parameters" ],
     [ "Polaron", "class_excimontec_1_1_polaron.html", "class_excimontec_1_1_polaron" ],
     [ "Polaron_Extraction", "class_excimontec_1_1_polaron___extraction.html", "class_excimontec_1_1_polaron___extraction" ],
     [ "Polaron_Hop", "class_excimontec_1_1_polaron___hop.html", "class_excimontec_1_1_polaron___hop" ],

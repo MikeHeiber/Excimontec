@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Excimontec
-   &#160;<span id="projectnumber">v1.0-beta.5</span>
+   &#160;<span id="projectnumber">v1.0.0-rc.1</span>
    </div>
    <div id="projectbrief">An open-source KMC simulation software package for modeling the optoelectronic processes in organic semiconductor materials and devices, such as OPVs, OLEDs, and more.</div>
   </td>
@@ -133,10 +133,7 @@ $(document).ready(function(){initNavTree('functions_g.html','');});
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a3381553fbef4f71504a64494bdc8f815">Excimontec::OSC_Sim</a>
 </li>
 <li>getEnergy()
-: <a class="el" href="class_excimontec_1_1_site___o_s_c.html#a5fa133c7ee016d8de734ee711b1d54f5">Excimontec::Site_OSC</a>
-</li>
-<li>getEvents()
-: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a286551a7b2f7467f5837c382fc9c2f36">Excimontec::OSC_Sim</a>
+: <a class="el" href="class_excimontec_1_1_site___o_s_c.html#a582059d550add728be4597c2282454a0">Excimontec::Site_OSC</a>
 </li>
 <li>getEventType()
 : <a class="el" href="class_excimontec_1_1_exciton___creation.html#a01d96f59425640573922c58409984693">Excimontec::Exciton_Creation</a>
@@ -174,11 +171,11 @@ $(document).ready(function(){initNavTree('functions_g.html','');});
 <li>getN_electrons_recombined()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#acae207b6dbd1beb5af9f8dd6954c6a54">Excimontec::OSC_Sim</a>
 </li>
+<li>getN_events_executed()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a39ea20a625c494a5f53cec730627b6c1">Excimontec::OSC_Sim</a>
+</li>
 <li>getN_excitons_created()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a51dbda679af3966cdf8b7b4b4de5199f">Excimontec::OSC_Sim</a>
-</li>
-<li>getN_excitons_dissociated()
-: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a56299f758b44e7fb559c8cf1bbd3c397">Excimontec::OSC_Sim</a>
 </li>
 <li>getN_geminate_recombinations()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a31b9676a91a5fa313694419972bdda1a">Excimontec::OSC_Sim</a>
@@ -191,6 +188,9 @@ $(document).ready(function(){initNavTree('functions_g.html','');});
 </li>
 <li>getN_holes_recombined()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a53a0123e8db1299519874ca6bed8bd2b">Excimontec::OSC_Sim</a>
+</li>
+<li>getN_singlet_excitons_dissociated()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ae9cce3e34cbd191ef187b04a647d6133">Excimontec::OSC_Sim</a>
 </li>
 <li>getN_singlet_excitons_recombined()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a0777f939de537a8bc82da5698b7c4102">Excimontec::OSC_Sim</a>
@@ -207,6 +207,9 @@ $(document).ready(function(){initNavTree('functions_g.html','');});
 <li>getN_transient_cycles()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a1c18548ebea94e905839f4d824d77935">Excimontec::OSC_Sim</a>
 </li>
+<li>getN_triplet_excitons_dissociated()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a33038c604bab9c6e1151f9a121cad318">Excimontec::OSC_Sim</a>
+</li>
 <li>getN_triplet_excitons_recombined()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ae15f5b3f09f59788e62792864eec2ec7">Excimontec::OSC_Sim</a>
 </li>
@@ -220,11 +223,32 @@ $(document).ready(function(){initNavTree('functions_g.html','');});
 : <a class="el" href="class_excimontec_1_1_exciton.html#a293a0cbd3025b05beae0bf23e8189b34">Excimontec::Exciton</a>
 , <a class="el" href="class_excimontec_1_1_polaron.html#a057f0be2b904310eff219999eab4b3e2">Excimontec::Polaron</a>
 </li>
+<li>getPreviousEventType()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a576de9d88dafa1a085fa9d6ae269ca87">Excimontec::OSC_Sim</a>
+</li>
 <li>getSiteEnergies()
-: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a69bc8156d1b8495dd82a806514f9ec9d">Excimontec::OSC_Sim</a>
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af14258c589bd369bf29052049d1dcb30">Excimontec::OSC_Sim</a>
+</li>
+<li>getSiteEnergy()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ad41e455807c994507f5402c3eef74bab">Excimontec::OSC_Sim</a>
+</li>
+<li>getSiteType()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ad962bcceb7e50c1b70560d9b61788dbf">Excimontec::OSC_Sim</a>
 </li>
 <li>getSpin()
 : <a class="el" href="class_excimontec_1_1_exciton.html#adadbad0efe7274f6d58abea14f8fe61f">Excimontec::Exciton</a>
+</li>
+<li>getSteadyEquilibrationEnergy()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a451e3ea3667f84d6841ad91355a618df">Excimontec::OSC_Sim</a>
+</li>
+<li>getSteadyFermiEnergy()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af76c050df29beb0b22b35804b192b111">Excimontec::OSC_Sim</a>
+</li>
+<li>getSteadyMobility()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a7420ce8e9f8634ab98483fa9ea6b7972">Excimontec::OSC_Sim</a>
+</li>
+<li>getSteadyTransportEnergy()
+: <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a29234a6db9fca5076b6da1367a81bfbc">Excimontec::OSC_Sim</a>
 </li>
 <li>getToFTransientCounts()
 : <a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aa63452a4db95a8a81962bf433853b123">Excimontec::OSC_Sim</a>

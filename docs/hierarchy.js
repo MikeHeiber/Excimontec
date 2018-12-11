@@ -16,9 +16,8 @@ var hierarchy =
       [ "Excimontec::Exciton", "class_excimontec_1_1_exciton.html", null ],
       [ "Excimontec::Polaron", "class_excimontec_1_1_polaron.html", null ]
     ] ],
-    [ "Parameters_main", "struct_parameters__main.html", null ],
     [ "Parameters_Simulation", null, [
-      [ "Excimontec::Parameters_OPV", "struct_excimontec_1_1_parameters___o_p_v.html", null ]
+      [ "Excimontec::Parameters", "class_excimontec_1_1_parameters.html", null ]
     ] ],
     [ "Simulation", null, [
       [ "Excimontec::OSC_Sim", "class_excimontec_1_1_o_s_c___sim.html", null ]

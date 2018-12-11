@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['polaron_5fdelocalization_5flength',['Polaron_delocalization_length',['../struct_excimontec_1_1_parameters___o_p_v.html#a7259df6314a2f6e377e334a05c160a3d',1,'Excimontec::Parameters_OPV']]],
-  ['polaron_5fhopping_5fcutoff',['Polaron_hopping_cutoff',['../struct_excimontec_1_1_parameters___o_p_v.html#acedbeab665fb7fca62631455eb33ee69',1,'Excimontec::Parameters_OPV']]],
-  ['polaron_5flocalization_5facceptor',['Polaron_localization_acceptor',['../struct_excimontec_1_1_parameters___o_p_v.html#ae2525539f341a674f77d2c67b9ba089f',1,'Excimontec::Parameters_OPV']]],
-  ['polaron_5flocalization_5fdonor',['Polaron_localization_donor',['../struct_excimontec_1_1_parameters___o_p_v.html#a11f58f331195fcfb3d17821215c7e3d7',1,'Excimontec::Parameters_OPV']]],
-  ['power_5fkernel_5fexponent',['Power_kernel_exponent',['../struct_excimontec_1_1_parameters___o_p_v.html#a80b2b79a8624cca9cfc4797657612f34',1,'Excimontec::Parameters_OPV']]]
+  ['polaron_5fdelocalization_5flength',['Polaron_delocalization_length',['../class_excimontec_1_1_parameters.html#a9ef2fd7bb08d760843ec03f47d00377f',1,'Excimontec::Parameters']]],
+  ['polaron_5fhopping_5fcutoff',['Polaron_hopping_cutoff',['../class_excimontec_1_1_parameters.html#a520804a5c527ad6df4f8d3663c644705',1,'Excimontec::Parameters']]],
+  ['polaron_5flocalization_5facceptor',['Polaron_localization_acceptor',['../class_excimontec_1_1_parameters.html#a0a2bbbd4583bec44be5d2af31810fb98',1,'Excimontec::Parameters']]],
+  ['polaron_5flocalization_5fdonor',['Polaron_localization_donor',['../class_excimontec_1_1_parameters.html#a0d238798ba91f700891d946d55d09ac4',1,'Excimontec::Parameters']]],
+  ['power_5fkernel_5fexponent',['Power_kernel_exponent',['../class_excimontec_1_1_parameters.html#a8b2995aa2d0a727570362244fb70ea40',1,'Excimontec::Parameters']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['coulomb_5fcutoff',['Coulomb_cutoff',['../struct_excimontec_1_1_parameters___o_p_v.html#a495dbf1a36ba28df1e8128ff9097f85d',1,'Excimontec::Parameters_OPV']]]
+  ['coulomb_5fcutoff',['Coulomb_cutoff',['../class_excimontec_1_1_parameters.html#aa58e148db895ecda0e5c144fce268498',1,'Excimontec::Parameters']]]
 ];
