@@ -901,14 +901,14 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_test = true;
 		params.Enable_neat = false;
 		params.Enable_random_blend = true;
-		params.Acceptor_conc = 0.1;
+		params.Acceptor_conc = 0.001;
 		params.Triplet_lifetime_donor = 1e-6;
 		params.R_exciton_isc_donor = 1e16;
-		params.R_exciton_exciton_annihilation_donor = 1e16;
+		params.R_exciton_exciton_annihilation_donor = 1e10;
 		params.R_exciton_polaron_annihilation_donor = 1e16;
 		params.R_polaron_recombination = 1e1;
 		params.Dynamics_initial_exciton_conc = 5e17;
-		params.Dynamics_transient_end = 1e-9;
+		params.Dynamics_transient_end = 1e-7;
 		params.N_tests = 500;
 		params.Enable_gaussian_dos = true;
 		EXPECT_TRUE(sim.init(params, 0));
@@ -925,6 +925,9 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = false;
 		params.Enable_marcus = true;
+		params.Dynamics_initial_exciton_conc = 1e17;
+		params.Dynamics_transient_end = 1e-7;
+		params.N_tests = 100;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
@@ -1314,11 +1317,11 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1.5e-1*expected_mobility);
 		// Check relaxed mobility value from the transient data
 		auto velocities = sim.getToFTransientVelocities();
-		auto counts = sim.getToFTransientCounts();
+		auto counts_data = sim.getToFTransientCounts();
 		int N_points = 5;
-		auto counts_end_it = find_if(counts.begin(), counts.end(), [](int val) {return val < 5;});
+		auto counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5;});
 		auto velocities_end_it = velocities.begin();
-		advance(velocities_end_it, distance(counts.begin(), counts_end_it));
+		advance(velocities_end_it, distance(counts_data.begin(), counts_end_it));
 		double mobility_relaxed_avg = abs((accumulate(velocities_end_it - N_points, velocities_end_it, 0.0) / accumulate(counts_end_it - N_points, counts_end_it, 0)) / sim.getInternalField());
 		EXPECT_NEAR(expected_mobility, mobility_relaxed_avg, 1.5e-1*expected_mobility);
 		// Hole ToF test with marcus hopping
@@ -1356,14 +1359,19 @@ namespace OSC_SimTests {
 		EXPECT_LT(mobility2, mobility1);
 		// Check the DOOS relaxation behavior
 		auto energy_transient = sim.getToFTransientEnergies();
-		auto counts_data = sim.getToFTransientCounts();
-		auto energy_avg = energy_transient;
-		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg.begin(), std::divides<double>());
+		counts_data = sim.getToFTransientCounts();
+		auto energy_avg_vec = energy_transient;
+		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg_vec.begin(), std::divides<double>());
 		auto target_it = --find_if(counts_data.begin(), counts_data.end(), [](int item) {return item <= 100; });
 		int index = (int)distance(counts_data.begin(), target_it);
-		// Check that the carriers relax into the tail during the transient
-		EXPECT_NEAR(0, energy_avg[0], 0.02);
-		EXPECT_LT(energy_avg[index], energy_avg[0]);
+		// Check the polaron equilibration energy
+		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
+		counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5; });
+		auto energy_end_it = energy_avg_vec.begin();
+		advance(energy_end_it, distance(counts_data.begin(), counts_end_it));
+		N_points = 5;
+		double energy_avg = accumulate(energy_end_it - N_points, energy_end_it, 0.0) / N_points;
+		EXPECT_NEAR(expected_energy, energy_avg, 5e-2*abs(expected_energy));
 		// Check the energy placement option
 		sim = OSC_Sim();
 		params.Enable_gaussian_dos = true;
@@ -1381,10 +1389,10 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(mobility3, mobility2, 1e-1*mobility2);
 		energy_transient = sim.getToFTransientEnergies();
 		counts_data = sim.getToFTransientCounts();
-		energy_avg = energy_transient;
-		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg.begin(), std::divides<double>());
+		energy_avg_vec = energy_transient;
+		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg_vec.begin(), std::divides<double>());
 		// Check that the initial occupation energy is near the specified energy
-		EXPECT_NEAR(params.ToF_placement_energy, energy_avg[0], 0.01);
+		EXPECT_NEAR(params.ToF_placement_energy, energy_avg_vec[0], 0.01);
 		// Electron ToF test on neat should not be allowed
 		sim = OSC_Sim();
 		params = params_default;
