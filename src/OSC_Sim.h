@@ -9,6 +9,7 @@
 #include "Simulation.h"
 #include "Site.h"
 #include "Exciton.h"
+#include "Parameters.h"
 #include "Polaron.h"
 #include "Version.h"
 #include <algorithm>
@@ -16,115 +17,14 @@
 
 namespace Excimontec {
 
-	struct Parameters_OPV : KMC_Lattice::Parameters_Simulation {
-		// Additional General Parameters
-		double Internal_potential;
-		// Morphology Parameters
-		bool Enable_neat; // Neat takes on donor properties
-		bool Enable_bilayer;
-		int Thickness_donor; // sites
-		int Thickness_acceptor; // sites
-		bool Enable_random_blend;
-		double Acceptor_conc;
-		bool Enable_import_morphology;
-		std::string Morphology_filename;
-		// Test Parameters
-		int N_tests;
-		bool Enable_exciton_diffusion_test;
-		bool Enable_ToF_test;
-		bool ToF_polaron_type;
-		int ToF_initial_polarons;
-		bool Enable_ToF_random_placement;
-		bool Enable_ToF_energy_placement;
-		double ToF_placement_energy;
-		double ToF_transient_start;
-		double ToF_transient_end;
-		int ToF_pnts_per_decade;
-		bool Enable_IQE_test;
-		double IQE_time_cutoff;
-		bool Enable_dynamics_test;
-		bool Enable_dynamics_extraction;
-		double Dynamics_initial_exciton_conc;
-		double Dynamics_transient_start;
-		double Dynamics_transient_end;
-		int Dynamics_pnts_per_decade;
-		// Exciton Parameters
-		double Exciton_generation_rate_donor;
-		double Exciton_generation_rate_acceptor;
-		double Singlet_lifetime_donor; // seconds
-		double Singlet_lifetime_acceptor; // seconds
-		double Triplet_lifetime_donor; // seconds
-		double Triplet_lifetime_acceptor; // seconds
-		double R_singlet_hopping_donor;
-		double R_singlet_hopping_acceptor;
-		double Singlet_localization_donor;
-		double Singlet_localization_acceptor;
-		double R_triplet_hopping_donor;
-		double R_triplet_hopping_acceptor;
-		double Triplet_localization_donor;
-		double Triplet_localization_acceptor;
-		bool Enable_FRET_triplet_annihilation;
-		double R_exciton_exciton_annihilation_donor;
-		double R_exciton_exciton_annihilation_acceptor;
-		double R_exciton_polaron_annihilation_donor;
-		double R_exciton_polaron_annihilation_acceptor;
-		int FRET_cutoff;
-		double E_exciton_binding_donor;
-		double E_exciton_binding_acceptor;
-		double R_exciton_dissociation_donor;
-		double R_exciton_dissociation_acceptor;
-		int Exciton_dissociation_cutoff; // nm
-		double R_exciton_isc_donor;
-		double R_exciton_isc_acceptor;
-		double R_exciton_risc_donor;
-		double R_exciton_risc_acceptor;
-		double E_exciton_ST_donor;
-		double E_exciton_ST_acceptor;
-		// Polaron Parameters
-		bool Enable_phase_restriction;
-		double R_polaron_hopping_donor;
-		double R_polaron_hopping_acceptor;
-		double Polaron_localization_donor; // nm^-1
-		double Polaron_localization_acceptor; // nm^-1
-		bool Enable_miller_abrahams;
-		bool Enable_marcus;
-		double Reorganization_donor;
-		double Reorganization_acceptor;
-		double R_polaron_recombination;
-		int Polaron_hopping_cutoff; // nm
-		bool Enable_gaussian_polaron_delocalization;
-		double Polaron_delocalization_length;
-		// Additional Lattice Parameters
-		double Homo_donor;
-		double Lumo_donor;
-		double Homo_acceptor;
-		double Lumo_acceptor;
-		bool Enable_gaussian_dos;
-		double Energy_stdev_donor; // eV
-		double Energy_stdev_acceptor; // eV
-		bool Enable_exponential_dos;
-		double Energy_urbach_donor; // eV
-		double Energy_urbach_acceptor; // eV
-		bool Enable_correlated_disorder;
-		double Disorder_correlation_length; // nm
-		bool Enable_gaussian_kernel;
-		bool Enable_power_kernel;
-		int Power_kernel_exponent; // must be negative
-		// Coulomb Calculation Parameters
-		double Dielectric_donor;
-		double Dielectric_acceptor;
-		int Coulomb_cutoff; // nm
-	};
-
 	class Site_OSC : public KMC_Lattice::Site {
 	public:
-		double getEnergy() const { return *energy_it; }
+		float getEnergy() const { return energy; }
 		short getType() const { return type; }
-		void setEnergy(const double energy) { *energy_it = energy; }
-		void setEnergyIt(const std::vector<double>::iterator it) { energy_it = it; }
+		void setEnergy(const float energy_input) { energy = energy_input; }
 		void setType(const short site_type) { type = site_type; }
 	private:
-		std::vector<double>::iterator energy_it;
+		float energy;
 		short type = 0; //  type 1 represent donor, type 2 represents acceptor
 	};
 
@@ -133,18 +33,20 @@ namespace Excimontec {
 		// Functions
 		OSC_Sim();
 		virtual ~OSC_Sim();
-		bool init(const Parameters_OPV& params, const int id);
+		bool init(const Parameters& params, const int id);
 		void calculateAllEvents();
 		void calculateDOSCorrelation();
 		void calculateDOSCorrelation(const double cutoff_radius);
 		std::vector<std::pair<double, double>> calculateTransitTimeHist(const std::vector<double>& data, const int counts) const;
 		std::vector<double> calculateMobilityData(const std::vector<double>& transit_times) const;
 		bool checkFinished() const;
-		bool checkParameters(const Parameters_OPV& params) const;
+		void createExciton(const bool spin);
 		void createExciton(const KMC_Lattice::Coords& coords, const bool spin);
 		void createElectron(const KMC_Lattice::Coords& coords);
 		void createHole(const KMC_Lattice::Coords& coords);
 		bool executeNextEvent();
+		void exportEnergies(std::string filename);
+		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
 		std::vector<std::pair<double, double>> getDOSCorrelationData() const;
 		std::vector<double> getDynamicsExcitonEnergies() const;
 		std::vector<double> getDynamicsElectronEnergies() const;
@@ -157,21 +59,14 @@ namespace Excimontec {
 		std::vector<double> getDynamicsExcitonMSDV() const;
 		std::vector<double> getDynamicsElectronMSDV() const;
 		std::vector<double> getDynamicsHoleMSDV() const;
-		std::vector<KMC_Lattice::Event> getEvents() const;
 		std::vector<double> getExcitonDiffusionData() const;
 		std::vector<int> getExcitonHopLengthData() const;
 		std::vector<double> getExcitonLifetimeData() const;
 		double getInternalField() const;
-		std::vector<double> getSiteEnergies(const short site_type) const;
-		std::vector<std::string> getChargeExtractionMap(const bool charge) const;
-		std::vector<int> getToFTransientCounts() const;
-		std::vector<double> getToFTransientEnergies() const;
-		std::vector<double> getToFTransientTimes() const;
-		std::vector<double> getToFTransientVelocities() const;
-		std::vector<double> getTransitTimeData() const;
 		int getN_excitons_created() const;
 		int getN_excitons_created(const short site_type) const;
-		int getN_excitons_dissociated() const;
+		int getN_singlet_excitons_dissociated() const;
+		int getN_triplet_excitons_dissociated() const;
 		int getN_singlet_excitons_recombined() const;
 		int getN_triplet_excitons_recombined() const;
 		int getN_singlet_singlet_annihilations() const;
@@ -182,12 +77,26 @@ namespace Excimontec {
 		int getN_electrons_created() const;
 		int getN_electrons_collected() const;
 		int getN_electrons_recombined() const;
+		long int getN_events_executed() const;
 		int getN_holes_created() const;
 		int getN_holes_collected() const;
 		int getN_holes_recombined() const;
 		int getN_geminate_recombinations() const;
 		int getN_bimolecular_recombinations() const;
 		int getN_transient_cycles() const;
+		std::string getPreviousEventType() const;
+		std::vector<float> getSiteEnergies(const short site_type) const;
+		float getSiteEnergy(const KMC_Lattice::Coords& coords) const;
+		short getSiteType(const KMC_Lattice::Coords& coords) const;
+		double getSteadyEquilibrationEnergy() const;
+		double getSteadyFermiEnergy() const;
+		double getSteadyMobility() const;
+		double getSteadyTransportEnergy() const;
+		std::vector<int> getToFTransientCounts() const;
+		std::vector<double> getToFTransientEnergies() const;
+		std::vector<double> getToFTransientTimes() const;
+		std::vector<double> getToFTransientVelocities() const;
+		std::vector<double> getTransitTimeData() const;
 		void outputStatus();
 		void reassignSiteEnergies();
 	protected:
@@ -218,7 +127,7 @@ namespace Excimontec {
 			ExcitonEventCalcVars() {}
 
 			ExcitonEventCalcVars(OSC_Sim* sim_ptr) {
-				range = (int)ceil(((sim_ptr->FRET_cutoff > sim_ptr->Exciton_dissociation_cutoff) ? (sim_ptr->FRET_cutoff) : (sim_ptr->Exciton_dissociation_cutoff)) / sim_ptr->lattice.getUnitSize());
+				range = (int)ceil(((sim_ptr->params.FRET_cutoff > sim_ptr->params.Exciton_dissociation_cutoff) ? (sim_ptr->params.FRET_cutoff) : (sim_ptr->params.Exciton_dissociation_cutoff)) / sim_ptr->lattice.getUnitSize());
 				dim = (2 * range + 1);
 				hop_event = Exciton_Hop(sim_ptr);
 				hops_temp.assign(dim*dim*dim, hop_event);
@@ -243,10 +152,10 @@ namespace Excimontec {
 						for (int k = -range; k <= range; k++) {
 							int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
 							distances[index] = sim_ptr->lattice.getUnitSize()*sqrt((double)(i*i + j * j + k * k));
-							if (!((distances[index] - 0.0001) > sim_ptr->Exciton_dissociation_cutoff)) {
+							if (!((distances[index] - 0.0001) > sim_ptr->params.Exciton_dissociation_cutoff)) {
 								isInDissRange[index] = true;
 							}
-							if (!((distances[index] - 0.0001) > sim_ptr->FRET_cutoff)) {
+							if (!((distances[index] - 0.0001) > sim_ptr->params.FRET_cutoff)) {
 								isInFRETRange[index] = true;
 							}
 						}
@@ -274,7 +183,7 @@ namespace Excimontec {
 			PolaronEventCalcVars() {}
 
 			PolaronEventCalcVars(OSC_Sim* sim_ptr) {
-				range = (int)ceil(sim_ptr->Polaron_hopping_cutoff / sim_ptr->lattice.getUnitSize());
+				range = (int)ceil(sim_ptr->params.Polaron_hopping_cutoff / sim_ptr->lattice.getUnitSize());
 				dim = (2 * range + 1);
 				hop_event = Polaron_Hop(sim_ptr);
 				hops_temp.assign(dim*dim*dim, hop_event);
@@ -293,7 +202,7 @@ namespace Excimontec {
 						for (int k = -range; k <= range; k++) {
 							int index = (i + range)*dim*dim + (j + range)*dim + (k + range);
 							distances[index] = sim_ptr->lattice.getUnitSize()*sqrt((double)(i*i + j * j + k * k));
-							if (!((distances[index] - 0.0001) > sim_ptr->Polaron_hopping_cutoff)) {
+							if (!((distances[index] - 0.0001) > sim_ptr->params.Polaron_hopping_cutoff)) {
 								isInRange[index] = true;
 							}
 						}
@@ -302,110 +211,12 @@ namespace Excimontec {
 			}
 		};
 		PolaronEventCalcVars polaron_event_calc_vars;
-
-		// Additional General Parameters
-		double Internal_potential;
-		// Morphology Parameters
-		bool Enable_neat; // Neat takes on donor properties
-		bool Enable_bilayer;
-		int Thickness_donor; // sites
-		int Thickness_acceptor; // sites
-		bool Enable_random_blend;
-		double Acceptor_conc;
-		bool Enable_import_morphology;
-		std::string Morphology_filename;
-		// Test Parameters
-		int N_tests;
-		bool Enable_exciton_diffusion_test;
-		bool Enable_ToF_test;
-		bool ToF_polaron_type;
-		int ToF_initial_polarons;
-		bool Enable_ToF_random_placement;
-		bool Enable_ToF_energy_placement;
-		double ToF_placement_energy;
-		//double ToF_transient_start;
-		//double ToF_transient_end;
-		//int ToF_pnts_per_decade;
-		bool Enable_IQE_test;
-		double IQE_time_cutoff;
-		bool Enable_dynamics_test;
-		bool Enable_dynamics_extraction;
-		double Dynamics_initial_exciton_conc;
-		//double Dynamics_transient_start;
-		//double Dynamics_transient_end;
-		//int Dynamics_pnts_per_decade;
+		// Input Parameters
+		Parameters params;
+		// Additional Derived Parameters
 		double Transient_start;
 		double Transient_end;
 		int Transient_pnts_per_decade;
-		// Exciton Parameters
-		double Exciton_generation_rate_donor;
-		double Exciton_generation_rate_acceptor;
-		double Singlet_lifetime_donor; // seconds
-		double Singlet_lifetime_acceptor; // seconds
-		double Triplet_lifetime_donor; // seconds
-		double Triplet_lifetime_acceptor; // seconds
-		double R_singlet_hopping_donor;
-		double R_singlet_hopping_acceptor;
-		double Singlet_localization_donor;
-		double Singlet_localization_acceptor;
-		double R_triplet_hopping_donor;
-		double R_triplet_hopping_acceptor;
-		double Triplet_localization_donor;
-		double Triplet_localization_acceptor;
-		bool Enable_FRET_triplet_annihilation;
-		double R_exciton_exciton_annihilation_donor;
-		double R_exciton_exciton_annihilation_acceptor;
-		double R_exciton_polaron_annihilation_donor;
-		double R_exciton_polaron_annihilation_acceptor;
-		int FRET_cutoff;
-		double E_exciton_binding_donor;
-		double E_exciton_binding_acceptor;
-		double R_exciton_dissociation_donor;
-		double R_exciton_dissociation_acceptor;
-		int Exciton_dissociation_cutoff; // nm
-		double R_exciton_isc_donor;
-		double R_exciton_isc_acceptor;
-		double R_exciton_risc_donor;
-		double R_exciton_risc_acceptor;
-		double E_exciton_ST_donor;
-		double E_exciton_ST_acceptor;
-		// Polaron Parameters
-		bool Enable_phase_restriction;
-		double R_polaron_hopping_donor;
-		double R_polaron_hopping_acceptor;
-		double Polaron_localization_donor; // nm^-1
-		double Polaron_localization_acceptor; // nm^-1
-		bool Enable_miller_abrahams;
-		bool Enable_marcus;
-		double Reorganization_donor;
-		double Reorganization_acceptor;
-		double R_polaron_recombination;
-		int Polaron_hopping_cutoff; // nm
-		bool Enable_gaussian_polaron_delocalization;
-		double Polaron_delocalization_length;
-		// Additional Lattice Parameters
-		double Homo_donor;
-		double Lumo_donor;
-		double Homo_acceptor;
-		double Lumo_acceptor;
-		bool Enable_gaussian_dos;
-		double Energy_stdev_donor; // eV
-		double Energy_stdev_acceptor; // eV
-		bool Enable_exponential_dos;
-		double Energy_urbach_donor;
-		double Energy_urbach_acceptor;
-		bool Enable_correlated_disorder;
-		double Disorder_correlation_length; // nm
-		bool Enable_gaussian_kernel;
-		bool Enable_power_kernel;
-		int Power_kernel_exponent; // must be negative
-		// Coulomb Calculation Parameters
-		double Dielectric_donor;
-		double Dielectric_acceptor;
-		int Coulomb_cutoff; // nm
-		// Additional Output Files
-		//
-		// Additional Parameters
 		bool isLightOn;
 		double R_exciton_generation_donor;
 		double R_exciton_generation_acceptor;
@@ -427,6 +238,8 @@ namespace Excimontec {
 		std::list<Polaron> electrons;
 		std::list<Polaron> holes;
 		// Event Data Structures
+		std::string previous_event_type = "";
+		double previous_event_time = 0;
 		std::list<Exciton_Creation> exciton_creation_events;
 		std::list<KMC_Lattice::Event*>::const_iterator exciton_creation_it;
 		std::list<Exciton_Hop> exciton_hop_events;
@@ -443,8 +256,6 @@ namespace Excimontec {
 		// Additional Data Structures
 		std::vector<double> Coulomb_table;
 		std::vector<double> E_potential;
-		std::vector<double> site_energies_donor;
-		std::vector<double> site_energies_acceptor;
 		std::vector<std::pair<double, double>> DOS_correlation_data;
 		std::vector<double> exciton_lifetimes;
 		std::vector<double> exciton_diffusion_distances;
@@ -471,15 +282,20 @@ namespace Excimontec {
 		std::vector<int> transient_triplet_counts;
 		std::vector<int> transient_electron_counts;
 		std::vector<int> transient_hole_counts;
+		double Steady_equilibration_energy_sum = 0.0;
+		double Steady_equilibration_time = 0.0;
+		double Transport_energy_weighted_sum = 0.0;
+		double Transport_energy_sum_of_weights = 0.0;
 		// Additional Counters
-		int N_donor_sites;
-		int N_acceptor_sites;
+		int N_donor_sites = 0;
+		int N_acceptor_sites = 0;
 		int N_excitons_created = 0;
 		int N_excitons_created_donor = 0;
 		int N_excitons_created_acceptor = 0;
 		int N_singlet_excitons_recombined = 0;
 		int N_triplet_excitons_recombined = 0;
-		int N_excitons_dissociated = 0;
+		int N_singlet_excitons_dissociated = 0;
+		int N_triplet_excitons_dissociated = 0;
 		int N_singlet_singlet_annihilations = 0;
 		int N_singlet_triplet_annihilations = 0;
 		int N_triplet_triplet_annihilations = 0;
@@ -495,6 +311,7 @@ namespace Excimontec {
 		int N_electrons_recombined = 0;
 		int N_electrons_collected = 0;
 		int N_electrons = 0;
+		long int N_events_executed = 0;
 		int N_holes_created = 0;
 		int N_holes_recombined = 0;
 		int N_holes_collected = 0;
@@ -507,7 +324,7 @@ namespace Excimontec {
 		// Additional Functions
 		double calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const KMC_Lattice::Coords& coords) const;
 		double calculateCoulomb(const bool charge, const KMC_Lattice::Coords& coords) const;
-		KMC_Lattice::Coords calculateExcitonCreationCoords();
+		KMC_Lattice::Coords calculateRandomExcitonCreationCoords();
 		void calculateExcitonEvents(Exciton* exciton_ptr);
 		void calculateObjectListEvents(const std::vector<KMC_Lattice::Object*>& object_ptr_vec);
 		void calculatePolaronEvents(Polaron* polaron_ptr);
@@ -533,14 +350,14 @@ namespace Excimontec {
 		void generateElectron(const KMC_Lattice::Coords& coords, int tag);
 		void generateHole(const KMC_Lattice::Coords& coords, int tag);
 		void generateDynamicsExcitons();
+		void generateSteadyPolarons();
 		void generateToFPolarons();
 		std::list<Exciton>::iterator getExcitonIt(const KMC_Lattice::Object* object_ptr);
 		std::list<Polaron>::iterator getPolaronIt(const KMC_Lattice::Object* object_ptr);
-		double getSiteEnergy(const KMC_Lattice::Coords& coords) const;
-		short getSiteType(const KMC_Lattice::Coords& coords) const;
 		bool initializeArchitecture();
 		void removeExciton(std::list<Exciton>::iterator exciton_it);
 		bool siteContainsHole(const KMC_Lattice::Coords& coords);
+		void updateSteadyData();
 		void updateTransientData();
 	};
 
