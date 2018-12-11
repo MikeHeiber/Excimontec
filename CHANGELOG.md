@@ -77,6 +77,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (ParameterTests) - New tests checking the validity of the parameters when enabling the steady transport test
 - test.cpp - New test function SteadyTransportTests that check the output of the steady transport test
 - test.cpp (ParameterTests) - New tests for attemping to import parameters using an uninitialized or close ifstream
+- OSC_Sim - New overloaded createExciton function that does not specify the creation coordinates and generates them randomly
+- OSC_sim (createExciton(Coords)) - Code to check whether the input coordinates are occupied and producing an error if they are
+- test.cpp (ChargeDynamicsTests) - New tests to check the transient data
+- test.cpp (ExcitonDynamicsTests) - New tests to check exciton relaxation into the tail of a Gaussian DOS, triplet dissociation, and triplet annihilation mechanisms
+- test.cpp (IQETests) - New tests for changes in the number of geminate recombination events under different test conditions
+- test.cpp (ObjectCreationTests) - New tests checking attempts to create an exciton in a fully occupied lattice
+- test.cpp (ParameterTests) - New tests for invalid parameters in the Parameters_Lattice and Parameters_Simulations classes
+- test.cpp (SteadyTransportTests) - New tests for attempts to create more initial polarons that there are donor sites
+- test.cpp (ToFTests) - New tests for attempts to create more initial polarons that there are donor sites
+- test.cpp (ToFTests) - New tests comparing the relaxed mobility and relaxed occupation energy from the transient data against the expected steady state mobility and steady state equilibration energy
 
 ### Changed
 - main.cpp (main) - Refactored code to use the new Parameters class
@@ -109,6 +119,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp - Updated functions to use format from new Parameters_Simulation base class in the latest KMC_Lattice version
 - test.cpp (InterfacialEnergyShiftTests) - Updated site energies to use float datatype instead of double
 - test.cpp (ExcitonDynamicsTests) - Increased the lifetime tests tolerance to reduce lilelihood of test failure
+- main.cpp (main) - Updated results file output to use new getN_singlet_excitons_dissociation and getN_triplet_excitons_dissociated functions instead of the old getN_excitons_dissociated function
+- OSC_Sim (calculateExcitonCreationCoords) - Changed function name to calculateRandomExcitonCreationCoords
+- OSC_Sim (getN_excitons_dissociated) - Replace the function with getN_singlet_excitons_dissociated and getN_triplet_excitons_dissocated allowing the user to get separate stats
+- OSC_Sim (N_excitons_dissociated) - Replace the counter variable with N_singlet_excitons_dissociated and N_triplet_excitons_dissociated to keep separate stats
+- OSC_Sim (executeExcitonDissociation) - Changed event counter by counting the singlet and triplet dissociation events separated using the new counter variables
+- test.cpp - Reduced default test parameters ToF_pnts_per_decade and Dynamics_pnts_per_decade down to 10 from 20 to have a larger time step to average over
+- test.cpp (SteadyTransportTests) - Adjusted N_equilibration_events and N_tests to reduce test time
 
 ### Removed
 - main.cpp (Parameters_main) - the Parameters_main struct because these parameters are now stored on the Parameters class
@@ -121,11 +138,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameters (checkParameters) - Several parameter checks that are now performed by the base Parameters_Simulation class
 test.cpp (ParameterTests) - Several tests that are now handled by the KMC_Lattice submodule
 
-
 ### Fixed
 - OSC_Sim (calculatePolaronEvents) - Update code so an error is not generated if no valid events are calculated because sometimes polarons can be trapped on sites where there are no valid events
 - Parameters (checkParameters) - Bug where the function was not indicating an error when unable to read in the bool value for the Enable_recalc option
 - Parameters (checkParameters) - Bug where the check for enabling of both imported energies and interfacial energy shift was implemented wrong
+- OSC_Sim (getChargeExtractionMap) - Bug where the functionw as skipping output of the 0,0 coordinate data
 
 --------------------------------------------------------------------------------------------------------------------------------
 
