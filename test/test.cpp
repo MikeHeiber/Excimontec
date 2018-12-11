@@ -1347,8 +1347,8 @@ namespace OSC_SimTests {
 		params.Enable_miller_abrahams = true;
 		params.Enable_marcus = false;
 		params.Enable_gaussian_dos = true;
-		params.Params_lattice.Height = 200;
-		params.N_tests = 500;
+		params.Params_lattice.Height = 400;
+		params.N_tests = 1000;
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
@@ -1362,11 +1362,9 @@ namespace OSC_SimTests {
 		counts_data = sim.getToFTransientCounts();
 		auto energy_avg_vec = energy_transient;
 		transform(energy_transient.begin(), energy_transient.end(), counts_data.begin(), energy_avg_vec.begin(), std::divides<double>());
-		auto target_it = --find_if(counts_data.begin(), counts_data.end(), [](int item) {return item <= 100; });
-		int index = (int)distance(counts_data.begin(), target_it);
 		// Check the polaron equilibration energy
 		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
-		counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5; });
+		counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 1000; });
 		auto energy_end_it = energy_avg_vec.begin();
 		advance(energy_end_it, distance(counts_data.begin(), counts_end_it));
 		N_points = 5;
