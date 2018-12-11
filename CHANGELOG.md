@@ -87,6 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (SteadyTransportTests) - New tests for attempts to create more initial polarons that there are donor sites
 - test.cpp (ToFTests) - New tests for attempts to create more initial polarons that there are donor sites
 - test.cpp (ToFTests) - New tests comparing the relaxed mobility and relaxed occupation energy from the transient data against the expected steady state mobility and steady state equilibration energy
+- CONTRIBUTING.md - New file with detailed instructions for how new people can contribute to the project
+- README.md - Link to the CONTRIBUTING.md file
 
 ### Changed
 - main.cpp (main) - Refactored code to use the new Parameters class
@@ -126,6 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (executeExcitonDissociation) - Changed event counter by counting the singlet and triplet dissociation events separated using the new counter variables
 - test.cpp - Reduced default test parameters ToF_pnts_per_decade and Dynamics_pnts_per_decade down to 10 from 20 to have a larger time step to average over
 - test.cpp (SteadyTransportTests) - Adjusted N_equilibration_events and N_tests to reduce test time
+- README.md - Updated status to note that all features are now implemented and have major testing
 
 ### Removed
 - main.cpp (Parameters_main) - the Parameters_main struct because these parameters are now stored on the Parameters class
