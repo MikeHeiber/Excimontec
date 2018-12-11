@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0-rc.1]- 2018-12-11 - Interfacial Energy Shift, Site Energy Import, and Steady State Transport Test Update
+
 ### Added
 - CHANGELOG.md - New file detailing the changes for each release
 - README.md - Link to new Changelog file
@@ -129,6 +131,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp - Reduced default test parameters ToF_pnts_per_decade and Dynamics_pnts_per_decade down to 10 from 20 to have a larger time step to average over
 - test.cpp (SteadyTransportTests) - Adjusted N_equilibration_events and N_tests to reduce test time
 - README.md - Updated status to note that all features are now implemented and have major testing
+- docs - Updated Doxygen documentation
 
 ### Removed
 - main.cpp (Parameters_main) - the Parameters_main struct because these parameters are now stored on the Parameters class

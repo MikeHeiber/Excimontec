@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fret_5fcutoff',['FRET_cutoff',['../struct_excimontec_1_1_parameters___o_p_v.html#aff85f4f38e7f8a6c163171fbece0678d',1,'Excimontec::Parameters_OPV']]]
+  ['fret_5fcutoff',['FRET_cutoff',['../class_excimontec_1_1_parameters.html#a09778936f43fde6d4b60a2d9f9bace86',1,'Excimontec::Parameters']]]
 ];
