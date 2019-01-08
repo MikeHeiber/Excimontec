@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 Michael C. Heiber
+// Copyright (c) 2017-2019 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -79,8 +79,7 @@ namespace Excimontec {
 		R_exciton_generation_acceptor = ((params.Exciton_generation_rate_acceptor*N_acceptor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
 		if (params.Enable_exciton_diffusion_test || params.Enable_IQE_test) {
 			isLightOn = true;
-			//Simulation* sim_ptr = this;
-			Exciton_Creation exciton_creation_event(this);
+			Exciton::Creation exciton_creation_event(this);
 			exciton_creation_event.calculateRateConstant(R_exciton_generation_donor + R_exciton_generation_acceptor);
 			exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor + R_exciton_generation_acceptor);
 			exciton_creation_events.assign(1, exciton_creation_event);
@@ -565,7 +564,7 @@ namespace Excimontec {
 			}
 		}
 		// Exciton Recombination
-		auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton_Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
+		auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton::Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
 		if (exciton_it->getSpin()) {
 			if (getSiteType(object_coords) == (short)1) {
 				rate = 1.0 / params.Singlet_lifetime_donor;
@@ -586,7 +585,7 @@ namespace Excimontec {
 		// Save the calculated exciton recombination event as a possible event
 		possible_events.push_back(&(*recombination_event_it));
 		// Exciton Intersystem Crossing
-		auto intersystem_crossing_event_it = find_if(exciton_intersystem_crossing_events.begin(), exciton_intersystem_crossing_events.end(), [exciton_ptr](Exciton_Intersystem_Crossing& a) { return a.getObjectPtr() == exciton_ptr; });
+		auto intersystem_crossing_event_it = find_if(exciton_intersystem_crossing_events.begin(), exciton_intersystem_crossing_events.end(), [exciton_ptr](Exciton::Intersystem_Crossing& a) { return a.getObjectPtr() == exciton_ptr; });
 		// ISC
 		if (exciton_it->getSpin()) {
 			if (getSiteType(object_coords) == (short)1) {
@@ -627,28 +626,28 @@ namespace Excimontec {
 		}
 		// Copy the chosen temp event to the appropriate main event list and set the target event pointer to the corresponding event from the main list
 		string event_type = event_ptr_target->getEventType();
-		if (event_type.compare(Exciton_Hop::event_type) == 0) {
+		if (event_type.compare(Exciton::Hop::event_type) == 0) {
 			auto hop_list_it = exciton_hop_events.begin();
 			std::advance(hop_list_it, std::distance(excitons.begin(), exciton_it));
-			*hop_list_it = *static_cast<Exciton_Hop*>(event_ptr_target);
+			*hop_list_it = *static_cast<Exciton::Hop*>(event_ptr_target);
 			event_ptr_target = &(*hop_list_it);
 		}
-		else if (event_type.compare(Exciton_Dissociation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Dissociation::event_type) == 0) {
 			auto dissociation_list_it = exciton_dissociation_events.begin();
 			std::advance(dissociation_list_it, std::distance(excitons.begin(), exciton_it));
-			*dissociation_list_it = *static_cast<Exciton_Dissociation*>(event_ptr_target);
+			*dissociation_list_it = *static_cast<Exciton::Dissociation*>(event_ptr_target);
 			event_ptr_target = &(*dissociation_list_it);
 		}
-		else if (event_type.compare(Exciton_Exciton_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Exciton_Annihilation::event_type) == 0) {
 			auto exciton_exciton_annihilation_list_it = exciton_exciton_annihilation_events.begin();
 			std::advance(exciton_exciton_annihilation_list_it, std::distance(excitons.begin(), exciton_it));
-			*exciton_exciton_annihilation_list_it = *static_cast<Exciton_Exciton_Annihilation*>(event_ptr_target);
+			*exciton_exciton_annihilation_list_it = *static_cast<Exciton::Exciton_Annihilation*>(event_ptr_target);
 			event_ptr_target = &(*exciton_exciton_annihilation_list_it);
 		}
-		else if (event_type.compare(Exciton_Polaron_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Polaron_Annihilation::event_type) == 0) {
 			auto exciton_polaron_annihilation_list_it = exciton_polaron_annihilation_events.begin();
 			std::advance(exciton_polaron_annihilation_list_it, std::distance(excitons.begin(), exciton_it));
-			*exciton_polaron_annihilation_list_it = *static_cast<Exciton_Polaron_Annihilation*>(event_ptr_target);
+			*exciton_polaron_annihilation_list_it = *static_cast<Exciton::Polaron_Annihilation*>(event_ptr_target);
 			event_ptr_target = &(*exciton_polaron_annihilation_list_it);
 		}
 		// Set the chosen event
@@ -788,7 +787,7 @@ namespace Excimontec {
 		// Holes are extracted at the top of the lattice (z=Height)
 		if ((params.Enable_dynamics_test && params.Enable_dynamics_extraction) || (!params.Enable_dynamics_test && !params.Enable_steady_transport_test)) {
 			bool Extraction_valid = false;
-			list<Polaron_Extraction>::iterator extraction_event_it;
+			list<Polaron::Extraction>::iterator extraction_event_it;
 			double distance;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
@@ -835,8 +834,8 @@ namespace Excimontec {
 		}
 		// Copy the chosen temp event to the appropriate main event list and set the target event pointer to the corresponding event from the main list
 		string event_type = event_ptr_target->getEventType();
-		if (event_type.compare(Polaron_Hop::event_type) == 0) {
-			list<Polaron_Hop>::iterator hop_list_it;
+		if (event_type.compare(Polaron::Hop::event_type) == 0) {
+			list<Polaron::Hop>::iterator hop_list_it;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
 				hop_list_it = electron_hop_events.begin();
@@ -847,11 +846,11 @@ namespace Excimontec {
 				hop_list_it = hole_hop_events.begin();
 				std::advance(hop_list_it, std::distance(holes.begin(), polaron_it));
 			}
-			*hop_list_it = *static_cast<Polaron_Hop*>(event_ptr_target);
+			*hop_list_it = *static_cast<Polaron::Hop*>(event_ptr_target);
 			event_ptr_target = &(*hop_list_it);
 		}
-		else if (event_type.compare(Polaron_Recombination::event_type) == 0) {
-			list<Polaron_Recombination>::iterator recombination_list_it;
+		else if (event_type.compare(Polaron::Recombination::event_type) == 0) {
+			list<Polaron::Recombination>::iterator recombination_list_it;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
 				recombination_list_it = polaron_recombination_events.begin();
@@ -865,7 +864,7 @@ namespace Excimontec {
 				Error_found = true;
 				return;
 			}
-			*recombination_list_it = *static_cast<Polaron_Recombination*>(event_ptr_target);
+			*recombination_list_it = *static_cast<Polaron::Recombination*>(event_ptr_target);
 			event_ptr_target = &(*recombination_list_it);
 		}
 		// Set the chosen event
@@ -1368,7 +1367,7 @@ namespace Excimontec {
 			N_triplet_excitons_dissociated++;
 		}
 		N_excitons--;
-		
+
 		// Update event list
 		auto recalc_objects = findRecalcObjects(coords_initial, coords_dest);
 		calculateObjectListEvents(recalc_objects);
@@ -1601,34 +1600,34 @@ namespace Excimontec {
 		// Update simulation time
 		setTime((*event_it)->getExecutionTime());
 		// Execute the chosen event
-		if (event_type.compare(Exciton_Creation::event_type) == 0) {
+		if (event_type.compare(Exciton::Creation::event_type) == 0) {
 			return executeExcitonCreation();
 		}
-		else if (event_type.compare(Exciton_Hop::event_type) == 0) {
+		else if (event_type.compare(Exciton::Hop::event_type) == 0) {
 			return executeExcitonHop(event_it);
 		}
-		else if (event_type.compare(Exciton_Recombination::event_type) == 0) {
+		else if (event_type.compare(Exciton::Recombination::event_type) == 0) {
 			return executeExcitonRecombination(event_it);
 		}
-		else if (event_type.compare(Exciton_Dissociation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Dissociation::event_type) == 0) {
 			return executeExcitonDissociation(event_it);
 		}
-		else if (event_type.compare(Exciton_Exciton_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Exciton_Annihilation::event_type) == 0) {
 			return executeExcitonExcitonAnnihilation(event_it);
 		}
-		else if (event_type.compare(Exciton_Polaron_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Polaron_Annihilation::event_type) == 0) {
 			return executeExcitonPolaronAnnihilation(event_it);
 		}
-		else if (event_type.compare(Exciton_Intersystem_Crossing::event_type) == 0) {
+		else if (event_type.compare(Exciton::Intersystem_Crossing::event_type) == 0) {
 			return executeExcitonIntersystemCrossing(event_it);
 		}
-		else if (event_type.compare(Polaron_Hop::event_type) == 0) {
+		else if (event_type.compare(Polaron::Hop::event_type) == 0) {
 			return executePolaronHop(event_it);
 		}
-		else if (event_type.compare(Polaron_Recombination::event_type) == 0) {
+		else if (event_type.compare(Polaron::Recombination::event_type) == 0) {
 			return executePolaronRecombination(event_it);
 		}
-		else if (event_type.compare(Polaron_Extraction::event_type) == 0) {
+		else if (event_type.compare(Polaron::Extraction::event_type) == 0) {
 			return executePolaronExtraction(event_it);
 		}
 		else {
@@ -1794,18 +1793,18 @@ namespace Excimontec {
 		addObject(object_ptr);
 		// Add placeholder events to the corresponding lists
 		Simulation* sim_ptr = this;
-		Exciton_Hop hop_event(sim_ptr);
+		Exciton::Hop hop_event(sim_ptr);
 		exciton_hop_events.push_back(hop_event);
-		Exciton_Recombination recombination_event(sim_ptr);
+		Exciton::Recombination recombination_event(sim_ptr);
 		recombination_event.setObjectPtr(object_ptr);
 		exciton_recombination_events.push_back(recombination_event);
-		Exciton_Dissociation dissociation_event(sim_ptr);
+		Exciton::Dissociation dissociation_event(sim_ptr);
 		exciton_dissociation_events.push_back(dissociation_event);
-		Exciton_Exciton_Annihilation exciton_exciton_annihilation_event(sim_ptr);
+		Exciton::Exciton_Annihilation exciton_exciton_annihilation_event(sim_ptr);
 		exciton_exciton_annihilation_events.push_back(exciton_exciton_annihilation_event);
-		Exciton_Polaron_Annihilation exciton_polaron_annihilation_event(sim_ptr);
+		Exciton::Polaron_Annihilation exciton_polaron_annihilation_event(sim_ptr);
 		exciton_polaron_annihilation_events.push_back(exciton_polaron_annihilation_event);
-		Exciton_Intersystem_Crossing intersystem_crossing_event(sim_ptr);
+		Exciton::Intersystem_Crossing intersystem_crossing_event(sim_ptr);
 		intersystem_crossing_event.setObjectPtr(object_ptr);
 		exciton_intersystem_crossing_events.push_back(intersystem_crossing_event);
 		// Update exciton counters
@@ -1840,11 +1839,11 @@ namespace Excimontec {
 		addObject(object_ptr);
 		// Add placeholder events to the corresponding lists
 		Simulation* sim_ptr = this;
-		Polaron_Hop hop_event(sim_ptr);
+		Polaron::Hop hop_event(sim_ptr);
 		electron_hop_events.push_back(hop_event);
-		Polaron_Recombination recombination_event(sim_ptr);
+		Polaron::Recombination recombination_event(sim_ptr);
 		polaron_recombination_events.push_back(recombination_event);
-		Polaron_Extraction extraction_event(sim_ptr);
+		Polaron::Extraction extraction_event(sim_ptr);
 		extraction_event.setObjectPtr(object_ptr);
 		electron_extraction_events.push_back(extraction_event);
 		// Update exciton counters
@@ -1872,9 +1871,9 @@ namespace Excimontec {
 		addObject(object_ptr);
 		// Add placeholder events to the corresponding lists
 		Simulation* sim_ptr = this;
-		Polaron_Hop hop_event(sim_ptr);
+		Polaron::Hop hop_event(sim_ptr);
 		hole_hop_events.push_back(hop_event);
-		Polaron_Extraction extraction_event(sim_ptr);
+		Polaron::Extraction extraction_event(sim_ptr);
 		extraction_event.setObjectPtr(object_ptr);
 		hole_extraction_events.push_back(extraction_event);
 		// Update exciton counters
@@ -2273,7 +2272,7 @@ namespace Excimontec {
 				else {
 					ss << x << "," << y << "," << 0;
 				}
-				output_data[i+1] = ss.str();
+				output_data[i + 1] = ss.str();
 				ss.str("");
 			}
 		}
@@ -2287,7 +2286,7 @@ namespace Excimontec {
 				else {
 					ss << x << "," << y << "," << 0;
 				}
-				output_data[i+1] = ss.str();
+				output_data[i + 1] = ss.str();
 				ss.str("");
 			}
 		}

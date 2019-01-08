@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 Michael C. Heiber
+// Copyright (c) 2017-2019 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -106,14 +106,14 @@ namespace Excimontec {
 		struct ExcitonEventCalcVars {
 			int range;
 			int dim;
-			Exciton_Hop hop_event;
-			std::vector<Exciton_Hop> hops_temp;
-			Exciton_Dissociation diss_event;
-			std::vector<Exciton_Dissociation> dissociations_temp;
-			Exciton_Exciton_Annihilation ee_annihilation_event;
-			std::vector<Exciton_Exciton_Annihilation> ee_annihilations_temp;
-			Exciton_Polaron_Annihilation ep_annihilation_event;
-			std::vector<Exciton_Polaron_Annihilation> ep_annihilations_temp;
+			Exciton::Hop hop_event;
+			std::vector<Exciton::Hop> hops_temp;
+			Exciton::Dissociation diss_event;
+			std::vector<Exciton::Dissociation> dissociations_temp;
+			Exciton::Exciton_Annihilation ee_annihilation_event;
+			std::vector<Exciton::Exciton_Annihilation> ee_annihilations_temp;
+			Exciton::Polaron_Annihilation ep_annihilation_event;
+			std::vector<Exciton::Polaron_Annihilation> ep_annihilations_temp;
 			std::vector<bool> hops_valid;
 			std::vector<bool> dissociations_valid;
 			std::vector<bool> ee_annihilations_valid;
@@ -129,13 +129,13 @@ namespace Excimontec {
 			ExcitonEventCalcVars(OSC_Sim* sim_ptr) {
 				range = (int)ceil(((sim_ptr->params.FRET_cutoff > sim_ptr->params.Exciton_dissociation_cutoff) ? (sim_ptr->params.FRET_cutoff) : (sim_ptr->params.Exciton_dissociation_cutoff)) / sim_ptr->lattice.getUnitSize());
 				dim = (2 * range + 1);
-				hop_event = Exciton_Hop(sim_ptr);
+				hop_event = Exciton::Hop(sim_ptr);
 				hops_temp.assign(dim*dim*dim, hop_event);
-				diss_event = Exciton_Dissociation(sim_ptr);
+				diss_event = Exciton::Dissociation(sim_ptr);
 				dissociations_temp.assign(dim*dim*dim, diss_event);
-				ee_annihilation_event = Exciton_Exciton_Annihilation(sim_ptr);
+				ee_annihilation_event = Exciton::Exciton_Annihilation(sim_ptr);
 				ee_annihilations_temp.assign(dim*dim*dim, ee_annihilation_event);
-				ep_annihilation_event = Exciton_Polaron_Annihilation(sim_ptr);
+				ep_annihilation_event = Exciton::Polaron_Annihilation(sim_ptr);
 				ep_annihilations_temp.assign(dim*dim*dim, ep_annihilation_event);
 				hops_valid.assign(dim*dim*dim, false);
 				dissociations_valid.assign(dim*dim*dim, false);
@@ -168,10 +168,10 @@ namespace Excimontec {
 		struct PolaronEventCalcVars {
 			int range;
 			int dim;
-			Polaron_Hop hop_event;
-			std::vector<Polaron_Hop> hops_temp;
-			Polaron_Recombination rec_event;
-			std::vector<Polaron_Recombination> recombinations_temp;
+			Polaron::Hop hop_event;
+			std::vector<Polaron::Hop> hops_temp;
+			Polaron::Recombination rec_event;
+			std::vector<Polaron::Recombination> recombinations_temp;
 			std::vector<bool> hops_valid;
 			std::vector<bool> recombinations_valid;
 			// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
@@ -185,9 +185,9 @@ namespace Excimontec {
 			PolaronEventCalcVars(OSC_Sim* sim_ptr) {
 				range = (int)ceil(sim_ptr->params.Polaron_hopping_cutoff / sim_ptr->lattice.getUnitSize());
 				dim = (2 * range + 1);
-				hop_event = Polaron_Hop(sim_ptr);
+				hop_event = Polaron::Hop(sim_ptr);
 				hops_temp.assign(dim*dim*dim, hop_event);
-				rec_event = Polaron_Recombination(sim_ptr);
+				rec_event = Polaron::Recombination(sim_ptr);
 				recombinations_temp.assign(dim*dim*dim, rec_event);
 				hops_valid.assign(dim*dim*dim, false);
 				recombinations_valid.assign(dim*dim*dim, false);
@@ -240,19 +240,19 @@ namespace Excimontec {
 		// Event Data Structures
 		std::string previous_event_type = "";
 		double previous_event_time = 0;
-		std::list<Exciton_Creation> exciton_creation_events;
+		std::list<Exciton::Creation> exciton_creation_events;
 		std::list<KMC_Lattice::Event*>::const_iterator exciton_creation_it;
-		std::list<Exciton_Hop> exciton_hop_events;
-		std::list<Exciton_Recombination> exciton_recombination_events;
-		std::list<Exciton_Dissociation> exciton_dissociation_events;
-		std::list<Exciton_Exciton_Annihilation> exciton_exciton_annihilation_events;
-		std::list<Exciton_Polaron_Annihilation> exciton_polaron_annihilation_events;
-		std::list<Exciton_Intersystem_Crossing> exciton_intersystem_crossing_events;
-		std::list<Polaron_Hop> electron_hop_events;
-		std::list<Polaron_Hop> hole_hop_events;
-		std::list<Polaron_Recombination> polaron_recombination_events;
-		std::list<Polaron_Extraction> electron_extraction_events;
-		std::list<Polaron_Extraction> hole_extraction_events;
+		std::list<Exciton::Hop> exciton_hop_events;
+		std::list<Exciton::Recombination> exciton_recombination_events;
+		std::list<Exciton::Dissociation> exciton_dissociation_events;
+		std::list<Exciton::Exciton_Annihilation> exciton_exciton_annihilation_events;
+		std::list<Exciton::Polaron_Annihilation> exciton_polaron_annihilation_events;
+		std::list<Exciton::Intersystem_Crossing> exciton_intersystem_crossing_events;
+		std::list<Polaron::Hop> electron_hop_events;
+		std::list<Polaron::Hop> hole_hop_events;
+		std::list<Polaron::Recombination> polaron_recombination_events;
+		std::list<Polaron::Extraction> electron_extraction_events;
+		std::list<Polaron::Extraction> hole_extraction_events;
 		// Additional Data Structures
 		std::vector<double> Coulomb_table;
 		std::vector<double> E_potential;
