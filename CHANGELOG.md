@@ -9,14 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- .gitignore - Numerous ignore statements to ignore files generated during build operations and from Microsoft Visual Studio
 - CHANGELOG.md - Notes about all changes in this release
+- README.md - Build instructions link for Windows users
 
 ### Changed
+- KMC_Lattice - Updated KMC_Lattice submodule to latest version (v2.0.0-rc.2)
+- Many files - Updated copyright statement years to 2017-2019
 - Doxyfile - Project version number to v1.0.0
 - Doxyfile - Settings so that markdown files will no longer be included in the documentation
 - docs - Updated docs using Doxygen v1.8.15
+- Exciton - Nested derived Exciton event classes into the Exciton class
 - main.cpp - Update version string to v1.0.0-rc.2 in preparation for next release
+- OSC_sim - Updated functions to use new object event class nesting format
 - OSC_Sim (generateExciton) - Moved definition of default tag value to the header file function declaration statement
+- Polaron - Nested derived Polaron event classes into the Polaron class
+- README.md - Replaced version badges with text links
 
 ### Removed
 - docs - Markdown files from the Doxygen documentation build
@@ -30,7 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (reassignSiteEnergies) - Spelling mistake in error message
 - Parameters (checkParameters) - Spelling mistakes in error messages
 - Parameters (importParameters) - Spelling mistakes in error messages
-
 
 ## [v1.0.0-rc.1]- 2018-12-11 - Interfacial Energy Shift, Site Energy Import, and Steady State Transport Test Update
 
