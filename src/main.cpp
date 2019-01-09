@@ -18,7 +18,7 @@ using namespace Excimontec;
 using namespace KMC_Lattice;
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0.0-rc.1";
+	string version = "v1.0.0-rc.2";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
@@ -501,7 +501,6 @@ int main(int argc, char *argv[]) {
 				}
 				else {
 					transientfile << ",NaN,NaN" << endl;
-					//transientfile << ",NaN" << endl;
 				}
 			}
 			transientfile.close();
@@ -603,7 +602,7 @@ int main(int argc, char *argv[]) {
 			analysisfile << "Transport energy = " << vector_avg(transport_energies) << " ± " << vector_stdev(transport_energies) << " eV.\n\n";
 			analysisfile << "CSV formatted results:\n";
 			analysisfile << "Temperature (K),Charge Carrier Density (cm^-3),Electric Field (V cm^-1),Mobility Avg. (cm^2 V^-1 cm^-1),Mobility Stdev. (cm^2 V^-1 cm^-1),";
-			analysisfile << "Fermi Energy Avg. (eV), Fermi Energy Stdev. (eV), Equilibration Energy Avg. (eV), Equilibration Energy Stdev. (eV),Tranport Energy Avg. (eV),Transport Energy Stdev. (eV)\n";
+			analysisfile << "Fermi Energy Avg. (eV), Fermi Energy Stdev. (eV), Equilibration Energy Avg. (eV), Equilibration Energy Stdev. (eV),Transport Energy Avg. (eV),Transport Energy Stdev. (eV)\n";
 			analysisfile << sim.getTemp() << "," << params.Steady_carrier_density << "," << fabs(sim.getInternalField()) << "," << vector_avg(mobilities) << "," << vector_stdev(mobilities) << ",";
 			analysisfile << vector_avg(fermi_energies) << "," << vector_stdev(fermi_energies) << "," << vector_avg(equilibration_energies) << "," << vector_stdev(equilibration_energies) << ",";
 			analysisfile << vector_avg(transport_energies) << "," << vector_stdev(transport_energies) << endl;

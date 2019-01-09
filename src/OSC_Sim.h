@@ -118,9 +118,9 @@ namespace Excimontec {
 			std::vector<bool> dissociations_valid;
 			std::vector<bool> ee_annihilations_valid;
 			std::vector<bool> ep_annihilations_valid;
-			// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+			// precalculated distances vector that contains the distances to nearby sites used for event execution time calculations
 			std::vector<double> distances;
-			// pre-calculated isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
+			// precalculated isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
 			std::vector<bool> isInDissRange;
 			std::vector<bool> isInFRETRange;
 
@@ -141,12 +141,12 @@ namespace Excimontec {
 				dissociations_valid.assign(dim*dim*dim, false);
 				ee_annihilations_valid.assign(dim*dim*dim, false);
 				ep_annihilations_valid.assign(dim*dim*dim, false);
-				// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+				// precalculated distances vector that contains the distances to nearby sites used for event execution time calculations
 				distances.assign(dim*dim*dim, 0.0);
-				// pre-calculated isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
+				// precalculated isInDissRange and isInFRETRange vectors that contains booleans to indicate whether the nearby sites are within range for the different exciton events to be possible.
 				isInDissRange.assign(dim*dim*dim, false);
 				isInFRETRange.assign(dim*dim*dim, false);
-				// Initiaize distances, isInDissRange, and isInFRETRange vectors
+				// Initialize distances, isInDissRange, and isInFRETRange vectors
 				for (int i = -range; i <= range; i++) {
 					for (int j = -range; j <= range; j++) {
 						for (int k = -range; k <= range; k++) {
@@ -174,10 +174,10 @@ namespace Excimontec {
 			std::vector<Polaron::Recombination> recombinations_temp;
 			std::vector<bool> hops_valid;
 			std::vector<bool> recombinations_valid;
-			// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+			// precalculated distances vector that contains the distances to nearby sites used for event execution time calculations
 			std::vector<double> distances;
 			std::vector<double> E_deltas;
-			// pre-calculated isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
+			// precalculated isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
 			std::vector<bool> isInRange;
 
 			PolaronEventCalcVars() {}
@@ -191,12 +191,12 @@ namespace Excimontec {
 				recombinations_temp.assign(dim*dim*dim, rec_event);
 				hops_valid.assign(dim*dim*dim, false);
 				recombinations_valid.assign(dim*dim*dim, false);
-				// pre-calculated distances vector that contains the distances to nearby sites used for event execution time calculations
+				// precalculated distances vector that contains the distances to nearby sites used for event execution time calculations
 				distances.assign(dim*dim*dim, 0.0);
 				E_deltas.assign(dim*dim*dim, 0.0);
-				// pre-calculated isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
+				// precalculated isInRange vector that contains booleans to indicate if the nearby sites are within range for polaron events to be possible.
 				isInRange.assign(dim*dim*dim, false);
-				// Intialize distances and isInRange vectors
+				// Initialize distances and isInRange vectors
 				for (int i = -range; i <= range; i++) {
 					for (int j = -range; j <= range; j++) {
 						for (int k = -range; k <= range; k++) {
@@ -346,7 +346,7 @@ namespace Excimontec {
 		bool executePolaronRecombination(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
 		bool executePolaronExtraction(const std::list<KMC_Lattice::Event*>::const_iterator event_it);
 		KMC_Lattice::Coords generateExciton();
-		void generateExciton(const KMC_Lattice::Coords& coords, const bool spin, int tag);
+		void generateExciton(const KMC_Lattice::Coords& coords, const bool spin, int tag = 0);
 		void generateElectron(const KMC_Lattice::Coords& coords, int tag);
 		void generateHole(const KMC_Lattice::Coords& coords, int tag);
 		void generateDynamicsExcitons();

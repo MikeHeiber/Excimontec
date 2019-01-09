@@ -154,7 +154,7 @@ namespace Excimontec {
 		calculateObjectListEvents(object_its);
 	}
 
-	double OSC_Sim::calculateCoulomb(const list<Polaron>::const_iterator polaron_it, const Coords& coords) const {
+	double OSC_Sim::calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const KMC_Lattice::Coords& coords) const {
 		double Energy = 0;
 		double distance;
 		int distance_sq_lat;
@@ -203,7 +203,7 @@ namespace Excimontec {
 		return Energy;
 	}
 
-	double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const {
+	double OSC_Sim::calculateCoulomb(const bool charge, const KMC_Lattice::Coords& coords) const {
 		double Energy = 0;
 		double distance;
 		int distance_sq_lat;
@@ -350,7 +350,7 @@ namespace Excimontec {
 			}
 			N_tries++;
 		}
-		// Method of choosing one of the empty sites.  This is slowish becuase it must loop through all sites first
+		// Method of choosing one of the empty sites.  This is slowish because it must loop through all sites first
 		// Get vector of possible creation sites
 		vector<long int> indices;
 		indices.reserve(lattice.getLength()*lattice.getWidth()*lattice.getHeight());
@@ -461,7 +461,7 @@ namespace Excimontec {
 										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params.R_exciton_polaron_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
 									}
 								}
-								// Save the calculated exciton-polaorn annihilation event as a possible event
+								// Save the calculated exciton-polaron annihilation event as a possible event
 								possible_events.push_back(&exciton_event_calc_vars.ep_annihilations_temp[index]);
 							}
 						}
@@ -487,7 +487,7 @@ namespace Excimontec {
 								}
 								// Triplet
 								else {
-									// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
+									// Increase E_delta by the singlet-triplet energy splitting if the exciton is a triplet
 									E_delta += params.E_exciton_ST_donor;
 									if (params.Enable_miller_abrahams) {
 										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
@@ -512,7 +512,7 @@ namespace Excimontec {
 								}
 								// Triplet
 								else {
-									// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
+									// Increase E_delta by the singlet-triplet energy splitting if the exciton is a triplet
 									E_delta += params.E_exciton_ST_acceptor;
 									if (params.Enable_miller_abrahams) {
 										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_acceptor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
@@ -860,7 +860,7 @@ namespace Excimontec {
 			else {
 				setObjectEvent(polaron_ptr, nullptr);
 				cout << getId() << ": Error! Only electrons can initiate polaron recombination." << endl;
-				setErrorMessage("Error calcualting polaron events. Only electrons can initiate polaron recombination.");
+				setErrorMessage("Error calculating polaron events. Only electrons can initiate polaron recombination.");
 				Error_found = true;
 				return;
 			}
@@ -1055,7 +1055,7 @@ namespace Excimontec {
 		generateExciton(coords, spin, 0);
 	}
 
-	void OSC_Sim::createExciton(const Coords& coords, const bool spin) {
+	void OSC_Sim::createExciton(const KMC_Lattice::Coords& coords, const bool spin) {
 		// Check that coords are valid
 		try {
 			lattice.getSiteIndex(coords);
@@ -1298,7 +1298,7 @@ namespace Excimontec {
 				// Locate corresponding hop event
 				auto hop_list_it = electron_hop_events.begin();
 				std::advance(hop_list_it, std::distance(electrons.begin(), polaron_it));
-				// Locate corresponding extractio event
+				// Locate corresponding extraction event
 				auto extraction_list_it = electron_extraction_events.begin();
 				std::advance(extraction_list_it, std::distance(electrons.begin(), polaron_it));
 				// Delete electron
@@ -1781,7 +1781,7 @@ namespace Excimontec {
 		return coords;
 	}
 
-	void OSC_Sim::generateExciton(const Coords& coords, const bool spin, int tag = 0) {
+	void OSC_Sim::generateExciton(const KMC_Lattice::Coords& coords, const bool spin, int tag) {
 		if (tag == 0) {
 			tag = N_excitons_created + 1;
 		}
@@ -1952,7 +1952,7 @@ namespace Excimontec {
 		partial_sort(coords_vect.begin(), coords_vect.begin() + N_polarons, coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
 			return (getSiteEnergy(a) < getSiteEnergy(b));
 		});
-		// Resize vector to only keep the the lowest energy sites
+		// Resize vector to only keep the lowest energy sites
 		coords_vect.resize(N_polarons);
 		// Generate the polarons in the selected sites
 		for (auto const &item : coords_vect) {
@@ -2031,7 +2031,7 @@ namespace Excimontec {
 			sort(coords_vect.begin(), coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
 				return fabs(getSiteEnergy(a) - params.ToF_placement_energy) < fabs(getSiteEnergy(b) - params.ToF_placement_energy);
 			});
-			// Resize vector to only keep the the lowest energy sites
+			// Resize vector to only keep the lowest energy sites
 			coords_vect.resize(params.ToF_initial_polarons);
 		}
 		// Generate the polarons in the selected sites
@@ -2605,7 +2605,7 @@ namespace Excimontec {
 			// Check that valid lattice dimensions were read from the file
 			if (length <= 0 || width <= 0 || height <= 0) {
 				cout << getId() << ": Error importing the site energies, lattice dimensions imported from file are not valid." << endl;
-				setErrorMessage("Error importing the site energies, lattice dimensions importd from file are not valid.");
+				setErrorMessage("Error importing the site energies, lattice dimensions imported from file are not valid.");
 				Error_found = true;
 				return;
 			}
@@ -2703,7 +2703,7 @@ namespace Excimontec {
 		// ToF_positions_prev is a vector that stores the z-position of each charge carrier at the previous time interval
 		// Transient_xxxx_energies_prev is a vector that stores the energies of each object at the previous time interval
 		if (params.Enable_ToF_test) {
-			// Cheeck if enough time has passed since the previous time interval
+			// Check if enough time has passed since the previous time interval
 			if ((getTime() - Transient_creation_time) > transient_times[Transient_index_prev + 1]) {
 				int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / Transient_step_size);
 				if (index >= (int)transient_times.size()) {

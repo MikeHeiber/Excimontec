@@ -3,13 +3,13 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "Exciton.cpp", "_exciton_8cpp.html", null ],
     [ "Exciton.h", "_exciton_8h.html", [
       [ "Exciton", "class_excimontec_1_1_exciton.html", "class_excimontec_1_1_exciton" ],
-      [ "Exciton_Creation", "class_excimontec_1_1_exciton___creation.html", "class_excimontec_1_1_exciton___creation" ],
-      [ "Exciton_Hop", "class_excimontec_1_1_exciton___hop.html", "class_excimontec_1_1_exciton___hop" ],
-      [ "Exciton_Recombination", "class_excimontec_1_1_exciton___recombination.html", "class_excimontec_1_1_exciton___recombination" ],
-      [ "Exciton_Dissociation", "class_excimontec_1_1_exciton___dissociation.html", "class_excimontec_1_1_exciton___dissociation" ],
-      [ "Exciton_Intersystem_Crossing", "class_excimontec_1_1_exciton___intersystem___crossing.html", "class_excimontec_1_1_exciton___intersystem___crossing" ],
-      [ "Exciton_Exciton_Annihilation", "class_excimontec_1_1_exciton___exciton___annihilation.html", "class_excimontec_1_1_exciton___exciton___annihilation" ],
-      [ "Exciton_Polaron_Annihilation", "class_excimontec_1_1_exciton___polaron___annihilation.html", "class_excimontec_1_1_exciton___polaron___annihilation" ]
+      [ "Creation", "class_excimontec_1_1_exciton_1_1_creation.html", "class_excimontec_1_1_exciton_1_1_creation" ],
+      [ "Hop", "class_excimontec_1_1_exciton_1_1_hop.html", "class_excimontec_1_1_exciton_1_1_hop" ],
+      [ "Recombination", "class_excimontec_1_1_exciton_1_1_recombination.html", "class_excimontec_1_1_exciton_1_1_recombination" ],
+      [ "Dissociation", "class_excimontec_1_1_exciton_1_1_dissociation.html", "class_excimontec_1_1_exciton_1_1_dissociation" ],
+      [ "Intersystem_Crossing", "class_excimontec_1_1_exciton_1_1_intersystem___crossing.html", "class_excimontec_1_1_exciton_1_1_intersystem___crossing" ],
+      [ "Exciton_Annihilation", "class_excimontec_1_1_exciton_1_1_exciton___annihilation.html", "class_excimontec_1_1_exciton_1_1_exciton___annihilation" ],
+      [ "Polaron_Annihilation", "class_excimontec_1_1_exciton_1_1_polaron___annihilation.html", "class_excimontec_1_1_exciton_1_1_polaron___annihilation" ]
     ] ],
     [ "main.cpp", "main_8cpp.html", "main_8cpp" ],
     [ "OSC_Sim.cpp", "_o_s_c___sim_8cpp.html", null ],
@@ -24,8 +24,8 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "Polaron.cpp", "_polaron_8cpp.html", null ],
     [ "Polaron.h", "_polaron_8h.html", [
       [ "Polaron", "class_excimontec_1_1_polaron.html", "class_excimontec_1_1_polaron" ],
-      [ "Polaron_Hop", "class_excimontec_1_1_polaron___hop.html", "class_excimontec_1_1_polaron___hop" ],
-      [ "Polaron_Recombination", "class_excimontec_1_1_polaron___recombination.html", "class_excimontec_1_1_polaron___recombination" ],
-      [ "Polaron_Extraction", "class_excimontec_1_1_polaron___extraction.html", "class_excimontec_1_1_polaron___extraction" ]
+      [ "Hop", "class_excimontec_1_1_polaron_1_1_hop.html", "class_excimontec_1_1_polaron_1_1_hop" ],
+      [ "Recombination", "class_excimontec_1_1_polaron_1_1_recombination.html", "class_excimontec_1_1_polaron_1_1_recombination" ],
+      [ "Extraction", "class_excimontec_1_1_polaron_1_1_extraction.html", "class_excimontec_1_1_polaron_1_1_extraction" ]
     ] ]
 ];
