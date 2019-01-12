@@ -526,7 +526,7 @@ namespace OSC_SimTests {
 		EXPECT_FALSE(sim.getErrorStatus());
 		// Check invalid coords
 		// Invalid coords should return NAN
-		EXPECT_TRUE(std::isnan(sim.getSiteEnergy(Coords(-1, -1, -1)));
+		EXPECT_TRUE(std::isnan(sim.getSiteEnergy(Coords(-1, -1, -1))));
 		EXPECT_TRUE(sim.getErrorStatus());
 		// Get site type
 		// Reset simulation object
