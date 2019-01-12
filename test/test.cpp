@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 Michael C. Heiber
+// Copyright (c) 2017-2019 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -152,7 +152,7 @@ namespace OSC_SimTests {
 		// Check that importing an uninitialized ifstream throws an exception
 		ifstream uninitialized_ifstream;
 		EXPECT_THROW(params.importParameters(uninitialized_ifstream), invalid_argument);
-		// Check that importing a closed parameter file throws an excepton
+		// Check that importing a closed parameter file throws an exception
 		ifstream closed_file("parameters_default.txt");
 		closed_file.close();
 		EXPECT_THROW(params.importParameters(closed_file), invalid_argument);
@@ -180,7 +180,7 @@ namespace OSC_SimTests {
 				ifstream params_file3("./test/parameters_misspell_1.txt");
 				EXPECT_FALSE(params.importParameters(params_file3));
 				params_file3.close();
-				// Reset mispelled tue back to true
+				// Reset misspelled tue back to true
 				item.replace(item.find("tue"), 3, "true");
 			}
 			// Find parameter lines with a boolean false value
@@ -193,7 +193,7 @@ namespace OSC_SimTests {
 				ifstream params_file4("./test/parameters_misspell_2.txt");
 				EXPECT_FALSE(params.importParameters(params_file4));
 				params_file4.close();
-				// Reset mispelled fase back to false
+				// Reset misspelled fase back to false
 				item.replace(item.find("fase"), 4, "false");
 			}
 		}
@@ -515,6 +515,34 @@ namespace OSC_SimTests {
 		EXPECT_EQ(params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height*1e-21, sim.getVolume());
 	}
 
+	TEST_F(OSC_SimTest, GetSiteTests) {
+		// Get site energy
+		sim = OSC_Sim();
+		auto params = params_default;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check valid coords
+		// Default parameters have no disorder, so site energies should all be zero.
+		EXPECT_DOUBLE_EQ(0.0, sim.getSiteEnergy(Coords(0, 0, 0)));
+		EXPECT_FALSE(sim.getErrorStatus());
+		// Check invalid coords
+		// Invalid coords should return NAN
+		EXPECT_TRUE(std::isnan(sim.getSiteEnergy(Coords(-1, -1, -1))));
+		EXPECT_TRUE(sim.getErrorStatus());
+		// Get site type
+		// Reset simulation object
+		sim = OSC_Sim();
+		params = params_default;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check valid coords
+		// Default parameters use a neat morphology, so all sites should be donor (type=1).
+		EXPECT_EQ(1, sim.getSiteType(Coords(0, 0, 0)));
+		EXPECT_FALSE(sim.getErrorStatus());
+		// Check invalid coords
+		// Invalid coords should return -1
+		EXPECT_EQ(-1, sim.getSiteType(Coords(-1, -1, -1)));
+		EXPECT_TRUE(sim.getErrorStatus());
+	}
+
 	TEST_F(OSC_SimTest, ObjectCreationTests) {
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -810,7 +838,7 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(params.N_tests, sim.getN_holes_created(), 5);
 		EXPECT_NEAR(params.N_tests, sim.getN_electrons_recombined(), 5);
 		EXPECT_NEAR(params.N_tests, sim.getN_holes_recombined(), 5);
-		// Check transient data outout
+		// Check transient data output
 		auto time_data = sim.getDynamicsTransientTimes();
 		auto electron_data = sim.getDynamicsTransientElectrons();
 		auto hole_data = sim.getDynamicsTransientHoles();
@@ -867,7 +895,7 @@ namespace OSC_SimTests {
 			transient_data[i] = make_pair(time_data[i], (double)triplet_data[i] / (sim.getVolume()*sim.getN_transient_cycles()));
 		}
 		EXPECT_NEAR(1 / exp(1), interpolateData(transient_data, params.Triplet_lifetime_donor) / params.Dynamics_initial_exciton_conc, 1e-1 / exp(1));
-		// Singet exciton relaxation test with Gaussian DOS
+		// Singlet exciton relaxation test with Gaussian DOS
 		sim = OSC_Sim();
 		params = params_default;
 		params.Params_lattice.Length = 200;
@@ -995,7 +1023,7 @@ namespace OSC_SimTests {
 		dim = 3.0;
 		expected_ratio = sqrt(2.0 / dim)*(tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0));
 		EXPECT_NEAR(expected_ratio, vector_avg(ratio_data), 2e-2*expected_ratio);
-		// Check that gaussian energetic disorder reduces the diffusion length
+		// Check that Gaussian energetic disorder reduces the diffusion length
 		sim = OSC_Sim();
 		params = params_default;
 		params.N_tests = 2000;
@@ -1319,12 +1347,12 @@ namespace OSC_SimTests {
 		auto velocities = sim.getToFTransientVelocities();
 		auto counts_data = sim.getToFTransientCounts();
 		int N_points = 5;
-		auto counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5;});
+		auto counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5; });
 		auto velocities_end_it = velocities.begin();
 		advance(velocities_end_it, distance(counts_data.begin(), counts_end_it));
 		double mobility_relaxed_avg = abs((accumulate(velocities_end_it - N_points, velocities_end_it, 0.0) / accumulate(counts_end_it - N_points, counts_end_it, 0)) / sim.getInternalField());
 		EXPECT_NEAR(expected_mobility, mobility_relaxed_avg, 1.5e-1*expected_mobility);
-		// Hole ToF test with marcus hopping
+		// Hole ToF test with Marcus hopping
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = false;
 		params.Enable_marcus = true;

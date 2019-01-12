@@ -1,5 +1,5 @@
 <!---
-# Copyright (c) 2017-2018 Michael C. Heiber
+# Copyright (c) 2017-2019 Michael C. Heiber
 # This source file is part of the Excimontec project, which is subject to the MIT License.
 # For more information, see the LICENSE file that accompanies this software.
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -35,9 +35,7 @@ If you would like to contribute to the development of this project, please see t
 
 ## Current Status
 
-The current release, Excimontec
-[![GitHub (pre-)release](https://img.shields.io/github/release/MikeHeiber/Excimontec/all.svg?style=flat-square)](https://github.com/MikeHeiber/Excimontec/releases)
-, is built with KMC_Lattice [![GitHub (pre-)release](https://img.shields.io/github/release/MikeHeiber/KMC_Lattice/all.svg?style=flat-square)](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+The current release, [Excimontec v1.0.0-rc.2](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.0.0-rc.2](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
 All features that are to be included in v1.0 are now implemented and have undergone significant testing. 
 However, there may still be bugs that need to be fixed, so please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 
@@ -79,12 +77,15 @@ We cannot provide pre-built binaries for your system.
 Contact your HPC admin to determine the protocols for building MPI applications on your HPC system. 
 In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/) or the [PGI compiler](https://www.pgroup.com/). 
 
-If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. For development and preliminary simulation tests, sometimes it is more efficient to run on your own workstation instead of an HPC system. More information about common MPI packages can be found here:
+If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. 
+For development and preliminary simulation tests, sometimes it is more efficient to run on your own workstation instead of an HPC system. 
+More information about common MPI packages can be found here:
 - Open MPI, http://www.open-mpi.org/
 - MPICH, http://www.mpich.org/
 - MVAPICH, http://mvapich.cse.ohio-state.edu/
 
-Once you have an MPI library installed, to build Excimontec, first copy the Excimontec directory to your machine.  On Linux this can be done using the command,
+Once you have an MPI library installed, to build Excimontec, first copy the Excimontec directory to your machine. 
+On Linux this can be done using the command,
 
 ```git clone --recurse-submodules https://github.com/MikeHeiber/Excimontec```
 
@@ -96,7 +97,8 @@ and finally build the software package with the default makefile.
 
 ```make```
 
-In the default makefile, compilation flags have been set for the GCC and PGI compilers.  If you are using another compiler, you will need to edit the makefile and define your own compiler options.
+In the default makefile, compilation flags have been set for the GCC and PGI compilers. 
+If you are using another compiler, you will need to edit the makefile and define your own compiler options.
 Once the normal build is successful, you should test Excimontec on your own hardware using the unit and system tests provided before you use the tool. 
 Build the testing executable by running
 
@@ -105,6 +107,8 @@ Build the testing executable by running
 Once the test build is complete, run the test suite.
 
 ```./test/Excimontec_tests.exe```
+
+On Windows, one can configure Microsoft Visual Studio with Microsoft MPI to also build and run this software, by following [these instructions](https://blogs.technet.microsoft.com/windowshpc/2015/02/02/how-to-compile-and-run-a-simple-ms-mpi-program/).
 
 Please report any build or testing errors in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2017-2018 Michael C. Heiber
+# Copyright (c) 2017-2019 Michael C. Heiber
 # This source file is part of the Excimontec project, which is subject to the MIT License.
 # For more information, see the LICENSE file that accompanies this software.
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec

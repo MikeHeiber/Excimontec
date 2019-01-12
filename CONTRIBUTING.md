@@ -22,17 +22,17 @@ The code owners will review new issues, provide feedback, and decide if and when
     
     Especially for code additions needed to add new features, it is important to discuss your implementation ideas with the code owners to ensure that the software design is relatively well thought out and fits with the rest of the codebase.
     
-2. Create fork of the Excimontec repo on your account.
+2. Create fork of the Excimontec repository on your account.
 
     Click the "Fork" button near the top of any Excimontec Github webpage.
 
-3. Connect your fork to the upstream repo
+3. Connect your fork to the upstream repository
 
     ```
     git remote add upstream https://github.com/MikeHeiber/Excimontec.git
     ```
 
-4. Clone your forked Excimontec repo to your local machine.
+4. Clone your forked Excimontec repository to your local machine.
 
     ```
     git clone --recurse-submodules https://github.com/YOUR_USERNAME/Excimontec
@@ -67,7 +67,7 @@ The code owners will review new issues, provide feedback, and decide if and when
     ./test/Excimontec_tests.exe
     ```
     
-10. Push your local changes to your forked Excimontec repo.
+10. Push your local changes to your forked Excimontec repository.
 
     ```
     git push origin feature-new-thing

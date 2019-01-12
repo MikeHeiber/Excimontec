@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 Michael C. Heiber
+// Copyright (c) 2017-2019 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -147,7 +147,7 @@ namespace Excimontec {
 			return false;
 		}
 		if (!(Singlet_lifetime_donor > 0) || !(Singlet_lifetime_acceptor > 0)) {
-			cout << "Error! The singlet exciotn lifetime of the donor and acceptor must be greater than zero." << endl;
+			cout << "Error! The singlet exciton lifetime of the donor and acceptor must be greater than zero." << endl;
 			return false;
 		}
 		if (!(Triplet_lifetime_donor > 0) || !(Triplet_lifetime_acceptor > 0)) {
@@ -208,7 +208,7 @@ namespace Excimontec {
 		}
 		// Check polaron parameters
 		if (!(R_polaron_hopping_donor > 0) || !(R_polaron_hopping_acceptor > 0)) {
-			cout << "Error! The polaron hopping rate of the donor and accpetor must be greater than zero." << endl;
+			cout << "Error! The polaron hopping rate of the donor and acceptor must be greater than zero." << endl;
 			return false;
 		}
 		if (!(Polaron_localization_donor > 0) || !(Polaron_localization_acceptor > 0)) {
@@ -771,7 +771,7 @@ namespace Excimontec {
 		}
 		catch (invalid_argument& exception) {
 			cout << exception.what() << endl;
-			cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
+			cout << "Error setting Correlated Disorder Gaussian kernel options" << endl;
 			Error_found = true;
 		}
 		i++;
@@ -781,7 +781,7 @@ namespace Excimontec {
 		}
 		catch (invalid_argument& exception) {
 			cout << exception.what() << endl;
-			cout << "Error setting Correlated Disorder gaussian kernel options" << endl;
+			cout << "Error setting Correlated Disorder Gaussian kernel options" << endl;
 			Error_found = true;
 		}
 		i++;

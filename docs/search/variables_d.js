@@ -1,8 +1,24 @@
 var searchData=
 [
-  ['singlet_5flifetime_5facceptor',['Singlet_lifetime_acceptor',['../class_excimontec_1_1_parameters.html#a5401ecd891e0685ee95a3daa423e0f3e',1,'Excimontec::Parameters']]],
-  ['singlet_5flifetime_5fdonor',['Singlet_lifetime_donor',['../class_excimontec_1_1_parameters.html#a83c25435aa1e154ee39ef4bac36ea83b',1,'Excimontec::Parameters']]],
-  ['singlet_5flocalization_5facceptor',['Singlet_localization_acceptor',['../class_excimontec_1_1_parameters.html#ad331d92ad4c0c897e820541353c630bf',1,'Excimontec::Parameters']]],
-  ['singlet_5flocalization_5fdonor',['Singlet_localization_donor',['../class_excimontec_1_1_parameters.html#a9d0a76bc2befbeab3909915143af50c2',1,'Excimontec::Parameters']]],
-  ['steady_5fcarrier_5fdensity',['Steady_carrier_density',['../class_excimontec_1_1_parameters.html#af20a885c4e55748a3d241575a8d6b87e',1,'Excimontec::Parameters']]]
+  ['r_5fexciton_5fdissociation_5facceptor',['R_exciton_dissociation_acceptor',['../class_excimontec_1_1_parameters.html#aa44d42efa65ebde473aee6758e2eb17a',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fdissociation_5fdonor',['R_exciton_dissociation_donor',['../class_excimontec_1_1_parameters.html#a256faf5dffc5b94456ce196bc192e8c6',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fexciton_5fannihilation_5facceptor',['R_exciton_exciton_annihilation_acceptor',['../class_excimontec_1_1_parameters.html#af81495eda7cb80c3c1fbc4b6aed36acc',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fexciton_5fannihilation_5fdonor',['R_exciton_exciton_annihilation_donor',['../class_excimontec_1_1_parameters.html#a0d923c8a105b1a0fdc2b97a06b0d2b27',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fisc_5facceptor',['R_exciton_isc_acceptor',['../class_excimontec_1_1_parameters.html#a74b3b27f43e94471c05cdac146f61b28',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fisc_5fdonor',['R_exciton_isc_donor',['../class_excimontec_1_1_parameters.html#af91b295a7f32d8695a9ea50211163a82',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fpolaron_5fannihilation_5facceptor',['R_exciton_polaron_annihilation_acceptor',['../class_excimontec_1_1_parameters.html#af8fdd6457ffc8539c0b9a3ee4a80c358',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5fpolaron_5fannihilation_5fdonor',['R_exciton_polaron_annihilation_donor',['../class_excimontec_1_1_parameters.html#a0c43c3e1add7b46ba1384b84fa846d97',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5frisc_5facceptor',['R_exciton_risc_acceptor',['../class_excimontec_1_1_parameters.html#aaef1f58bf93fcc84e2841f388fabb7d7',1,'Excimontec::Parameters']]],
+  ['r_5fexciton_5frisc_5fdonor',['R_exciton_risc_donor',['../class_excimontec_1_1_parameters.html#a8f9452affa718ef2120f394fed1cc945',1,'Excimontec::Parameters']]],
+  ['r_5fpolaron_5fhopping_5facceptor',['R_polaron_hopping_acceptor',['../class_excimontec_1_1_parameters.html#a9f28353d34bfac39b666dca0efa6bcc6',1,'Excimontec::Parameters']]],
+  ['r_5fpolaron_5fhopping_5fdonor',['R_polaron_hopping_donor',['../class_excimontec_1_1_parameters.html#a23e1133a87fcc213c481daf802b52c8b',1,'Excimontec::Parameters']]],
+  ['r_5fpolaron_5frecombination',['R_polaron_recombination',['../class_excimontec_1_1_parameters.html#aeec5bb2a38970d1055bb52f821b4d335',1,'Excimontec::Parameters']]],
+  ['r_5fsinglet_5fhopping_5facceptor',['R_singlet_hopping_acceptor',['../class_excimontec_1_1_parameters.html#abef26ba12ff412a8004025675036100e',1,'Excimontec::Parameters']]],
+  ['r_5fsinglet_5fhopping_5fdonor',['R_singlet_hopping_donor',['../class_excimontec_1_1_parameters.html#a7d0dd85916847c374cbfaa4ffd6f8a92',1,'Excimontec::Parameters']]],
+  ['r_5ftriplet_5fhopping_5facceptor',['R_triplet_hopping_acceptor',['../class_excimontec_1_1_parameters.html#a3019332d8bfc7927917a1e87bc4ee77d',1,'Excimontec::Parameters']]],
+  ['r_5ftriplet_5fhopping_5fdonor',['R_triplet_hopping_donor',['../class_excimontec_1_1_parameters.html#a85a9f729450a8c45daafaa336b276400',1,'Excimontec::Parameters']]],
+  ['rate_5fconstant',['rate_constant',['../class_k_m_c___lattice_1_1_event.html#a98949e76ebd2f2350efdbd5bc5d34c92',1,'KMC_Lattice::Event']]],
+  ['recalc_5fcutoff',['Recalc_cutoff',['../class_k_m_c___lattice_1_1_parameters___simulation.html#a11e2d4ccb4debeb97f539b696ecc2268',1,'KMC_Lattice::Parameters_Simulation']]],
+  ['reorganization_5facceptor',['Reorganization_acceptor',['../class_excimontec_1_1_parameters.html#a1d335b9e230a64ca612de318bc2a1900',1,'Excimontec::Parameters']]],
+  ['reorganization_5fdonor',['Reorganization_donor',['../class_excimontec_1_1_parameters.html#a3e4c94a2cec4b5b9d2b8a0b3e6eba746',1,'Excimontec::Parameters']]]
 ];

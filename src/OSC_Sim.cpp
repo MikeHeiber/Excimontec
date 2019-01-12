@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018 Michael C. Heiber
+// Copyright (c) 2017-2019 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -79,8 +79,7 @@ namespace Excimontec {
 		R_exciton_generation_acceptor = ((params.Exciton_generation_rate_acceptor*N_acceptor_sites*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize())*1e-7*lattice.getUnitSize();
 		if (params.Enable_exciton_diffusion_test || params.Enable_IQE_test) {
 			isLightOn = true;
-			//Simulation* sim_ptr = this;
-			Exciton_Creation exciton_creation_event(this);
+			Exciton::Creation exciton_creation_event(this);
 			exciton_creation_event.calculateRateConstant(R_exciton_generation_donor + R_exciton_generation_acceptor);
 			exciton_creation_event.calculateExecutionTime(R_exciton_generation_donor + R_exciton_generation_acceptor);
 			exciton_creation_events.assign(1, exciton_creation_event);
@@ -155,7 +154,7 @@ namespace Excimontec {
 		calculateObjectListEvents(object_its);
 	}
 
-	double OSC_Sim::calculateCoulomb(const list<Polaron>::const_iterator polaron_it, const Coords& coords) const {
+	double OSC_Sim::calculateCoulomb(const std::list<Polaron>::const_iterator polaron_it, const KMC_Lattice::Coords& coords) const {
 		double Energy = 0;
 		double distance;
 		int distance_sq_lat;
@@ -204,7 +203,7 @@ namespace Excimontec {
 		return Energy;
 	}
 
-	double OSC_Sim::calculateCoulomb(const bool charge, const Coords& coords) const {
+	double OSC_Sim::calculateCoulomb(const bool charge, const KMC_Lattice::Coords& coords) const {
 		double Energy = 0;
 		double distance;
 		int distance_sq_lat;
@@ -351,7 +350,7 @@ namespace Excimontec {
 			}
 			N_tries++;
 		}
-		// Method of choosing one of the empty sites.  This is slowish becuase it must loop through all sites first
+		// Method of choosing one of the empty sites.  This is slowish because it must loop through all sites first
 		// Get vector of possible creation sites
 		vector<long int> indices;
 		indices.reserve(lattice.getLength()*lattice.getWidth()*lattice.getHeight());
@@ -462,7 +461,7 @@ namespace Excimontec {
 										exciton_event_calc_vars.ep_annihilations_temp[index].calculateRateConstant(params.R_exciton_polaron_annihilation_acceptor, exciton_event_calc_vars.distances[index]);
 									}
 								}
-								// Save the calculated exciton-polaorn annihilation event as a possible event
+								// Save the calculated exciton-polaron annihilation event as a possible event
 								possible_events.push_back(&exciton_event_calc_vars.ep_annihilations_temp[index]);
 							}
 						}
@@ -488,7 +487,7 @@ namespace Excimontec {
 								}
 								// Triplet
 								else {
-									// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
+									// Increase E_delta by the singlet-triplet energy splitting if the exciton is a triplet
 									E_delta += params.E_exciton_ST_donor;
 									if (params.Enable_miller_abrahams) {
 										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_donor, params.Triplet_localization_donor, exciton_event_calc_vars.distances[index], E_delta);
@@ -513,7 +512,7 @@ namespace Excimontec {
 								}
 								// Triplet
 								else {
-									// Increase E_delta by the singlet-triplet energy splititng if the exciton is a triplet
+									// Increase E_delta by the singlet-triplet energy splitting if the exciton is a triplet
 									E_delta += params.E_exciton_ST_acceptor;
 									if (params.Enable_miller_abrahams) {
 										exciton_event_calc_vars.dissociations_temp[index].calculateRateConstant(params.R_exciton_dissociation_acceptor, params.Triplet_localization_acceptor, exciton_event_calc_vars.distances[index], E_delta);
@@ -565,7 +564,7 @@ namespace Excimontec {
 			}
 		}
 		// Exciton Recombination
-		auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton_Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
+		auto recombination_event_it = find_if(exciton_recombination_events.begin(), exciton_recombination_events.end(), [exciton_ptr](Exciton::Recombination& a) { return a.getObjectPtr() == exciton_ptr; });
 		if (exciton_it->getSpin()) {
 			if (getSiteType(object_coords) == (short)1) {
 				rate = 1.0 / params.Singlet_lifetime_donor;
@@ -586,7 +585,7 @@ namespace Excimontec {
 		// Save the calculated exciton recombination event as a possible event
 		possible_events.push_back(&(*recombination_event_it));
 		// Exciton Intersystem Crossing
-		auto intersystem_crossing_event_it = find_if(exciton_intersystem_crossing_events.begin(), exciton_intersystem_crossing_events.end(), [exciton_ptr](Exciton_Intersystem_Crossing& a) { return a.getObjectPtr() == exciton_ptr; });
+		auto intersystem_crossing_event_it = find_if(exciton_intersystem_crossing_events.begin(), exciton_intersystem_crossing_events.end(), [exciton_ptr](Exciton::Intersystem_Crossing& a) { return a.getObjectPtr() == exciton_ptr; });
 		// ISC
 		if (exciton_it->getSpin()) {
 			if (getSiteType(object_coords) == (short)1) {
@@ -627,28 +626,28 @@ namespace Excimontec {
 		}
 		// Copy the chosen temp event to the appropriate main event list and set the target event pointer to the corresponding event from the main list
 		string event_type = event_ptr_target->getEventType();
-		if (event_type.compare(Exciton_Hop::event_type) == 0) {
+		if (event_type.compare(Exciton::Hop::event_type) == 0) {
 			auto hop_list_it = exciton_hop_events.begin();
 			std::advance(hop_list_it, std::distance(excitons.begin(), exciton_it));
-			*hop_list_it = *static_cast<Exciton_Hop*>(event_ptr_target);
+			*hop_list_it = *static_cast<Exciton::Hop*>(event_ptr_target);
 			event_ptr_target = &(*hop_list_it);
 		}
-		else if (event_type.compare(Exciton_Dissociation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Dissociation::event_type) == 0) {
 			auto dissociation_list_it = exciton_dissociation_events.begin();
 			std::advance(dissociation_list_it, std::distance(excitons.begin(), exciton_it));
-			*dissociation_list_it = *static_cast<Exciton_Dissociation*>(event_ptr_target);
+			*dissociation_list_it = *static_cast<Exciton::Dissociation*>(event_ptr_target);
 			event_ptr_target = &(*dissociation_list_it);
 		}
-		else if (event_type.compare(Exciton_Exciton_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Exciton_Annihilation::event_type) == 0) {
 			auto exciton_exciton_annihilation_list_it = exciton_exciton_annihilation_events.begin();
 			std::advance(exciton_exciton_annihilation_list_it, std::distance(excitons.begin(), exciton_it));
-			*exciton_exciton_annihilation_list_it = *static_cast<Exciton_Exciton_Annihilation*>(event_ptr_target);
+			*exciton_exciton_annihilation_list_it = *static_cast<Exciton::Exciton_Annihilation*>(event_ptr_target);
 			event_ptr_target = &(*exciton_exciton_annihilation_list_it);
 		}
-		else if (event_type.compare(Exciton_Polaron_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Polaron_Annihilation::event_type) == 0) {
 			auto exciton_polaron_annihilation_list_it = exciton_polaron_annihilation_events.begin();
 			std::advance(exciton_polaron_annihilation_list_it, std::distance(excitons.begin(), exciton_it));
-			*exciton_polaron_annihilation_list_it = *static_cast<Exciton_Polaron_Annihilation*>(event_ptr_target);
+			*exciton_polaron_annihilation_list_it = *static_cast<Exciton::Polaron_Annihilation*>(event_ptr_target);
 			event_ptr_target = &(*exciton_polaron_annihilation_list_it);
 		}
 		// Set the chosen event
@@ -788,7 +787,7 @@ namespace Excimontec {
 		// Holes are extracted at the top of the lattice (z=Height)
 		if ((params.Enable_dynamics_test && params.Enable_dynamics_extraction) || (!params.Enable_dynamics_test && !params.Enable_steady_transport_test)) {
 			bool Extraction_valid = false;
-			list<Polaron_Extraction>::iterator extraction_event_it;
+			list<Polaron::Extraction>::iterator extraction_event_it;
 			double distance;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
@@ -835,8 +834,8 @@ namespace Excimontec {
 		}
 		// Copy the chosen temp event to the appropriate main event list and set the target event pointer to the corresponding event from the main list
 		string event_type = event_ptr_target->getEventType();
-		if (event_type.compare(Polaron_Hop::event_type) == 0) {
-			list<Polaron_Hop>::iterator hop_list_it;
+		if (event_type.compare(Polaron::Hop::event_type) == 0) {
+			list<Polaron::Hop>::iterator hop_list_it;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
 				hop_list_it = electron_hop_events.begin();
@@ -847,11 +846,11 @@ namespace Excimontec {
 				hop_list_it = hole_hop_events.begin();
 				std::advance(hop_list_it, std::distance(holes.begin(), polaron_it));
 			}
-			*hop_list_it = *static_cast<Polaron_Hop*>(event_ptr_target);
+			*hop_list_it = *static_cast<Polaron::Hop*>(event_ptr_target);
 			event_ptr_target = &(*hop_list_it);
 		}
-		else if (event_type.compare(Polaron_Recombination::event_type) == 0) {
-			list<Polaron_Recombination>::iterator recombination_list_it;
+		else if (event_type.compare(Polaron::Recombination::event_type) == 0) {
+			list<Polaron::Recombination>::iterator recombination_list_it;
 			// If electron, charge is false
 			if (!polaron_it->getCharge()) {
 				recombination_list_it = polaron_recombination_events.begin();
@@ -861,11 +860,11 @@ namespace Excimontec {
 			else {
 				setObjectEvent(polaron_ptr, nullptr);
 				cout << getId() << ": Error! Only electrons can initiate polaron recombination." << endl;
-				setErrorMessage("Error calcualting polaron events. Only electrons can initiate polaron recombination.");
+				setErrorMessage("Error calculating polaron events. Only electrons can initiate polaron recombination.");
 				Error_found = true;
 				return;
 			}
-			*recombination_list_it = *static_cast<Polaron_Recombination*>(event_ptr_target);
+			*recombination_list_it = *static_cast<Polaron::Recombination*>(event_ptr_target);
 			event_ptr_target = &(*recombination_list_it);
 		}
 		// Set the chosen event
@@ -1056,7 +1055,7 @@ namespace Excimontec {
 		generateExciton(coords, spin, 0);
 	}
 
-	void OSC_Sim::createExciton(const Coords& coords, const bool spin) {
+	void OSC_Sim::createExciton(const KMC_Lattice::Coords& coords, const bool spin) {
 		// Check that coords are valid
 		try {
 			lattice.getSiteIndex(coords);
@@ -1299,7 +1298,7 @@ namespace Excimontec {
 				// Locate corresponding hop event
 				auto hop_list_it = electron_hop_events.begin();
 				std::advance(hop_list_it, std::distance(electrons.begin(), polaron_it));
-				// Locate corresponding extractio event
+				// Locate corresponding extraction event
 				auto extraction_list_it = electron_extraction_events.begin();
 				std::advance(extraction_list_it, std::distance(electrons.begin(), polaron_it));
 				// Delete electron
@@ -1368,7 +1367,7 @@ namespace Excimontec {
 			N_triplet_excitons_dissociated++;
 		}
 		N_excitons--;
-		
+
 		// Update event list
 		auto recalc_objects = findRecalcObjects(coords_initial, coords_dest);
 		calculateObjectListEvents(recalc_objects);
@@ -1601,34 +1600,34 @@ namespace Excimontec {
 		// Update simulation time
 		setTime((*event_it)->getExecutionTime());
 		// Execute the chosen event
-		if (event_type.compare(Exciton_Creation::event_type) == 0) {
+		if (event_type.compare(Exciton::Creation::event_type) == 0) {
 			return executeExcitonCreation();
 		}
-		else if (event_type.compare(Exciton_Hop::event_type) == 0) {
+		else if (event_type.compare(Exciton::Hop::event_type) == 0) {
 			return executeExcitonHop(event_it);
 		}
-		else if (event_type.compare(Exciton_Recombination::event_type) == 0) {
+		else if (event_type.compare(Exciton::Recombination::event_type) == 0) {
 			return executeExcitonRecombination(event_it);
 		}
-		else if (event_type.compare(Exciton_Dissociation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Dissociation::event_type) == 0) {
 			return executeExcitonDissociation(event_it);
 		}
-		else if (event_type.compare(Exciton_Exciton_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Exciton_Annihilation::event_type) == 0) {
 			return executeExcitonExcitonAnnihilation(event_it);
 		}
-		else if (event_type.compare(Exciton_Polaron_Annihilation::event_type) == 0) {
+		else if (event_type.compare(Exciton::Polaron_Annihilation::event_type) == 0) {
 			return executeExcitonPolaronAnnihilation(event_it);
 		}
-		else if (event_type.compare(Exciton_Intersystem_Crossing::event_type) == 0) {
+		else if (event_type.compare(Exciton::Intersystem_Crossing::event_type) == 0) {
 			return executeExcitonIntersystemCrossing(event_it);
 		}
-		else if (event_type.compare(Polaron_Hop::event_type) == 0) {
+		else if (event_type.compare(Polaron::Hop::event_type) == 0) {
 			return executePolaronHop(event_it);
 		}
-		else if (event_type.compare(Polaron_Recombination::event_type) == 0) {
+		else if (event_type.compare(Polaron::Recombination::event_type) == 0) {
 			return executePolaronRecombination(event_it);
 		}
-		else if (event_type.compare(Polaron_Extraction::event_type) == 0) {
+		else if (event_type.compare(Polaron::Extraction::event_type) == 0) {
 			return executePolaronExtraction(event_it);
 		}
 		else {
@@ -1782,30 +1781,29 @@ namespace Excimontec {
 		return coords;
 	}
 
-	void OSC_Sim::generateExciton(const Coords& coords, const bool spin, int tag = 0) {
+	void OSC_Sim::generateExciton(const KMC_Lattice::Coords& coords, const bool spin, int tag) {
 		if (tag == 0) {
 			tag = N_excitons_created + 1;
 		}
 		// Create the new exciton and add it to the simulation
-		Exciton exciton_new(getTime(), tag, coords);
-		exciton_new.setSpin(spin); // Generated exciton is in singlet state
+		Exciton exciton_new(getTime(), tag, coords, spin);
 		excitons.push_back(exciton_new);
 		Object* object_ptr = &excitons.back();
 		addObject(object_ptr);
 		// Add placeholder events to the corresponding lists
 		Simulation* sim_ptr = this;
-		Exciton_Hop hop_event(sim_ptr);
+		Exciton::Hop hop_event(sim_ptr);
 		exciton_hop_events.push_back(hop_event);
-		Exciton_Recombination recombination_event(sim_ptr);
+		Exciton::Recombination recombination_event(sim_ptr);
 		recombination_event.setObjectPtr(object_ptr);
 		exciton_recombination_events.push_back(recombination_event);
-		Exciton_Dissociation dissociation_event(sim_ptr);
+		Exciton::Dissociation dissociation_event(sim_ptr);
 		exciton_dissociation_events.push_back(dissociation_event);
-		Exciton_Exciton_Annihilation exciton_exciton_annihilation_event(sim_ptr);
+		Exciton::Exciton_Annihilation exciton_exciton_annihilation_event(sim_ptr);
 		exciton_exciton_annihilation_events.push_back(exciton_exciton_annihilation_event);
-		Exciton_Polaron_Annihilation exciton_polaron_annihilation_event(sim_ptr);
+		Exciton::Polaron_Annihilation exciton_polaron_annihilation_event(sim_ptr);
 		exciton_polaron_annihilation_events.push_back(exciton_polaron_annihilation_event);
-		Exciton_Intersystem_Crossing intersystem_crossing_event(sim_ptr);
+		Exciton::Intersystem_Crossing intersystem_crossing_event(sim_ptr);
 		intersystem_crossing_event.setObjectPtr(object_ptr);
 		exciton_intersystem_crossing_events.push_back(intersystem_crossing_event);
 		// Update exciton counters
@@ -1840,11 +1838,11 @@ namespace Excimontec {
 		addObject(object_ptr);
 		// Add placeholder events to the corresponding lists
 		Simulation* sim_ptr = this;
-		Polaron_Hop hop_event(sim_ptr);
+		Polaron::Hop hop_event(sim_ptr);
 		electron_hop_events.push_back(hop_event);
-		Polaron_Recombination recombination_event(sim_ptr);
+		Polaron::Recombination recombination_event(sim_ptr);
 		polaron_recombination_events.push_back(recombination_event);
-		Polaron_Extraction extraction_event(sim_ptr);
+		Polaron::Extraction extraction_event(sim_ptr);
 		extraction_event.setObjectPtr(object_ptr);
 		electron_extraction_events.push_back(extraction_event);
 		// Update exciton counters
@@ -1872,9 +1870,9 @@ namespace Excimontec {
 		addObject(object_ptr);
 		// Add placeholder events to the corresponding lists
 		Simulation* sim_ptr = this;
-		Polaron_Hop hop_event(sim_ptr);
+		Polaron::Hop hop_event(sim_ptr);
 		hole_hop_events.push_back(hop_event);
-		Polaron_Extraction extraction_event(sim_ptr);
+		Polaron::Extraction extraction_event(sim_ptr);
 		extraction_event.setObjectPtr(object_ptr);
 		hole_extraction_events.push_back(extraction_event);
 		// Update exciton counters
@@ -1953,7 +1951,7 @@ namespace Excimontec {
 		partial_sort(coords_vect.begin(), coords_vect.begin() + N_polarons, coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
 			return (getSiteEnergy(a) < getSiteEnergy(b));
 		});
-		// Resize vector to only keep the the lowest energy sites
+		// Resize vector to only keep the lowest energy sites
 		coords_vect.resize(N_polarons);
 		// Generate the polarons in the selected sites
 		for (auto const &item : coords_vect) {
@@ -2032,7 +2030,7 @@ namespace Excimontec {
 			sort(coords_vect.begin(), coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
 				return fabs(getSiteEnergy(a) - params.ToF_placement_energy) < fabs(getSiteEnergy(b) - params.ToF_placement_energy);
 			});
-			// Resize vector to only keep the the lowest energy sites
+			// Resize vector to only keep the lowest energy sites
 			coords_vect.resize(params.ToF_initial_polarons);
 		}
 		// Generate the polarons in the selected sites
@@ -2250,12 +2248,30 @@ namespace Excimontec {
 		return energies;
 	}
 
-	float OSC_Sim::getSiteEnergy(const Coords& coords) const {
-		return sites[lattice.getSiteIndex(coords)].getEnergy();
+	float OSC_Sim::getSiteEnergy(const Coords& coords) {
+		// Check that coords are valid
+		try {
+			return sites[lattice.getSiteIndex(coords)].getEnergy();
+		}
+		catch (out_of_range exception) {
+			cout << "Error! Site energy cannot be retrieved because the input coordinates are invalid." << endl;
+			setErrorMessage("Site energy cannot be retrieved because the input coordinates are invalid.");
+			Error_found = true;
+			return NAN;
+		}	
 	}
 
-	short OSC_Sim::getSiteType(const Coords& coords) const {
-		return sites[lattice.getSiteIndex(coords)].getType();
+	short OSC_Sim::getSiteType(const Coords& coords) {
+		// Check that coords are valid
+		try {
+			return sites[lattice.getSiteIndex(coords)].getType();
+		}
+		catch (out_of_range exception) {
+			cout << "Error! Site type cannot be retrieved because the input coordinates are invalid." << endl;
+			setErrorMessage("Site type cannot be retrieved because the input coordinates are invalid.");
+			Error_found = true;
+			return -1;
+		}
 	}
 
 	vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
@@ -2273,7 +2289,7 @@ namespace Excimontec {
 				else {
 					ss << x << "," << y << "," << 0;
 				}
-				output_data[i+1] = ss.str();
+				output_data[i + 1] = ss.str();
 				ss.str("");
 			}
 		}
@@ -2287,7 +2303,7 @@ namespace Excimontec {
 				else {
 					ss << x << "," << y << "," << 0;
 				}
-				output_data[i+1] = ss.str();
+				output_data[i + 1] = ss.str();
 				ss.str("");
 			}
 		}
@@ -2606,7 +2622,7 @@ namespace Excimontec {
 			// Check that valid lattice dimensions were read from the file
 			if (length <= 0 || width <= 0 || height <= 0) {
 				cout << getId() << ": Error importing the site energies, lattice dimensions imported from file are not valid." << endl;
-				setErrorMessage("Error importing the site energies, lattice dimensions importd from file are not valid.");
+				setErrorMessage("Error importing the site energies, lattice dimensions imported from file are not valid.");
 				Error_found = true;
 				return;
 			}
@@ -2704,7 +2720,7 @@ namespace Excimontec {
 		// ToF_positions_prev is a vector that stores the z-position of each charge carrier at the previous time interval
 		// Transient_xxxx_energies_prev is a vector that stores the energies of each object at the previous time interval
 		if (params.Enable_ToF_test) {
-			// Cheeck if enough time has passed since the previous time interval
+			// Check if enough time has passed since the previous time interval
 			if ((getTime() - Transient_creation_time) > transient_times[Transient_index_prev + 1]) {
 				int index = (int)floor((log10(getTime() - Transient_creation_time) - log10(Transient_start)) / Transient_step_size);
 				if (index >= (int)transient_times.size()) {
