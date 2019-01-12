@@ -531,7 +531,7 @@ namespace OSC_SimTests {
 		// Get site type
 		// Reset simulation object
 		sim = OSC_Sim();
-		auto params = params_default;
+		params = params_default;
 		EXPECT_TRUE(sim.init(params, 0));
 		// Check valid coords
 		// Default parameters use a neat morphology, so all sites should be donor (type=1).
