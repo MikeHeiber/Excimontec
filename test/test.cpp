@@ -515,6 +515,34 @@ namespace OSC_SimTests {
 		EXPECT_EQ(params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height*1e-21, sim.getVolume());
 	}
 
+	TEST_F(OSC_SimTest, GetSiteTests) {
+		// Get site energy
+		sim = OSC_Sim();
+		auto params = params_default;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check valid coords
+		// Default parameters have no disorder, so site energies should all be zero.
+		EXPECT_DOUBLE_EQ(0.0, sim.getSiteEnergy(Coords(0, 0, 0)));
+		EXPECT_FALSE(sim.getErrorStatus());
+		// Check invalid coords
+		// Invalid coords should return NAN
+		EXPECT_TRUE(std::isnan(sim.getSiteEnergy(Coords(-1, -1, -1)));
+		EXPECT_TRUE(sim.getErrorStatus());
+		// Get site type
+		// Reset simulation object
+		sim = OSC_Sim();
+		auto params = params_default;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check valid coords
+		// Default parameters use a neat morphology, so all sites should be donor (type=1).
+		EXPECT_EQ(1, sim.getSiteType(Coords(0, 0, 0)));
+		EXPECT_FALSE(sim.getErrorStatus());
+		// Check invalid coords
+		// Invalid coords should return -1
+		EXPECT_EQ(-1, sim.getSiteEnergy(Coords(-1, -1, -1)));
+		EXPECT_TRUE(sim.getErrorStatus());
+	}
+
 	TEST_F(OSC_SimTest, ObjectCreationTests) {
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1319,7 +1347,7 @@ namespace OSC_SimTests {
 		auto velocities = sim.getToFTransientVelocities();
 		auto counts_data = sim.getToFTransientCounts();
 		int N_points = 5;
-		auto counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5;});
+		auto counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5; });
 		auto velocities_end_it = velocities.begin();
 		advance(velocities_end_it, distance(counts_data.begin(), counts_end_it));
 		double mobility_relaxed_avg = abs((accumulate(velocities_end_it - N_points, velocities_end_it, 0.0) / accumulate(counts_end_it - N_points, counts_end_it, 0)) / sim.getInternalField());
