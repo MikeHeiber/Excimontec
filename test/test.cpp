@@ -539,7 +539,7 @@ namespace OSC_SimTests {
 		EXPECT_FALSE(sim.getErrorStatus());
 		// Check invalid coords
 		// Invalid coords should return -1
-		EXPECT_EQ(-1, sim.getSiteEnergy(Coords(-1, -1, -1)));
+		EXPECT_EQ(-1, sim.getSiteType(Coords(-1, -1, -1)));
 		EXPECT_TRUE(sim.getErrorStatus());
 	}
 
