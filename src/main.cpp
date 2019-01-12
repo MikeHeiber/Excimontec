@@ -414,7 +414,7 @@ int main(int argc, char *argv[]) {
 			// ToF transient output
 			ofstream transientfile;
 			transientfile.open("ToF_average_transients.txt");
-			transientfile << "Time (s),Current (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
+			transientfile << "Time (s),Current Density (mA cm^-2),Average Mobility (cm^2 V^-1 s^-1),Average Energy (eV),Carrier Density (cm^-3)" << endl;
 			double volume_total = N_transient_cycles_sum * sim.getVolume();
 			for (int i = 0; i < (int)velocities.size(); i++) {
 				if ((double)counts[i] > 0.95*counts[0]) {

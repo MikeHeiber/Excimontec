@@ -96,150 +96,325 @@ $(document).ready(function(){initNavTree('class_excimontec_1_1_o_s_c___sim.html'
 </div><!--header-->
 <div class="contents">
 
+<p>This class extends the <a class="el" href="class_k_m_c___lattice_1_1_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">KMC_Lattice::Simulation</a> class to create a functioning KMC simulation object for organic semiconductor devices.  
+ <a href="class_excimontec_1_1_o_s_c___sim.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_o_s_c___sim_8h_source.html">OSC_Sim.h</a>&gt;</code></p>
 
-<p>Inherits Simulation.</p>
+<p>Inherits <a class="el" href="class_k_m_c___lattice_1_1_simulation.html">KMC_Lattice::Simulation</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a367b3fc2b5ebb2ce64eec5e37df1203e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a367b3fc2b5ebb2ce64eec5e37df1203e">OSC_Sim</a> ()</td></tr>
+<tr class="memdesc:a367b3fc2b5ebb2ce64eec5e37df1203e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty simulation object that is uninitialized.  <a href="#a367b3fc2b5ebb2ce64eec5e37df1203e">More...</a><br /></td></tr>
 <tr class="separator:a367b3fc2b5ebb2ce64eec5e37df1203e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb94e0648c3999c8e48eb3ba4e30533c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aeb94e0648c3999c8e48eb3ba4e30533c">~OSC_Sim</a> ()</td></tr>
+<tr class="memdesc:aeb94e0648c3999c8e48eb3ba4e30533c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor.  <a href="#aeb94e0648c3999c8e48eb3ba4e30533c">More...</a><br /></td></tr>
 <tr class="separator:aeb94e0648c3999c8e48eb3ba4e30533c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63bb36ed57ab8f0029ada80a20be6ed7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a63bb36ed57ab8f0029ada80a20be6ed7">init</a> (const <a class="el" href="class_excimontec_1_1_parameters.html">Parameters</a> &amp;params, const int id)</td></tr>
+<tr class="memdesc:a63bb36ed57ab8f0029ada80a20be6ed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the simulation object so that it is ready to execute a simulation test.  <a href="#a63bb36ed57ab8f0029ada80a20be6ed7">More...</a><br /></td></tr>
 <tr class="separator:a63bb36ed57ab8f0029ada80a20be6ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8f6a903ba261864f4aa7c2c667a5a97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aa8f6a903ba261864f4aa7c2c667a5a97">calculateAllEvents</a> ()</td></tr>
+<tr class="memdesc:aa8f6a903ba261864f4aa7c2c667a5a97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the events for all objects in the simulation.  <a href="#aa8f6a903ba261864f4aa7c2c667a5a97">More...</a><br /></td></tr>
 <tr class="separator:aa8f6a903ba261864f4aa7c2c667a5a97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7ebf2bfe3c344b2f81080f9300503aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ad7ebf2bfe3c344b2f81080f9300503aa">calculateDOSCorrelation</a> ()</td></tr>
-<tr class="separator:ad7ebf2bfe3c344b2f81080f9300503aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e4576f71ec422e581c8cf41f3d37119"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a3e4576f71ec422e581c8cf41f3d37119">calculateDOSCorrelation</a> (const double cutoff_radius)</td></tr>
-<tr class="separator:a3e4576f71ec422e581c8cf41f3d37119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79b52b66787bfff14d9d0f4bbbdf1090"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a79b52b66787bfff14d9d0f4bbbdf1090">calculateTransitTimeHist</a> (const std::vector&lt; double &gt; &amp;data, const int counts) const</td></tr>
+<tr class="memdesc:a79b52b66787bfff14d9d0f4bbbdf1090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the transit time probability histogram using the data generated by the time-of-flight charge transport test.  <a href="#a79b52b66787bfff14d9d0f4bbbdf1090">More...</a><br /></td></tr>
 <tr class="separator:a79b52b66787bfff14d9d0f4bbbdf1090"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72f724474d75a9864014bd0896b8fdf2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a72f724474d75a9864014bd0896b8fdf2">calculateMobilityData</a> (const std::vector&lt; double &gt; &amp;transit_times) const</td></tr>
+<tr class="memdesc:a72f724474d75a9864014bd0896b8fdf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the mobility data using the transit time data generated by the time-of-flight charge transport test.  <a href="#a72f724474d75a9864014bd0896b8fdf2">More...</a><br /></td></tr>
 <tr class="separator:a72f724474d75a9864014bd0896b8fdf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab39f0c82b57b1e92993d6526ca0601ed"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ab39f0c82b57b1e92993d6526ca0601ed">checkFinished</a> () const</td></tr>
+<tr class="memdesc:ab39f0c82b57b1e92993d6526ca0601ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether the simulation test specified by the input parameters is finished.  <a href="#ab39f0c82b57b1e92993d6526ca0601ed">More...</a><br /></td></tr>
 <tr class="separator:ab39f0c82b57b1e92993d6526ca0601ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9266e67e41307cf45cbe3386d602241"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af9266e67e41307cf45cbe3386d602241">createExciton</a> (const bool spin)</td></tr>
+<tr class="memdesc:af9266e67e41307cf45cbe3386d602241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> on a randomly selected unoccupied site.  <a href="#af9266e67e41307cf45cbe3386d602241">More...</a><br /></td></tr>
 <tr class="separator:af9266e67e41307cf45cbe3386d602241"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2908ed7edc46725776c5b58e2a0db11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a2908ed7edc46725776c5b58e2a0db11d">createExciton</a> (const KMC_Lattice::Coords &amp;coords, const bool spin)</td></tr>
+<tr class="memitem:a2908ed7edc46725776c5b58e2a0db11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a2908ed7edc46725776c5b58e2a0db11d">createExciton</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;coords, const bool spin)</td></tr>
+<tr class="memdesc:a2908ed7edc46725776c5b58e2a0db11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to create an <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> on the specified lattice site. An error is generated if the specified lattice site is already occupied or if the coordinates are not in the lattice.  <a href="#a2908ed7edc46725776c5b58e2a0db11d">More...</a><br /></td></tr>
 <tr class="separator:a2908ed7edc46725776c5b58e2a0db11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10492db50c54e36a401beb119165243b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a10492db50c54e36a401beb119165243b">createElectron</a> (const KMC_Lattice::Coords &amp;coords)</td></tr>
+<tr class="memitem:a10492db50c54e36a401beb119165243b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a10492db50c54e36a401beb119165243b">createElectron</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;coords)</td></tr>
+<tr class="memdesc:a10492db50c54e36a401beb119165243b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to create an electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) on the specified lattice site. An error is generated if the specified lattice site is already occupied or if the coordinates are not in the lattice.  <a href="#a10492db50c54e36a401beb119165243b">More...</a><br /></td></tr>
 <tr class="separator:a10492db50c54e36a401beb119165243b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6b9d8fca93ae8152a5ecabe95535df5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af6b9d8fca93ae8152a5ecabe95535df5">createHole</a> (const KMC_Lattice::Coords &amp;coords)</td></tr>
+<tr class="memitem:af6b9d8fca93ae8152a5ecabe95535df5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af6b9d8fca93ae8152a5ecabe95535df5">createHole</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;coords)</td></tr>
+<tr class="memdesc:af6b9d8fca93ae8152a5ecabe95535df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to create a hole (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) on the specified lattice site. An error is generated if the specified lattice site is already occupied or if the coordinates are not in the lattice.  <a href="#af6b9d8fca93ae8152a5ecabe95535df5">More...</a><br /></td></tr>
 <tr class="separator:af6b9d8fca93ae8152a5ecabe95535df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b49d7df062b9184c84685fadcf944bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a1b49d7df062b9184c84685fadcf944bb">executeNextEvent</a> ()</td></tr>
+<tr class="memdesc:a1b49d7df062b9184c84685fadcf944bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to execute the next event in the KMC simulation. An error is generated if an event cannot be executed.  <a href="#a1b49d7df062b9184c84685fadcf944bb">More...</a><br /></td></tr>
 <tr class="separator:a1b49d7df062b9184c84685fadcf944bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06d8e0cf6531a02306bc78d73b1a217e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a06d8e0cf6531a02306bc78d73b1a217e">exportEnergies</a> (std::string filename)</td></tr>
+<tr class="memdesc:a06d8e0cf6531a02306bc78d73b1a217e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports the lattice site energies to a text file.  <a href="#a06d8e0cf6531a02306bc78d73b1a217e">More...</a><br /></td></tr>
 <tr class="separator:a06d8e0cf6531a02306bc78d73b1a217e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a004af96483497b6e4c10348c63d9b646"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a004af96483497b6e4c10348c63d9b646">getChargeExtractionMap</a> (const bool charge) const</td></tr>
+<tr class="memdesc:a004af96483497b6e4c10348c63d9b646"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the charge extraction map data generated by the time-of-flight charge transport or internal quantum efficiency tests.  <a href="#a004af96483497b6e4c10348c63d9b646">More...</a><br /></td></tr>
 <tr class="separator:a004af96483497b6e4c10348c63d9b646"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afde92e2eaf42cd1db2e763e86adb465c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#afde92e2eaf42cd1db2e763e86adb465c">getDOSCorrelationData</a> () const</td></tr>
+<tr class="memdesc:afde92e2eaf42cd1db2e763e86adb465c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the radial autocorrelation data for the lattice site energies that is generated when using the correlated Gaussian DOS model.  <a href="#afde92e2eaf42cd1db2e763e86adb465c">More...</a><br /></td></tr>
 <tr class="separator:afde92e2eaf42cd1db2e763e86adb465c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a760144e827864e9532bd2eb3548ad7a9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a760144e827864e9532bd2eb3548ad7a9">getDynamicsExcitonEnergies</a> () const</td></tr>
+<tr class="memdesc:a760144e827864e9532bd2eb3548ad7a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient average <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> energy data generated by the dynamics test.  <a href="#a760144e827864e9532bd2eb3548ad7a9">More...</a><br /></td></tr>
 <tr class="separator:a760144e827864e9532bd2eb3548ad7a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a844eaae5879bff0a03a7fba3ca4d9275"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a844eaae5879bff0a03a7fba3ca4d9275">getDynamicsElectronEnergies</a> () const</td></tr>
+<tr class="memdesc:a844eaae5879bff0a03a7fba3ca4d9275"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient average electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) energy data generated during the dynamics test.  <a href="#a844eaae5879bff0a03a7fba3ca4d9275">More...</a><br /></td></tr>
 <tr class="separator:a844eaae5879bff0a03a7fba3ca4d9275"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6d07a7077de9f4af86163ddbea19d1f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ae6d07a7077de9f4af86163ddbea19d1f">getDynamicsHoleEnergies</a> () const</td></tr>
+<tr class="memdesc:ae6d07a7077de9f4af86163ddbea19d1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient average electron (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) energy data generated during the dynamics test.  <a href="#ae6d07a7077de9f4af86163ddbea19d1f">More...</a><br /></td></tr>
 <tr class="separator:ae6d07a7077de9f4af86163ddbea19d1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18785a34bd36bb28de60f4668a06d21f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a18785a34bd36bb28de60f4668a06d21f">getDynamicsTransientSinglets</a> () const</td></tr>
+<tr class="memdesc:a18785a34bd36bb28de60f4668a06d21f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient singlet exciton counts data generated by the dynamics test.  <a href="#a18785a34bd36bb28de60f4668a06d21f">More...</a><br /></td></tr>
 <tr class="separator:a18785a34bd36bb28de60f4668a06d21f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3381553fbef4f71504a64494bdc8f815"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a3381553fbef4f71504a64494bdc8f815">getDynamicsTransientTriplets</a> () const</td></tr>
+<tr class="memdesc:a3381553fbef4f71504a64494bdc8f815"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient triplet exciton counts data generated by the dynamics test.  <a href="#a3381553fbef4f71504a64494bdc8f815">More...</a><br /></td></tr>
 <tr class="separator:a3381553fbef4f71504a64494bdc8f815"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cb96ab507abf269145441276eb7ca65"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a4cb96ab507abf269145441276eb7ca65">getDynamicsTransientElectrons</a> () const</td></tr>
+<tr class="memdesc:a4cb96ab507abf269145441276eb7ca65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) counts data generated during the dynamics test.  <a href="#a4cb96ab507abf269145441276eb7ca65">More...</a><br /></td></tr>
 <tr class="separator:a4cb96ab507abf269145441276eb7ca65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e51664e1d78a6f2afffbc9663f437a7"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a6e51664e1d78a6f2afffbc9663f437a7">getDynamicsTransientHoles</a> () const</td></tr>
+<tr class="memdesc:a6e51664e1d78a6f2afffbc9663f437a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient hole (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) counts data generated during the dynamics test.  <a href="#a6e51664e1d78a6f2afffbc9663f437a7">More...</a><br /></td></tr>
 <tr class="separator:a6e51664e1d78a6f2afffbc9663f437a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a82568ca8047ad40ba66d15f0120f90"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a4a82568ca8047ad40ba66d15f0120f90">getDynamicsTransientTimes</a> () const</td></tr>
+<tr class="memdesc:a4a82568ca8047ad40ba66d15f0120f90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient time data generated during the dynamics test.  <a href="#a4a82568ca8047ad40ba66d15f0120f90">More...</a><br /></td></tr>
 <tr class="separator:a4a82568ca8047ad40ba66d15f0120f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e36cc9d370cd35e293a436ffde04ec2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a4e36cc9d370cd35e293a436ffde04ec2">getDynamicsExcitonMSDV</a> () const</td></tr>
+<tr class="memdesc:a4e36cc9d370cd35e293a436ffde04ec2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient exciton mean squared displacement velocity data generated during the dynamics test. The mean squared displacement velocity is equivalent to the diffusion coefficient for excitons.  <a href="#a4e36cc9d370cd35e293a436ffde04ec2">More...</a><br /></td></tr>
 <tr class="separator:a4e36cc9d370cd35e293a436ffde04ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e0f32505c46289fcab5effbea34e367"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a3e0f32505c46289fcab5effbea34e367">getDynamicsElectronMSDV</a> () const</td></tr>
+<tr class="memdesc:a3e0f32505c46289fcab5effbea34e367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) mean squared displacement velocity data generated by the dynamics test. The mean squared displacement velocity equals the diffusion coefficient at zero-bias conditions or can be used to calculate the mobility using the applied internal electrical potential.  <a href="#a3e0f32505c46289fcab5effbea34e367">More...</a><br /></td></tr>
 <tr class="separator:a3e0f32505c46289fcab5effbea34e367"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b72ab3095a13f90284bd7cf5c3bfe50"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a2b72ab3095a13f90284bd7cf5c3bfe50">getDynamicsHoleMSDV</a> () const</td></tr>
+<tr class="memdesc:a2b72ab3095a13f90284bd7cf5c3bfe50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient hole (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) mean squared displacement velocity data generated by the dynamics test. The mean squared displacement velocity equals the diffusion coefficient at zero-bias conditions or can be used to calculate the mobility using the applied internal electrical potential.  <a href="#a2b72ab3095a13f90284bd7cf5c3bfe50">More...</a><br /></td></tr>
 <tr class="separator:a2b72ab3095a13f90284bd7cf5c3bfe50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaaa91d7a9c6404e6014680e43f9f1341"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aaaa91d7a9c6404e6014680e43f9f1341">getExcitonDiffusionData</a> () const</td></tr>
+<tr class="memdesc:aaaa91d7a9c6404e6014680e43f9f1341"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the exciton diffusion distance data generated during the exciton diffusion test.  <a href="#aaaa91d7a9c6404e6014680e43f9f1341">More...</a><br /></td></tr>
 <tr class="separator:aaaa91d7a9c6404e6014680e43f9f1341"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44cbde2e3191a1d60aa966d6fb2454d8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a44cbde2e3191a1d60aa966d6fb2454d8">getExcitonHopLengthData</a> () const</td></tr>
+<tr class="memdesc:a44cbde2e3191a1d60aa966d6fb2454d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> hop distance data generated during the exciton diffusion test. /return A vector of data representing the hop distance of all exciton hop events in lattice units.  <a href="#a44cbde2e3191a1d60aa966d6fb2454d8">More...</a><br /></td></tr>
 <tr class="separator:a44cbde2e3191a1d60aa966d6fb2454d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fe0eb297d6a8443b15c5d999140e1fd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a9fe0eb297d6a8443b15c5d999140e1fd">getExcitonLifetimeData</a> () const</td></tr>
+<tr class="memdesc:a9fe0eb297d6a8443b15c5d999140e1fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the exciton lifetime data generated during the exciton diffusion test.  <a href="#a9fe0eb297d6a8443b15c5d999140e1fd">More...</a><br /></td></tr>
 <tr class="separator:a9fe0eb297d6a8443b15c5d999140e1fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7df7a3ab273bdc1fab71d540166c1e6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af7df7a3ab273bdc1fab71d540166c1e6">getInternalField</a> () const</td></tr>
+<tr class="memdesc:af7df7a3ab273bdc1fab71d540166c1e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the internal electric field due to applied internal potential.  <a href="#af7df7a3ab273bdc1fab71d540166c1e6">More...</a><br /></td></tr>
 <tr class="separator:af7df7a3ab273bdc1fab71d540166c1e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51dbda679af3966cdf8b7b4b4de5199f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a51dbda679af3966cdf8b7b4b4de5199f">getN_excitons_created</a> () const</td></tr>
+<tr class="memdesc:a51dbda679af3966cdf8b7b4b4de5199f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of excitons that have been created in the simulation.  <a href="#a51dbda679af3966cdf8b7b4b4de5199f">More...</a><br /></td></tr>
 <tr class="separator:a51dbda679af3966cdf8b7b4b4de5199f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00df316fb445f26dfe2dabb0a8b9e366"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a00df316fb445f26dfe2dabb0a8b9e366">getN_excitons_created</a> (const short site_type) const</td></tr>
+<tr class="memdesc:a00df316fb445f26dfe2dabb0a8b9e366"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of excitons that have been created on the specified site type in the simulation.  <a href="#a00df316fb445f26dfe2dabb0a8b9e366">More...</a><br /></td></tr>
 <tr class="separator:a00df316fb445f26dfe2dabb0a8b9e366"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9cce3e34cbd191ef187b04a647d6133"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ae9cce3e34cbd191ef187b04a647d6133">getN_singlet_excitons_dissociated</a> () const</td></tr>
+<tr class="memdesc:ae9cce3e34cbd191ef187b04a647d6133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of singlet excitons that have dissociated.  <a href="#ae9cce3e34cbd191ef187b04a647d6133">More...</a><br /></td></tr>
 <tr class="separator:ae9cce3e34cbd191ef187b04a647d6133"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33038c604bab9c6e1151f9a121cad318"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a33038c604bab9c6e1151f9a121cad318">getN_triplet_excitons_dissociated</a> () const</td></tr>
+<tr class="memdesc:a33038c604bab9c6e1151f9a121cad318"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of triplet excitons that have dissociated.  <a href="#a33038c604bab9c6e1151f9a121cad318">More...</a><br /></td></tr>
 <tr class="separator:a33038c604bab9c6e1151f9a121cad318"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0777f939de537a8bc82da5698b7c4102"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a0777f939de537a8bc82da5698b7c4102">getN_singlet_excitons_recombined</a> () const</td></tr>
+<tr class="memdesc:a0777f939de537a8bc82da5698b7c4102"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of singlet excitons that have recombined.  <a href="#a0777f939de537a8bc82da5698b7c4102">More...</a><br /></td></tr>
 <tr class="separator:a0777f939de537a8bc82da5698b7c4102"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae15f5b3f09f59788e62792864eec2ec7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ae15f5b3f09f59788e62792864eec2ec7">getN_triplet_excitons_recombined</a> () const</td></tr>
+<tr class="memdesc:ae15f5b3f09f59788e62792864eec2ec7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of triplet excitons that have recombined.  <a href="#ae15f5b3f09f59788e62792864eec2ec7">More...</a><br /></td></tr>
 <tr class="separator:ae15f5b3f09f59788e62792864eec2ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40064a50e363b3f35b6a3d148b99c18a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a40064a50e363b3f35b6a3d148b99c18a">getN_singlet_singlet_annihilations</a> () const</td></tr>
+<tr class="memdesc:a40064a50e363b3f35b6a3d148b99c18a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of singlet-singlet annihilation events that have occurred.  <a href="#a40064a50e363b3f35b6a3d148b99c18a">More...</a><br /></td></tr>
 <tr class="separator:a40064a50e363b3f35b6a3d148b99c18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f060e0e88bf75b74746b3ee81d95d12"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a7f060e0e88bf75b74746b3ee81d95d12">getN_singlet_triplet_annihilations</a> () const</td></tr>
+<tr class="memdesc:a7f060e0e88bf75b74746b3ee81d95d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of singlet-triplet annihilation events that have occurred.  <a href="#a7f060e0e88bf75b74746b3ee81d95d12">More...</a><br /></td></tr>
 <tr class="separator:a7f060e0e88bf75b74746b3ee81d95d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92327b767487eb7405e0c337ef16d2a5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a92327b767487eb7405e0c337ef16d2a5">getN_triplet_triplet_annihilations</a> () const</td></tr>
+<tr class="memdesc:a92327b767487eb7405e0c337ef16d2a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of triplet-triplet annihilation events that have occurred.  <a href="#a92327b767487eb7405e0c337ef16d2a5">More...</a><br /></td></tr>
 <tr class="separator:a92327b767487eb7405e0c337ef16d2a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeda088bf92bc7991c036cbefd48f0422"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aeda088bf92bc7991c036cbefd48f0422">getN_singlet_polaron_annihilations</a> () const</td></tr>
+<tr class="memdesc:aeda088bf92bc7991c036cbefd48f0422"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of singlet-polaron annihilation events that have occurred.  <a href="#aeda088bf92bc7991c036cbefd48f0422">More...</a><br /></td></tr>
 <tr class="separator:aeda088bf92bc7991c036cbefd48f0422"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f703e7c8cf563cb6b9d961a552fe3e2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a1f703e7c8cf563cb6b9d961a552fe3e2">getN_triplet_polaron_annihilations</a> () const</td></tr>
+<tr class="memdesc:a1f703e7c8cf563cb6b9d961a552fe3e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of triplet-polaron annihilation events that have occurred.  <a href="#a1f703e7c8cf563cb6b9d961a552fe3e2">More...</a><br /></td></tr>
 <tr class="separator:a1f703e7c8cf563cb6b9d961a552fe3e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97881c4ea6de53c0c1488664aea9dda3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a97881c4ea6de53c0c1488664aea9dda3">getN_electrons_created</a> () const</td></tr>
+<tr class="memdesc:a97881c4ea6de53c0c1488664aea9dda3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of electrons (negatively charged polarons) that have been created in the simulation.  <a href="#a97881c4ea6de53c0c1488664aea9dda3">More...</a><br /></td></tr>
 <tr class="separator:a97881c4ea6de53c0c1488664aea9dda3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1090d447104236755708cb812569cb3c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a1090d447104236755708cb812569cb3c">getN_electrons_collected</a> () const</td></tr>
+<tr class="memdesc:a1090d447104236755708cb812569cb3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of electrons (negatively charged polarons) that have been collected (extracted) at electrodes in the simulation.  <a href="#a1090d447104236755708cb812569cb3c">More...</a><br /></td></tr>
 <tr class="separator:a1090d447104236755708cb812569cb3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acae207b6dbd1beb5af9f8dd6954c6a54"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#acae207b6dbd1beb5af9f8dd6954c6a54">getN_electrons_recombined</a> () const</td></tr>
+<tr class="memdesc:acae207b6dbd1beb5af9f8dd6954c6a54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of electrons (negatively charged polarons) that have recombined with holes (positively charged polarons) in the simulation.  <a href="#acae207b6dbd1beb5af9f8dd6954c6a54">More...</a><br /></td></tr>
 <tr class="separator:acae207b6dbd1beb5af9f8dd6954c6a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39ea20a625c494a5f53cec730627b6c1"><td class="memItemLeft" align="right" valign="top">long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a39ea20a625c494a5f53cec730627b6c1">getN_events_executed</a> () const</td></tr>
+<tr class="memdesc:a39ea20a625c494a5f53cec730627b6c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of events that have been executed.  <a href="#a39ea20a625c494a5f53cec730627b6c1">More...</a><br /></td></tr>
 <tr class="separator:a39ea20a625c494a5f53cec730627b6c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7613b16646431fae74b575f02e37774a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a7613b16646431fae74b575f02e37774a">getN_holes_created</a> () const</td></tr>
+<tr class="memdesc:a7613b16646431fae74b575f02e37774a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of holes (positively charged polarons) that have been created in the simulation.  <a href="#a7613b16646431fae74b575f02e37774a">More...</a><br /></td></tr>
 <tr class="separator:a7613b16646431fae74b575f02e37774a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe00946ee2394b51ba132c3897212f92"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#afe00946ee2394b51ba132c3897212f92">getN_holes_collected</a> () const</td></tr>
+<tr class="memdesc:afe00946ee2394b51ba132c3897212f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of holes (positively charged polarons) that have been collected (extracted) at electrodes in the simulation.  <a href="#afe00946ee2394b51ba132c3897212f92">More...</a><br /></td></tr>
 <tr class="separator:afe00946ee2394b51ba132c3897212f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53a0123e8db1299519874ca6bed8bd2b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a53a0123e8db1299519874ca6bed8bd2b">getN_holes_recombined</a> () const</td></tr>
+<tr class="memdesc:a53a0123e8db1299519874ca6bed8bd2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of holes (positively charged polarons) that have recombined with electrons (negatively charged polarons) in the simulation.  <a href="#a53a0123e8db1299519874ca6bed8bd2b">More...</a><br /></td></tr>
 <tr class="separator:a53a0123e8db1299519874ca6bed8bd2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31b9676a91a5fa313694419972bdda1a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a31b9676a91a5fa313694419972bdda1a">getN_geminate_recombinations</a> () const</td></tr>
+<tr class="memdesc:a31b9676a91a5fa313694419972bdda1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of geminate electron-hole recombination events that have occurred in the simulation. Geminate recombination occurs between an electron and hole originating from the same exciton.  <a href="#a31b9676a91a5fa313694419972bdda1a">More...</a><br /></td></tr>
 <tr class="separator:a31b9676a91a5fa313694419972bdda1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaed86987781fac286234254b8a9a9c45"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aaed86987781fac286234254b8a9a9c45">getN_bimolecular_recombinations</a> () const</td></tr>
+<tr class="memdesc:aaed86987781fac286234254b8a9a9c45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of bimolecular electron-hole recombination events that have occurred in the simulation. Bimolecular recombination occurs between an electron and hole originating from different excitons.  <a href="#aaed86987781fac286234254b8a9a9c45">More...</a><br /></td></tr>
 <tr class="separator:aaed86987781fac286234254b8a9a9c45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c18548ebea94e905839f4d824d77935"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a1c18548ebea94e905839f4d824d77935">getN_transient_cycles</a> () const</td></tr>
+<tr class="memdesc:a1c18548ebea94e905839f4d824d77935"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of transient test cycles that have been performed. During the time-of-flight charge transport test and the dynamics test, multiple transient cycles may be used to reach the target number of tested objects.  <a href="#a1c18548ebea94e905839f4d824d77935">More...</a><br /></td></tr>
 <tr class="separator:a1c18548ebea94e905839f4d824d77935"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a576de9d88dafa1a085fa9d6ae269ca87"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a576de9d88dafa1a085fa9d6ae269ca87">getPreviousEventType</a> () const</td></tr>
+<tr class="memdesc:a576de9d88dafa1a085fa9d6ae269ca87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the name of event type that was last performed.  <a href="#a576de9d88dafa1a085fa9d6ae269ca87">More...</a><br /></td></tr>
 <tr class="separator:a576de9d88dafa1a085fa9d6ae269ca87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af14258c589bd369bf29052049d1dcb30"><td class="memItemLeft" align="right" valign="top">std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af14258c589bd369bf29052049d1dcb30">getSiteEnergies</a> (const short site_type) const</td></tr>
+<tr class="memdesc:af14258c589bd369bf29052049d1dcb30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the energies of the lattice sites with the specified type.  <a href="#af14258c589bd369bf29052049d1dcb30">More...</a><br /></td></tr>
 <tr class="separator:af14258c589bd369bf29052049d1dcb30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad41e455807c994507f5402c3eef74bab"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ad41e455807c994507f5402c3eef74bab">getSiteEnergy</a> (const KMC_Lattice::Coords &amp;coords) const</td></tr>
-<tr class="separator:ad41e455807c994507f5402c3eef74bab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad962bcceb7e50c1b70560d9b61788dbf"><td class="memItemLeft" align="right" valign="top">short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ad962bcceb7e50c1b70560d9b61788dbf">getSiteType</a> (const KMC_Lattice::Coords &amp;coords) const</td></tr>
-<tr class="separator:ad962bcceb7e50c1b70560d9b61788dbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a524b4928a7593df1f240aef8b878e36e"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a524b4928a7593df1f240aef8b878e36e">getSiteEnergy</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;coords)</td></tr>
+<tr class="memdesc:a524b4928a7593df1f240aef8b878e36e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the site energy of the lattice site at the specified coordinates. An error is generated if the specified lattice site is not in the lattice.  <a href="#a524b4928a7593df1f240aef8b878e36e">More...</a><br /></td></tr>
+<tr class="separator:a524b4928a7593df1f240aef8b878e36e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8af9398bc791961be796b0653fba2c2"><td class="memItemLeft" align="right" valign="top">short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ae8af9398bc791961be796b0653fba2c2">getSiteType</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;coords)</td></tr>
+<tr class="memdesc:ae8af9398bc791961be796b0653fba2c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the site type of the lattice site at the specified coordinates. An error is generated if the specified lattice site is not in the lattice.  <a href="#ae8af9398bc791961be796b0653fba2c2">More...</a><br /></td></tr>
+<tr class="separator:ae8af9398bc791961be796b0653fba2c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a451e3ea3667f84d6841ad91355a618df"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a451e3ea3667f84d6841ad91355a618df">getSteadyEquilibrationEnergy</a> () const</td></tr>
+<tr class="memdesc:a451e3ea3667f84d6841ad91355a618df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the average equilibration energy of the polarons calculated during the steady state charge transport test. The average equilibration energy corresponds to the average of the density of occupied states at steady state, quasi-equilibrium conditions.  <a href="#a451e3ea3667f84d6841ad91355a618df">More...</a><br /></td></tr>
 <tr class="separator:a451e3ea3667f84d6841ad91355a618df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af76c050df29beb0b22b35804b192b111"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#af76c050df29beb0b22b35804b192b111">getSteadyFermiEnergy</a> () const</td></tr>
+<tr class="memdesc:af76c050df29beb0b22b35804b192b111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the Fermi energy of the system calculated during the steady state charge transport test. The Fermi energy corresponds to the highest occupied energy state under equilibrium conditions at 0 K.  <a href="#af76c050df29beb0b22b35804b192b111">More...</a><br /></td></tr>
 <tr class="separator:af76c050df29beb0b22b35804b192b111"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7420ce8e9f8634ab98483fa9ea6b7972"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a7420ce8e9f8634ab98483fa9ea6b7972">getSteadyMobility</a> () const</td></tr>
+<tr class="memdesc:a7420ce8e9f8634ab98483fa9ea6b7972"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the average steady state charge carrier mobility calculated during the steady state charge transport test.  <a href="#a7420ce8e9f8634ab98483fa9ea6b7972">More...</a><br /></td></tr>
 <tr class="separator:a7420ce8e9f8634ab98483fa9ea6b7972"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29234a6db9fca5076b6da1367a81bfbc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a29234a6db9fca5076b6da1367a81bfbc">getSteadyTransportEnergy</a> () const</td></tr>
+<tr class="memdesc:a29234a6db9fca5076b6da1367a81bfbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the average transport energy of the polarons calculated during the stead state charge transport test.  <a href="#a29234a6db9fca5076b6da1367a81bfbc">More...</a><br /></td></tr>
 <tr class="separator:a29234a6db9fca5076b6da1367a81bfbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa63452a4db95a8a81962bf433853b123"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aa63452a4db95a8a81962bf433853b123">getToFTransientCounts</a> () const</td></tr>
+<tr class="memdesc:aa63452a4db95a8a81962bf433853b123"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient polaron counts data generated during the time-of-flight charge transport test.  <a href="#aa63452a4db95a8a81962bf433853b123">More...</a><br /></td></tr>
 <tr class="separator:aa63452a4db95a8a81962bf433853b123"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6c09cfb0d8fddd574b68d09af5263e5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aa6c09cfb0d8fddd574b68d09af5263e5">getToFTransientEnergies</a> () const</td></tr>
+<tr class="memdesc:aa6c09cfb0d8fddd574b68d09af5263e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient average polaron energy data generated during the time-of-flight charge transport test.  <a href="#aa6c09cfb0d8fddd574b68d09af5263e5">More...</a><br /></td></tr>
 <tr class="separator:aa6c09cfb0d8fddd574b68d09af5263e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0697dda27b32d094e57256936000ff93"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a0697dda27b32d094e57256936000ff93">getToFTransientTimes</a> () const</td></tr>
+<tr class="memdesc:a0697dda27b32d094e57256936000ff93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient time data generated during the time-of-flight charge transport test.  <a href="#a0697dda27b32d094e57256936000ff93">More...</a><br /></td></tr>
 <tr class="separator:a0697dda27b32d094e57256936000ff93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaee65e3048ee5fd3bdea9743fbd3a1af"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aaee65e3048ee5fd3bdea9743fbd3a1af">getToFTransientVelocities</a> () const</td></tr>
+<tr class="memdesc:aaee65e3048ee5fd3bdea9743fbd3a1af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transient average polaron velocity data generated during the time-of-flight charge transport test. The average polaron velocity can be used to calculate the current density and the charge carrier mobility.  <a href="#aaee65e3048ee5fd3bdea9743fbd3a1af">More...</a><br /></td></tr>
 <tr class="separator:aaee65e3048ee5fd3bdea9743fbd3a1af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa17987f593b65b82fdc39e84deff3f07"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#aa17987f593b65b82fdc39e84deff3f07">getTransitTimeData</a> () const</td></tr>
+<tr class="memdesc:aa17987f593b65b82fdc39e84deff3f07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the transit time data generate during the time-of-flight charge transport test.  <a href="#aa17987f593b65b82fdc39e84deff3f07">More...</a><br /></td></tr>
 <tr class="separator:aa17987f593b65b82fdc39e84deff3f07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade45c659b9df32de6187ee83bf7758f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#ade45c659b9df32de6187ee83bf7758f0">outputStatus</a> ()</td></tr>
+<tr class="memdesc:ade45c659b9df32de6187ee83bf7758f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints a message to the command line about the current status of the simulation test.  <a href="#ade45c659b9df32de6187ee83bf7758f0">More...</a><br /></td></tr>
 <tr class="separator:ade45c659b9df32de6187ee83bf7758f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b56db2ae5db69979f2d52ae4e6026ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_o_s_c___sim.html#a0b56db2ae5db69979f2d52ae4e6026ba">reassignSiteEnergies</a> ()</td></tr>
+<tr class="memdesc:a0b56db2ae5db69979f2d52ae4e6026ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Regenerates the site energies for all sites in the lattice.  <a href="#a0b56db2ae5db69979f2d52ae4e6026ba">More...</a><br /></td></tr>
 <tr class="separator:a0b56db2ae5db69979f2d52ae4e6026ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_k_m_c___lattice_1_1_simulation"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_k_m_c___lattice_1_1_simulation')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_k_m_c___lattice_1_1_simulation.html">KMC_Lattice::Simulation</a></td></tr>
+<tr class="memitem:a985507cf5873a307fc3e2d4cf84c6312 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a985507cf5873a307fc3e2d4cf84c6312">~Simulation</a> ()</td></tr>
+<tr class="memdesc:a985507cf5873a307fc3e2d4cf84c6312 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor needed by the base class.  <a href="class_k_m_c___lattice_1_1_simulation.html#a985507cf5873a307fc3e2d4cf84c6312">More...</a><br /></td></tr>
+<tr class="separator:a985507cf5873a307fc3e2d4cf84c6312 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aefeb9ae9754ccb057735d631f66893 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a9aefeb9ae9754ccb057735d631f66893">Simulation</a> ()</td></tr>
+<tr class="memdesc:a9aefeb9ae9754ccb057735d631f66893 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor that creates an empty <a class="el" href="class_k_m_c___lattice_1_1_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> object.  <a href="class_k_m_c___lattice_1_1_simulation.html#a9aefeb9ae9754ccb057735d631f66893">More...</a><br /></td></tr>
+<tr class="separator:a9aefeb9ae9754ccb057735d631f66893 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a429f8189101f96d9c17ea1e1559776c6 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a429f8189101f96d9c17ea1e1559776c6">init</a> (const <a class="el" href="class_k_m_c___lattice_1_1_parameters___simulation.html">Parameters_Simulation</a> &amp;params, const int id)</td></tr>
+<tr class="memdesc:a429f8189101f96d9c17ea1e1559776c6 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the <a class="el" href="class_k_m_c___lattice_1_1_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> object using the provided <a class="el" href="class_k_m_c___lattice_1_1_parameters___simulation.html" title="This class contains all of the main input parameters needed by the Simulation class.">Parameters_Simulation</a> struct containing the input parameters.  <a href="class_k_m_c___lattice_1_1_simulation.html#a429f8189101f96d9c17ea1e1559776c6">More...</a><br /></td></tr>
+<tr class="separator:a429f8189101f96d9c17ea1e1559776c6 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14e3df53df4637f7e6cdb38b31a64e83 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a14e3df53df4637f7e6cdb38b31a64e83">getErrorMessage</a> () const</td></tr>
+<tr class="memdesc:a14e3df53df4637f7e6cdb38b31a64e83 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the saved error message.  <a href="class_k_m_c___lattice_1_1_simulation.html#a14e3df53df4637f7e6cdb38b31a64e83">More...</a><br /></td></tr>
+<tr class="separator:a14e3df53df4637f7e6cdb38b31a64e83 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a294e1783518336358ac13ce76d8e62fa inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a294e1783518336358ac13ce76d8e62fa">getErrorStatus</a> () const</td></tr>
+<tr class="memdesc:a294e1783518336358ac13ce76d8e62fa inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the error status.  <a href="class_k_m_c___lattice_1_1_simulation.html#a294e1783518336358ac13ce76d8e62fa">More...</a><br /></td></tr>
+<tr class="separator:a294e1783518336358ac13ce76d8e62fa inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ff53c93c65e8ce95d70430d13e7b1f5 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a9ff53c93c65e8ce95d70430d13e7b1f5">getN_events</a> () const</td></tr>
+<tr class="memdesc:a9ff53c93c65e8ce95d70430d13e7b1f5 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of events that are currently in the event list.  <a href="class_k_m_c___lattice_1_1_simulation.html#a9ff53c93c65e8ce95d70430d13e7b1f5">More...</a><br /></td></tr>
+<tr class="separator:a9ff53c93c65e8ce95d70430d13e7b1f5 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c49004c424814576e19bc163a4364e7 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a3c49004c424814576e19bc163a4364e7">getN_events_executed</a> () const</td></tr>
+<tr class="memdesc:a3c49004c424814576e19bc163a4364e7 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of events that have been executed in the simulation.  <a href="class_k_m_c___lattice_1_1_simulation.html#a3c49004c424814576e19bc163a4364e7">More...</a><br /></td></tr>
+<tr class="separator:a3c49004c424814576e19bc163a4364e7 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5501b5b52a7bec86e7ffe157fb4d989 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#aa5501b5b52a7bec86e7ffe157fb4d989">getN_objects_created</a> () const</td></tr>
+<tr class="memdesc:aa5501b5b52a7bec86e7ffe157fb4d989 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of objects that have been created in the simulation.  <a href="class_k_m_c___lattice_1_1_simulation.html#aa5501b5b52a7bec86e7ffe157fb4d989">More...</a><br /></td></tr>
+<tr class="separator:aa5501b5b52a7bec86e7ffe157fb4d989 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4836f0c323af3fe8f1ecbe6c7566ae61 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a4836f0c323af3fe8f1ecbe6c7566ae61">getId</a> () const</td></tr>
+<tr class="memdesc:a4836f0c323af3fe8f1ecbe6c7566ae61 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the processor ID number for the processor that is running the simulation.  <a href="class_k_m_c___lattice_1_1_simulation.html#a4836f0c323af3fe8f1ecbe6c7566ae61">More...</a><br /></td></tr>
+<tr class="separator:a4836f0c323af3fe8f1ecbe6c7566ae61 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9218e6b4f0b164290edf73ec9a76c94b inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a9218e6b4f0b164290edf73ec9a76c94b">getTemp</a> () const</td></tr>
+<tr class="memdesc:a9218e6b4f0b164290edf73ec9a76c94b inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of the temperature parameter.  <a href="class_k_m_c___lattice_1_1_simulation.html#a9218e6b4f0b164290edf73ec9a76c94b">More...</a><br /></td></tr>
+<tr class="separator:a9218e6b4f0b164290edf73ec9a76c94b inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0baa87a3f9c2c60431c2de73ca5b5eb inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ae0baa87a3f9c2c60431c2de73ca5b5eb">getTime</a> () const</td></tr>
+<tr class="memdesc:ae0baa87a3f9c2c60431c2de73ca5b5eb inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current simulation time in units of seconds.  <a href="class_k_m_c___lattice_1_1_simulation.html#ae0baa87a3f9c2c60431c2de73ca5b5eb">More...</a><br /></td></tr>
+<tr class="separator:ae0baa87a3f9c2c60431c2de73ca5b5eb inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0b0fa2b84e54e52e649804d4a1ea37f inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ac0b0fa2b84e54e52e649804d4a1ea37f">getVolume</a> () const</td></tr>
+<tr class="memdesc:ac0b0fa2b84e54e52e649804d4a1ea37f inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the simulation box volume in cm^-3.  <a href="class_k_m_c___lattice_1_1_simulation.html#ac0b0fa2b84e54e52e649804d4a1ea37f">More...</a><br /></td></tr>
+<tr class="separator:ac0b0fa2b84e54e52e649804d4a1ea37f inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbce3b3329fcdc74870ef3abca578bc4 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#abbce3b3329fcdc74870ef3abca578bc4">isLoggingEnabled</a> () const</td></tr>
+<tr class="memdesc:abbce3b3329fcdc74870ef3abca578bc4 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether or not logging is enabled.  <a href="class_k_m_c___lattice_1_1_simulation.html#abbce3b3329fcdc74870ef3abca578bc4">More...</a><br /></td></tr>
+<tr class="separator:abbce3b3329fcdc74870ef3abca578bc4 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27b476d904f3ad0af2ef58a962f2574a inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a27b476d904f3ad0af2ef58a962f2574a">rand01</a> ()</td></tr>
+<tr class="memdesc:a27b476d904f3ad0af2ef58a962f2574a inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a uniform random number from 0 to 1, not including 0.  <a href="class_k_m_c___lattice_1_1_simulation.html#a27b476d904f3ad0af2ef58a962f2574a">More...</a><br /></td></tr>
+<tr class="separator:a27b476d904f3ad0af2ef58a962f2574a inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e1180b3f59de06f32fe7899a6c4f5e7 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a2e1180b3f59de06f32fe7899a6c4f5e7">setGeneratorSeed</a> (const int seed)</td></tr>
+<tr class="memdesc:a2e1180b3f59de06f32fe7899a6c4f5e7 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the random number generator seed.  <a href="class_k_m_c___lattice_1_1_simulation.html#a2e1180b3f59de06f32fe7899a6c4f5e7">More...</a><br /></td></tr>
+<tr class="separator:a2e1180b3f59de06f32fe7899a6c4f5e7 inherit pub_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_methods_class_k_m_c___lattice_1_1_simulation"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_k_m_c___lattice_1_1_simulation')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_k_m_c___lattice_1_1_simulation.html">KMC_Lattice::Simulation</a></td></tr>
+<tr class="memitem:ad95f2788c66be06a7f2b7c8596bd4c62 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> * &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ad95f2788c66be06a7f2b7c8596bd4c62">addEvent</a> (<a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> *event_ptr)</td></tr>
+<tr class="memdesc:ad95f2788c66be06a7f2b7c8596bd4c62 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pointer to an <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> object to the event list and returns the iterator to its position in the list.  <a href="class_k_m_c___lattice_1_1_simulation.html#ad95f2788c66be06a7f2b7c8596bd4c62">More...</a><br /></td></tr>
+<tr class="separator:ad95f2788c66be06a7f2b7c8596bd4c62 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a799a9759dca73725830f90a6da726145 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a799a9759dca73725830f90a6da726145">addObject</a> (<a class="el" href="class_k_m_c___lattice_1_1_object.html">Object</a> *object_ptr)</td></tr>
+<tr class="memdesc:a799a9759dca73725830f90a6da726145 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pointer to an <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> object to the object list.  <a href="class_k_m_c___lattice_1_1_simulation.html#a799a9759dca73725830f90a6da726145">More...</a><br /></td></tr>
+<tr class="separator:a799a9759dca73725830f90a6da726145 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ccfc03c32dc356fb9fd5445afa89230 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> * &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a6ccfc03c32dc356fb9fd5445afa89230">chooseNextEvent</a> ()</td></tr>
+<tr class="memdesc:a6ccfc03c32dc356fb9fd5445afa89230 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Searches the event list and determines which event will be executed next.  <a href="class_k_m_c___lattice_1_1_simulation.html#a6ccfc03c32dc356fb9fd5445afa89230">More...</a><br /></td></tr>
+<tr class="separator:a6ccfc03c32dc356fb9fd5445afa89230 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d1a70ac5ba52d66bac63bd04a049953 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a4d1a70ac5ba52d66bac63bd04a049953">determinePathway</a> (const std::vector&lt; <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> * &gt; &amp;possible_events)</td></tr>
+<tr class="memdesc:a4d1a70ac5ba52d66bac63bd04a049953 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses the BKL algorithm to determine the reaction pathway and execution time given a number of different options.  <a href="class_k_m_c___lattice_1_1_simulation.html#a4d1a70ac5ba52d66bac63bd04a049953">More...</a><br /></td></tr>
+<tr class="separator:a4d1a70ac5ba52d66bac63bd04a049953 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a52c0dfc5351a1022256815656b5b28 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_k_m_c___lattice_1_1_object.html">Object</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a2a52c0dfc5351a1022256815656b5b28">findRecalcObjects</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a> &amp;coords_start, const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a> &amp;coords_dest) const</td></tr>
+<tr class="memdesc:a2a52c0dfc5351a1022256815656b5b28 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and returns a vector of pointers to all <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects that are to have their events recalculated/.  <a href="class_k_m_c___lattice_1_1_simulation.html#a2a52c0dfc5351a1022256815656b5b28">More...</a><br /></td></tr>
+<tr class="separator:a2a52c0dfc5351a1022256815656b5b28 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6d674579eba48ac3b97f16f4dc3c949 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ae6d674579eba48ac3b97f16f4dc3c949">getAllEventPtrs</a> () const</td></tr>
+<tr class="memdesc:ae6d674579eba48ac3b97f16f4dc3c949 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of pointers to all <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> objects in the simulation.  <a href="class_k_m_c___lattice_1_1_simulation.html#ae6d674579eba48ac3b97f16f4dc3c949">More...</a><br /></td></tr>
+<tr class="separator:ae6d674579eba48ac3b97f16f4dc3c949 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79529cdeb5dbc7f6cf1c8d0d67621f09 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_k_m_c___lattice_1_1_object.html">Object</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a79529cdeb5dbc7f6cf1c8d0d67621f09">getAllObjectPtrs</a> () const</td></tr>
+<tr class="memdesc:a79529cdeb5dbc7f6cf1c8d0d67621f09 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of pointers to all <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> objects in the simulation.  <a href="class_k_m_c___lattice_1_1_simulation.html#a79529cdeb5dbc7f6cf1c8d0d67621f09">More...</a><br /></td></tr>
+<tr class="separator:a79529cdeb5dbc7f6cf1c8d0d67621f09 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2d007aefb505664a914f6a82767bf77 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ae2d007aefb505664a914f6a82767bf77">moveObject</a> (<a class="el" href="class_k_m_c___lattice_1_1_object.html">Object</a> *object_ptr, const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a> &amp;coords_dest)</td></tr>
+<tr class="memdesc:ae2d007aefb505664a914f6a82767bf77 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the designated object to the designated destination coordinates.  <a href="class_k_m_c___lattice_1_1_simulation.html#ae2d007aefb505664a914f6a82767bf77">More...</a><br /></td></tr>
+<tr class="separator:ae2d007aefb505664a914f6a82767bf77 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1df8865ebf3d6d358263b911f524a573 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a1df8865ebf3d6d358263b911f524a573">removeEvent</a> (<a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> *event_ptr)</td></tr>
+<tr class="memdesc:a1df8865ebf3d6d358263b911f524a573 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes an <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> pointer from the event list.  <a href="class_k_m_c___lattice_1_1_simulation.html#a1df8865ebf3d6d358263b911f524a573">More...</a><br /></td></tr>
+<tr class="separator:a1df8865ebf3d6d358263b911f524a573 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2003bd2e11263b622a3d95ceaee01c4 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ac2003bd2e11263b622a3d95ceaee01c4">removeObject</a> (<a class="el" href="class_k_m_c___lattice_1_1_object.html">Object</a> *object_ptr)</td></tr>
+<tr class="memdesc:ac2003bd2e11263b622a3d95ceaee01c4 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> pointer from the base simulation class.  <a href="class_k_m_c___lattice_1_1_simulation.html#ac2003bd2e11263b622a3d95ceaee01c4">More...</a><br /></td></tr>
+<tr class="separator:ac2003bd2e11263b622a3d95ceaee01c4 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c041088f69d7eafd428260b3f641996 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a9c041088f69d7eafd428260b3f641996">setErrorMessage</a> (const std::string &amp;input_msg)</td></tr>
+<tr class="memdesc:a9c041088f69d7eafd428260b3f641996 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the error_msg member variable to the input string.  <a href="class_k_m_c___lattice_1_1_simulation.html#a9c041088f69d7eafd428260b3f641996">More...</a><br /></td></tr>
+<tr class="separator:a9c041088f69d7eafd428260b3f641996 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50040359d9cc6622f9c026f6590ccdce inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a50040359d9cc6622f9c026f6590ccdce">setObjectEvent</a> (const <a class="el" href="class_k_m_c___lattice_1_1_object.html">Object</a> *object_ptr, <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> *event_ptr)</td></tr>
+<tr class="memdesc:a50040359d9cc6622f9c026f6590ccdce inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overwrites the <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> pointer in the event list associated with the indicated <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> to the input <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">Event</a> pointer.  <a href="class_k_m_c___lattice_1_1_simulation.html#a50040359d9cc6622f9c026f6590ccdce">More...</a><br /></td></tr>
+<tr class="separator:a50040359d9cc6622f9c026f6590ccdce inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a596a265370c7d2836ea7d47426b48c29 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a596a265370c7d2836ea7d47426b48c29">setTime</a> (const double input_time)</td></tr>
+<tr class="memdesc:a596a265370c7d2836ea7d47426b48c29 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the simulation time with the input time.  <a href="class_k_m_c___lattice_1_1_simulation.html#a596a265370c7d2836ea7d47426b48c29">More...</a><br /></td></tr>
+<tr class="separator:a596a265370c7d2836ea7d47426b48c29 inherit pro_methods_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_k_m_c___lattice_1_1_simulation"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_k_m_c___lattice_1_1_simulation')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_k_m_c___lattice_1_1_simulation.html">KMC_Lattice::Simulation</a></td></tr>
+<tr class="memitem:a42af51079dcce9e99df592c2ff9fcc22 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::mt19937_64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a42af51079dcce9e99df592c2ff9fcc22">generator</a></td></tr>
+<tr class="memdesc:a42af51079dcce9e99df592c2ff9fcc22 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mersenne Twister random number generator.  <a href="class_k_m_c___lattice_1_1_simulation.html#a42af51079dcce9e99df592c2ff9fcc22">More...</a><br /></td></tr>
+<tr class="separator:a42af51079dcce9e99df592c2ff9fcc22 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac99e99d5f2b1e9ccecf04c3d3ffc88f7 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::ofstream *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ac99e99d5f2b1e9ccecf04c3d3ffc88f7">Logfile</a></td></tr>
+<tr class="memdesc:ac99e99d5f2b1e9ccecf04c3d3ffc88f7 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to an output file stream that is used to print log messages to a logfile when logging is enabled.  <a href="class_k_m_c___lattice_1_1_simulation.html#ac99e99d5f2b1e9ccecf04c3d3ffc88f7">More...</a><br /></td></tr>
+<tr class="separator:ac99e99d5f2b1e9ccecf04c3d3ffc88f7 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ebf8e9e8c47cf04b773e061604c2a8b inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_k_m_c___lattice_1_1_lattice.html">Lattice</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a4ebf8e9e8c47cf04b773e061604c2a8b">lattice</a></td></tr>
+<tr class="memdesc:a4ebf8e9e8c47cf04b773e061604c2a8b inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_k_m_c___lattice_1_1_lattice.html" title="This class contains the properties of a three-dimensional lattice and the functions needed to interac...">Lattice</a> object represents a three-dimensional lattice, its boundary conditions, and its occupancy.  <a href="class_k_m_c___lattice_1_1_simulation.html#a4ebf8e9e8c47cf04b773e061604c2a8b">More...</a><br /></td></tr>
+<tr class="separator:a4ebf8e9e8c47cf04b773e061604c2a8b inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79fe016711db5cc768a121460fb0687 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#aa79fe016711db5cc768a121460fb0687">Error_found</a> = false</td></tr>
+<tr class="memdesc:aa79fe016711db5cc768a121460fb0687 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Error_found flag indicates whether or not there has been an error during one of the simulation operations.  <a href="class_k_m_c___lattice_1_1_simulation.html#aa79fe016711db5cc768a121460fb0687">More...</a><br /></td></tr>
+<tr class="separator:aa79fe016711db5cc768a121460fb0687 inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a91d6fe01d7d1514136dc398ed7d57f inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_simulation.html#a8a91d6fe01d7d1514136dc398ed7d57f">error_msg</a> = &quot;&quot;</td></tr>
+<tr class="memdesc:a8a91d6fe01d7d1514136dc398ed7d57f inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="mdescLeft">&#160;</td><td class="mdescRight">The error_msg string holds a message with information about the error that has occurred or is empty otherwise.  <a href="class_k_m_c___lattice_1_1_simulation.html#a8a91d6fe01d7d1514136dc398ed7d57f">More...</a><br /></td></tr>
+<tr class="separator:a8a91d6fe01d7d1514136dc398ed7d57f inherit pro_attribs_class_k_m_c___lattice_1_1_simulation"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This class extends the <a class="el" href="class_k_m_c___lattice_1_1_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">KMC_Lattice::Simulation</a> class to create a functioning KMC simulation object for organic semiconductor devices. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2017-2019 </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a367b3fc2b5ebb2ce64eec5e37df1203e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a367b3fc2b5ebb2ce64eec5e37df1203e">&#9670;&nbsp;</a></span>OSC_Sim()</h2>
 
@@ -254,6 +429,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Constructs an empty simulation object that is uninitialized. </p>
 
 </div>
 </div>
@@ -280,6 +457,8 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Default virtual destructor. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -298,40 +477,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="ad7ebf2bfe3c344b2f81080f9300503aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7ebf2bfe3c344b2f81080f9300503aa">&#9670;&nbsp;</a></span>calculateDOSCorrelation() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Excimontec::OSC_Sim::calculateDOSCorrelation </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3e4576f71ec422e581c8cf41f3d37119"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e4576f71ec422e581c8cf41f3d37119">&#9670;&nbsp;</a></span>calculateDOSCorrelation() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Excimontec::OSC_Sim::calculateDOSCorrelation </td>
-          <td>(</td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>cutoff_radius</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Calculates the events for all objects in the simulation. </p>
 
 </div>
 </div>
@@ -350,6 +496,15 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Calculate the mobility data using the transit time data generated by the time-of-flight charge transport test. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transit_times</td><td>is a vector of transit times for all extracted polarons. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of calculated mobility values for each extracted polaron. </dd></dl>
 
 </div>
 </div>
@@ -379,6 +534,16 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Calculates the transit time probability histogram using the data generated by the time-of-flight charge transport test. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>is a vector of transit times for all extracted polarons. </td></tr>
+    <tr><td class="paramname">counts</td><td>is the total number of polarons tested. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pair vector where the first value is the bin position and the second value is the probability. </dd></dl>
+
 </div>
 </div>
 <a id="ab39f0c82b57b1e92993d6526ca0601ed"></a>
@@ -386,6 +551,9 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool Excimontec::OSC_Sim::checkFinished </td>
@@ -394,7 +562,19 @@ Public Member Functions</h2></td></tr>
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p>Checks whether the simulation test specified by the input parameters is finished. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the simulation test is finished. </dd>
+<dd>
+false if the simulation test is not yet finished. </dd></dl>
+
+<p>Implements <a class="el" href="class_k_m_c___lattice_1_1_simulation.html#ab052ca6b08f8ab0fb7fd6c6cdacd13c4">KMC_Lattice::Simulation</a>.</p>
 
 </div>
 </div>
@@ -407,12 +587,20 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Excimontec::OSC_Sim::createElectron </td>
           <td>(</td>
-          <td class="paramtype">const KMC_Lattice::Coords &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;&#160;</td>
           <td class="paramname"><em>coords</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Attempts to create an electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) on the specified lattice site. An error is generated if the specified lattice site is already occupied or if the coordinates are not in the lattice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coords</td><td>is the coordinates where the electron will be created. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -432,6 +620,14 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Creates an <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> on a randomly selected unoccupied site. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">spin</td><td>specifies the spin state of the created exciton. (true for singlet and false for triplet) </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a2908ed7edc46725776c5b58e2a0db11d"></a>
@@ -443,7 +639,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Excimontec::OSC_Sim::createExciton </td>
           <td>(</td>
-          <td class="paramtype">const KMC_Lattice::Coords &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;&#160;</td>
           <td class="paramname"><em>coords</em>, </td>
         </tr>
         <tr>
@@ -460,6 +656,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Attempts to create an <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> on the specified lattice site. An error is generated if the specified lattice site is already occupied or if the coordinates are not in the lattice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coords</td><td>is the coordinates where the exciton will be created. </td></tr>
+    <tr><td class="paramname">spin</td><td>specifies the spin state of the created exciton. (true for singlet and false for triplet) </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="af6b9d8fca93ae8152a5ecabe95535df5"></a>
@@ -471,12 +676,20 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Excimontec::OSC_Sim::createHole </td>
           <td>(</td>
-          <td class="paramtype">const KMC_Lattice::Coords &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;&#160;</td>
           <td class="paramname"><em>coords</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Attempts to create a hole (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) on the specified lattice site. An error is generated if the specified lattice site is already occupied or if the coordinates are not in the lattice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coords</td><td>is the coordinates where the hole will be created. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -485,6 +698,9 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool Excimontec::OSC_Sim::executeNextEvent </td>
@@ -493,7 +709,19 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p>Attempts to execute the next event in the KMC simulation. An error is generated if an event cannot be executed. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the next event is executed successfully. </dd>
+<dd>
+false if the next event cannot be executed. </dd></dl>
+
+<p>Implements <a class="el" href="class_k_m_c___lattice_1_1_simulation.html#aad20795467f58e08d0a645365b5204d4">KMC_Lattice::Simulation</a>.</p>
 
 </div>
 </div>
@@ -513,6 +741,14 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Exports the lattice site energies to a text file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>is the name of the file that will be created in the working directory. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a004af96483497b6e4c10348c63d9b646"></a>
@@ -531,6 +767,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the charge extraction map data generated by the time-of-flight charge transport or internal quantum efficiency tests. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">charge</td><td>specifies whether to get electron or hole polaron extraction data. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A string vector that can be separately output to a file. </dd></dl>
+
 </div>
 </div>
 <a id="afde92e2eaf42cd1db2e763e86adb465c"></a>
@@ -547,6 +792,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the radial autocorrelation data for the lattice site energies that is generated when using the correlated Gaussian DOS model. </p>
+<dl class="section return"><dt>Returns</dt><dd>A pair vector where the first value is the radial distance and the second is the autocorrelation probability value. </dd></dl>
 
 </div>
 </div>
@@ -565,6 +813,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient average electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) energy data generated during the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the average electron energy in units of eV changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="a3e0f32505c46289fcab5effbea34e367"></a>
@@ -581,6 +832,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transient electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) mean squared displacement velocity data generated by the dynamics test. The mean squared displacement velocity equals the diffusion coefficient at zero-bias conditions or can be used to calculate the mobility using the applied internal electrical potential. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the electron mean squared displacement velocity changes over time. </dd></dl>
 
 </div>
 </div>
@@ -599,6 +853,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient average <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> energy data generated by the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the average exciton energy in units of eV changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="a4e36cc9d370cd35e293a436ffde04ec2"></a>
@@ -615,6 +872,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transient exciton mean squared displacement velocity data generated during the dynamics test. The mean squared displacement velocity is equivalent to the diffusion coefficient for excitons. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the exciton mean squared displacement velocity changes over time. </dd></dl>
 
 </div>
 </div>
@@ -633,6 +893,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient average electron (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) energy data generated during the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the average hole energy in units of eV changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="a2b72ab3095a13f90284bd7cf5c3bfe50"></a>
@@ -649,6 +912,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transient hole (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) mean squared displacement velocity data generated by the dynamics test. The mean squared displacement velocity equals the diffusion coefficient at zero-bias conditions or can be used to calculate the mobility using the applied internal electrical potential. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the hole mean squared displacement velocity changes over time. </dd></dl>
 
 </div>
 </div>
@@ -667,6 +933,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient electron (negatively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) counts data generated during the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the number of electrons in the simulation changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="a6e51664e1d78a6f2afffbc9663f437a7"></a>
@@ -683,6 +952,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transient hole (positively charged <a class="el" href="class_excimontec_1_1_polaron.html" title="This class extends the KMC_Lattice::Object class to create a polaron object that represents an electr...">Polaron</a>) counts data generated during the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the number of holes in the simulation changes over time. </dd></dl>
 
 </div>
 </div>
@@ -701,6 +973,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient singlet exciton counts data generated by the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the number of singlet excitons in the simulation changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="a4a82568ca8047ad40ba66d15f0120f90"></a>
@@ -717,6 +992,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transient time data generated during the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing the time points for the transient data. </dd></dl>
 
 </div>
 </div>
@@ -735,6 +1013,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient triplet exciton counts data generated by the dynamics test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the number of triplet excitons in the simulation changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="aaaa91d7a9c6404e6014680e43f9f1341"></a>
@@ -751,6 +1032,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the exciton diffusion distance data generated during the exciton diffusion test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing the displacement distance of each exciton tested. </dd></dl>
 
 </div>
 </div>
@@ -769,6 +1053,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the <a class="el" href="class_excimontec_1_1_exciton.html" title="This class extends the KMC_Lattice::Object class to create an exciton object that represents a single...">Exciton</a> hop distance data generated during the exciton diffusion test. /return A vector of data representing the hop distance of all exciton hop events in lattice units. </p>
+
 </div>
 </div>
 <a id="a9fe0eb297d6a8443b15c5d999140e1fd"></a>
@@ -785,6 +1071,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the exciton lifetime data generated during the exciton diffusion test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing the lifetime of each exciton tested. </dd></dl>
 
 </div>
 </div>
@@ -803,6 +1092,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the internal electric field due to applied internal potential. </p>
+<dl class="section return"><dt>Returns</dt><dd>the internal electric field in units of V/cm. </dd></dl>
+
 </div>
 </div>
 <a id="aaed86987781fac286234254b8a9a9c45"></a>
@@ -819,6 +1111,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of bimolecular electron-hole recombination events that have occurred in the simulation. Bimolecular recombination occurs between an electron and hole originating from different excitons. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of bimolecular electron-hole recombination events that have occurred since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -837,6 +1132,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of electrons (negatively charged polarons) that have been collected (extracted) at electrodes in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of electrons that have been collected (extracted) since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a97881c4ea6de53c0c1488664aea9dda3"></a>
@@ -853,6 +1151,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of electrons (negatively charged polarons) that have been created in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of electrons that have been created since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -871,6 +1172,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of electrons (negatively charged polarons) that have recombined with holes (positively charged polarons) in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of electron-hole pairs that have recombined since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a39ea20a625c494a5f53cec730627b6c1"></a>
@@ -888,6 +1192,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of events that have been executed. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of events that have been executed since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a51dbda679af3966cdf8b7b4b4de5199f"></a>
@@ -904,6 +1211,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of excitons that have been created in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of excitons that have been created since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -923,6 +1233,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of excitons that have been created on the specified site type in the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">site_type</td><td>specifies the site type, where 1 is for donor sites and 2 is for acceptor sites. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of excitons that have been created on the specified site type since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a31b9676a91a5fa313694419972bdda1a"></a>
@@ -939,6 +1258,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of geminate electron-hole recombination events that have occurred in the simulation. Geminate recombination occurs between an electron and hole originating from the same exciton. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of geminate electron-hole recombination events that have occurred since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -957,6 +1279,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of holes (positively charged polarons) that have been collected (extracted) at electrodes in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of holes that have been collected (extracted) since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a7613b16646431fae74b575f02e37774a"></a>
@@ -973,6 +1298,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of holes (positively charged polarons) that have been created in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of holes that have been created since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -991,6 +1319,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of holes (positively charged polarons) that have recombined with electrons (negatively charged polarons) in the simulation. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of electron-hole pairs that have recombined since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="ae9cce3e34cbd191ef187b04a647d6133"></a>
@@ -1007,6 +1338,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of singlet excitons that have dissociated. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of singlet excitons that have dissociated since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -1025,6 +1359,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of singlet excitons that have recombined. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of singlet excitons that have recombined since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="aeda088bf92bc7991c036cbefd48f0422"></a>
@@ -1041,6 +1378,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of singlet-polaron annihilation events that have occurred. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of singlet-polaron annihilation events that have occurred since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -1059,6 +1399,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of singlet-singlet annihilation events that have occurred. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of singlet-singlet annihilation events that have occurred since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a7f060e0e88bf75b74746b3ee81d95d12"></a>
@@ -1075,6 +1418,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of singlet-triplet annihilation events that have occurred. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of singlet-triplet annihilation events that have occurred since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -1093,6 +1439,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of transient test cycles that have been performed. During the time-of-flight charge transport test and the dynamics test, multiple transient cycles may be used to reach the target number of tested objects. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of transient test cycles that have been performed since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a33038c604bab9c6e1151f9a121cad318"></a>
@@ -1109,6 +1458,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of triplet excitons that have dissociated. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of triplet excitons that have dissociated since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -1127,6 +1479,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of triplet excitons that have recombined. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of triplet excitons that have recombined since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a1f703e7c8cf563cb6b9d961a552fe3e2"></a>
@@ -1143,6 +1498,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the number of triplet-polaron annihilation events that have occurred. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of triplet-polaron annihilation events that have occurred since the simulation object was initialized. </dd></dl>
 
 </div>
 </div>
@@ -1161,6 +1519,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of triplet-triplet annihilation events that have occurred. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of triplet-triplet annihilation events that have occurred since the simulation object was initialized. </dd></dl>
+
 </div>
 </div>
 <a id="a576de9d88dafa1a085fa9d6ae269ca87"></a>
@@ -1177,6 +1538,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the name of event type that was last performed. </p>
+<dl class="section return"><dt>Returns</dt><dd>The event_type name of the previously executed event. </dd></dl>
 
 </div>
 </div>
@@ -1196,10 +1560,19 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the energies of the lattice sites with the specified type. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">site_type</td><td>specifies the site type, where 1 is for donor sites and 2 is for acceptor sites. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing the lattice site energies of sites with the specified type in units of eV. </dd></dl>
+
 </div>
 </div>
-<a id="ad41e455807c994507f5402c3eef74bab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad41e455807c994507f5402c3eef74bab">&#9670;&nbsp;</a></span>getSiteEnergy()</h2>
+<a id="a524b4928a7593df1f240aef8b878e36e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a524b4928a7593df1f240aef8b878e36e">&#9670;&nbsp;</a></span>getSiteEnergy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1207,17 +1580,28 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">float Excimontec::OSC_Sim::getSiteEnergy </td>
           <td>(</td>
-          <td class="paramtype">const KMC_Lattice::Coords &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;&#160;</td>
           <td class="paramname"><em>coords</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the site energy of the lattice site at the specified coordinates. An error is generated if the specified lattice site is not in the lattice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coords</td><td>is the coordinates of the specified lattice site. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The energy of the specified site in units of eV. </dd>
+<dd>
+NAN if the coordinates correspond to a site that is not in the lattice. </dd></dl>
+
 </div>
 </div>
-<a id="ad962bcceb7e50c1b70560d9b61788dbf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad962bcceb7e50c1b70560d9b61788dbf">&#9670;&nbsp;</a></span>getSiteType()</h2>
+<a id="ae8af9398bc791961be796b0653fba2c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8af9398bc791961be796b0653fba2c2">&#9670;&nbsp;</a></span>getSiteType()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1225,12 +1609,23 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">short Excimontec::OSC_Sim::getSiteType </td>
           <td>(</td>
-          <td class="paramtype">const KMC_Lattice::Coords &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;&#160;</td>
           <td class="paramname"><em>coords</em></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the site type of the lattice site at the specified coordinates. An error is generated if the specified lattice site is not in the lattice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coords</td><td>is the coordinates of the specified lattice site. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The type of the specified site, where 1 is for a donor site and 2 is for an acceptor site. </dd>
+<dd>
+-1 if the coordinates correspond to a site that is not in the lattice. </dd></dl>
 
 </div>
 </div>
@@ -1249,6 +1644,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the average equilibration energy of the polarons calculated during the steady state charge transport test. The average equilibration energy corresponds to the average of the density of occupied states at steady state, quasi-equilibrium conditions. </p>
+<dl class="section return"><dt>Returns</dt><dd>The calculated average equilibration energy of the polarons in units of eV. </dd></dl>
+
 </div>
 </div>
 <a id="af76c050df29beb0b22b35804b192b111"></a>
@@ -1265,6 +1663,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the Fermi energy of the system calculated during the steady state charge transport test. The Fermi energy corresponds to the highest occupied energy state under equilibrium conditions at 0 K. </p>
+<dl class="section return"><dt>Returns</dt><dd>The Fermi energy of the system in units of eV. </dd></dl>
 
 </div>
 </div>
@@ -1283,6 +1684,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the average steady state charge carrier mobility calculated during the steady state charge transport test. </p>
+<dl class="section return"><dt>Returns</dt><dd>The average charge carrier mobility in units of cm^2 V^-1 s^-1. </dd></dl>
+
 </div>
 </div>
 <a id="a29234a6db9fca5076b6da1367a81bfbc"></a>
@@ -1299,6 +1703,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the average transport energy of the polarons calculated during the stead state charge transport test. </p>
+<dl class="section return"><dt>Returns</dt><dd>The average transport energy of the polarons in units of eV. </dd></dl>
 
 </div>
 </div>
@@ -1317,6 +1724,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient polaron counts data generated during the time-of-flight charge transport test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the number of polarons in the simulation changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="aa6c09cfb0d8fddd574b68d09af5263e5"></a>
@@ -1333,6 +1743,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transient average polaron energy data generated during the time-of-flight charge transport test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the average polaron energy in units of eV changes over time. </dd></dl>
 
 </div>
 </div>
@@ -1351,6 +1764,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient time data generated during the time-of-flight charge transport test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing the time points for the transient data. </dd></dl>
+
 </div>
 </div>
 <a id="aaee65e3048ee5fd3bdea9743fbd3a1af"></a>
@@ -1368,6 +1784,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the transient average polaron velocity data generated during the time-of-flight charge transport test. The average polaron velocity can be used to calculate the current density and the charge carrier mobility. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing how the average polaron velocity in units of cm/s changes over time. </dd></dl>
+
 </div>
 </div>
 <a id="aa17987f593b65b82fdc39e84deff3f07"></a>
@@ -1384,6 +1803,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the transit time data generate during the time-of-flight charge transport test. </p>
+<dl class="section return"><dt>Returns</dt><dd>A vector of data representing the transit time of all extracted polarons. </dd></dl>
 
 </div>
 </div>
@@ -1413,6 +1835,18 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Initializes the simulation object so that it is ready to execute a simulation test. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td>specifies all of the input parameters needed to run the simulation. </td></tr>
+    <tr><td class="paramname">id</td><td>defines the desired ID number of the simulation object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the initialization is successful. </dd>
+<dd>
+false if there are any errors during initialization. </dd></dl>
+
 </div>
 </div>
 <a id="ade45c659b9df32de6187ee83bf7758f0"></a>
@@ -1430,6 +1864,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Prints a message to the command line about the current status of the simulation test. </p>
+
 </div>
 </div>
 <a id="a0b56db2ae5db69979f2d52ae4e6026ba"></a>
@@ -1446,6 +1882,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Regenerates the site energies for all sites in the lattice. </p>
 
 </div>
 </div>

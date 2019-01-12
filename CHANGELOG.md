@@ -11,33 +11,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - .gitignore - Numerous ignore statements to ignore files generated during build operations and from Microsoft Visual Studio
 - CHANGELOG.md - Notes about all changes in this release
+- docs - KMC_Lattice documentation
+- Exciton - Project name (Excimontec) to header guards
+- OSC_Sim - Project name (Excimontec) to header guards
+- OSC_Sim - Public function and member variable documentation
+- OSC_Sim (getSiteEnergy) - Checking of the input coordinates validity and generating error if invalid
+- OSC_Sim (getSiteType) - Checking of the input coordinates validity and generating error if invalid
+- Parameters - Project name (Excimontec) to header guards
+- Parameters - Public function and member variable documentation
+- Polaron - Project name (Excimontec) to header guards
+- Polaron - Public function and member variable documentation
 - README.md - Build instructions link for Windows users
 
 ### Changed
-- KMC_Lattice - Updated KMC_Lattice submodule to latest version (v2.0.0-rc.2)
-- Many files - Updated copyright statement years to 2017-2019
-- Doxyfile - Project version number to v1.0.0
-- Doxyfile - Settings so that markdown files will no longer be included in the documentation
+- KMC_Lattice - KMC_Lattice submodule to latest version (v2.0.0-rc.2)
+- Many files - Copyright statement years to 2017-2019
 - docs - Updated docs using Doxygen v1.8.15
+- Doxyfile - Project version number to v1.0.0
+- Doxyfile - Settings so that KMC_Lattice is included and markdown files are no longer be included in the documentation
 - Exciton - Nested derived Exciton event classes into the Exciton class
-- main.cpp - Update version string to v1.0.0-rc.2 in preparation for next release
-- OSC_sim - Updated functions to use new object event class nesting format
+- Exciton (constructor) - Must now specify the spin state upon construction
+- Exciton - Revised documentation for public functions and member variables
+- main.cpp - Version string to v1.0.0-rc.2 in preparation for next release
+- OSC_Sim - Functions to use new object event class nesting format
 - OSC_Sim (generateExciton) - Moved definition of default tag value to the header file function declaration statement
+- OSC_Sim (generateExciton) - Implemented the new Exciton constructor where one must specify the spin state
+- OSC_Sim - Nested derived Site class (Site_OSC) into the OSC_Sim class as a private class
+- OSC_Sim (calculateDOSCorrelation) - Scope of the two functions from public to private
+- parameters_default.txt - Default morphology file format to not include the compression specifier suffix 
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
 
 ### Removed
-- docs - Markdown files from the Doxygen documentation build
+- docs - Markdown files from the generated documentation
+- test.cpp - Corrected several spelling errors in the test comments
 
 ### Fixed
 - CHANGELOG.md - Several spelling mistakes in previous release sections
-- main.cpp - Spelling mistake in results output of steady transport test
+- main.cpp - Spelling mistake in the results output of steady transport test
+- main.cpp - Label error in the results output of the time-of-flight charge transport test, current should have been current density
 - OSC_Sim (calculateCoulomb) - Specified input parameter namespaces to avoid Doxygen confusion between the header declaration and source file definition
 - OSC_Sim (createExciton) - Specified input parameter namespaces to avoid Doxygen confusion between the header declaration and source file definition
 - OSC_Sim (calculatePolaronEvents) - Spelling mistake in error message
 - OSC_Sim (reassignSiteEnergies) - Spelling mistake in error message
 - Parameters (checkParameters) - Spelling mistakes in error messages
 - Parameters (importParameters) - Spelling mistakes in error messages
+- test.cpp - Fixed spelling mistakes in the test comments
 
 ## [v1.0.0-rc.1]- 2018-12-11 - Interfacial Energy Shift, Site Energy Import, and Steady State Transport Test Update
 

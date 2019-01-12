@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['site_5fosc',['Site_OSC',['../class_excimontec_1_1_site___o_s_c.html',1,'Excimontec']]]
+  ['recombination',['Recombination',['../class_excimontec_1_1_polaron_1_1_recombination.html',1,'Excimontec::Polaron::Recombination'],['../class_excimontec_1_1_exciton_1_1_recombination.html',1,'Excimontec::Exciton::Recombination']]]
 ];

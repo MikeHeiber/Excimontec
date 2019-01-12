@@ -25,9 +25,9 @@ false //Enable_bilayer (Sum of Thickness_donor and Thickness_acceptor must equal
 false //Enable_random_blend
 0.5 //Acceptor_conc
 false //Enable_import_morphology_single
-morphology_0_compressed.txt //Morphology_filename
+morphology_0.txt //Morphology_filename
 false //Enable_import_morphology_set
-morphology_#_compressed.txt //Morphology_set_format
+morphology_#.txt //Morphology_set_format
 4 //N_test_morphologies
 4 //N_morphology_set_size
 --------------------------------------------------------------

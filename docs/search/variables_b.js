@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['polaron_5fdelocalization_5flength',['Polaron_delocalization_length',['../class_excimontec_1_1_parameters.html#a9ef2fd7bb08d760843ec03f47d00377f',1,'Excimontec::Parameters']]],
-  ['polaron_5fhopping_5fcutoff',['Polaron_hopping_cutoff',['../class_excimontec_1_1_parameters.html#a520804a5c527ad6df4f8d3663c644705',1,'Excimontec::Parameters']]],
-  ['polaron_5flocalization_5facceptor',['Polaron_localization_acceptor',['../class_excimontec_1_1_parameters.html#a0a2bbbd4583bec44be5d2af31810fb98',1,'Excimontec::Parameters']]],
-  ['polaron_5flocalization_5fdonor',['Polaron_localization_donor',['../class_excimontec_1_1_parameters.html#a0d238798ba91f700891d946d55d09ac4',1,'Excimontec::Parameters']]],
-  ['power_5fkernel_5fexponent',['Power_kernel_exponent',['../class_excimontec_1_1_parameters.html#a8b2995aa2d0a727570362244fb70ea40',1,'Excimontec::Parameters']]]
+  ['object_5ftype',['object_type',['../class_excimontec_1_1_exciton.html#a564abe42899b7c49ad37cc4aaecfa1b0',1,'Excimontec::Exciton::object_type()'],['../class_excimontec_1_1_polaron.html#ab27d92edd450d140e7ac8770dc439e0c',1,'Excimontec::Polaron::object_type()']]]
 ];

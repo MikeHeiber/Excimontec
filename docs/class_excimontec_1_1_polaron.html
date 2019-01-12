@@ -97,36 +97,94 @@ $(document).ready(function(){initNavTree('class_excimontec_1_1_polaron.html','')
 </div><!--header-->
 <div class="contents">
 
+<p>This class extends the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">KMC_Lattice::Object</a> class to create a polaron object that represents an electron or hole in an organic semiconductor.  
+ <a href="class_excimontec_1_1_polaron.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_polaron_8h_source.html">Polaron.h</a>&gt;</code></p>
 
-<p>Inherits Object.</p>
+<p>Inherits <a class="el" href="class_k_m_c___lattice_1_1_object.html">KMC_Lattice::Object</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron_1_1_extraction.html">Extraction</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class extends the <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">KMC_Lattice::Event</a> class to create a polaron extraction event.  <a href="class_excimontec_1_1_polaron_1_1_extraction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron_1_1_hop.html">Hop</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class extends the <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">KMC_Lattice::Event</a> class to create a polaron hop event.  <a href="class_excimontec_1_1_polaron_1_1_hop.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron_1_1_recombination.html">Recombination</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class extends the <a class="el" href="class_k_m_c___lattice_1_1_event.html" title="This base class contains the basic properties of a KMC simulation event and the functions needed to i...">KMC_Lattice::Event</a> class to create a polaron recombination event.  <a href="class_excimontec_1_1_polaron_1_1_recombination.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac46cc4cc8c4ec7ec212c914d5785f1dc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron.html#ac46cc4cc8c4ec7ec212c914d5785f1dc">Polaron</a> (const double time, const int tag_num, const KMC_Lattice::Coords &amp;start_coords, const bool polaron_charge)</td></tr>
-<tr class="separator:ac46cc4cc8c4ec7ec212c914d5785f1dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f24f9a28e1d412188b1013ccecaf462"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron.html#a0f24f9a28e1d412188b1013ccecaf462">Polaron</a> (const double time, const int tag_num, const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;coords_start, const bool polaron_charge)</td></tr>
+<tr class="memdesc:a0f24f9a28e1d412188b1013ccecaf462"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that creates and initializes a polaron.  <a href="#a0f24f9a28e1d412188b1013ccecaf462">More...</a><br /></td></tr>
+<tr class="separator:a0f24f9a28e1d412188b1013ccecaf462"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac018ba285a382f9094cf447ab2c69a05"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron.html#ac018ba285a382f9094cf447ab2c69a05">getCharge</a> () const</td></tr>
+<tr class="memdesc:ac018ba285a382f9094cf447ab2c69a05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the charge state of the polaron.  <a href="#ac018ba285a382f9094cf447ab2c69a05">More...</a><br /></td></tr>
 <tr class="separator:ac018ba285a382f9094cf447ab2c69a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a057f0be2b904310eff219999eab4b3e2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron.html#a057f0be2b904310eff219999eab4b3e2">getObjectType</a> () const</td></tr>
+<tr class="memdesc:a057f0be2b904310eff219999eab4b3e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the object type string that denotes what type of derived object class this is.  <a href="#a057f0be2b904310eff219999eab4b3e2">More...</a><br /></td></tr>
 <tr class="separator:a057f0be2b904310eff219999eab4b3e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_k_m_c___lattice_1_1_object"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_k_m_c___lattice_1_1_object')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_k_m_c___lattice_1_1_object.html">KMC_Lattice::Object</a></td></tr>
+<tr class="memitem:a2f950c46bb2903eda745a8082dee201e inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a2f950c46bb2903eda745a8082dee201e">~Object</a> ()</td></tr>
+<tr class="memdesc:a2f950c46bb2903eda745a8082dee201e inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor needed by the base class.  <a href="class_k_m_c___lattice_1_1_object.html#a2f950c46bb2903eda745a8082dee201e">More...</a><br /></td></tr>
+<tr class="separator:a2f950c46bb2903eda745a8082dee201e inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefef862e9b7d6664f49c0187743dc757 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#aefef862e9b7d6664f49c0187743dc757">Object</a> ()</td></tr>
+<tr class="memdesc:aefef862e9b7d6664f49c0187743dc757 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor that creates an empty <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> object.  <a href="class_k_m_c___lattice_1_1_object.html#aefef862e9b7d6664f49c0187743dc757">More...</a><br /></td></tr>
+<tr class="separator:aefef862e9b7d6664f49c0187743dc757 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc5166f14876fb0a6ceebbdd19d5b40 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a3cc5166f14876fb0a6ceebbdd19d5b40">Object</a> (const double time, const int tag_num, const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a> &amp;start_coords)</td></tr>
+<tr class="memdesc:a3cc5166f14876fb0a6ceebbdd19d5b40 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that creates and initializes a usable <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> object.  <a href="class_k_m_c___lattice_1_1_object.html#a3cc5166f14876fb0a6ceebbdd19d5b40">More...</a><br /></td></tr>
+<tr class="separator:a3cc5166f14876fb0a6ceebbdd19d5b40 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1831d9ef4058f8605c630cf68fc36b68 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a1831d9ef4058f8605c630cf68fc36b68">calculateDisplacement</a> (const int direction=0) const</td></tr>
+<tr class="memdesc:a1831d9ef4058f8605c630cf68fc36b68 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the absolute displacement of the object from its starting coordinates in lattice units.  <a href="class_k_m_c___lattice_1_1_object.html#a1831d9ef4058f8605c630cf68fc36b68">More...</a><br /></td></tr>
+<tr class="separator:a1831d9ef4058f8605c630cf68fc36b68 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83a7bab6def0127d9a9a867a5f7f7ca8 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a83a7bab6def0127d9a9a867a5f7f7ca8">getCoords</a> () const</td></tr>
+<tr class="memdesc:a83a7bab6def0127d9a9a867a5f7f7ca8 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current coordinates of the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a>.  <a href="class_k_m_c___lattice_1_1_object.html#a83a7bab6def0127d9a9a867a5f7f7ca8">More...</a><br /></td></tr>
+<tr class="separator:a83a7bab6def0127d9a9a867a5f7f7ca8 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a938b0914499c7f609fd9feffe6893783 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a938b0914499c7f609fd9feffe6893783">getCreationTime</a> () const</td></tr>
+<tr class="memdesc:a938b0914499c7f609fd9feffe6893783 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the simulation creation time of the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a>.  <a href="class_k_m_c___lattice_1_1_object.html#a938b0914499c7f609fd9feffe6893783">More...</a><br /></td></tr>
+<tr class="separator:a938b0914499c7f609fd9feffe6893783 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85b51ab799b2a9ec7ada716a6af7209a inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">std::list&lt; <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> * &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a85b51ab799b2a9ec7ada716a6af7209a">getEventIt</a> () const</td></tr>
+<tr class="memdesc:a85b51ab799b2a9ec7ada716a6af7209a inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the event list iterator for the event that is associated with the object.  <a href="class_k_m_c___lattice_1_1_object.html#a85b51ab799b2a9ec7ada716a6af7209a">More...</a><br /></td></tr>
+<tr class="separator:a85b51ab799b2a9ec7ada716a6af7209a inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa35cd6ed8f68b0baa36fdd1132314b99 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#aa35cd6ed8f68b0baa36fdd1132314b99">getTag</a> () const</td></tr>
+<tr class="memdesc:aa35cd6ed8f68b0baa36fdd1132314b99 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the tag id number of the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a>.  <a href="class_k_m_c___lattice_1_1_object.html#aa35cd6ed8f68b0baa36fdd1132314b99">More...</a><br /></td></tr>
+<tr class="separator:aa35cd6ed8f68b0baa36fdd1132314b99 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7795648362f4701a409c022963d28e5 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#ab7795648362f4701a409c022963d28e5">incrementDX</a> (const int num)</td></tr>
+<tr class="memdesc:ab7795648362f4701a409c022963d28e5 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the dx parameter, which is to be used when the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> crosses an x-direction periodic boundary.  <a href="class_k_m_c___lattice_1_1_object.html#ab7795648362f4701a409c022963d28e5">More...</a><br /></td></tr>
+<tr class="separator:ab7795648362f4701a409c022963d28e5 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bf5f181f4b6e13a8c6152a555150c33 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a0bf5f181f4b6e13a8c6152a555150c33">incrementDY</a> (const int num)</td></tr>
+<tr class="memdesc:a0bf5f181f4b6e13a8c6152a555150c33 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the dy parameter, which is to be used when the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> crosses a y-direction periodic boundary.  <a href="class_k_m_c___lattice_1_1_object.html#a0bf5f181f4b6e13a8c6152a555150c33">More...</a><br /></td></tr>
+<tr class="separator:a0bf5f181f4b6e13a8c6152a555150c33 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d2c9e1ec9c369bd99d65d3b56d7329d inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a3d2c9e1ec9c369bd99d65d3b56d7329d">incrementDZ</a> (const int num)</td></tr>
+<tr class="memdesc:a3d2c9e1ec9c369bd99d65d3b56d7329d inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increments the dz parameter, which is to be used when the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a> crosses a z-direction periodic boundary.  <a href="class_k_m_c___lattice_1_1_object.html#a3d2c9e1ec9c369bd99d65d3b56d7329d">More...</a><br /></td></tr>
+<tr class="separator:a3d2c9e1ec9c369bd99d65d3b56d7329d inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac36b584f43f8f72b454031c760327b24 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#ac36b584f43f8f72b454031c760327b24">resetInitialCoords</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a> &amp;input_coords)</td></tr>
+<tr class="memdesc:ac36b584f43f8f72b454031c760327b24 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the initial coordinates of the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a>.  <a href="class_k_m_c___lattice_1_1_object.html#ac36b584f43f8f72b454031c760327b24">More...</a><br /></td></tr>
+<tr class="separator:ac36b584f43f8f72b454031c760327b24 inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d5125d7d975837065fe7be0240a20f inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#aa4d5125d7d975837065fe7be0240a20f">setCoords</a> (const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">Coords</a> &amp;input_coords)</td></tr>
+<tr class="memdesc:aa4d5125d7d975837065fe7be0240a20f inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the coordinates of the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">Object</a>.  <a href="class_k_m_c___lattice_1_1_object.html#aa4d5125d7d975837065fe7be0240a20f">More...</a><br /></td></tr>
+<tr class="separator:aa4d5125d7d975837065fe7be0240a20f inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24dadfaed3fd64461c17f8fb8bcab84a inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_k_m_c___lattice_1_1_object.html#a24dadfaed3fd64461c17f8fb8bcab84a">setEventIt</a> (const std::list&lt; <a class="el" href="class_k_m_c___lattice_1_1_event.html">Event</a> * &gt;::iterator input_it)</td></tr>
+<tr class="memdesc:a24dadfaed3fd64461c17f8fb8bcab84a inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the iterator that points to a specific entry in the events list within the <a class="el" href="class_k_m_c___lattice_1_1_simulation.html" title="This abstract base class contains the basic properties of a KMC simulation and the functions needed t...">Simulation</a> class.  <a href="class_k_m_c___lattice_1_1_object.html#a24dadfaed3fd64461c17f8fb8bcab84a">More...</a><br /></td></tr>
+<tr class="separator:a24dadfaed3fd64461c17f8fb8bcab84a inherit pub_methods_class_k_m_c___lattice_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:ab27d92edd450d140e7ac8770dc439e0c"><td class="memItemLeft" align="right" valign="top">static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_excimontec_1_1_polaron.html#ab27d92edd450d140e7ac8770dc439e0c">object_type</a> = &quot;Polaron&quot;</td></tr>
+<tr class="memdesc:ab27d92edd450d140e7ac8770dc439e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This static member variable holds the name of the object type, which is "Polaron".  <a href="#ab27d92edd450d140e7ac8770dc439e0c">More...</a><br /></td></tr>
 <tr class="separator:ab27d92edd450d140e7ac8770dc439e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac46cc4cc8c4ec7ec212c914d5785f1dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac46cc4cc8c4ec7ec212c914d5785f1dc">&#9670;&nbsp;</a></span>Polaron()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This class extends the <a class="el" href="class_k_m_c___lattice_1_1_object.html" title="This base class contains the basic properties of a KMC simulation object and the functions needed to ...">KMC_Lattice::Object</a> class to create a polaron object that represents an electron or hole in an organic semiconductor. </p>
+<dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2017-2019 </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a0f24f9a28e1d412188b1013ccecaf462"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f24f9a28e1d412188b1013ccecaf462">&#9670;&nbsp;</a></span>Polaron()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,8 +207,8 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const KMC_Lattice::Coords &amp;&#160;</td>
-          <td class="paramname"><em>start_coords</em>, </td>
+          <td class="paramtype">const <a class="el" href="struct_k_m_c___lattice_1_1_coords.html">KMC_Lattice::Coords</a> &amp;&#160;</td>
+          <td class="paramname"><em>coords_start</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -170,6 +228,17 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Constructor that creates and initializes a polaron. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">time</td><td>is the simulation time denoting when the polaron was created. </td></tr>
+    <tr><td class="paramname">tag_num</td><td>is a unique id number used to distinguish the polaron from other polarons. </td></tr>
+    <tr><td class="paramname">coords_start</td><td>is the starting coordinates of the polaron. </td></tr>
+    <tr><td class="paramname">polaron_charge</td><td>is the charge state of the polaron. (true for positive and false for negative) </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -197,6 +266,11 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Gets the charge state of the polaron. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the polaron is a positively charged hole. </dd>
+<dd>
+false if the polaron is a negatively charged electron. </dd></dl>
+
 </div>
 </div>
 <a id="a057f0be2b904310eff219999eab4b3e2"></a>
@@ -217,10 +291,15 @@ Static Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Gets the object type string that denotes what type of derived object class this is. </p>
+<dl class="section return"><dt>Returns</dt><dd>The string "Polaron". </dd></dl>
+
+<p>Reimplemented from <a class="el" href="class_k_m_c___lattice_1_1_object.html#a7d3cf585bb696b0a550ca3ba19891dd3">KMC_Lattice::Object</a>.</p>
 
 </div>
 </div>
@@ -244,6 +323,8 @@ Static Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>This static member variable holds the name of the object type, which is "Polaron". </p>
 
 </div>
 </div>

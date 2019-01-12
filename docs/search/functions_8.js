@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['osc_5fsim',['OSC_Sim',['../class_excimontec_1_1_o_s_c___sim.html#a367b3fc2b5ebb2ce64eec5e37df1203e',1,'Excimontec::OSC_Sim']]],
-  ['outputstatus',['outputStatus',['../class_excimontec_1_1_o_s_c___sim.html#ade45c659b9df32de6187ee83bf7758f0',1,'Excimontec::OSC_Sim']]]
+  ['lattice',['Lattice',['../class_k_m_c___lattice_1_1_lattice.html#ad3016e30705074f892074751f82e4c40',1,'KMC_Lattice::Lattice']]]
 ];

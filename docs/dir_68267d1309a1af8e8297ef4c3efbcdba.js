@@ -14,7 +14,6 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "main.cpp", "main_8cpp.html", "main_8cpp" ],
     [ "OSC_Sim.cpp", "_o_s_c___sim_8cpp.html", null ],
     [ "OSC_Sim.h", "_o_s_c___sim_8h.html", [
-      [ "Site_OSC", "class_excimontec_1_1_site___o_s_c.html", "class_excimontec_1_1_site___o_s_c" ],
       [ "OSC_Sim", "class_excimontec_1_1_o_s_c___sim.html", "class_excimontec_1_1_o_s_c___sim" ]
     ] ],
     [ "Parameters.cpp", "_parameters_8cpp.html", null ],

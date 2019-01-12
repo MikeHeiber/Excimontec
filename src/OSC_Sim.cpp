@@ -1786,8 +1786,7 @@ namespace Excimontec {
 			tag = N_excitons_created + 1;
 		}
 		// Create the new exciton and add it to the simulation
-		Exciton exciton_new(getTime(), tag, coords);
-		exciton_new.setSpin(spin); // Generated exciton is in singlet state
+		Exciton exciton_new(getTime(), tag, coords, spin);
 		excitons.push_back(exciton_new);
 		Object* object_ptr = &excitons.back();
 		addObject(object_ptr);
@@ -2249,12 +2248,30 @@ namespace Excimontec {
 		return energies;
 	}
 
-	float OSC_Sim::getSiteEnergy(const Coords& coords) const {
-		return sites[lattice.getSiteIndex(coords)].getEnergy();
+	float OSC_Sim::getSiteEnergy(const Coords& coords) {
+		// Check that coords are valid
+		try {
+			return sites[lattice.getSiteIndex(coords)].getEnergy();
+		}
+		catch (out_of_range exception) {
+			cout << "Error! Site energy cannot be retrieved because the input coordinates are invalid." << endl;
+			setErrorMessage("Site energy cannot be retrieved because the input coordinates are invalid.");
+			Error_found = true;
+			return NAN;
+		}	
 	}
 
-	short OSC_Sim::getSiteType(const Coords& coords) const {
-		return sites[lattice.getSiteIndex(coords)].getType();
+	short OSC_Sim::getSiteType(const Coords& coords) {
+		// Check that coords are valid
+		try {
+			return sites[lattice.getSiteIndex(coords)].getType();
+		}
+		catch (out_of_range exception) {
+			cout << "Error! Site type cannot be retrieved because the input coordinates are invalid." << endl;
+			setErrorMessage("Site type cannot be retrieved because the input coordinates are invalid.");
+			Error_found = true;
+			return -1;
+		}
 	}
 
 	vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {

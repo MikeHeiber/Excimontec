@@ -25,7 +25,12 @@ var NAVTREE =
 [
   [ "Excimontec", "index.html", [
     [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ]
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ]
+      ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
@@ -33,8 +38,9 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
-        [ "Variables", "functions_vars.html", null ]
+        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Related Functions", "functions_rela.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -49,8 +55,9 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_exciton_8cpp.html",
-"class_excimontec_1_1_polaron_1_1_recombination.html#ab8ab07264729609fb3106cc6f8287b42"
+"_event_8cpp.html",
+"class_excimontec_1_1_parameters.html#a40764c33d7bc7678a08addd99fdb5753",
+"functions.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
