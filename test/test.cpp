@@ -1345,6 +1345,8 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1.5e-1*expected_mobility);
 		// Check relaxed mobility value from the transient data
 		auto velocities = sim.getToFTransientVelocities();
+		// Check sign of transient hole velocity data
+		EXPECT_GT(velocities[0], 0);
 		auto counts_data = sim.getToFTransientCounts();
 		int N_points = 5;
 		auto counts_end_it = find_if(counts_data.begin(), counts_data.end(), [](int val) {return val < 5; });
@@ -1444,6 +1446,9 @@ namespace OSC_SimTests {
 		dim = 3.0;
 		expected_mobility = (params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor)*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1.0 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, vector_avg(mobility_data), 1.5e-1*expected_mobility);
+		// Check sign of transient electron velocity data
+		velocities = sim.getToFTransientVelocities();
+		EXPECT_GT(velocities[0], 0);
 		// Check charge extraction map output
 		auto vec = sim.getChargeExtractionMap(false);
 		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");

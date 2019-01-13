@@ -2756,7 +2756,7 @@ namespace Excimontec {
 					for (auto const &item : electrons) {
 						// Get electron site energy and position for previous timestep
 						int electron_index = (int)distance(transient_electron_tags.begin(), find(transient_electron_tags.begin(), transient_electron_tags.end(), item.getTag()));
-						transient_velocities[index] += (1e-7*lattice.getUnitSize()*(item.getCoords().z - ToF_positions_prev[electron_index])) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
+						transient_velocities[index] += abs(1e-7*lattice.getUnitSize()*(item.getCoords().z - ToF_positions_prev[electron_index])) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 						transient_electron_energies[index] += getSiteEnergy(item.getCoords());
 						transient_electron_energies_prev[electron_index] = getSiteEnergy(item.getCoords());
 						ToF_positions_prev[electron_index] = item.getCoords().z;
@@ -2769,7 +2769,7 @@ namespace Excimontec {
 					for (auto const &item : holes) {
 						// Get hole site energy and position for previous timestep
 						int hole_index = (int)distance(transient_hole_tags.begin(), find(transient_hole_tags.begin(), transient_hole_tags.end(), item.getTag()));
-						transient_velocities[index] += (1e-7*lattice.getUnitSize()*(item.getCoords().z - ToF_positions_prev[hole_index])) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
+						transient_velocities[index] += abs(1e-7*lattice.getUnitSize()*(item.getCoords().z - ToF_positions_prev[hole_index])) / ((getTime() - Transient_creation_time) - transient_times[Transient_index_prev]);
 						transient_hole_energies[index] += getSiteEnergy(item.getCoords());
 						transient_hole_energies_prev[hole_index] = getSiteEnergy(item.getCoords());
 						ToF_positions_prev[hole_index] = item.getCoords().z;
