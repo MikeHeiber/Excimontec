@@ -56,7 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (reassignSiteEnergies) - Spelling mistake in error message
 - Parameters (checkParameters) - Spelling mistakes in error messages
 - Parameters (importParameters) - Spelling mistakes in error messages
-- test.cpp - Fixed spelling mistakes in the test comments
+- test.cpp - Spelling mistakes in the test comments
+- parameters_default.txt - Incorrect units for the exciton hopping and annihilation rate prefactors
 
 ## [v1.0.0-rc.1]- 2018-12-11 - Interfacial Energy Shift, Site Energy Import, and Steady State Transport Test Update
 
