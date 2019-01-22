@@ -43,6 +43,6 @@ before_install:
     
 script:
     - make -j10 $TARGET
-    - travis_wait ./test/Excimontec_tests.exe
+    - travis_wait 30 ./test/Excimontec_tests.exe
     - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --exclude "googletest/*" --gcov-options '\-lp'; fi
     - if [[ "$TARGET" = test ]]; then make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt; fi
