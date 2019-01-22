@@ -1265,9 +1265,9 @@ namespace OSC_SimTests {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		// Check the steady energies
-		EXPECT_DOUBLE_EQ(params.Homo_donor, sim.getSteadyEquilibrationEnergy());
-		EXPECT_DOUBLE_EQ(params.Homo_donor, sim.getSteadyFermiEnergy());
-		EXPECT_DOUBLE_EQ(params.Homo_donor, sim.getSteadyTransportEnergy());
+		EXPECT_NEAR(params.Homo_donor, sim.getSteadyEquilibrationEnergy(), 1e-2*params.Homo_donor);
+		EXPECT_NEAR(params.Homo_donor, sim.getSteadyFermiEnergy(), 1e-2*params.Homo_donor);
+		EXPECT_NEAR(params.Homo_donor, sim.getSteadyTransportEnergy(), 1e-2*params.Homo_donor);
 		// Check steady state mobility
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
