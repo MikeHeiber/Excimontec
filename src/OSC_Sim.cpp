@@ -207,7 +207,6 @@ namespace Excimontec {
 		double Energy = 0;
 		double distance;
 		int distance_sq_lat;
-
 		// Loop through electrons
 		for (auto const &item : electrons) {
 			distance_sq_lat = lattice.calculateLatticeDistanceSquared(coords, item.getCoords());
@@ -1717,7 +1716,7 @@ namespace Excimontec {
 				}
 			}
 			// Record data for the steady transport test
-			if (params.Enable_steady_transport_test) {
+			if (params.Enable_steady_transport_test && (N_events_executed % 10) == 0) {
 				int displacement = object_coords.z - dest_coords.z;
 				if (displacement > 0) {
 					double velocity = (double)displacement / (getTime() - previous_event_time);
@@ -1996,7 +1995,7 @@ namespace Excimontec {
 						item.second = (float)params.Homo_acceptor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
 					}
 				}
-				// Find the nth element when sorting the vector by the state energies
+				// Find the lowest energy site
 				auto min_it = min_element(site_data.begin(), site_data.end(), [this](const pair<Coords, float>& a, const pair<Coords, float>& b) -> bool {
 					return (a.second < b.second);
 				});

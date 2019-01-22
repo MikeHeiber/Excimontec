@@ -1276,16 +1276,16 @@ namespace OSC_SimTests {
 		// Steady transport test with Gaussian disorder
 		sim = OSC_Sim();
 		params = params_default;
-		params.Params_lattice.Length = 500;
-		params.Params_lattice.Width = 500;
-		params.Params_lattice.Height = 500;
+		params.Params_lattice.Length = 400;
+		params.Params_lattice.Width = 400;
+		params.Params_lattice.Height = 400;
 		params.Coulomb_cutoff = 100;
 		params.Temperature = 300;
 		params.Internal_potential = -0.00001;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
 		params.N_equilibration_events = 1000000;
-		params.Steady_carrier_density = 2e14;
+		params.Steady_carrier_density = 4e14;
 		params.N_tests = 1000000;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
