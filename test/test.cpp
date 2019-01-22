@@ -1265,9 +1265,9 @@ namespace OSC_SimTests {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		// Check the steady energies
-		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyEquilibrationEnergy());
-		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyFermiEnergy());
-		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyTransportEnergy());
+		EXPECT_DOUBLE_EQ(params.Homo_donor, sim.getSteadyEquilibrationEnergy());
+		EXPECT_DOUBLE_EQ(params.Homo_donor, sim.getSteadyFermiEnergy());
+		EXPECT_DOUBLE_EQ(params.Homo_donor, sim.getSteadyTransportEnergy());
 		// Check steady state mobility
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
@@ -1297,12 +1297,23 @@ namespace OSC_SimTests {
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
-		// Check the steady energies
-		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
-		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 5e-2*abs(expected_energy));
+		// Check the steady state energies
+		double expected_energy = params.Homo_donor - intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
+		// At low carrier density energies calculated with and without Coulomb interactions should be almost equal
+		// Check Fermi energies w/ and w/o Coulomb potential
 		double fermi_energy = sim.getSteadyFermiEnergy();
-		EXPECT_GT(sim.getSteadyEquilibrationEnergy() - fermi_energy, 5 * K_b*params.Temperature);
+		EXPECT_NEAR(fermi_energy, sim.getSteadyFermiEnergy_Coulomb(), 5e-2*abs(fermi_energy));
+		// Check that equilibration energy and Fermi energy are different enough
+		EXPECT_GT(abs(sim.getSteadyEquilibrationEnergy() - fermi_energy), 5 * K_b*params.Temperature);
+		// Check equilibration energies w/ and w/o Coulomb potential
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 5e-2*abs(expected_energy));
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy_Coulomb(), 5e-2*abs(expected_energy));
+		// Check transport energies w/ and w/o Coulomb potential
+		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 5e-2*abs(sim.getSteadyTransportEnergy()));
+		// The transport energy should be greater than the equilibration energy
 		EXPECT_GT(sim.getSteadyTransportEnergy(), sim.getSteadyEquilibrationEnergy());
+		// equilibration energy should be greater than the Fermi energy
+		EXPECT_GT(sim.getSteadyEquilibrationEnergy(), fermi_energy);
 	}
 
 	TEST_F(OSC_SimTest, ToFTests) {

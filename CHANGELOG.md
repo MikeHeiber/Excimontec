@@ -13,15 +13,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CHANGELOG.md - Notes about all changes in this release
 - docs - KMC_Lattice documentation
 - Exciton - Project name (Excimontec) to header guards
+- main.cpp - Output of Fermi energy, equilibration energy, and transport energy both with and without including the Coulomb potential
 - OSC_Sim - Project name (Excimontec) to header guards
 - OSC_Sim - Public function and member variable documentation
 - OSC_Sim (getSiteEnergy) - Checking of the input coordinates validity and generating error if invalid
 - OSC_Sim (getSiteType) - Checking of the input coordinates validity and generating error if invalid
+- OSC_Sim - include statements for all used components to better document class dependencies
+- OSC_Sim (getSteadyEquilibrationEnergy_Coulomb) - New function to return the equilibration energy calculated including the Coulomb potential
+- OSC_Sim (getSteadyFermiEnergy_Coulomb) - New function to return the Fermi energy calculated including the Coulomb potential
+- OSC_Sim (getSteadyTransportEnergy_Coulomb) - New function to return the transport energy calculated including the Coulomb potential
+- OSC_Sim (Steady_equilibration_energy_sum_Coulomb) - New private member variable for calculating the equilibration energy including the Coulomb potential
+- OSC_Sim (Steady_Fermi_energy) - New private member variable for storing the Fermi energy calculated including the Coulomb potential
+- OSC_Sim (Transport_energy_weighted_sum_Coulomb) - New private member variable for storing the data used to calculate the transport energy including the Coulomb potential
+- OSC_Sim (executePolaronHop) - Calculation of the transport energy including the Coulomb potential
+- OSC_Sim (generateSteadyPolarons) - Simpler creation of polarons on random sites when energetic disorder is disabled
+- OSC_Sim (generateSteadyPolarons) - Calculation of the Fermi energy including the Coulomb potential
+- OSC_Sim (updateSteadyData) - Calculation of the equilibration energy including the Coulomb potential
 - Parameters - Project name (Excimontec) to header guards
 - Parameters - Public function and member variable documentation
 - Polaron - Project name (Excimontec) to header guards
 - Polaron - Public function and member variable documentation
 - README.md - Build instructions link for Windows users
+- test.cpp (SteadyTransportTests) - Tests comparing the energies calculated with and without Coulomb interactions and relative positions of the Fermi, equilibration, and transport energies
 
 ### Changed
 - KMC_Lattice - KMC_Lattice submodule to latest version (v2.0.0-rc.2)
@@ -38,9 +51,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (generateExciton) - Implemented the new Exciton constructor where one must specify the spin state
 - OSC_Sim - Nested derived Site class (Site_OSC) into the OSC_Sim class as a private class
 - OSC_Sim (calculateDOSCorrelation) - Scope of the two functions from public to private
+- OSC_Sim (executePolaronHop) - Refactored function and using temporary local variables to make code more readable
+- OSC_Sim (executePolaronHop) - Calculation of the transport energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
+- OSC_Sim (generateSteadyPolarons) - Allow creation of polarons on acceptor sites
+- OSC_Sim (generateSteadyPolarons) - Polarons are created by filling up the DOS where the DOS is modified due to inclusion of Coulomb interactions after adding each polaron
+- OSC_Sim (getChargeExtractionMap) - Refactored code replacing usage of stringstream with addition of substrings
+- OSC_Sim (getSteadyFermiEnergy) - Calculation of the Fermi energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
+- OSC_Sim (updateSteadyData) - Calculation of equilibration energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
 - parameters_default.txt - Default morphology file format to not include the compression specifier suffix 
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
+- test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
 
 ### Removed
 - docs - Markdown files from the generated documentation
@@ -54,6 +75,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (createExciton) - Specified input parameter namespaces to avoid Doxygen confusion between the header declaration and source file definition
 - OSC_Sim (calculatePolaronEvents) - Spelling mistake in error message
 - OSC_Sim (reassignSiteEnergies) - Spelling mistake in error message
+- OSC_Sim (getSteadyTransportEnergy) - Spelling mistake in the function documentation
+- OSC_Sim (getPolaronIt) - Bug that could occur when comparing a list iterator to an iterator from a different list
+- OSC_Sim (getSteadyEquilibrationEnergy) - Bug that could cause rounding error due to integer division
 - Parameters (checkParameters) - Spelling mistakes in error messages
 - Parameters (importParameters) - Spelling mistakes in error messages
 - test.cpp - Spelling mistakes in the test comments

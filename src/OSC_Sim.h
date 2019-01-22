@@ -13,7 +13,14 @@
 #include "Polaron.h"
 #include "Version.h"
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <list>
 #include <numeric>
+#include <random>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace Excimontec {
 
@@ -277,18 +284,35 @@ namespace Excimontec {
 		//! \return The calculated average equilibration energy of the polarons in units of eV.
 		double getSteadyEquilibrationEnergy() const;
 
+		//! \brief Gets the average equilibration energy of the polarons calculated during the steady state charge transport test.
+		//! The average equilibration energy corresponds to the average of the density of occupied states at steady state, quasi-equilibrium conditions.
+		//! This function returns the equilibration energy calculated including the Coulomb potential due to interactions between the polarons.
+		//! \return The calculated average equilibration energy of the polarons in units of eV.
+		double getSteadyEquilibrationEnergy_Coulomb() const;
+
 		//! \brief Gets the Fermi energy of the system calculated during the steady state charge transport test.
 		//! The Fermi energy corresponds to the highest occupied energy state under equilibrium conditions at 0 K.
 		//! \return The Fermi energy of the system in units of eV.
 		double getSteadyFermiEnergy() const;
 
+		//! \brief Gets the Fermi energy of the system calculated during the steady state charge transport test.
+		//! The Fermi energy corresponds to the highest occupied energy state under equilibrium conditions at 0 K.
+		//! This Fermi energy calculation includes the Coulomb potential energy due to interactions between the polarons.
+		//! \return The Fermi energy of the system in units of eV.
+		double getSteadyFermiEnergy_Coulomb() const;
+
 		//! \brief Gets the average steady state charge carrier mobility calculated during the steady state charge transport test.
 		//! \return The average charge carrier mobility in units of cm^2 V^-1 s^-1.
 		double getSteadyMobility() const;
 
-		//! \brief Gets the average transport energy of the polarons calculated during the stead state charge transport test.
+		//! \brief Gets the average transport energy of the polarons calculated during the steady state charge transport test.
 		//! \return The average transport energy of the polarons in units of eV.
 		double getSteadyTransportEnergy() const;
+
+		//! \brief Gets the average transport energy of the polarons calculated during the steady state charge transport test.
+		//! This returns the transport energy calculated including the Coulomb potential energy due to interactions between the polarons.
+		//! \return The average transport energy of the polarons in units of eV.
+		double getSteadyTransportEnergy_Coulomb() const;
 
 		//! \brief Gets the transient polaron counts data generated during the time-of-flight charge transport test.
 		//! \returns A vector of data representing how the number of polarons in the simulation changes over time.
@@ -512,8 +536,11 @@ namespace Excimontec {
 		std::vector<int> transient_electron_counts;
 		std::vector<int> transient_hole_counts;
 		double Steady_equilibration_energy_sum = 0.0;
+		double Steady_equilibration_energy_sum_Coulomb = 0.0;
 		double Steady_equilibration_time = 0.0;
+		double Steady_Fermi_energy = 0.0;
 		double Transport_energy_weighted_sum = 0.0;
+		double Transport_energy_weighted_sum_Coulomb = 0.0;
 		double Transport_energy_sum_of_weights = 0.0;
 		// Additional Counters
 		int N_donor_sites = 0;

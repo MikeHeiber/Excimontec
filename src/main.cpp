@@ -335,9 +335,12 @@ int main(int argc, char *argv[]) {
 			resultsfile << "Charge carrier density = " << params.Steady_carrier_density << " cm^-3.\n";
 			resultsfile << "Internal electric field = " << fabs(sim.getInternalField()) << " V cm^-1.\n\n";
 			resultsfile << "Charge carrier mobility = " << sim.getSteadyMobility() << " cm^2 V^-1 s^-1.\n";
-			resultsfile << "Fermi energy = " << sim.getSteadyFermiEnergy() << " eV.\n";
-			resultsfile << "Equilibration energy = " << sim.getSteadyEquilibrationEnergy() << " eV.\n";
-			resultsfile << "Transport energy = " << sim.getSteadyTransportEnergy() << " eV.\n";
+			resultsfile << "Fermi energy (without Coulomb potential) = " << sim.getSteadyFermiEnergy() << " eV.\n";
+			resultsfile << "Fermi energy (with Coulomb potential) = " << sim.getSteadyFermiEnergy_Coulomb() << " eV.\n";
+			resultsfile << "Equilibration energy (without Coulomb potential) = " << sim.getSteadyEquilibrationEnergy() << " eV.\n";
+			resultsfile << "Equilibration energy (with Coulomb potential) = " << sim.getSteadyEquilibrationEnergy_Coulomb() << " eV.\n";
+			resultsfile << "Transport energy (without Coulomb potential) = " << sim.getSteadyTransportEnergy() << " eV.\n";
+			resultsfile << "Transport energy (with Coulomb potential) = " << sim.getSteadyTransportEnergy_Coulomb() << " eV.\n";
 		}
 		resultsfile << endl;
 	}
@@ -586,9 +589,12 @@ int main(int argc, char *argv[]) {
 	if (error_found == (char)0 && params.Enable_steady_transport_test) {
 		// Gather results from all procs
 		auto mobilities = MPI_gatherValues(sim.getSteadyMobility());
-		auto fermi_energies = MPI_gatherValues(sim.getSteadyFermiEnergy());
-		auto equilibration_energies = MPI_gatherValues(sim.getSteadyEquilibrationEnergy());
-		auto transport_energies = MPI_gatherValues(sim.getSteadyTransportEnergy());
+		auto fermi_energies1 = MPI_gatherValues(sim.getSteadyFermiEnergy());
+		auto fermi_energies2 = MPI_gatherValues(sim.getSteadyFermiEnergy_Coulomb());
+		auto equilibration_energies1 = MPI_gatherValues(sim.getSteadyEquilibrationEnergy());
+		auto equilibration_energies2 = MPI_gatherValues(sim.getSteadyEquilibrationEnergy_Coulomb());
+		auto transport_energies1 = MPI_gatherValues(sim.getSteadyTransportEnergy());
+		auto transport_energies2 = MPI_gatherValues(sim.getSteadyTransportEnergy_Coulomb());
 		// Output overall results from all procs
 		if (procid == 0) {
 			analysisfile << "Overall steady state charge transport test results:\n";
@@ -597,15 +603,21 @@ int main(int argc, char *argv[]) {
 			analysisfile << "Charge carrier density = " << params.Steady_carrier_density << " cm^-3.\n";
 			analysisfile << "Electric field = " << fabs(sim.getInternalField()) << " V cm^-1.\n\n";
 			analysisfile << "Charge carrier mobility = " << vector_avg(mobilities) << " ± " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
-			analysisfile << "Fermi energy = " << vector_avg(fermi_energies) << " ± " << vector_stdev(fermi_energies) << " eV.\n";
-			analysisfile << "Equilibration energy = " << vector_avg(equilibration_energies) << " ± " << vector_stdev(equilibration_energies) << " eV.\n";
-			analysisfile << "Transport energy = " << vector_avg(transport_energies) << " ± " << vector_stdev(transport_energies) << " eV.\n\n";
+			analysisfile << "Fermi energy (without Coulomb potential) = " << vector_avg(fermi_energies1) << " ± " << vector_stdev(fermi_energies1) << " eV.\n";
+			analysisfile << "Fermi energy (with Coulomb potential) = " << vector_avg(fermi_energies2) << " ± " << vector_stdev(fermi_energies2) << " eV.\n";
+			analysisfile << "Equilibration energy (without Coulomb potential) = " << vector_avg(equilibration_energies1) << " ± " << vector_stdev(equilibration_energies1) << " eV.\n";
+			analysisfile << "Equilibration energy (with Coulomb potential) = " << vector_avg(equilibration_energies2) << " ± " << vector_stdev(equilibration_energies2) << " eV.\n";
+			analysisfile << "Transport energy (without Coulomb potential) = " << vector_avg(transport_energies1) << " ± " << vector_stdev(transport_energies1) << " eV.\n";
+			analysisfile << "Transport energy (with Coulomb potential) = " << vector_avg(transport_energies2) << " ± " << vector_stdev(transport_energies2) << " eV.\n\n";
 			analysisfile << "CSV formatted results:\n";
 			analysisfile << "Temperature (K),Charge Carrier Density (cm^-3),Electric Field (V cm^-1),Mobility Avg. (cm^2 V^-1 cm^-1),Mobility Stdev. (cm^2 V^-1 cm^-1),";
-			analysisfile << "Fermi Energy Avg. (eV), Fermi Energy Stdev. (eV), Equilibration Energy Avg. (eV), Equilibration Energy Stdev. (eV),Transport Energy Avg. (eV),Transport Energy Stdev. (eV)\n";
+			analysisfile << "Fermi Energy Avg. w/o Coulomb (eV),Fermi Energy Stdev. w/o Coulomb (eV),Fermi Energy Avg. w/ Coulomb (eV),Fermi Energy Stdev. w/ Coulomb (eV),";
+			analysisfile << "Equilibration Energy Avg. w/o Coulomb,Equilibration Energy Stdev. w/o Coulomb (eV),Equilibration Energy Avg. w/ Coulomb (eV),Equilibration Energy Stdev. w/ Coulomb (eV),";
+			analysisfile << "Transport Energy Avg. w/o Coulomb (eV),Transport Energy Stdev. w/o Coulomb (eV),Transport Energy Avg. w/ Coulomb (eV),Transport Energy Stdev. w/ Coulomb (eV)\n";
 			analysisfile << sim.getTemp() << "," << params.Steady_carrier_density << "," << fabs(sim.getInternalField()) << "," << vector_avg(mobilities) << "," << vector_stdev(mobilities) << ",";
-			analysisfile << vector_avg(fermi_energies) << "," << vector_stdev(fermi_energies) << "," << vector_avg(equilibration_energies) << "," << vector_stdev(equilibration_energies) << ",";
-			analysisfile << vector_avg(transport_energies) << "," << vector_stdev(transport_energies) << endl;
+			analysisfile << vector_avg(fermi_energies1) << "," << vector_stdev(fermi_energies1) << "," << vector_avg(fermi_energies2) << "," << vector_stdev(fermi_energies2) << ",";
+			analysisfile << vector_avg(equilibration_energies1) << "," << vector_stdev(equilibration_energies1) << "," << vector_avg(equilibration_energies2) << "," << vector_stdev(equilibration_energies2) << ",";
+			analysisfile << vector_avg(transport_energies1) << "," << vector_stdev(transport_energies1) << "," << vector_avg(transport_energies2) << "," << vector_stdev(transport_energies2) << endl;
 		}
 	}
 	if (procid == 0) {

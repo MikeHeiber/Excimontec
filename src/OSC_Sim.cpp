@@ -1705,22 +1705,45 @@ namespace Excimontec {
 		}
 		else {
 			auto polaron_it = getPolaronIt((*event_it)->getObjectPtr());
+			auto object_coords = polaron_it->getCoords();
+			auto dest_coords = (*event_it)->getDestCoords();
 			// Log event
 			if (isLoggingEnabled()) {
 				if (!polaron_it->getCharge()) {
-					*Logfile << "Electron " << polaron_it->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+					*Logfile << "Electron " << polaron_it->getTag() << " hopping to site " << dest_coords.x << "," << dest_coords.y << "," << dest_coords.z << "." << endl;
 				}
 				else {
-					*Logfile << "Hole " << polaron_it->getTag() << " hopping to site " << (*event_it)->getDestCoords().x << "," << (*event_it)->getDestCoords().y << "," << (*event_it)->getDestCoords().z << "." << endl;
+					*Logfile << "Hole " << polaron_it->getTag() << " hopping to site " << dest_coords.x << "," << dest_coords.y << "," << dest_coords.z << "." << endl;
 				}
 			}
 			// Record data for the steady transport test
 			if (params.Enable_steady_transport_test) {
-				int displacement = polaron_it->getCoords().z - (*event_it)->getDestCoords().z;
+				int displacement = object_coords.z - dest_coords.z;
 				if (displacement > 0) {
 					double velocity = (double)displacement / (getTime() - previous_event_time);
-					double energy_avg = (getSiteEnergy(polaron_it->getCoords()) + getSiteEnergy((*event_it)->getDestCoords())) / 2.0;
-					Transport_energy_weighted_sum += energy_avg * velocity;
+					// Get initial site energy
+					double energy_i;
+					if (getSiteType(polaron_it->getCoords()) == 1) {
+						energy_i = params.Homo_donor + getSiteEnergy(object_coords);
+					}
+					else {
+						energy_i = params.Homo_acceptor + getSiteEnergy(object_coords);
+					}
+					// Get final site energy
+					double energy_f;
+					if (getSiteType((*event_it)->getDestCoords()) == 1) {
+						energy_f = params.Homo_donor + getSiteEnergy(dest_coords);
+					}
+					else {
+						energy_f = params.Homo_acceptor + getSiteEnergy(dest_coords);
+					}
+					// Add to the transport energy weighted sum without Coulomb energy
+					Transport_energy_weighted_sum += ((energy_i + energy_f) / 2.0) * velocity;
+					// Add to the transport energy weighted sum with Coulomb energy
+					energy_i += calculateCoulomb(polaron_it, object_coords);
+					energy_f += calculateCoulomb(polaron_it, dest_coords);
+					Transport_energy_weighted_sum_Coulomb += ((energy_i + energy_f) / 2.0) * velocity;
+					// Add velocity to sum of weights
 					Transport_energy_sum_of_weights += velocity;
 				}
 			}
@@ -1924,39 +1947,68 @@ namespace Excimontec {
 	void OSC_Sim::generateSteadyPolarons() {
 		// Check to make sure there are enough possible sites
 		int N_polarons = round_int(params.Steady_carrier_density*lattice.getVolume());
-		if (N_donor_sites < N_polarons) {
-			cout << "Error! " << N_polarons << " sites were not available to place the initial steady transport test polarons." << endl;
-			setErrorMessage("Steady transport test polarons could not be created.");
+		if (params.Enable_phase_restriction && N_donor_sites < N_polarons) {
+			cout << "Error! " << N_polarons << " donor sites were not available to place the initial steady transport test hole polarons." << endl;
+			setErrorMessage("Steady transport test hole polarons could not be created.");
 			Error_found = true;
 			return;
 		}
-		// Construct vector of coordinates for all possible sites
-		vector<Coords> coords_vect;
-		coords_vect.reserve(N_donor_sites);
-		Coords coords;
-		for (int x = 0; x < lattice.getLength(); x++) {
-			for (int y = 0; y < lattice.getWidth(); y++) {
-				for (int z = 0; z < lattice.getHeight(); z++) {
-					coords.x = x;
-					coords.y = y;
-					coords.z = z;
-					// Only add donor sites
-					if (getSiteType(coords) == (short)1) {
-						coords_vect.push_back(coords);
-					}
-				}
+		if (sites.size() < N_polarons) {
+			cout << "Error! " << N_polarons << " sites were not available to place the initial steady transport test hole polarons." << endl;
+			setErrorMessage("Steady transport test hole polarons could not be created.");
+			Error_found = true;
+			return;
+		}
+		// Construct a pair vector of coordinates and energies for all possible sites
+		vector<pair<Coords, float>> site_data;
+		if (params.Enable_phase_restriction) {
+			site_data.reserve(N_donor_sites);
+		}
+		else {
+			site_data.reserve(sites.size());
+		}
+		for (long int i = 0; i < (long int)sites.size(); i++) {
+			auto coords = lattice.getSiteCoords(i);
+			if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
+				continue;
+			}
+			site_data.push_back(make_pair(coords, 0.0f));
+		}
+		// If there is no disorder, generate the hole polarons on random sites
+		// Randomly select from the total possible sites
+		if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
+			shuffle(site_data.begin(), site_data.end(), generator);
+			// Resize the vector to only keep the appropriate number of sites
+			site_data.resize(N_polarons);
+			for (auto& item : site_data) {
+				generateHole(item.first);
 			}
 		}
-		// Sort subrange of coords vect based on the site energy at the coords
-		partial_sort(coords_vect.begin(), coords_vect.begin() + N_polarons, coords_vect.end(), [this](const Coords& a, const Coords& b) -> bool {
-			return (getSiteEnergy(a) < getSiteEnergy(b));
-		});
-		// Resize vector to only keep the lowest energy sites
-		coords_vect.resize(N_polarons);
-		// Generate the polarons in the selected sites
-		for (auto const &item : coords_vect) {
-			generateHole(item);
+		else {
+			// Add polarons one by one and update the site energies including the updated Coulomb potential after placing each polaron
+			while (N_holes < N_polarons) {
+				// Calculate polaron state energies including Coulomb potential for each empty site
+				for (auto& item : site_data) {
+					if (getSiteType(item.first) == 1) {
+						item.second = (float)params.Homo_donor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
+					}
+					else {
+						item.second = (float)params.Homo_acceptor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
+					}
+				}
+				// Find the nth element when sorting the vector by the state energies
+				auto min_it = min_element(site_data.begin(), site_data.end(), [this](const pair<Coords, float>& a, const pair<Coords, float>& b) -> bool {
+					return (a.second < b.second);
+				});
+				// Generate the next hole, this increments N_holes
+				generateHole(min_it->first);
+				// Update the Fermi energy
+				Steady_Fermi_energy = min_it->second;
+				// Remove newly occupied site from the site_data vector
+				site_data.erase(min_it);
+			}
 		}
+		// Calculate events for all polarons created
 		calculateAllEvents();
 	}
 
@@ -2219,17 +2271,26 @@ namespace Excimontec {
 		if (object_ptr->getObjectType().compare(Polaron::object_type) == 0) {
 			// electrons
 			if (!(static_cast<const Polaron*>(object_ptr)->getCharge())) {
-				it = find_if(electrons.begin(), electrons.end(), [object_ptr](Polaron& a) {return (a.getTag() == object_ptr->getTag()); });
+				it = find_if(electrons.begin(), electrons.end(), [object_ptr](Polaron& a) {
+					return (a.getTag() == object_ptr->getTag());
+				});
+				if (it == electrons.end()) {
+					cout << "Error! Polaron iterator could not be located." << endl;
+					setErrorMessage("Polaron iterator could not be located.");
+					Error_found = true;
+				}
 			}
 			// holes
 			else {
-				it = find_if(holes.begin(), holes.end(), [object_ptr](Polaron& a) {return (a.getTag() == object_ptr->getTag()); });
+				it = find_if(holes.begin(), holes.end(), [object_ptr](Polaron& a) {
+					return (a.getTag() == object_ptr->getTag());
+				});
+				if (it == holes.end()) {
+					cout << "Error! Polaron iterator could not be located." << endl;
+					setErrorMessage("Polaron iterator could not be located.");
+					Error_found = true;
+				}
 			}
-		}
-		if (it == electrons.end() || it == holes.end()) {
-			cout << "Error! Polaron iterator could not be located." << endl;
-			setErrorMessage("Polaron iterator could not be located.");
-			Error_found = true;
 		}
 		return it;
 	}
@@ -2258,7 +2319,7 @@ namespace Excimontec {
 			setErrorMessage("Site energy cannot be retrieved because the input coordinates are invalid.");
 			Error_found = true;
 			return NAN;
-		}	
+		}
 	}
 
 	short OSC_Sim::getSiteType(const Coords& coords) {
@@ -2276,7 +2337,6 @@ namespace Excimontec {
 
 	vector<string> OSC_Sim::getChargeExtractionMap(const bool charge) const {
 		vector<string> output_data(lattice.getLength()*lattice.getWidth() + 1);
-		stringstream ss;
 		int x, y;
 		output_data[0] = "X-Position,Y-Position,Extraction Probability";
 		if (!charge) {
@@ -2284,13 +2344,11 @@ namespace Excimontec {
 				x = i / lattice.getWidth();
 				y = i % lattice.getWidth();
 				if (N_electrons_collected > 0) {
-					ss << x << "," << y << "," << (double)electron_extraction_data[i] / (double)(N_electrons_collected);
+					output_data[i + 1] = to_string(x) + "," + to_string(y) + "," + to_string((double)electron_extraction_data[i] / (double)(N_electrons_collected));
 				}
 				else {
-					ss << x << "," << y << "," << 0;
+					output_data[i + 1] = to_string(x) + "," + to_string(y) + ",0";
 				}
-				output_data[i + 1] = ss.str();
-				ss.str("");
 			}
 		}
 		else {
@@ -2298,13 +2356,11 @@ namespace Excimontec {
 				x = i / lattice.getWidth();
 				y = i % lattice.getWidth();
 				if (N_holes_collected > 0) {
-					ss << x << "," << y << "," << (double)hole_extraction_data[i] / (double)(N_holes_collected);
+					output_data[i + 1] = to_string(x) + "," + to_string(y) + "," + to_string((double)hole_extraction_data[i] / (double)(N_holes_collected));
 				}
 				else {
-					ss << x << "," << y << "," << 0;
+					output_data[i + 1] = to_string(x) + "," + to_string(y) + ",0";
 				}
-				output_data[i + 1] = ss.str();
-				ss.str("");
 			}
 		}
 		return output_data;
@@ -2312,7 +2368,16 @@ namespace Excimontec {
 
 	double OSC_Sim::getSteadyEquilibrationEnergy() const {
 		if ((int)holes.size() > 0) {
-			return Steady_equilibration_energy_sum / (double)(holes.size()*(params.N_tests / 100));
+			return Steady_equilibration_energy_sum / (double)(holes.size()*((double)params.N_tests / 100));
+		}
+		else {
+			return NAN;
+		}
+	}
+
+	double OSC_Sim::getSteadyEquilibrationEnergy_Coulomb() const {
+		if ((int)holes.size() > 0) {
+			return Steady_equilibration_energy_sum_Coulomb / (double)(holes.size()*((double)params.N_tests / 100));
 		}
 		else {
 			return NAN;
@@ -2320,7 +2385,22 @@ namespace Excimontec {
 	}
 
 	double OSC_Sim::getSteadyFermiEnergy() const {
-		auto energies = getSiteEnergies(1);
+		// Get all donor site hole energies
+		auto energies_donor = getSiteEnergies(1);
+		// Shift energies to the appropriate level given by the HOMO energy
+		for (auto& item : energies_donor) {
+			item += (float)params.Homo_donor;
+		}
+		// Get all acceptor site hole energies
+		auto energies_acceptor = getSiteEnergies(2);
+		// Shift energies to the appropriate level given by the HOMO energy
+		for (auto& item : energies_acceptor) {
+			item += (float)params.Homo_acceptor;
+		}
+		// Concatenate the two vectors to get the total collection of hole state energies
+		auto energies = energies_donor;
+		energies.insert(energies.end(), energies_acceptor.begin(), energies_acceptor.end());
+		// Find the top of the filled site energies
 		if ((int)holes.size() > 0) {
 			nth_element(energies.begin(), energies.begin() + (int)holes.size() - 1, energies.end());
 			return energies[(int)holes.size() - 1];
@@ -2328,6 +2408,10 @@ namespace Excimontec {
 		else {
 			return NAN;
 		}
+	}
+
+	double OSC_Sim::getSteadyFermiEnergy_Coulomb() const {
+		return Steady_Fermi_energy;
 	}
 
 	double OSC_Sim::getSteadyMobility() const {
@@ -2342,6 +2426,15 @@ namespace Excimontec {
 	double OSC_Sim::getSteadyTransportEnergy() const {
 		if (Transport_energy_sum_of_weights > 0) {
 			return (Transport_energy_weighted_sum / Transport_energy_sum_of_weights);
+		}
+		else {
+			return NAN;
+		}
+	}
+
+	double OSC_Sim::getSteadyTransportEnergy_Coulomb() const {
+		if (Transport_energy_sum_of_weights > 0) {
+			return (Transport_energy_weighted_sum_Coulomb / Transport_energy_sum_of_weights);
 		}
 		else {
 			return NAN;
@@ -2705,12 +2798,20 @@ namespace Excimontec {
 			}
 			// Reset transport energy data
 			Transport_energy_weighted_sum = 0.0;
+			Transport_energy_weighted_sum_Coulomb = 0.0;
 			Transport_energy_sum_of_weights = 0.0;
 		}
 		if (N_events_executed > params.N_equilibration_events) {
 			if ((N_events_executed - params.N_equilibration_events) % 100 == 0) {
-				for (const auto &item : holes) {
-					Steady_equilibration_energy_sum += getSiteEnergy(item.getCoords());
+				for (auto it = holes.begin(); it != holes.end(); ++it) {
+					if (getSiteType(it->getCoords()) == 1) {
+						Steady_equilibration_energy_sum += params.Homo_donor + getSiteEnergy(it->getCoords());
+						Steady_equilibration_energy_sum_Coulomb += params.Homo_donor + getSiteEnergy(it->getCoords()) + calculateCoulomb(it, it->getCoords());
+					}
+					else {
+						Steady_equilibration_energy_sum += params.Homo_acceptor + getSiteEnergy(it->getCoords());
+						Steady_equilibration_energy_sum_Coulomb += params.Homo_acceptor + getSiteEnergy(it->getCoords()) + calculateCoulomb(it, it->getCoords());
+					}
 				}
 			}
 		}
