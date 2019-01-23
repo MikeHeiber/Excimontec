@@ -1985,14 +1985,17 @@ namespace Excimontec {
 		}
 		else {
 			// Add polarons one by one and update the site energies including the updated Coulomb potential after placing each polaron
+			Coords hole_coords(0, 0, 0);
 			while (N_holes < N_polarons) {
 				// Calculate polaron state energies including Coulomb potential for each empty site
 				for (auto& item : site_data) {
-					if (getSiteType(item.first) == 1) {
-						item.second = (float)params.Homo_donor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
-					}
-					else {
-						item.second = (float)params.Homo_acceptor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
+					if (N_holes < 1 || lattice.calculateLatticeDistanceSquared(item.first, hole_coords) <= Coulomb_range) {
+						if (getSiteType(item.first) == 1) {
+							item.second = (float)params.Homo_donor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
+						}
+						else {
+							item.second = (float)params.Homo_acceptor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
+						}
 					}
 				}
 				// Find the lowest energy site
@@ -2001,6 +2004,7 @@ namespace Excimontec {
 				});
 				// Generate the next hole, this increments N_holes
 				generateHole(min_it->first);
+				hole_coords = min_it->first;
 				// Update the Fermi energy
 				Steady_Fermi_energy = min_it->second;
 				// Remove newly occupied site from the site_data vector
@@ -2363,6 +2367,15 @@ namespace Excimontec {
 			}
 		}
 		return output_data;
+	}
+
+	double OSC_Sim::getSteadyCurrentDensity() const {
+		double average_displacement = 0.0;
+		for (auto const &item : holes) {
+			average_displacement += item.calculateDisplacement(3);
+		}
+		average_displacement *= (lattice.getUnitSize()*1e-7 / holes.size());
+		return 1000*Elementary_charge*(abs(average_displacement) / (getTime() - Steady_equilibration_time)) / getVolume();
 	}
 
 	double OSC_Sim::getSteadyEquilibrationEnergy() const {

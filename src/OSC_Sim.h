@@ -279,6 +279,10 @@ namespace Excimontec {
 		//! \return -1 if the coordinates correspond to a site that is not in the lattice.
 		short getSiteType(const KMC_Lattice::Coords& coords);
 
+		//! \brief Gets the average steady state current density calculated during the steady state charge transport test.
+		//! \return The average current density in units of mA cm^-2.
+		double getSteadyCurrentDensity() const;
+
 		//! \brief Gets the average equilibration energy of the polarons calculated during the steady state charge transport test.
 		//! The average equilibration energy corresponds to the average of the density of occupied states at steady state, quasi-equilibrium conditions.
 		//! \return The calculated average equilibration energy of the polarons in units of eV.

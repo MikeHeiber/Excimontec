@@ -12,13 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .gitignore - Numerous ignore statements to ignore files generated during build operations and from Microsoft Visual Studio
 - CHANGELOG.md - Notes about all changes in this release
 - docs - KMC_Lattice documentation
+- docs - Documentation of new functions in the OSC_Sim class
 - Exciton - Project name (Excimontec) to header guards
-- main.cpp - Output of Fermi energy, equilibration energy, and transport energy both with and without including the Coulomb potential
+- main.cpp - Output of Fermi energy, equilibration energy, and transport energy both with and without including the Coulomb potential when running a steady transport test
+- main.cpp - Output the current density when running a steady transport test
 - OSC_Sim - Project name (Excimontec) to header guards
 - OSC_Sim - Public function and member variable documentation
 - OSC_Sim (getSiteEnergy) - Checking of the input coordinates validity and generating error if invalid
 - OSC_Sim (getSiteType) - Checking of the input coordinates validity and generating error if invalid
 - OSC_Sim - include statements for all used components to better document class dependencies
+- OSC_Sim - (getSteadyCurrentDensiy) - New function that returns the average current density from the steady state transport test
 - OSC_Sim (getSteadyEquilibrationEnergy_Coulomb) - New function to return the equilibration energy calculated including the Coulomb potential
 - OSC_Sim (getSteadyFermiEnergy_Coulomb) - New function to return the Fermi energy calculated including the Coulomb potential
 - OSC_Sim (getSteadyTransportEnergy_Coulomb) - New function to return the transport energy calculated including the Coulomb potential
@@ -53,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (calculateDOSCorrelation) - Scope of the two functions from public to private
 - OSC_Sim (executePolaronHop) - Refactored function and using temporary local variables to make code more readable
 - OSC_Sim (executePolaronHop) - Calculation of the transport energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
+- OSC_Sim (ExecutePolaronHop) - Calculation of the transport energy now samples the transport energy once every 10 hops
 - OSC_Sim (generateSteadyPolarons) - Allow creation of polarons on acceptor sites
 - OSC_Sim (generateSteadyPolarons) - Polarons are created by filling up the DOS where the DOS is modified due to inclusion of Coulomb interactions after adding each polaron
 - OSC_Sim (getChargeExtractionMap) - Refactored code replacing usage of stringstream with addition of substrings
