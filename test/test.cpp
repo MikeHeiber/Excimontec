@@ -1592,6 +1592,7 @@ int main(int argc, char **argv) {
 	// Redirect cout to NULL to suppress command line output during the tests
 	ofstream testlog("./test/test_log.txt");
 	cout.rdbuf(testlog.rdbuf());
-	return RUN_ALL_TESTS();
+	int test_status = RUN_ALL_TESTS();
 	testlog.close();
+	return test_status;
 }
