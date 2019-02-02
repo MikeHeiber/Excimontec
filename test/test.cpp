@@ -1321,12 +1321,12 @@ namespace OSC_SimTests {
 		// Check the DOS
 		auto DOS_data = sim.getSteadyDOS();
 		// Check the DOS peak
-		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](auto& a, auto& b) {return (a.second < b.second);})).first;
+		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second);})).first;
 		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
 		// Check the DOOS
 		auto DOOS_data = sim.getSteadyDOOS();
 		// Check the DOOS peak
-		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](auto& a, auto& b) {return (a.second < b.second); })).first;
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
 		// Steady transport test with Gaussian disorder at medium field
 		sim = OSC_Sim();
