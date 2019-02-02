@@ -9,38 +9,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- .gitignore - Numerous ignore statements to ignore files generated during build operations and from Microsoft Visual Studio
+- .gitignore - Numerous ignore statements to ignore files generated during build and test operations and from Microsoft Visual Studio
 - CHANGELOG.md - Notes about all changes in this release
 - docs - KMC_Lattice documentation
 - docs - Documentation of new functions in the OSC_Sim class
 - Exciton - Project name (Excimontec) to header guards
-- main.cpp - Output of Fermi energy, equilibration energy, and transport energy both with and without including the Coulomb potential when running a steady transport test
+- main.cpp - Output of equilibration energy and transport energy both with and without including the Coulomb potential when running a steady transport test
 - main.cpp - Output the current density when running a steady transport test
+- main.cpp - Output the density of states and density of occupied states data calculated with and without Coulomb potential adjustments
 - OSC_Sim - Project name (Excimontec) to header guards
 - OSC_Sim - Public function and member variable documentation
 - OSC_Sim (getSiteEnergy) - Checking of the input coordinates validity and generating error if invalid
 - OSC_Sim (getSiteType) - Checking of the input coordinates validity and generating error if invalid
 - OSC_Sim - include statements for all used components to better document class dependencies
-- OSC_Sim - (getSteadyCurrentDensiy) - New function that returns the average current density from the steady state transport test
+- OSC_Sim (getSteadyCurrentDensity) - New function that returns the average current density from the steady state transport test
 - OSC_Sim (getSteadyEquilibrationEnergy_Coulomb) - New function to return the equilibration energy calculated including the Coulomb potential
-- OSC_Sim (getSteadyFermiEnergy_Coulomb) - New function to return the Fermi energy calculated including the Coulomb potential
 - OSC_Sim (getSteadyTransportEnergy_Coulomb) - New function to return the transport energy calculated including the Coulomb potential
 - OSC_Sim (Steady_equilibration_energy_sum_Coulomb) - New private member variable for calculating the equilibration energy including the Coulomb potential
-- OSC_Sim (Steady_Fermi_energy) - New private member variable for storing the Fermi energy calculated including the Coulomb potential
 - OSC_Sim (Transport_energy_weighted_sum_Coulomb) - New private member variable for storing the data used to calculate the transport energy including the Coulomb potential
+- OSC_Sim (Steady_hops_per_DOS_sample) - New private member variable for calculating the DOS during the steady transport test
+- OSC_Sim (Steady_hops_per_DOOS_sample) - New private member variable for calculating the DOOS during the steady transport test
+- OSC_Sim (DOS_bin_size) - New private member variable for calculating the DOOS and DOS during the steady transport test
 - OSC_Sim (executePolaronHop) - Calculation of the transport energy including the Coulomb potential
 - OSC_Sim (generateSteadyPolarons) - Simpler creation of polarons on random sites when energetic disorder is disabled
-- OSC_Sim (generateSteadyPolarons) - Calculation of the Fermi energy including the Coulomb potential
+- OSC_Sim (generateSteadyPolarons) - Status output about how many polarons are created in the lattice for the steady transport test
+- OSC_Sim (generateSteadyPolarons) - Allow creation of polarons on acceptor sites
+- OSC_Sim (getSteadyDOOS) - New function for getting density of occupied states data
+- OSC_Sim (getSteadyDOOS_Coulomb) - New function for getting density of occupied states data
+- OSC_Sim (getSteadyDOS) - New function for getting density of states data
+- OSC_Sim (getSteadyDOS_Coulomb) - New function for getting density of states data
+- OSC_Sim (getSteadyTransportEnergy) - Function now allows calculation when the sum of weights is negative
+- OSC_Sim (getSteadyTransportEnergy_Coulomb) - Function now allows calculation when the sum of weights is negative
+- OSC_Sim (outputStatus) - Status output for the steady state charge transport test
 - OSC_Sim (updateSteadyData) - Calculation of the equilibration energy including the Coulomb potential
+- OSC_Sim (updateSteadyData) - Periodic sampling of the DOOS and DOS
+- OSC_Sim (updateSteadyDOS) - New function that uses the input energy of a given site to update the input density of states data
 - Parameters - Project name (Excimontec) to header guards
 - Parameters - Public function and member variable documentation
+- Parameters (Enable_steady_data_output) - New member variable that is set to true by default but could be used in the future to disable DOS data output
 - Polaron - Project name (Excimontec) to header guards
 - Polaron - Public function and member variable documentation
 - README.md - Build instructions link for Windows users
-- test.cpp (SteadyTransportTests) - Tests comparing the energies calculated with and without Coulomb interactions and relative positions of the Fermi, equilibration, and transport energies
+- test.cpp - Added a simple command line status message at the beginning of all test cases
+- test.cpp (SteadyTransportTests) - Tests comparing the energies calculated with and without Coulomb interactions and relative positions of the equilibration and transport energies
+- test.cpp - (SteadyTransportTests) - Test to check that phase restriction disabling increases the number of available sites for creating the initial polarons in donor-acceptor blends
+- test.cpp - (SteadyTransportTests) - New tests to check the peak position of the DOS and DOOS from the very low field test
+- test.cpp (SteadyTransportTests) - New tests to check the transport energy calculated during a medium electric field test condition
 
 ### Changed
-- KMC_Lattice - KMC_Lattice submodule to latest version (v2.0.0-rc.2)
+- KMC_Lattice - KMC_Lattice submodule to v2.1.0-beta.1
 - Many files - Copyright statement years to 2017-2019
 - docs - Updated docs using Doxygen v1.8.15
 - Doxyfile - Project version number to v1.0.0
@@ -50,35 +67,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exciton - Revised documentation for public functions and member variables
 - main.cpp - Version string to v1.0.0-rc.2 in preparation for next release
 - OSC_Sim - Functions to use new object event class nesting format
+- OSC_Sim (Site_OSC) - Store the site type internally as a char instead of short to save memory
 - OSC_Sim (generateExciton) - Moved definition of default tag value to the header file function declaration statement
 - OSC_Sim (generateExciton) - Implemented the new Exciton constructor where one must specify the spin state
 - OSC_Sim - Nested derived Site class (Site_OSC) into the OSC_Sim class as a private class
 - OSC_Sim (calculateDOSCorrelation) - Scope of the two functions from public to private
 - OSC_Sim (executePolaronHop) - Refactored function and using temporary local variables to make code more readable
 - OSC_Sim (executePolaronHop) - Calculation of the transport energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
-- OSC_Sim (ExecutePolaronHop) - Calculation of the transport energy now samples the transport energy once every 10 hops
-- OSC_Sim (generateSteadyPolarons) - Allow creation of polarons on acceptor sites
-- OSC_Sim (generateSteadyPolarons) - Polarons are created by filling up the DOS where the DOS is modified due to inclusion of Coulomb interactions after adding each polaron
+- OSC_Sim (executePolaronHop) - Calculation of the transport energy is only performed after the equilibration phase is complete
 - OSC_Sim (getChargeExtractionMap) - Refactored code replacing usage of stringstream with addition of substrings
-- OSC_Sim (getSteadyFermiEnergy) - Calculation of the Fermi energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
 - OSC_Sim (updateSteadyData) - Calculation of equilibration energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
+- Parameters (checkParameters) - Lower the limit for the smallest internal potential that one can during a steady transport simulation to allow very low field simulations
 - parameters_default.txt - Default morphology file format to not include the compression specifier suffix 
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
+- test.cpp - All tests to route command line output to a test_log.txt file instead of cluttering the command line making it easier to see the test results
 - test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
+- test.cpp (SteadyTransportTests) - Very low field test to make it more accurate and a little bit faster by decreasing the internal potential, lattice size, and Coulomb cutoff radius
 
 ### Removed
 - docs - Markdown files from the generated documentation
+- main.cpp - Output of the Fermi energy during the steady state charge transport test
+- OSC_Sim (Steady_Fermi_energy) - private member variable that is no longer used
+- OSC_Sim (getSteadyFermiEnergy) - Fermi energy is no longer calculated and DOOS and DOS data is output instead
 - test.cpp - Corrected several spelling errors in the test comments
+- test.cpp (SteadyTransportTests) - Tests of the Fermi energy
 
 ### Fixed
 - CHANGELOG.md - Several spelling mistakes in previous release sections
 - main.cpp - Spelling mistake in the results output of steady transport test
 - main.cpp - Label error in the results output of the time-of-flight charge transport test, current should have been current density
+- main.cpp - Bug bug where status output and logfile reset was only being performed when checking the error status
 - OSC_Sim (calculateCoulomb) - Specified input parameter namespaces to avoid Doxygen confusion between the header declaration and source file definition
 - OSC_Sim (createExciton) - Specified input parameter namespaces to avoid Doxygen confusion between the header declaration and source file definition
 - OSC_Sim (calculatePolaronEvents) - Spelling mistake in error message
 - OSC_Sim (reassignSiteEnergies) - Spelling mistake in error message
+- OSC_Sim (executePolaronHop) - Transport energy calculation to correctly calculate the carrier velocity for each time step by also including hops moving against the electric field direction
 - OSC_Sim (getSteadyTransportEnergy) - Spelling mistake in the function documentation
 - OSC_Sim (getPolaronIt) - Bug that could occur when comparing a list iterator to an iterator from a different list
 - OSC_Sim (getSteadyEquilibrationEnergy) - Bug that could cause rounding error due to integer division

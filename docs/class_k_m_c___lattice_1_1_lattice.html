@@ -204,7 +204,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class contains the properties of a three-dimensional lattice and the functions needed to interact with it. </p>
-<p>The class makes use of the <a class="el" href="class_k_m_c___lattice_1_1_parameters___lattice.html" title="This class contains all of the main input parameters needed by the Lattice class.">Parameters_Lattice</a> struct to load the neccessary input parameters, the <a class="el" href="struct_k_m_c___lattice_1_1_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z.">Coords</a> struct to record the Cartesian coordinates of each lattice site, and the <a class="el" href="class_k_m_c___lattice_1_1_site.html" title="This base class contains the basic properties of a lattice site and the functions needed to interact ...">Site</a> class to assign properties to each site. </p><dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
+<p>The class makes use of the <a class="el" href="class_k_m_c___lattice_1_1_parameters___lattice.html" title="This class contains all of the main input parameters needed by the Lattice class.">Parameters_Lattice</a> struct to load the necessary input parameters, the <a class="el" href="struct_k_m_c___lattice_1_1_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z.">Coords</a> struct to record the Cartesian coordinates of each lattice site, and the <a class="el" href="class_k_m_c___lattice_1_1_site.html" title="This base class contains the basic properties of a lattice site and the functions needed to interact ...">Site</a> class to assign properties to each site. </p><dl class="section copyright"><dt>Copyright</dt><dd>MIT License. For more information, see the LICENSE file that accompanies this software package. </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Michael C. Heiber </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2017-2019 </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -274,9 +274,9 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calculates the destination coordinates when given the starting coordinates and the displacement vector (i,j,k). </p>
-<p>When the starting coordinates are near one or more of the lattice boundaries and periodic boundary conditions are enabled, the function detemines the destination coordinates across the periodic boundary and assigns the calculated <a class="el" href="struct_k_m_c___lattice_1_1_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z.">Coords</a> struct to the input coords_dest argument. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>When the starting coordinates are near one or more of the lattice boundaries and periodic boundary conditions are enabled, the function determines the destination coordinates across the periodic boundary and assigns the calculated <a class="el" href="struct_k_m_c___lattice_1_1_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z.">Coords</a> struct to the input coords_dest argument. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">coords_initial</td><td>is the <a class="el" href="struct_k_m_c___lattice_1_1_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z.">Coords</a> struct tht designates the starting coordinates. </td></tr>
+    <tr><td class="paramname">coords_initial</td><td>is the <a class="el" href="struct_k_m_c___lattice_1_1_coords.html" title="This simple struct contains Cartesian coordinates specified by integers x,y,z.">Coords</a> struct that designates the starting coordinates. </td></tr>
     <tr><td class="paramname">i</td><td>is the displacement in the x-direction. </td></tr>
     <tr><td class="paramname">j</td><td>is the displacement in the y-direction. </td></tr>
     <tr><td class="paramname">k</td><td>is the displacement in the z-direction. </td></tr>
@@ -1028,7 +1028,7 @@ false if a move event is not possible. </dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the specificed site is occupied </dd>
+<dl class="section return"><dt>Returns</dt><dd>true if the specified site is occupied </dd>
 <dd>
 false if the specified site is unoccupied </dd></dl>
 

@@ -23,6 +23,7 @@ var _utils_8h =
     [ "integrateData", "_utils_8h.html#a0b0f0e2e47c9dbe650e4f736c80883c3", null ],
     [ "interpolateData", "_utils_8h.html#a04c980223b98303984f9c722356101eb", null ],
     [ "intpow", "_utils_8h.html#a87d94bc0d678c87d936e14a53c3094ff", null ],
+    [ "MPI_calculatePairVectorAvg", "_utils_8h.html#ac59934977c80ff0ef20e4108ed0e859a", null ],
     [ "MPI_calculateProbHistAvg", "_utils_8h.html#acb87c0ce18e46b80e482ab257345f70c", null ],
     [ "MPI_calculateVectorAvg", "_utils_8h.html#ad022d008e8635c1285b9b2ca300bd5b6", null ],
     [ "MPI_calculateVectorSum", "_utils_8h.html#aa1b88bbdb7d17543f266c0ec41bfc3b8", null ],

@@ -38,6 +38,7 @@ var class_excimontec_1_1_parameters =
     [ "Enable_phase_restriction", "class_excimontec_1_1_parameters.html#a70e1a38a48bbc7d23ccc9cc688b68da3", null ],
     [ "Enable_power_kernel", "class_excimontec_1_1_parameters.html#a5e9dafbd456d625bf23053bd5b9c5a17", null ],
     [ "Enable_random_blend", "class_excimontec_1_1_parameters.html#a5886011a3f9c445e097206b098b8d3b8", null ],
+    [ "Enable_state_data_output", "class_excimontec_1_1_parameters.html#aa4a26f6ab0713fc7600cb310ed1a8560", null ],
     [ "Enable_steady_transport_test", "class_excimontec_1_1_parameters.html#a2bdd712ce240bf8af0cfde08594338a6", null ],
     [ "Enable_ToF_energy_placement", "class_excimontec_1_1_parameters.html#a7ff424e8e99341f6d194146e922c4246", null ],
     [ "Enable_ToF_random_placement", "class_excimontec_1_1_parameters.html#ab0b65fac522290c314fe60ce298f04ed", null ],

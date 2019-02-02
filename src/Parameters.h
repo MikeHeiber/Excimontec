@@ -138,11 +138,15 @@ namespace Excimontec {
 		//! Specifies whether or not the run the steady state charge transport test.
 		bool Enable_steady_transport_test;
 
-		//! Defines the steady state charge carrier density used by he steady state charge transport test.
+		//! Defines the steady state charge carrier density used by the steady state charge transport test.
 		double Steady_carrier_density;
 
 		//! Defines the number of events to execute during the equilibration phase of the steady charge transport test.
 		int N_equilibration_events;
+
+		//! Specifies whether or not to output the density of occupied states and density of states data after the 
+		//! steady state charge transport test.
+		bool Enable_state_data_output = true;
 
 		// Exciton Parameters ------------------------------------------------------------------------------------
 		// These parameters define the properties of the excitons used by the various simulation tests.

@@ -125,7 +125,7 @@ namespace Excimontec {
 			cout << "Error! When running a steady transport test, z-direction periodic boundaries must be used." << endl;
 			return false;
 		}
-		if (Enable_steady_transport_test && abs(Internal_potential) < 1e-6) {
+		if (Enable_steady_transport_test && abs(Internal_potential) < 1e-9) {
 			cout << "Error! When running a steady transport test, the internal potential must not be set to zero." << endl;
 			return false;
 		}

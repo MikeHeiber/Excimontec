@@ -283,6 +283,24 @@ namespace Excimontec {
 		//! \return The average current density in units of mA cm^-2.
 		double getSteadyCurrentDensity() const;
 
+		//! \brief Gets the density of occupied states calculated during the steady state charge transport test.
+		//! \return A pair vector where the first value is the state energy and the second in the density of occupied states.
+		std::vector<std::pair<double, double>> getSteadyDOOS() const;
+
+		//! \brief Gets the density of occupied states calculated during the steady state charge transport test.
+		// This function calculates the state energies including the Coulomb potential due to interactions between the polarons.
+		//! \return A pair vector where the first value is the state energy and the second in the density of occupied states.
+		std::vector<std::pair<double, double>> getSteadyDOOS_Coulomb() const;
+
+		//! \brief Gets the density of states calculated during the steady state charge transport test.
+		//! \return A pair vector where the first value is the state energy and the second in the density of states.
+		std::vector<std::pair<double, double>> getSteadyDOS() const;
+
+		//! \brief Gets the density of states calculated during the steady state charge transport test.
+		// This function calculates the state energies including the Coulomb potential due to interactions between the polarons.
+		//! \return A pair vector where the first value is the state energy and the second in the density of states.
+		std::vector<std::pair<double, double>> getSteadyDOS_Coulomb() const;
+
 		//! \brief Gets the average equilibration energy of the polarons calculated during the steady state charge transport test.
 		//! The average equilibration energy corresponds to the average of the density of occupied states at steady state, quasi-equilibrium conditions.
 		//! \return The calculated average equilibration energy of the polarons in units of eV.
@@ -293,17 +311,6 @@ namespace Excimontec {
 		//! This function returns the equilibration energy calculated including the Coulomb potential due to interactions between the polarons.
 		//! \return The calculated average equilibration energy of the polarons in units of eV.
 		double getSteadyEquilibrationEnergy_Coulomb() const;
-
-		//! \brief Gets the Fermi energy of the system calculated during the steady state charge transport test.
-		//! The Fermi energy corresponds to the highest occupied energy state under equilibrium conditions at 0 K.
-		//! \return The Fermi energy of the system in units of eV.
-		double getSteadyFermiEnergy() const;
-
-		//! \brief Gets the Fermi energy of the system calculated during the steady state charge transport test.
-		//! The Fermi energy corresponds to the highest occupied energy state under equilibrium conditions at 0 K.
-		//! This Fermi energy calculation includes the Coulomb potential energy due to interactions between the polarons.
-		//! \return The Fermi energy of the system in units of eV.
-		double getSteadyFermiEnergy_Coulomb() const;
 
 		//! \brief Gets the average steady state charge carrier mobility calculated during the steady state charge transport test.
 		//! \return The average charge carrier mobility in units of cm^2 V^-1 s^-1.
@@ -354,10 +361,10 @@ namespace Excimontec {
 			float getEnergy() const { return energy; }
 			short getType() const { return type; }
 			void setEnergy(const float energy_input) { energy = energy_input; }
-			void setType(const short site_type) { type = site_type; }
+			void setType(const short site_type) { type = (char)site_type; }
 		private:
 			float energy;
-			short type = 0; //  type 1 represent donor, type 2 represents acceptor
+			char type = 0; //  type 1 represent donor, type 2 represents acceptor
 		};
 
 		struct ExcitonEventCalcVars {
@@ -529,6 +536,10 @@ namespace Excimontec {
 		std::vector<double> transient_hole_msdv;
 		std::vector<int> electron_extraction_data;
 		std::vector<int> hole_extraction_data;
+		std::vector<std::pair<double, double>> steady_DOOS;
+		std::vector<std::pair<double, double>> steady_DOOS_Coulomb;
+		std::vector<std::pair<double, double>> steady_DOS;
+		std::vector<std::pair<double, double>> steady_DOS_Coulomb;
 		std::vector<double> transient_times;
 		std::vector<double> transient_velocities;
 		std::vector<double> transient_exciton_energies;
@@ -539,10 +550,12 @@ namespace Excimontec {
 		std::vector<int> transient_triplet_counts;
 		std::vector<int> transient_electron_counts;
 		std::vector<int> transient_hole_counts;
+		int Steady_hops_per_DOS_sample = 1000000;
+		int Steady_hops_per_DOOS_sample = 1000;
+		double DOS_bin_size = 1e-2;
+		double Steady_equilibration_time = 0.0;
 		double Steady_equilibration_energy_sum = 0.0;
 		double Steady_equilibration_energy_sum_Coulomb = 0.0;
-		double Steady_equilibration_time = 0.0;
-		double Steady_Fermi_energy = 0.0;
 		double Transport_energy_weighted_sum = 0.0;
 		double Transport_energy_weighted_sum_Coulomb = 0.0;
 		double Transport_energy_sum_of_weights = 0.0;
@@ -620,6 +633,7 @@ namespace Excimontec {
 		void removeExciton(std::list<Exciton>::iterator exciton_it);
 		bool siteContainsHole(const KMC_Lattice::Coords& coords);
 		void updateSteadyData();
+		void updateSteadyDOS(std::vector<std::pair<double, double>>& density_of_states, double state_energy);
 		void updateTransientData();
 	};
 

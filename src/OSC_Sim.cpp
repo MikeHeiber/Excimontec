@@ -1716,9 +1716,9 @@ namespace Excimontec {
 				}
 			}
 			// Record data for the steady transport test
-			if (params.Enable_steady_transport_test && (N_events_executed % 10) == 0) {
+			if (params.Enable_steady_transport_test && N_events_executed > params.N_equilibration_events) {
 				int displacement = object_coords.z - dest_coords.z;
-				if (displacement > 0) {
+				if (abs(displacement) > 0) {
 					double velocity = (double)displacement / (getTime() - previous_event_time);
 					// Get initial site energy
 					double energy_i;
@@ -1946,6 +1946,7 @@ namespace Excimontec {
 	void OSC_Sim::generateSteadyPolarons() {
 		// Check to make sure there are enough possible sites
 		int N_polarons = round_int(params.Steady_carrier_density*lattice.getVolume());
+		cout << getId() << ": Creating " << N_polarons << " polarons for the steady charge transport simulation..." << endl;
 		if (params.Enable_phase_restriction && N_donor_sites < N_polarons) {
 			cout << "Error! " << N_polarons << " donor sites were not available to place the initial steady transport test hole polarons." << endl;
 			setErrorMessage("Steady transport test hole polarons could not be created.");
@@ -1958,57 +1959,65 @@ namespace Excimontec {
 			Error_found = true;
 			return;
 		}
-		// Construct a pair vector of coordinates and energies for all possible sites
-		vector<pair<Coords, float>> site_data;
-		if (params.Enable_phase_restriction) {
-			site_data.reserve(N_donor_sites);
-		}
-		else {
-			site_data.reserve(sites.size());
-		}
-		for (long int i = 0; i < (long int)sites.size(); i++) {
-			auto coords = lattice.getSiteCoords(i);
-			if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
-				continue;
-			}
-			site_data.push_back(make_pair(coords, 0.0f));
-		}
 		// If there is no disorder, generate the hole polarons on random sites
 		// Randomly select from the total possible sites
 		if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
-			shuffle(site_data.begin(), site_data.end(), generator);
+			// Construct a vector of coordinates for all possible sites
+			vector<Coords> coords_vec;
+			if (params.Enable_phase_restriction) {
+				coords_vec.reserve(N_donor_sites);
+			}
+			else {
+				coords_vec.reserve(sites.size());
+			}
+			for (long int i = 0; i < (long int)sites.size(); i++) {
+				auto coords = lattice.getSiteCoords(i);
+				if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
+					continue;
+				}
+				coords_vec.push_back(coords);
+			}
+			shuffle(coords_vec.begin(), coords_vec.end(), generator);
 			// Resize the vector to only keep the appropriate number of sites
-			site_data.resize(N_polarons);
-			for (auto& item : site_data) {
-				generateHole(item.first);
+			coords_vec.resize(N_polarons);
+			for (auto& item : coords_vec) {
+				generateHole(item);
 			}
 		}
+		// If there is disorder, create polarons by filling up the DOS
 		else {
-			// Add polarons one by one and update the site energies including the updated Coulomb potential after placing each polaron
-			Coords hole_coords(0, 0, 0);
-			while (N_holes < N_polarons) {
-				// Calculate polaron state energies including Coulomb potential for each empty site
-				for (auto& item : site_data) {
-					if (N_holes < 1 || lattice.calculateLatticeDistanceSquared(item.first, hole_coords) <= Coulomb_range) {
-						if (getSiteType(item.first) == 1) {
-							item.second = (float)params.Homo_donor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
-						}
-						else {
-							item.second = (float)params.Homo_acceptor + getSiteEnergy(item.first) + (float)calculateCoulomb(true, item.first);
-						}
-					}
+			// Construct a vector of coordinates for all possible sites
+			vector<Coords> site_data;
+			if (params.Enable_phase_restriction) {
+				site_data.reserve(N_donor_sites);
+			}
+			else {
+				site_data.reserve(sites.size());
+			}
+			for (long int i = 0; i < (long int)sites.size(); i++) {
+				auto coords = lattice.getSiteCoords(i);
+				if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
+					continue;
 				}
-				// Find the lowest energy site
-				auto min_it = min_element(site_data.begin(), site_data.end(), [this](const pair<Coords, float>& a, const pair<Coords, float>& b) -> bool {
-					return (a.second < b.second);
-				});
-				// Generate the next hole, this increments N_holes
-				generateHole(min_it->first);
-				hole_coords = min_it->first;
-				// Update the Fermi energy
-				Steady_Fermi_energy = min_it->second;
-				// Remove newly occupied site from the site_data vector
-				site_data.erase(min_it);
+				site_data.push_back(coords);
+			}
+			// Sort subrange of coords vect based on the site energy at the coords
+			partial_sort(site_data.begin(), site_data.begin() + N_polarons, site_data.end(), [this](const Coords& a, const Coords& b) -> bool {
+				if (getSiteType(a) == getSiteType(b)) {
+					return (getSiteEnergy(a) < getSiteEnergy(b));
+				}
+				else if (getSiteType(a) == 1) {
+					return ((params.Homo_donor + getSiteEnergy(a)) < (params.Homo_acceptor + getSiteEnergy(b)));
+				}
+				else {
+					return ((params.Homo_acceptor + getSiteEnergy(a)) < (params.Homo_donor + getSiteEnergy(b)));
+				}
+			});
+			// Resize vector to only keep the lowest energy sites
+			site_data.resize(N_polarons);
+			// Generate the polarons in the selected sites
+			for (auto const &item : site_data) {
+				generateHole(item);
 			}
 		}
 		// Calculate events for all polarons created
@@ -2106,6 +2115,10 @@ namespace Excimontec {
 		calculateAllEvents();
 	}
 
+	vector<pair<double, double>> OSC_Sim::getDOSCorrelationData() const {
+		return DOS_correlation_data;
+	}
+
 	vector<double> OSC_Sim::getDynamicsExcitonMSDV() const {
 		return transient_exciton_msdv;
 	}
@@ -2140,10 +2153,6 @@ namespace Excimontec {
 
 	vector<int> OSC_Sim::getDynamicsTransientElectrons() const {
 		return transient_electron_counts;
-	}
-
-	vector<pair<double, double>> OSC_Sim::getDOSCorrelationData() const {
-		return DOS_correlation_data;
 	}
 
 	vector<int> OSC_Sim::getDynamicsTransientHoles() const {
@@ -2375,12 +2384,48 @@ namespace Excimontec {
 			average_displacement += item.calculateDisplacement(3);
 		}
 		average_displacement *= (lattice.getUnitSize()*1e-7 / holes.size());
-		return 1000*Elementary_charge*(abs(average_displacement) / (getTime() - Steady_equilibration_time)) / getVolume();
+		return 1000 * Elementary_charge*(abs(average_displacement) / (getTime() - Steady_equilibration_time)) / getVolume();
+	}
+
+	vector<std::pair<double, double>> OSC_Sim::getSteadyDOOS() const {
+		auto hist = steady_DOOS;
+		// Normalize histogram counts to produce density
+		for (auto& item : hist) {
+			item.second /= ((params.N_tests / Steady_hops_per_DOOS_sample) + 1)*lattice.getVolume()*DOS_bin_size;
+		}
+		return hist;
+	}
+
+	vector<std::pair<double, double>> OSC_Sim::getSteadyDOOS_Coulomb() const {
+		auto hist = steady_DOOS_Coulomb;
+		// Normalize histogram counts to produce density
+		for (auto& item : hist) {
+			item.second /= ((params.N_tests / Steady_hops_per_DOOS_sample) + 1)*lattice.getVolume()*DOS_bin_size;
+		}
+		return hist;
+	}
+
+	vector<std::pair<double, double>> OSC_Sim::getSteadyDOS() const {
+		auto hist = steady_DOS;
+		// Normalize histogram counts to produce density
+		for (auto& item : hist) {
+			item.second /= ((params.N_tests / Steady_hops_per_DOS_sample) + 1)*lattice.getVolume()*DOS_bin_size;
+		}
+		return hist;
+	}
+
+	vector<std::pair<double, double>> OSC_Sim::getSteadyDOS_Coulomb() const {
+		auto hist = steady_DOS_Coulomb;
+		// Normalize histogram counts to produce density
+		for (auto& item : hist) {
+			item.second /= (((params.N_tests / Steady_hops_per_DOS_sample) + 1))*lattice.getVolume()*DOS_bin_size;
+		}
+		return hist;
 	}
 
 	double OSC_Sim::getSteadyEquilibrationEnergy() const {
 		if ((int)holes.size() > 0) {
-			return Steady_equilibration_energy_sum / (double)(holes.size()*((double)params.N_tests / 100));
+			return Steady_equilibration_energy_sum / (double)(holes.size()*((params.N_tests / Steady_hops_per_DOOS_sample) + 1));
 		}
 		else {
 			return NAN;
@@ -2389,41 +2434,11 @@ namespace Excimontec {
 
 	double OSC_Sim::getSteadyEquilibrationEnergy_Coulomb() const {
 		if ((int)holes.size() > 0) {
-			return Steady_equilibration_energy_sum_Coulomb / (double)(holes.size()*((double)params.N_tests / 100));
+			return Steady_equilibration_energy_sum_Coulomb / (double)(holes.size()*((params.N_tests / Steady_hops_per_DOOS_sample) + 1));
 		}
 		else {
 			return NAN;
 		}
-	}
-
-	double OSC_Sim::getSteadyFermiEnergy() const {
-		// Get all donor site hole energies
-		auto energies_donor = getSiteEnergies(1);
-		// Shift energies to the appropriate level given by the HOMO energy
-		for (auto& item : energies_donor) {
-			item += (float)params.Homo_donor;
-		}
-		// Get all acceptor site hole energies
-		auto energies_acceptor = getSiteEnergies(2);
-		// Shift energies to the appropriate level given by the HOMO energy
-		for (auto& item : energies_acceptor) {
-			item += (float)params.Homo_acceptor;
-		}
-		// Concatenate the two vectors to get the total collection of hole state energies
-		auto energies = energies_donor;
-		energies.insert(energies.end(), energies_acceptor.begin(), energies_acceptor.end());
-		// Find the top of the filled site energies
-		if ((int)holes.size() > 0) {
-			nth_element(energies.begin(), energies.begin() + (int)holes.size() - 1, energies.end());
-			return energies[(int)holes.size() - 1];
-		}
-		else {
-			return NAN;
-		}
-	}
-
-	double OSC_Sim::getSteadyFermiEnergy_Coulomb() const {
-		return Steady_Fermi_energy;
 	}
 
 	double OSC_Sim::getSteadyMobility() const {
@@ -2436,7 +2451,7 @@ namespace Excimontec {
 	}
 
 	double OSC_Sim::getSteadyTransportEnergy() const {
-		if (Transport_energy_sum_of_weights > 0) {
+		if (abs(Transport_energy_sum_of_weights) > 0) {
 			return (Transport_energy_weighted_sum / Transport_energy_sum_of_weights);
 		}
 		else {
@@ -2445,7 +2460,7 @@ namespace Excimontec {
 	}
 
 	double OSC_Sim::getSteadyTransportEnergy_Coulomb() const {
-		if (Transport_energy_sum_of_weights > 0) {
+		if (abs(Transport_energy_sum_of_weights) > 0) {
 			return (Transport_energy_weighted_sum_Coulomb / Transport_energy_sum_of_weights);
 		}
 		else {
@@ -2541,8 +2556,8 @@ namespace Excimontec {
 	}
 
 	void OSC_Sim::outputStatus() {
-		cout << getId() << ": Time = " << getTime() << " seconds.\n";
 		if (params.Enable_ToF_test) {
+			cout << getId() << ": Time = " << getTime() << " seconds.\n";
 			if (!params.ToF_polaron_type) {
 				cout << getId() << ": " << N_electrons_collected << " out of " << N_electrons_created << " electrons have been collected and " << N_events_executed << " events have been executed.\n";
 				cout << getId() << ": There are currently " << N_electrons << " electrons in the lattice:\n";
@@ -2559,6 +2574,7 @@ namespace Excimontec {
 			}
 		}
 		if (params.Enable_exciton_diffusion_test) {
+			cout << getId() << ": Time = " << getTime() << " seconds.\n";
 			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << N_events_executed << " events have been executed.\n";
 			cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
 			for (auto const &item : excitons) {
@@ -2566,6 +2582,7 @@ namespace Excimontec {
 			}
 		}
 		if (params.Enable_IQE_test || params.Enable_dynamics_test) {
+			cout << getId() << ": Time = " << getTime() << " seconds.\n";
 			cout << getId() << ": " << N_excitons_created << " excitons have been created and " << N_events_executed << " events have been executed.\n";
 			cout << getId() << ": There are currently " << N_excitons << " excitons in the lattice:\n";
 			for (auto const &item : excitons) {
@@ -2578,6 +2595,16 @@ namespace Excimontec {
 			cout << getId() << ": There are currently " << N_holes << " holes in the lattice:\n";
 			for (auto const &item : holes) {
 				cout << getId() << ": Hole " << item.getTag() << " is at " << item.getCoords().x << "," << item.getCoords().y << "," << item.getCoords().z << ".\n";
+			}
+		}
+		if (params.Enable_steady_transport_test) {
+			if (N_events_executed <= params.N_equilibration_events) {
+				cout << getId() << ": Time = " << getTime() << " seconds.\n";
+				cout << getId() << ": " << N_events_executed << " of " << params.N_equilibration_events << " equilibration events have been executed.\n";
+			}
+			else if (N_events_executed > params.N_equilibration_events) {
+				cout << getId() << ": Time = " << getTime() << " seconds.\n";
+				cout << getId() << ": " << (N_events_executed - params.N_equilibration_events) << " of " << params.N_tests << " test events have been executed.\n";
 			}
 		}
 		cout.flush();
@@ -2812,21 +2839,110 @@ namespace Excimontec {
 			Transport_energy_weighted_sum = 0.0;
 			Transport_energy_weighted_sum_Coulomb = 0.0;
 			Transport_energy_sum_of_weights = 0.0;
+			// Output status
+			cout << getId() << ": Equilibration phase complete." << endl;
 		}
-		if (N_events_executed > params.N_equilibration_events) {
-			if ((N_events_executed - params.N_equilibration_events) % 100 == 0) {
-				for (auto it = holes.begin(); it != holes.end(); ++it) {
-					if (getSiteType(it->getCoords()) == 1) {
-						Steady_equilibration_energy_sum += params.Homo_donor + getSiteEnergy(it->getCoords());
-						Steady_equilibration_energy_sum_Coulomb += params.Homo_donor + getSiteEnergy(it->getCoords()) + calculateCoulomb(it, it->getCoords());
+		if (N_events_executed >= params.N_equilibration_events) {
+			// Sample the density of occupied states
+			if ((N_events_executed - params.N_equilibration_events) % Steady_hops_per_DOOS_sample == 0) {
+				for (const auto& item : holes) {
+					double energy;
+					double energy_C;
+					auto site_coords = item.getCoords();
+					auto it = getPolaronIt((*lattice.getSiteIt(site_coords))->getObjectPtr());
+					if (getSiteType(site_coords) == 1) {
+						energy = params.Homo_donor + getSiteEnergy(site_coords);
+						energy_C = params.Homo_donor + getSiteEnergy(site_coords) + calculateCoulomb(it, site_coords);
 					}
 					else {
-						Steady_equilibration_energy_sum += params.Homo_acceptor + getSiteEnergy(it->getCoords());
-						Steady_equilibration_energy_sum_Coulomb += params.Homo_acceptor + getSiteEnergy(it->getCoords()) + calculateCoulomb(it, it->getCoords());
+						energy = params.Homo_acceptor + getSiteEnergy(site_coords);
+						energy_C = params.Homo_acceptor + getSiteEnergy(site_coords) + calculateCoulomb(it, site_coords);
+					}
+					updateSteadyDOS(steady_DOOS, energy);
+					updateSteadyDOS(steady_DOOS_Coulomb, energy_C);
+					Steady_equilibration_energy_sum += energy;
+					Steady_equilibration_energy_sum_Coulomb += energy_C;
+				}
+			}
+			// Sample the density of states
+			if ((N_events_executed - params.N_equilibration_events) % Steady_hops_per_DOS_sample == 0) {
+				for (long int i = 0; i < lattice.getNumSites(); i++) {
+					double energy;
+					double energy_C;
+					auto site_coords = lattice.getSiteCoords(i);
+					if (lattice.isOccupied(site_coords)) {
+						auto it = getPolaronIt((*lattice.getSiteIt(site_coords))->getObjectPtr());
+						if (getSiteType(site_coords) == 1) {
+							energy = params.Homo_donor + getSiteEnergy(site_coords);
+							energy_C = params.Homo_donor + getSiteEnergy(site_coords) + calculateCoulomb(it, site_coords);
+						}
+						else {
+							energy = params.Homo_acceptor + getSiteEnergy(site_coords);
+							energy_C = params.Homo_acceptor + getSiteEnergy(site_coords) + calculateCoulomb(it, site_coords);
+						}
+						updateSteadyDOS(steady_DOS, energy);
+						updateSteadyDOS(steady_DOS_Coulomb, energy_C);
+					}
+					else {
+						if (getSiteType(site_coords) == 1) {
+							energy = params.Homo_donor + getSiteEnergy(site_coords);
+							energy_C = params.Homo_donor + getSiteEnergy(site_coords) + calculateCoulomb(true, site_coords);
+						}
+						else {
+							energy = params.Homo_acceptor + getSiteEnergy(site_coords);
+							energy_C = params.Homo_acceptor + getSiteEnergy(site_coords) + calculateCoulomb(true, site_coords);
+						}
+						updateSteadyDOS(steady_DOS, energy);
+						updateSteadyDOS(steady_DOS_Coulomb, energy_C);
 					}
 				}
 			}
 		}
+	}
+
+	void OSC_Sim::updateSteadyDOS(vector<pair<double, double>>& density_of_states, double state_energy) {
+		// Check if the density of states is empty
+		if ((int)density_of_states.size() == 0) {
+			// Round input state_energy to nearest bin value
+			double new_bin = round_int(state_energy / DOS_bin_size)*DOS_bin_size;
+			density_of_states.push_back(make_pair(new_bin, 1.0));
+			return;
+		}
+		int new_bin_int = round_int(state_energy / DOS_bin_size);
+		// Determine current range of bins
+		int smallest_bin_int = round_int(density_of_states[0].first / DOS_bin_size);
+		int largest_bin_int = round_int(density_of_states.back().first / DOS_bin_size);
+		if (new_bin_int < smallest_bin_int) {
+			// Insert as many bins as needed before the current bin to extend the range of the histogram to include the new state_energy
+			vector<pair<double, double>> temp;
+			for (int i = new_bin_int; i < smallest_bin_int; i++) {
+				temp.push_back(make_pair(i*DOS_bin_size, 0.0));
+			}
+			// Add histogram count for the new state energy
+			temp[0].second += 1.0;
+			// Insert temp vector into the main density of states vector
+			density_of_states.insert(density_of_states.begin(), temp.begin(), temp.end());
+			return;
+		}
+		if (new_bin_int > largest_bin_int) {
+			// Insert as many bins as needed after the current bin to extend the range of the histogram to include the new state_energy
+			vector<pair<double, double>> temp;
+			for (int i = largest_bin_int + 1; i <= new_bin_int; i++) {
+				temp.push_back(make_pair(i*DOS_bin_size, 0.0));
+			}
+			// Add histogram count for the new state energy
+			temp.back().second += 1.0;
+			// Insert temp vector into the main density of states vector
+			density_of_states.insert(density_of_states.end(), temp.begin(), temp.end());
+			return;
+		}
+		// Calculate data range
+		double min_val = smallest_bin_int * DOS_bin_size - 0.5*DOS_bin_size;
+		double max_val = largest_bin_int * DOS_bin_size + 0.5*DOS_bin_size;
+		// Add to state_energy to histogram
+		int index = (int)floor((state_energy - min_val) / DOS_bin_size);
+		density_of_states[index].second += 1.0;
+		return;
 	}
 
 	void OSC_Sim::updateTransientData() {

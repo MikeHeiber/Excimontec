@@ -33,3 +33,9 @@
 .vs*
 x64*
 *.sln
+packages*
+test/energies.txt
+test/log.txt
+test/parameters_misspell*
+test/status.txt
+test/test_log.txt

@@ -146,6 +146,7 @@ namespace OSC_SimTests {
 	};
 
 	TEST_F(OSC_SimTest, ParameterTests) {
+		cout << "Starting OSC_SimTest.ParameterTests..." << endl;
 		sim = OSC_Sim();
 		Parameters params;
 		params.Enable_logging = false;
@@ -508,6 +509,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, SetupTests) {
+		cout << "Starting OSC_SimTest.SetupTests..." << endl;
 		// Check default parameters
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -516,6 +518,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, GetSiteTests) {
+		cout << "Starting OSC_SimTest.GetSiteTests..." << endl;
 		// Get site energy
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -544,6 +547,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ObjectCreationTests) {
+		cout << "Starting OSC_SimTest.ObjectCreationTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
@@ -554,7 +558,7 @@ namespace OSC_SimTests {
 		EXPECT_TRUE(sim.init(params, 0));
 		// Create triplet exciton
 		sim.createExciton(Coords(10, 10, 10), false);
-		// redirect cout to file
+		// redirect cout to status file
 		ofstream outfile("./test/status.txt");
 		auto old_buf = cout.rdbuf(outfile.rdbuf());
 		sim.outputStatus();
@@ -573,7 +577,7 @@ namespace OSC_SimTests {
 		// Try executing an event
 		sim.calculateAllEvents();
 		sim.executeNextEvent();
-		// redirect cout to file
+		// redirect cout to status file
 		ofstream outfile2("./test/status.txt");
 		old_buf = cout.rdbuf(outfile2.rdbuf());
 		sim.outputStatus();
@@ -667,6 +671,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, LoggingTests) {
+		cout << "Starting OSC_SimTest.LoggingTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		// Enable logging
@@ -724,6 +729,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, EnergiesImportTests) {
+		cout << "Starting OSC_SimTest.EnergiesImportTests..." << endl;
 		// Create sample energies file
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -766,6 +772,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, MorphologyImportTests) {
+		cout << "Starting OSC_SimTest.MorphologyImportTests..." << endl;
 		auto params = params_default;
 		// Test morphology import
 		sim = OSC_Sim();
@@ -814,6 +821,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ChargeDynamicsTests) {
+		cout << "Starting OSC_SimTest.ChargeDynamicsTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
@@ -856,6 +864,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {
+		cout << "Starting OSC_SimTest.ExcitonDynamicsTests..." << endl;
 		// Singlet exciton lifetime test
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -964,6 +973,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
+		cout << "Starting OSC_SimTest.ExcitonDiffusionTests..." << endl;
 		// Singlet exciton diffusion test
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1058,6 +1068,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, IQETests) {
+		cout << "Starting OSC_SimTest.IQETests..." << endl;
 		// Setup starting parameters
 		auto params = params_default;
 		params.Enable_exciton_diffusion_test = false;
@@ -1232,7 +1243,8 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, SteadyTransportTests) {
-		// Test response when there are not enough donor sites to create the specified number of initial polarons
+		cout << "Starting OSC_SimTest.SteadyTransportTests..." << endl;
+		// Check that error is generated when there are not enough donor sites to create the specified number of initial polarons with phase restriction
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
@@ -1241,8 +1253,13 @@ namespace OSC_SimTests {
 		params.Internal_potential = -1.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
+		params.Enable_phase_restriction = true;
 		params.Steady_carrier_density = 1e18;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check that there is no error without phase restriction
+		sim = OSC_Sim();
+		params.Enable_phase_restriction = false;
+		EXPECT_TRUE(sim.init(params, 0));
 		// Steady transport test without disorder
 		sim = OSC_Sim();
 		params = params_default;
@@ -1257,7 +1274,6 @@ namespace OSC_SimTests {
 		params.N_tests = 500000;
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
-		EXPECT_TRUE(std::isnan(sim.getSteadyFermiEnergy()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy()));
 		// Run the simulation
 		EXPECT_TRUE(sim.init(params, 0));
@@ -1266,22 +1282,21 @@ namespace OSC_SimTests {
 		}
 		// Check the steady energies
 		EXPECT_NEAR(params.Homo_donor, sim.getSteadyEquilibrationEnergy(), 1e-2*params.Homo_donor);
-		EXPECT_NEAR(params.Homo_donor, sim.getSteadyFermiEnergy(), 1e-2*params.Homo_donor);
 		EXPECT_NEAR(params.Homo_donor, sim.getSteadyTransportEnergy(), 1e-2*params.Homo_donor);
 		// Check steady state mobility
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1.5e-1*expected_mobility);
-		// Steady transport test with Gaussian disorder
+		// Steady transport test with Gaussian disorder at very low electric field
 		sim = OSC_Sim();
 		params = params_default;
-		params.Params_lattice.Length = 400;
-		params.Params_lattice.Width = 400;
-		params.Params_lattice.Height = 400;
-		params.Coulomb_cutoff = 100;
+		params.Params_lattice.Length = 350;
+		params.Params_lattice.Width = 350;
+		params.Params_lattice.Height = 350;
+		params.Coulomb_cutoff = 50;
 		params.Temperature = 300;
-		params.Internal_potential = -0.00001;
+		params.Internal_potential = 0.0000035;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
 		params.N_equilibration_events = 1000000;
@@ -1300,23 +1315,51 @@ namespace OSC_SimTests {
 		// Check the steady state energies
 		double expected_energy = params.Homo_donor - intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
 		// At low carrier density energies calculated with and without Coulomb interactions should be almost equal
-		// Check Fermi energies w/ and w/o Coulomb potential
-		double fermi_energy = sim.getSteadyFermiEnergy();
-		EXPECT_NEAR(fermi_energy, sim.getSteadyFermiEnergy_Coulomb(), 5e-2*abs(fermi_energy));
-		// Check that equilibration energy and Fermi energy are different enough
-		EXPECT_GT(abs(sim.getSteadyEquilibrationEnergy() - fermi_energy), 5 * K_b*params.Temperature);
 		// Check equilibration energies w/ and w/o Coulomb potential
-		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 5e-2*abs(expected_energy));
-		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy_Coulomb(), 5e-2*abs(expected_energy));
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 1e-2*abs(expected_energy));
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy_Coulomb(), 1e-2*abs(expected_energy));
+		// Check the DOS
+		auto DOS_data = sim.getSteadyDOS();
+		// Check the DOS peak
+		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](auto& a, auto& b) {return (a.second < b.second);})).first;
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
+		// Check the DOOS
+		auto DOOS_data = sim.getSteadyDOOS();
+		// Check the DOOS peak
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](auto& a, auto& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
+		// Steady transport test with Gaussian disorder at medium field
+		sim = OSC_Sim();
+		params = params_default;
+		params.Params_lattice.Length = 300;
+		params.Params_lattice.Width = 300;
+		params.Params_lattice.Height = 300;
+		params.Coulomb_cutoff = 50;
+		params.Temperature = 300;
+		params.Internal_potential = 2.0;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_steady_transport_test = true;
+		params.N_equilibration_events = 100000;
+		params.Steady_carrier_density = 6e14;
+		params.N_tests = 100000;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.05;
+		// Initialize the test
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check that at least 10 holes have been created
+		EXPECT_GT(sim.getN_holes_created(), 10);
+		// Run the simulation
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
 		// Check transport energies w/ and w/o Coulomb potential
-		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 5e-2*abs(sim.getSteadyTransportEnergy()));
+		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 1e-2*abs(sim.getSteadyTransportEnergy()));
 		// The transport energy should be greater than the equilibration energy
 		EXPECT_GT(sim.getSteadyTransportEnergy(), sim.getSteadyEquilibrationEnergy());
-		// equilibration energy should be greater than the Fermi energy
-		EXPECT_GT(sim.getSteadyEquilibrationEnergy(), fermi_energy);
 	}
 
 	TEST_F(OSC_SimTest, ToFTests) {
+		cout << "Starting OSC_SimTest.ToFTests..." << endl;
 		// Test response when there are not enough donor sites to create the specified number of initial polarons
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1472,6 +1515,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, InterfacialEnergyShiftTests) {
+		cout << "Starting OSC_SimTest.InterfacialEnergyShiftTests..." << endl;
 		// Test energy shift on bilayer without energetic disorder
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1506,6 +1550,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
+		cout << "Starting OSC_SimTest.CorrelatedDisorderGaussianKernelTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_gaussian_dos = true;
@@ -1545,6 +1590,8 @@ namespace OSC_SimTests {
 int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Redirect cout to NULL to suppress command line output during the tests
-	//cout.rdbuf(NULL);
+	ofstream testlog("./test/test_log.txt");
+	cout.rdbuf(testlog.rdbuf());
 	return RUN_ALL_TESTS();
+	testlog.close();
 }
