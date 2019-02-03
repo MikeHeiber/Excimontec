@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (SteadyTransportTests) - New tests to check the transport energy calculated during a medium electric field test condition
 - test.cpp (SteadyTransportTests) - New test to check the relative position of the transport energy and the donor HOMO during the medium electric field test
 - test.cpp (SteadyTransportTests) - New test to check the absolute position of the transport energy
+- test.cpp (SteadyTransportTests) - New test for transport in a random donor-acceptor blend and check for the relative change in transport energy position relative to the neat donor architecture
 
 ### Changed
 - KMC_Lattice - KMC_Lattice submodule to v2.1.0-beta.1

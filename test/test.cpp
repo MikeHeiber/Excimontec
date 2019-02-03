@@ -1361,6 +1361,31 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 1e-2*abs(sim.getSteadyTransportEnergy()));
 		// The transport energy should be greater than the equilibration energy
 		EXPECT_GT(sim.getSteadyTransportEnergy(), sim.getSteadyEquilibrationEnergy());
+		// Steady transport test with Gaussian disorder at medium field in random 50:50 donor-acceptor blend
+		sim = OSC_Sim();
+		params.N_equilibration_events = 500000;
+		params.N_tests = 100000;
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.5;
+		params.Enable_phase_restriction = false;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.075;
+		params.Energy_stdev_acceptor = 0.075;
+		params.Homo_donor = 5.0;
+		params.Lumo_donor = 3.0;
+		params.Homo_acceptor = 5.1;
+		params.Lumo_acceptor = 3.1;
+		// Initialize the test
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check that at least 10 holes have been created
+		EXPECT_GT(sim.getN_holes_created(), 10);
+		// Run the simulation
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check position of transport energy relative to the neat test
+		EXPECT_LT(expected_energy, sim.getSteadyTransportEnergy());
 	}
 
 	TEST_F(OSC_SimTest, ToFTests) {

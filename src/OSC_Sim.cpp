@@ -1963,12 +1963,6 @@ namespace Excimontec {
 			Error_found = true;
 			return;
 		}
-		if ((int)sites.size() < N_polarons) {
-			cout << "Error! " << N_polarons << " sites were not available to place the initial steady transport test hole polarons." << endl;
-			setErrorMessage("Steady transport test hole polarons could not be created.");
-			Error_found = true;
-			return;
-		}
 		// If there is no disorder, generate the hole polarons on random sites
 		// Randomly select from the total possible sites
 		if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
