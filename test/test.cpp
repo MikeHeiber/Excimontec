@@ -1339,9 +1339,9 @@ namespace OSC_SimTests {
 		params.Internal_potential = 2.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
-		params.N_equilibration_events = 100000;
-		params.Steady_carrier_density = 6e14;
-		params.N_tests = 100000;
+		params.N_equilibration_events = 500000;
+		params.Steady_carrier_density = 5e14;
+		params.N_tests = 500000;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		// Initialize the test
@@ -1591,8 +1591,9 @@ int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Redirect cout to NULL to suppress command line output during the tests
 	ofstream testlog("./test/test_log.txt");
-	cout.rdbuf(testlog.rdbuf());
+	auto old_buf = cout.rdbuf(testlog.rdbuf());
 	int test_status = RUN_ALL_TESTS();
+	cout.rdbuf(old_buf);
 	testlog.close();
 	return test_status;
 }
