@@ -1343,7 +1343,7 @@ namespace OSC_SimTests {
 		params.Steady_carrier_density = 5e14;
 		params.N_tests = 500000;
 		params.Enable_gaussian_dos = true;
-		params.Energy_stdev_donor = 0.05;
+		params.Energy_stdev_donor = 0.075;
 		// Initialize the test
 		EXPECT_TRUE(sim.init(params, 0));
 		// Check that at least 10 holes have been created

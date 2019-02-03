@@ -1953,7 +1953,7 @@ namespace Excimontec {
 			Error_found = true;
 			return;
 		}
-		if (sites.size() < N_polarons) {
+		if ((int)sites.size() < N_polarons) {
 			cout << "Error! " << N_polarons << " sites were not available to place the initial steady transport test hole polarons." << endl;
 			setErrorMessage("Steady transport test hole polarons could not be created.");
 			Error_found = true;
@@ -2936,9 +2936,8 @@ namespace Excimontec {
 			density_of_states.insert(density_of_states.end(), temp.begin(), temp.end());
 			return;
 		}
-		// Calculate data range
+		// Calculate start of data range
 		double min_val = smallest_bin_int * DOS_bin_size - 0.5*DOS_bin_size;
-		double max_val = largest_bin_int * DOS_bin_size + 0.5*DOS_bin_size;
 		// Add to state_energy to histogram
 		int index = (int)floor((state_energy - min_val) / DOS_bin_size);
 		density_of_states[index].second += 1.0;
