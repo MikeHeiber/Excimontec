@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp - (SteadyTransportTests) - Test to check that phase restriction disabling increases the number of available sites for creating the initial polarons in donor-acceptor blends
 - test.cpp - (SteadyTransportTests) - New tests to check the peak position of the DOS and DOOS from the very low field test
 - test.cpp (SteadyTransportTests) - New tests to check the transport energy calculated during a medium electric field test condition
+- test.cpp (SteadyTransportTests) - New test to check the relative position of the transport energy and the donor HOMO during the medium electric field test
 
 ### Changed
 - KMC_Lattice - KMC_Lattice submodule to v2.1.0-beta.1
@@ -82,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
 - test.cpp - All tests to route command line output to a test_log.txt file instead of cluttering the command line making it easier to see the test results
+- test.cpp (ExcitonDynamicsTests) - Increased the range of the transient to get a more accurate assessment of the equilibrium energy position
 - test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
 - test.cpp (SteadyTransportTests) - Very low field test to make it more accurate and a little bit faster by decreasing the internal potential, lattice size, and Coulomb cutoff radius
 

@@ -914,7 +914,7 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_test = true;
 		params.N_tests = 500;
 		params.Singlet_lifetime_donor = 1e-6;
-		params.Dynamics_transient_end = 1e-8;
+		params.Dynamics_transient_end = 2e-8;
 		params.Dynamics_initial_exciton_conc = 2e15;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
@@ -1352,6 +1352,8 @@ namespace OSC_SimTests {
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
+		// Check position of transport energy relative to the DOS peak
+		EXPECT_GT(params.Homo_donor, sim.getSteadyTransportEnergy());
 		// Check transport energies w/ and w/o Coulomb potential
 		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 1e-2*abs(sim.getSteadyTransportEnergy()));
 		// The transport energy should be greater than the equilibration energy
