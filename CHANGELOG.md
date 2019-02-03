@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp - (SteadyTransportTests) - New tests to check the peak position of the DOS and DOOS from the very low field test
 - test.cpp (SteadyTransportTests) - New tests to check the transport energy calculated during a medium electric field test condition
 - test.cpp (SteadyTransportTests) - New test to check the relative position of the transport energy and the donor HOMO during the medium electric field test
+- test.cpp (SteadyTransportTests) - New test to check the absolute position of the transport energy
 
 ### Changed
 - KMC_Lattice - KMC_Lattice submodule to v2.1.0-beta.1
@@ -76,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (executePolaronHop) - Refactored function and using temporary local variables to make code more readable
 - OSC_Sim (executePolaronHop) - Calculation of the transport energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
 - OSC_Sim (executePolaronHop) - Calculation of the transport energy is only performed after the equilibration phase is complete
+- OSC_Sim (executePolaronHop) - Calculation of the transport energy is is done using the displacement as the weights instead of the velocity
 - OSC_Sim (getChargeExtractionMap) - Refactored code replacing usage of stringstream with addition of substrings
 - OSC_Sim (updateSteadyData) - Calculation of equilibration energy to absolute value that includes the HOMO energy and accounts for donor and acceptor site occupation
 - Parameters (checkParameters) - Lower the limit for the smallest internal potential that one can during a steady transport simulation to allow very low field simulations
@@ -86,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (ExcitonDynamicsTests) - Increased the range of the transient to get a more accurate assessment of the equilibrium energy position
 - test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
 - test.cpp (SteadyTransportTests) - Very low field test to make it more accurate and a little bit faster by decreasing the internal potential, lattice size, and Coulomb cutoff radius
+- test.cpp (SteadyTransportTests) - Medium field test by reducing the number of iterations to make the test faster
 
 ### Removed
 - docs - Markdown files from the generated documentation
@@ -104,7 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (createExciton) - Specified input parameter namespaces to avoid Doxygen confusion between the header declaration and source file definition
 - OSC_Sim (calculatePolaronEvents) - Spelling mistake in error message
 - OSC_Sim (reassignSiteEnergies) - Spelling mistake in error message
-- OSC_Sim (executePolaronHop) - Transport energy calculation to correctly calculate the carrier velocity for each time step by also including hops moving against the electric field direction
+- OSC_Sim (executePolaronHop) - Transport energy calculation to correctly account for hops across the periodic boundary when calculating the displacement
 - OSC_Sim (getSteadyTransportEnergy) - Spelling mistake in the function documentation
 - OSC_Sim (getPolaronIt) - Bug that could occur when comparing a list iterator to an iterator from a different list
 - OSC_Sim (getSteadyEquilibrationEnergy) - Bug that could cause rounding error due to integer division

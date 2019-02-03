@@ -1336,12 +1336,12 @@ namespace OSC_SimTests {
 		params.Params_lattice.Height = 300;
 		params.Coulomb_cutoff = 50;
 		params.Temperature = 300;
-		params.Internal_potential = 2.0;
+		params.Internal_potential = 3.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
 		params.N_equilibration_events = 500000;
 		params.Steady_carrier_density = 5e14;
-		params.N_tests = 500000;
+		params.N_tests = 100000;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.075;
 		// Initialize the test
@@ -1354,6 +1354,9 @@ namespace OSC_SimTests {
 		}
 		// Check position of transport energy relative to the DOS peak
 		EXPECT_GT(params.Homo_donor, sim.getSteadyTransportEnergy());
+		// Check value of transport energy
+		expected_energy = 4.91;
+		EXPECT_NEAR(expected_energy, sim.getSteadyTransportEnergy(), 1e-2*expected_energy);
 		// Check transport energies w/ and w/o Coulomb potential
 		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 1e-2*abs(sim.getSteadyTransportEnergy()));
 		// The transport energy should be greater than the equilibration energy

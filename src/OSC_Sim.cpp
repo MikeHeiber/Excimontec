@@ -1718,8 +1718,18 @@ namespace Excimontec {
 			// Record data for the steady transport test
 			if (params.Enable_steady_transport_test && N_events_executed > params.N_equilibration_events) {
 				int displacement = object_coords.z - dest_coords.z;
-				if (abs(displacement) > 0) {
-					double velocity = (double)displacement / (getTime() - previous_event_time);
+				// Skip transport energy calculation when the z-direction displacement is zero
+				if (displacement == 0) {
+					// Do nothing
+				}
+				else {
+					// Correct for hops across the periodic boundaries
+					if (2 * displacement > lattice.getHeight()) {
+						displacement -= lattice.getHeight();
+					}
+					else if (2 * displacement < -lattice.getHeight()) {
+						displacement += lattice.getHeight();
+					}
 					// Get initial site energy
 					double energy_i;
 					if (getSiteType(polaron_it->getCoords()) == 1) {
@@ -1737,13 +1747,13 @@ namespace Excimontec {
 						energy_f = params.Homo_acceptor + getSiteEnergy(dest_coords);
 					}
 					// Add to the transport energy weighted sum without Coulomb energy
-					Transport_energy_weighted_sum += ((energy_i + energy_f) / 2.0) * velocity;
+					Transport_energy_weighted_sum += ((energy_i + energy_f) / 2.0) * displacement;
 					// Add to the transport energy weighted sum with Coulomb energy
 					energy_i += calculateCoulomb(polaron_it, object_coords);
 					energy_f += calculateCoulomb(polaron_it, dest_coords);
-					Transport_energy_weighted_sum_Coulomb += ((energy_i + energy_f) / 2.0) * velocity;
-					// Add velocity to sum of weights
-					Transport_energy_sum_of_weights += velocity;
+					Transport_energy_weighted_sum_Coulomb += ((energy_i + energy_f) / 2.0) * displacement;
+					// Add displacement to sum of weights
+					Transport_energy_sum_of_weights += displacement;
 				}
 			}
 			return executeObjectHop(event_it);
