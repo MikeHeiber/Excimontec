@@ -87,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
 - test.cpp - All tests to route command line output to a test_log.txt file instead of cluttering the command line making it easier to see the test results
+- test.cpp (EnergiesImportTests) - Tests of the new exportEnergies function checking the absolute value of the exported electron and hole site energies
 - test.cpp (ExcitonDynamicsTests) - Increased the range of the transient to get a more accurate assessment of the equilibrium energy position
 - test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
 - test.cpp (SteadyTransportTests) - Very low field test to make it more accurate and a little bit faster by decreasing the internal potential, lattice size, and Coulomb cutoff radius
@@ -97,7 +98,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - main.cpp - Output of the Fermi energy during the steady state charge transport test
 - OSC_Sim (Steady_Fermi_energy) - private member variable that is no longer used
 - OSC_Sim (getSteadyFermiEnergy) - Fermi energy is no longer calculated and DOOS and DOS data is output instead
-- test.cpp - Corrected several spelling errors in the test comments
 - test.cpp (SteadyTransportTests) - Tests of the Fermi energy
 
 ### Fixed
@@ -115,8 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (getSteadyEquilibrationEnergy) - Bug that could cause rounding error due to integer division
 - Parameters (checkParameters) - Spelling mistakes in error messages
 - Parameters (importParameters) - Spelling mistakes in error messages
-- test.cpp - Spelling mistakes in the test comments
 - parameters_default.txt - Incorrect units for the exciton hopping and annihilation rate prefactors
+- test.cpp - Spelling mistakes in the test comments
 
 ## [v1.0.0-rc.1]- 2018-12-11 - Interfacial Energy Shift, Site Energy Import, and Steady State Transport Test Update
 

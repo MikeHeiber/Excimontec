@@ -754,7 +754,45 @@ namespace OSC_SimTests {
 		auto site_energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0, vector_avg(site_energies), 5e-3);
 		EXPECT_NEAR(energies_stdev1, vector_stdev(site_energies), 1e-4);
+		// Test export of electron energies
+		sim = OSC_Sim();
+		params.Enable_import_energies = false;
+		params.Enable_gaussian_dos = true;
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.exportEnergies("./test/energies.txt", false);
+		ifstream infile("./test/energies.txt");
+		int i = 0;
+		site_energies.clear();
+		int num_sites = params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height;
+		site_energies.reserve(num_sites);
+		string line;
+		while (getline(infile, line)) {
+			if (i > 2) {
+				site_energies.push_back(stod(line));
+			}
+			i++;
+		}
+		infile.close();
+		EXPECT_EQ(num_sites, (int)site_energies.size());
+		EXPECT_NEAR((params.Lumo_donor + params.Lumo_acceptor) / 2.0, vector_avg(site_energies), 1e-2*params.Lumo_donor);
+		// Check hole energies
+		sim.exportEnergies("./test/energies.txt", true);
+		ifstream infile2("./test/energies.txt");
+		i = 0;
+		site_energies.clear();
+		site_energies.reserve(num_sites);
+		while (getline(infile2, line)) {
+			if (i > 2) {
+				site_energies.push_back(stod(line));
+			}
+			i++;
+		}
+		infile2.close();
+		EXPECT_EQ(num_sites, (int)site_energies.size());
+		EXPECT_NEAR((params.Homo_donor + params.Homo_acceptor) / 2.0, vector_avg(site_energies), 1e-2*params.Homo_donor);
 		// Test missing energies file
+		params.Enable_gaussian_dos = false;
+		params.Enable_import_energies = true;
 		params.Energies_import_filename = "energies.txt";
 		EXPECT_FALSE(sim.init(params, 0));
 		// Test energies file with missing data
@@ -1321,7 +1359,7 @@ namespace OSC_SimTests {
 		// Check the DOS
 		auto DOS_data = sim.getSteadyDOS();
 		// Check the DOS peak
-		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second);})).first;
+		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
 		// Check the DOOS
 		auto DOOS_data = sim.getSteadyDOOS();
