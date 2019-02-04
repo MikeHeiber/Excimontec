@@ -12,6 +12,7 @@ var class_excimontec_1_1_o_s_c___sim =
     [ "createHole", "class_excimontec_1_1_o_s_c___sim.html#af6b9d8fca93ae8152a5ecabe95535df5", null ],
     [ "executeNextEvent", "class_excimontec_1_1_o_s_c___sim.html#a1b49d7df062b9184c84685fadcf944bb", null ],
     [ "exportEnergies", "class_excimontec_1_1_o_s_c___sim.html#a06d8e0cf6531a02306bc78d73b1a217e", null ],
+    [ "exportEnergies", "class_excimontec_1_1_o_s_c___sim.html#a2fbeb3a712bdf343bfc3ef8b53859161", null ],
     [ "getChargeExtractionMap", "class_excimontec_1_1_o_s_c___sim.html#a004af96483497b6e4c10348c63d9b646", null ],
     [ "getDOSCorrelationData", "class_excimontec_1_1_o_s_c___sim.html#afde92e2eaf42cd1db2e763e86adb465c", null ],
     [ "getDynamicsElectronEnergies", "class_excimontec_1_1_o_s_c___sim.html#a844eaae5879bff0a03a7fba3ca4d9275", null ],

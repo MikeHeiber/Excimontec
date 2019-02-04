@@ -1806,6 +1806,40 @@ namespace Excimontec {
 		outfile.close();
 	}
 
+	void OSC_Sim::exportEnergies(std::string filename, bool charge) {
+		ofstream outfile(filename);
+		outfile << lattice.getLength() << endl;
+		outfile << lattice.getWidth() << endl;
+		outfile << lattice.getHeight() << endl;
+		for (int x = 0; x < lattice.getLength(); x++) {
+			for (int y = 0; y < lattice.getWidth(); y++) {
+				for (int z = 0; z < lattice.getHeight(); z++) {
+					if (getSiteType(Coords(x, y, z)) == 1) {
+						// hole site energies
+						if (charge) {
+							outfile << params.Homo_donor + getSiteEnergy(Coords(x, y, z)) << "\n";
+						}
+						// electron site energies
+						else {
+							outfile << params.Lumo_donor + getSiteEnergy(Coords(x, y, z)) << "\n";
+						}
+					}
+					else {
+						// hole site energies
+						if (charge) {
+							outfile << params.Homo_acceptor + getSiteEnergy(Coords(x, y, z)) << "\n";
+						}
+						// electron site energies
+						else {
+							outfile << params.Lumo_acceptor + getSiteEnergy(Coords(x, y, z)) << "\n";
+						}
+					}
+				}
+			}
+		}
+		outfile.close();
+	}
+
 	Coords OSC_Sim::generateExciton() {
 		// Determine coords
 		Coords coords = calculateRandomExcitonCreationCoords();

@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (Steady_hops_per_DOOS_sample) - New private member variable for calculating the DOOS during the steady transport test
 - OSC_Sim (DOS_bin_size) - New private member variable for calculating the DOOS and DOS during the steady transport test
 - OSC_Sim (executePolaronHop) - Calculation of the transport energy including the Coulomb potential
+- OSC_Sim (exportEnergies) - New overloaded function allowing the user to output the absolute site energies for electrons or holes
 - OSC_Sim (generateSteadyPolarons) - Simpler creation of polarons on random sites when energetic disorder is disabled
 - OSC_Sim (generateSteadyPolarons) - Status output about how many polarons are created in the lattice for the steady transport test
 - OSC_Sim (generateSteadyPolarons) - Allow creation of polarons on acceptor sites
