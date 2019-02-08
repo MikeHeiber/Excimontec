@@ -51,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Polaron - Project name (Excimontec) to header guards
 - Polaron - Public function and member variable documentation
 - README.md - Build instructions link for Windows users
+- README.md - Information about new DOS and DOOS data files generated during the steady transport test
+- README.md - Examples about what the custom site energies import feature can be used for.
 - test.cpp - Added a simple command line status message at the beginning of all test cases
 - test.cpp (SteadyTransportTests) - Tests comparing the energies calculated with and without Coulomb interactions and relative positions of the equilibration and transport energies
 - test.cpp - (SteadyTransportTests) - Test to check that phase restriction disabling increases the number of available sites for creating the initial polarons in donor-acceptor blends
@@ -86,6 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - parameters_default.txt - Default morphology file format to not include the compression specifier suffix 
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
+- README.md - Updated description of steady transport test feature
+- README.md - Updated current release status info for KMC_Lattice
 - test.cpp - All tests to route command line output to a test_log.txt file instead of cluttering the command line making it easier to see the test results
 - test.cpp (EnergiesImportTests) - Tests of the new exportEnergies function checking the absolute value of the exported electron and hole site energies
 - test.cpp (ExcitonDynamicsTests) - Increased the range of the transient to get a more accurate assessment of the equilibrium energy position
