@@ -1321,7 +1321,7 @@ namespace OSC_SimTests {
 		params.Enable_steady_transport_test = true;
 		params.Steady_carrier_density = 4e15;
 		params.N_equilibration_events = 10000;
-		params.N_tests = 500000;
+		params.N_tests = 100000;
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy()));
@@ -1339,9 +1339,9 @@ namespace OSC_SimTests {
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
-		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1.5e-1*expected_mobility);
 		double expected_current_density = 1000 * Elementary_charge * expected_mobility*(sim.getN_holes_created() / sim.getVolume())*abs(sim.getInternalField());
-		EXPECT_NEAR(expected_current_density, sim.getSteadyCurrentDensity(), 1e-1*expected_current_density);
+		EXPECT_NEAR(expected_current_density, sim.getSteadyCurrentDensity(), 1.5e-1*expected_current_density);
 		// Steady transport test with Gaussian disorder at very low electric field
 		sim = OSC_Sim();
 		params = params_default;

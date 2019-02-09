@@ -101,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
 - test.cpp (SteadyTransportTests) - Very low field test to make it more accurate and a little bit faster by decreasing the internal potential, lattice size, and Coulomb cutoff radius
 - test.cpp (SteadyTransportTests) - Medium field test by reducing the number of iterations to make the test faster
-- test.cpp (SteadyTransportTests) - Adjusted parameters of the medium field mobility test to increase the accuracy of the test and reduced the pass threshold
+- test.cpp (SteadyTransportTests) - Adjusted parameters of the no disorder mobility test to decrease the test time
 
 ### Removed
 - docs - Markdown files from the generated documentation
