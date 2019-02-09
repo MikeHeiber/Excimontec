@@ -29,5 +29,5 @@ var searchData=
   ['creategaussiandosvector',['createGaussianDOSVector',['../namespace_k_m_c___lattice.html#a58a253f2ce23a5a608d582a06e67d852',1,'KMC_Lattice::createGaussianDOSVector(std::vector&lt; double &gt; &amp;data, const double mean, const double stdev, std::mt19937_64 &amp;gen)'],['../namespace_k_m_c___lattice.html#a224863c8dd449fa501d07c5b0cfc07a1',1,'KMC_Lattice::createGaussianDOSVector(std::vector&lt; float &gt; &amp;data, const double mean, const double stdev, std::mt19937_64 &amp;gen)']]],
   ['createhole',['createHole',['../class_excimontec_1_1_o_s_c___sim.html#af6b9d8fca93ae8152a5ecabe95535df5',1,'Excimontec::OSC_Sim']]],
   ['creation',['Creation',['../class_excimontec_1_1_exciton_1_1_creation.html',1,'Excimontec::Exciton::Creation'],['../class_excimontec_1_1_exciton_1_1_creation.html#a0b9996f348c821aa7cf8d17bc0f6e903',1,'Excimontec::Exciton::Creation::Creation()'],['../class_excimontec_1_1_exciton_1_1_creation.html#aafa8af0396f76c1094b8258b92e99139',1,'Excimontec::Exciton::Creation::Creation(KMC_Lattice::Simulation *simulation_ptr)']]],
-  ['current_5fversion',['Current_version',['../namespace_k_m_c___lattice.html#a7da01aab47adc940e19891e5979e3b72',1,'KMC_Lattice']]]
+  ['current_5fversion',['Current_version',['../namespace_k_m_c___lattice.html#a91f4a916d9235dfa664004930666c9fa',1,'KMC_Lattice']]]
 ];

@@ -146,6 +146,7 @@ namespace OSC_SimTests {
 	};
 
 	TEST_F(OSC_SimTest, ParameterTests) {
+		cout << "Starting OSC_SimTest.ParameterTests..." << endl;
 		sim = OSC_Sim();
 		Parameters params;
 		params.Enable_logging = false;
@@ -508,6 +509,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, SetupTests) {
+		cout << "Starting OSC_SimTest.SetupTests..." << endl;
 		// Check default parameters
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -516,6 +518,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, GetSiteTests) {
+		cout << "Starting OSC_SimTest.GetSiteTests..." << endl;
 		// Get site energy
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -544,6 +547,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ObjectCreationTests) {
+		cout << "Starting OSC_SimTest.ObjectCreationTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
@@ -554,7 +558,7 @@ namespace OSC_SimTests {
 		EXPECT_TRUE(sim.init(params, 0));
 		// Create triplet exciton
 		sim.createExciton(Coords(10, 10, 10), false);
-		// redirect cout to file
+		// redirect cout to status file
 		ofstream outfile("./test/status.txt");
 		auto old_buf = cout.rdbuf(outfile.rdbuf());
 		sim.outputStatus();
@@ -573,7 +577,7 @@ namespace OSC_SimTests {
 		// Try executing an event
 		sim.calculateAllEvents();
 		sim.executeNextEvent();
-		// redirect cout to file
+		// redirect cout to status file
 		ofstream outfile2("./test/status.txt");
 		old_buf = cout.rdbuf(outfile2.rdbuf());
 		sim.outputStatus();
@@ -667,6 +671,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, LoggingTests) {
+		cout << "Starting OSC_SimTest.LoggingTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		// Enable logging
@@ -680,12 +685,18 @@ namespace OSC_SimTests {
 		params.Triplet_lifetime_donor = 1e-7;
 		params.Triplet_lifetime_acceptor = 1e-7;
 		params.Enable_FRET_triplet_annihilation = true;
+		params.R_triplet_hopping_donor = 1e10;
+		params.R_triplet_hopping_acceptor = 1e10;
 		params.R_exciton_exciton_annihilation_donor = 1e14;
 		params.R_exciton_exciton_annihilation_acceptor = 1e14;
 		params.R_exciton_polaron_annihilation_donor = 1e14;
 		params.R_exciton_polaron_annihilation_acceptor = 1e14;
 		params.R_exciton_isc_donor = 1e11;
 		params.R_exciton_isc_acceptor = 1e11;
+		params.R_exciton_risc_donor = 1e11;
+		params.R_exciton_risc_acceptor = 1e11;
+		params.E_exciton_ST_donor = 0.1;
+		params.E_exciton_ST_acceptor = 0.1;
 		params.R_polaron_hopping_donor = 1e10;
 		params.R_polaron_hopping_acceptor = 1e10;
 		params.R_polaron_recombination = 1e11;
@@ -695,9 +706,9 @@ namespace OSC_SimTests {
 		params.Exciton_generation_rate_acceptor = 1e26;
 		params.Internal_potential = -0.5;
 		EXPECT_TRUE(sim.init(params, 0));
-		// Execute 1000 events and save events executed
+		// Execute 5000 events and save events executed
 		vector<string> event_types;
-		for (int i = 0; i < 3000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			sim.executeNextEvent();
 			event_types.push_back(sim.getPreviousEventType());
 		}
@@ -724,6 +735,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, EnergiesImportTests) {
+		cout << "Starting OSC_SimTest.EnergiesImportTests..." << endl;
 		// Create sample energies file
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -748,7 +760,45 @@ namespace OSC_SimTests {
 		auto site_energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0, vector_avg(site_energies), 5e-3);
 		EXPECT_NEAR(energies_stdev1, vector_stdev(site_energies), 1e-4);
+		// Test export of electron energies
+		sim = OSC_Sim();
+		params.Enable_import_energies = false;
+		params.Enable_gaussian_dos = true;
+		EXPECT_TRUE(sim.init(params, 0));
+		sim.exportEnergies("./test/energies.txt", false);
+		ifstream infile("./test/energies.txt");
+		int i = 0;
+		site_energies.clear();
+		int num_sites = params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height;
+		site_energies.reserve(num_sites);
+		string line;
+		while (getline(infile, line)) {
+			if (i > 2) {
+				site_energies.push_back(stod(line));
+			}
+			i++;
+		}
+		infile.close();
+		EXPECT_EQ(num_sites, (int)site_energies.size());
+		EXPECT_NEAR((params.Lumo_donor + params.Lumo_acceptor) / 2.0, vector_avg(site_energies), 1e-2*params.Lumo_donor);
+		// Check hole energies
+		sim.exportEnergies("./test/energies.txt", true);
+		ifstream infile2("./test/energies.txt");
+		i = 0;
+		site_energies.clear();
+		site_energies.reserve(num_sites);
+		while (getline(infile2, line)) {
+			if (i > 2) {
+				site_energies.push_back(stod(line));
+			}
+			i++;
+		}
+		infile2.close();
+		EXPECT_EQ(num_sites, (int)site_energies.size());
+		EXPECT_NEAR((params.Homo_donor + params.Homo_acceptor) / 2.0, vector_avg(site_energies), 1e-2*params.Homo_donor);
 		// Test missing energies file
+		params.Enable_gaussian_dos = false;
+		params.Enable_import_energies = true;
 		params.Energies_import_filename = "energies.txt";
 		EXPECT_FALSE(sim.init(params, 0));
 		// Test energies file with missing data
@@ -766,6 +816,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, MorphologyImportTests) {
+		cout << "Starting OSC_SimTest.MorphologyImportTests..." << endl;
 		auto params = params_default;
 		// Test morphology import
 		sim = OSC_Sim();
@@ -814,6 +865,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ChargeDynamicsTests) {
+		cout << "Starting OSC_SimTest.ChargeDynamicsTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
@@ -856,6 +908,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDynamicsTests) {
+		cout << "Starting OSC_SimTest.ExcitonDynamicsTests..." << endl;
 		// Singlet exciton lifetime test
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -905,7 +958,7 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_test = true;
 		params.N_tests = 500;
 		params.Singlet_lifetime_donor = 1e-6;
-		params.Dynamics_transient_end = 1e-8;
+		params.Dynamics_transient_end = 2e-8;
 		params.Dynamics_initial_exciton_conc = 2e15;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
@@ -964,6 +1017,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, ExcitonDiffusionTests) {
+		cout << "Starting OSC_SimTest.ExcitonDiffusionTests..." << endl;
 		// Singlet exciton diffusion test
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1058,6 +1112,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, IQETests) {
+		cout << "Starting OSC_SimTest.IQETests..." << endl;
 		// Setup starting parameters
 		auto params = params_default;
 		params.Enable_exciton_diffusion_test = false;
@@ -1232,7 +1287,8 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, SteadyTransportTests) {
-		// Test response when there are not enough donor sites to create the specified number of initial polarons
+		cout << "Starting OSC_SimTest.SteadyTransportTests..." << endl;
+		// Check that error is generated when there are not enough donor sites to create the specified number of initial polarons with phase restriction
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_neat = false;
@@ -1241,8 +1297,18 @@ namespace OSC_SimTests {
 		params.Internal_potential = -1.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
+		params.Enable_phase_restriction = true;
 		params.Steady_carrier_density = 1e18;
 		EXPECT_FALSE(sim.init(params, 0));
+		// Check that there is no error without phase restriction
+		sim = OSC_Sim();
+		params.Enable_phase_restriction = false;
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check that there is no error with phase restriction when the carrier density is low
+		sim = OSC_Sim();
+		params.Enable_phase_restriction = true;
+		params.Steady_carrier_density = 1e15;
+		EXPECT_TRUE(sim.init(params, 0));
 		// Steady transport test without disorder
 		sim = OSC_Sim();
 		params = params_default;
@@ -1250,42 +1316,45 @@ namespace OSC_SimTests {
 		params.Params_lattice.Width = 200;
 		params.Params_lattice.Height = 200;
 		params.Coulomb_cutoff = 100;
-		params.Internal_potential = -4.0;
+		params.Internal_potential = -2.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
-		params.N_equilibration_events = 50000;
-		params.N_tests = 500000;
+		params.Steady_carrier_density = 4e15;
+		params.N_equilibration_events = 10000;
+		params.N_tests = 100000;
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
-		EXPECT_TRUE(std::isnan(sim.getSteadyFermiEnergy()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy_Coulomb()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy_Coulomb()));
 		// Run the simulation
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
 		// Check the steady energies
-		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyEquilibrationEnergy());
-		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyFermiEnergy());
-		EXPECT_DOUBLE_EQ(0.0, sim.getSteadyTransportEnergy());
+		EXPECT_NEAR(params.Homo_donor, sim.getSteadyEquilibrationEnergy(), 1e-2*params.Homo_donor);
+		EXPECT_NEAR(params.Homo_donor, sim.getSteadyTransportEnergy(), 1e-2*params.Homo_donor);
 		// Check steady state mobility
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1.5e-1*expected_mobility);
-		// Steady transport test with Gaussian disorder
+		double expected_current_density = 1000 * Elementary_charge * expected_mobility*(sim.getN_holes_created() / sim.getVolume())*abs(sim.getInternalField());
+		EXPECT_NEAR(expected_current_density, sim.getSteadyCurrentDensity(), 1.5e-1*expected_current_density);
+		// Steady transport test with Gaussian disorder at very low electric field
 		sim = OSC_Sim();
 		params = params_default;
-		params.Params_lattice.Length = 500;
-		params.Params_lattice.Width = 500;
-		params.Params_lattice.Height = 500;
-		params.Coulomb_cutoff = 100;
+		params.Params_lattice.Length = 350;
+		params.Params_lattice.Width = 350;
+		params.Params_lattice.Height = 350;
+		params.Coulomb_cutoff = 50;
 		params.Temperature = 300;
-		params.Internal_potential = -0.00001;
+		params.Internal_potential = 0.0000035;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
 		params.N_equilibration_events = 1000000;
-		params.Steady_carrier_density = 2e14;
+		params.Steady_carrier_density = 4e14;
 		params.N_tests = 1000000;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
@@ -1297,15 +1366,94 @@ namespace OSC_SimTests {
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
-		// Check the steady energies
-		double expected_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
-		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 5e-2*abs(expected_energy));
-		double fermi_energy = sim.getSteadyFermiEnergy();
-		EXPECT_GT(sim.getSteadyEquilibrationEnergy() - fermi_energy, 5 * K_b*params.Temperature);
+		// Check the steady state energies
+		double expected_energy = params.Homo_donor - intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
+		// At low carrier density energies calculated with and without Coulomb interactions should be almost equal
+		// Check equilibration energies w/ and w/o Coulomb potential
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 1e-2*abs(expected_energy));
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy_Coulomb(), 1e-2*abs(expected_energy));
+		// Check the DOS
+		auto DOS_data = sim.getSteadyDOS();
+		// Check the DOS peak
+		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);// Check the DOS
+		// Check the DOS w/ Coulomb potential
+		DOS_data = sim.getSteadyDOS_Coulomb();
+		// Check the DOS peak
+		peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
+		// Check the DOOS
+		auto DOOS_data = sim.getSteadyDOOS();
+		// Check the DOOS peak
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
+		// Check the DOOS w/ Coulomb potential
+		DOOS_data = sim.getSteadyDOOS_Coulomb();
+		// Check the DOOS peak
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
+		// Steady transport test with Gaussian disorder at medium field
+		sim = OSC_Sim();
+		params = params_default;
+		params.Params_lattice.Length = 300;
+		params.Params_lattice.Width = 300;
+		params.Params_lattice.Height = 300;
+		params.Coulomb_cutoff = 50;
+		params.Temperature = 300;
+		params.Internal_potential = 3.0;
+		params.Enable_exciton_diffusion_test = false;
+		params.Enable_steady_transport_test = true;
+		params.N_equilibration_events = 500000;
+		params.Steady_carrier_density = 5e14;
+		params.N_tests = 100000;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.075;
+		// Initialize the test
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check that at least 10 holes have been created
+		EXPECT_GT(sim.getN_holes_created(), 10);
+		// Run the simulation
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check position of transport energy relative to the DOS peak
+		EXPECT_GT(params.Homo_donor, sim.getSteadyTransportEnergy());
+		// Check value of transport energy
+		expected_energy = 4.91;
+		EXPECT_NEAR(expected_energy, sim.getSteadyTransportEnergy(), 1e-2*expected_energy);
+		// Check transport energies w/ and w/o Coulomb potential
+		EXPECT_NEAR(sim.getSteadyTransportEnergy(), sim.getSteadyTransportEnergy_Coulomb(), 1e-2*abs(sim.getSteadyTransportEnergy()));
+		// The transport energy should be greater than the equilibration energy
 		EXPECT_GT(sim.getSteadyTransportEnergy(), sim.getSteadyEquilibrationEnergy());
+		// Steady transport test with Gaussian disorder at medium field in random 50:50 donor-acceptor blend
+		sim = OSC_Sim();
+		params.N_equilibration_events = 500000;
+		params.N_tests = 100000;
+		params.Enable_neat = false;
+		params.Enable_random_blend = true;
+		params.Acceptor_conc = 0.5;
+		params.Enable_phase_restriction = false;
+		params.Enable_gaussian_dos = true;
+		params.Energy_stdev_donor = 0.075;
+		params.Energy_stdev_acceptor = 0.075;
+		params.Homo_donor = 5.0;
+		params.Lumo_donor = 3.0;
+		params.Homo_acceptor = 5.1;
+		params.Lumo_acceptor = 3.1;
+		// Initialize the test
+		EXPECT_TRUE(sim.init(params, 0));
+		// Check that at least 10 holes have been created
+		EXPECT_GT(sim.getN_holes_created(), 10);
+		// Run the simulation
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check position of transport energy relative to the neat test
+		EXPECT_LT(expected_energy, sim.getSteadyTransportEnergy());
 	}
 
 	TEST_F(OSC_SimTest, ToFTests) {
+		cout << "Starting OSC_SimTest.ToFTests..." << endl;
 		// Test response when there are not enough donor sites to create the specified number of initial polarons
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1449,7 +1597,7 @@ namespace OSC_SimTests {
 		// Check sign of transient electron velocity data
 		velocities = sim.getToFTransientVelocities();
 		EXPECT_GT(velocities[0], 0);
-		// Check charge extraction map output
+		// Check electron extraction map output
 		auto vec = sim.getChargeExtractionMap(false);
 		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
 		stringstream ss(vec[1]);
@@ -1458,9 +1606,14 @@ namespace OSC_SimTests {
 		EXPECT_EQ(val, "0");
 		getline(ss, val, ',');
 		EXPECT_EQ(val, "0");
+		// Check hole extraction map output
+		vec = sim.getChargeExtractionMap(true);
+		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
+		EXPECT_EQ(vec[1], "0,0,0");
 	}
 
 	TEST_F(OSC_SimTest, InterfacialEnergyShiftTests) {
+		cout << "Starting OSC_SimTest.InterfacialEnergyShiftTests..." << endl;
 		// Test energy shift on bilayer without energetic disorder
 		sim = OSC_Sim();
 		auto params = params_default;
@@ -1495,6 +1648,7 @@ namespace OSC_SimTests {
 	}
 
 	TEST_F(OSC_SimTest, CorrelatedDisorderGaussianKernelTests) {
+		cout << "Starting OSC_SimTest.CorrelatedDisorderGaussianKernelTests..." << endl;
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.Enable_gaussian_dos = true;
@@ -1534,6 +1688,10 @@ namespace OSC_SimTests {
 int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Redirect cout to NULL to suppress command line output during the tests
-	//cout.rdbuf(NULL);
-	return RUN_ALL_TESTS();
+	ofstream testlog("./test/test_log.txt");
+	auto old_buf = cout.rdbuf(testlog.rdbuf());
+	int test_status = RUN_ALL_TESTS();
+	cout.rdbuf(old_buf);
+	testlog.close();
+	return test_status;
 }

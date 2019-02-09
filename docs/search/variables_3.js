@@ -34,6 +34,7 @@ var searchData=
   ['enable_5fpower_5fkernel',['Enable_power_kernel',['../class_excimontec_1_1_parameters.html#a5e9dafbd456d625bf23053bd5b9c5a17',1,'Excimontec::Parameters']]],
   ['enable_5frandom_5fblend',['Enable_random_blend',['../class_excimontec_1_1_parameters.html#a5886011a3f9c445e097206b098b8d3b8',1,'Excimontec::Parameters']]],
   ['enable_5fselective_5frecalc',['Enable_selective_recalc',['../class_k_m_c___lattice_1_1_parameters___simulation.html#accecb211f89b76589b4b180bc4dbe609',1,'KMC_Lattice::Parameters_Simulation']]],
+  ['enable_5fstate_5fdata_5foutput',['Enable_state_data_output',['../class_excimontec_1_1_parameters.html#aa4a26f6ab0713fc7600cb310ed1a8560',1,'Excimontec::Parameters']]],
   ['enable_5fsteady_5ftransport_5ftest',['Enable_steady_transport_test',['../class_excimontec_1_1_parameters.html#a2bdd712ce240bf8af0cfde08594338a6',1,'Excimontec::Parameters']]],
   ['enable_5ftof_5fenergy_5fplacement',['Enable_ToF_energy_placement',['../class_excimontec_1_1_parameters.html#a7ff424e8e99341f6d194146e922c4246',1,'Excimontec::Parameters']]],
   ['enable_5ftof_5frandom_5fplacement',['Enable_ToF_random_placement',['../class_excimontec_1_1_parameters.html#ab0b65fac522290c314fe60ce298f04ed',1,'Excimontec::Parameters']]],

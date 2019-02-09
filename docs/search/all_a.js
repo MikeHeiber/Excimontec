@@ -5,6 +5,7 @@ var searchData=
   ['morphology_5ffilename',['Morphology_filename',['../class_excimontec_1_1_parameters.html#a79b7c01b28a6d90b5e5efe4acf4d03b2',1,'Excimontec::Parameters']]],
   ['morphology_5fset_5fformat',['Morphology_set_format',['../class_excimontec_1_1_parameters.html#a232e535782093fbeae7aad1de5961791',1,'Excimontec::Parameters']]],
   ['moveobject',['moveObject',['../class_k_m_c___lattice_1_1_simulation.html#ae2d007aefb505664a914f6a82767bf77',1,'KMC_Lattice::Simulation']]],
+  ['mpi_5fcalculatepairvectoravg',['MPI_calculatePairVectorAvg',['../namespace_k_m_c___lattice.html#ac59934977c80ff0ef20e4108ed0e859a',1,'KMC_Lattice']]],
   ['mpi_5fcalculateprobhistavg',['MPI_calculateProbHistAvg',['../namespace_k_m_c___lattice.html#acb87c0ce18e46b80e482ab257345f70c',1,'KMC_Lattice']]],
   ['mpi_5fcalculatevectoravg',['MPI_calculateVectorAvg',['../namespace_k_m_c___lattice.html#ad022d008e8635c1285b9b2ca300bd5b6',1,'KMC_Lattice']]],
   ['mpi_5fcalculatevectorsum',['MPI_calculateVectorSum',['../namespace_k_m_c___lattice.html#aa1b88bbdb7d17543f266c0ec41bfc3b8',1,'KMC_Lattice::MPI_calculateVectorSum(const std::vector&lt; double &gt; &amp;input_vector)'],['../namespace_k_m_c___lattice.html#aafd5796fdd773483e11f6b3e0a954821',1,'KMC_Lattice::MPI_calculateVectorSum(const std::vector&lt; int &gt; &amp;input_vector)']]],

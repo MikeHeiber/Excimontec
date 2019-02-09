@@ -179,6 +179,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a04c980223b98303984f9c722356101eb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#a04c980223b98303984f9c722356101eb">interpolateData</a> (const std::vector&lt; std::pair&lt; double, double &gt;&gt; &amp;data, const double x_val)</td></tr>
 <tr class="memdesc:a04c980223b98303984f9c722356101eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Linearly interpolates an x-y data set to determine the interpolated y-value corresponding to an input x-value.  <a href="#a04c980223b98303984f9c722356101eb">More...</a><br /></td></tr>
 <tr class="separator:a04c980223b98303984f9c722356101eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac59934977c80ff0ef20e4108ed0e859a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#ac59934977c80ff0ef20e4108ed0e859a">MPI_calculatePairVectorAvg</a> (const std::vector&lt; std::pair&lt; double, double &gt;&gt; &amp;input_vector)</td></tr>
+<tr class="memdesc:ac59934977c80ff0ef20e4108ed0e859a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses MPI to calculate the average pair vector distribution from separate pair vectors coming from different processors.  <a href="#ac59934977c80ff0ef20e4108ed0e859a">More...</a><br /></td></tr>
+<tr class="separator:ac59934977c80ff0ef20e4108ed0e859a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb87c0ce18e46b80e482ab257345f70c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#acb87c0ce18e46b80e482ab257345f70c">MPI_calculateProbHistAvg</a> (const std::vector&lt; std::pair&lt; double, int &gt;&gt; &amp;input_hist)</td></tr>
 <tr class="memdesc:acb87c0ce18e46b80e482ab257345f70c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses MPI to calculate the average probability histogram from separate histograms coming from different processors.  <a href="#acb87c0ce18e46b80e482ab257345f70c">More...</a><br /></td></tr>
 <tr class="separator:acb87c0ce18e46b80e482ab257345f70c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,7 +207,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a2446260a5a686ab9d49f0a765f79bb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses MPI to gather vectors from separate processors to build one big vector containing all of the data.  <a href="#a2446260a5a686ab9d49f0a765f79bb72">More...</a><br /></td></tr>
 <tr class="separator:a2446260a5a686ab9d49f0a765f79bb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a142c78315f934d0d4a046faa564621ee"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#a142c78315f934d0d4a046faa564621ee">removeWhitespace</a> (const std::string &amp;str)</td></tr>
-<tr class="memdesc:a142c78315f934d0d4a046faa564621ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes all spaces and ta characters in a string.  <a href="#a142c78315f934d0d4a046faa564621ee">More...</a><br /></td></tr>
+<tr class="memdesc:a142c78315f934d0d4a046faa564621ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes all spaces and tab characters in a string.  <a href="#a142c78315f934d0d4a046faa564621ee">More...</a><br /></td></tr>
 <tr class="separator:a142c78315f934d0d4a046faa564621ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a106d596e3fdd800dd2bc451ab3a0cc92"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#a106d596e3fdd800dd2bc451ab3a0cc92">round_int</a> (const double num)</td></tr>
 <tr class="memdesc:a106d596e3fdd800dd2bc451ab3a0cc92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rounds the input double value to the nearest integer value.  <a href="#a106d596e3fdd800dd2bc451ab3a0cc92">More...</a><br /></td></tr>
@@ -242,7 +245,7 @@ Functions</h2></td></tr>
 <tr class="separator:a99e4511b3bf639f465a6a5ab4511f266"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5855f0270f9168564452bdc258c0c24c"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a5855f0270f9168564452bdc258c0c24c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#a5855f0270f9168564452bdc258c0c24c">removeDuplicates</a> (std::vector&lt; T &gt; &amp;vec)</td></tr>
-<tr class="memdesc:a5855f0270f9168564452bdc258c0c24c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This template function efficienctly removes the duplicate entries from an input vector.  <a href="#a5855f0270f9168564452bdc258c0c24c">More...</a><br /></td></tr>
+<tr class="memdesc:a5855f0270f9168564452bdc258c0c24c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This template function efficiently removes the duplicate entries from an input vector.  <a href="#a5855f0270f9168564452bdc258c0c24c">More...</a><br /></td></tr>
 <tr class="separator:a5855f0270f9168564452bdc258c0c24c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6e3c50cbe381912063d9a263a1421a8"><td class="memTemplParams" colspan="2">template&lt;typename T , typename A &gt; </td></tr>
 <tr class="memitem:ac6e3c50cbe381912063d9a263a1421a8"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#ac6e3c50cbe381912063d9a263a1421a8">vector_avg</a> (const std::vector&lt; T, A &gt; &amp;data)</td></tr>
@@ -265,8 +268,8 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a7da01aab47adc940e19891e5979e3b72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_k_m_c___lattice_1_1_version.html">Version</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#a7da01aab47adc940e19891e5979e3b72">Current_version</a> (&quot;2.0.0&quot;)</td></tr>
-<tr class="separator:a7da01aab47adc940e19891e5979e3b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91f4a916d9235dfa664004930666c9fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_k_m_c___lattice_1_1_version.html">Version</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_k_m_c___lattice.html#a91f4a916d9235dfa664004930666c9fa">Current_version</a> (&quot;2.1.0-beta.1&quot;)</td></tr>
+<tr class="separator:a91f4a916d9235dfa664004930666c9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ab019150ae3696a9d3a886b65122d796d"></a>
@@ -869,11 +872,11 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Creates a vector of doubles that has a custom asymmetric distribution with an exponential tail. </p>
-<p>The created distribution is Gaussian in the positive direction relative to the mode and exponential in the negative direction. On the Gaussian side, the standard deviation is calculated relative to the urbach energy chosen for the exponential side, so that the distribution function is continuous. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>The created distribution is Gaussian in the positive direction relative to the mode and exponential in the negative direction. On the Gaussian side, the standard deviation is calculated relative to the Urbach energy chosen for the exponential side, so that the distribution function is continuous. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">data</td><td>is the data vector where the random numbers will be placed, which must be preallocated to the desired size. </td></tr>
     <tr><td class="paramname">mode</td><td>is the value of the peak of the distribution. </td></tr>
-    <tr><td class="paramname">urbach_energy</td><td>is the parameter that detemines the shape of the exponential tail side of the distribution. </td></tr>
+    <tr><td class="paramname">urbach_energy</td><td>is the parameter that determines the shape of the exponential tail side of the distribution. </td></tr>
     <tr><td class="paramname">gen</td><td>is a Mersenne twister random number generator used to randomly draw numbers from the distribution. </td></tr>
   </table>
   </dd>
@@ -920,11 +923,11 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Creates a vector of floats that has a custom asymmetric distribution with an exponential tail. </p>
-<p>The created distribution is Gaussian in the positive direction relative to the mode and exponential in the negative direction. On the Gaussian side, the standard deviation is calculated relative to the urbach energy chosen for the exponential side, so that the distribution function is continuous. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>The created distribution is Gaussian in the positive direction relative to the mode and exponential in the negative direction. On the Gaussian side, the standard deviation is calculated relative to the Urbach energy chosen for the exponential side, so that the distribution function is continuous. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">data</td><td>is the data vector where the random numbers will be placed, which must be preallocated to the desired size. </td></tr>
     <tr><td class="paramname">mode</td><td>is the value of the peak of the distribution. </td></tr>
-    <tr><td class="paramname">urbach_energy</td><td>is the parameter that detemines the shape of the exponential tail side of the distribution. </td></tr>
+    <tr><td class="paramname">urbach_energy</td><td>is the parameter that determines the shape of the exponential tail side of the distribution. </td></tr>
     <tr><td class="paramname">gen</td><td>is a Mersenne twister random number generator used to randomly draw numbers from the distribution. </td></tr>
   </table>
   </dd>
@@ -1141,6 +1144,38 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ac59934977c80ff0ef20e4108ed0e859a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac59934977c80ff0ef20e4108ed0e859a">&#9670;&nbsp;</a></span>MPI_calculatePairVectorAvg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::pair&lt; double, double &gt; &gt; KMC_Lattice::MPI_calculatePairVectorAvg </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::pair&lt; double, double &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>input_vector</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Uses MPI to calculate the average pair vector distribution from separate pair vectors coming from different processors. </p>
+<p>Each processor calls this function and sends an input pair vector distribution. Each pair vector entry represents an x-y data pair, where x is the centered bin position and y is the distribution value for that bin. Each input pair vector distribution can have a different range, but they must have the same bin size. Beyond the range of the input pair vector, the y distribution values are assumed to be zero. Upon function return, processor 0 receives the average pair vector and all of the other processors receive an empty pair vector. The range of the final pair vector is automatically sized to contain the data from of all input pair vectors. </p><dl class="section warning"><dt>Warning</dt><dd>This function will throw an invalid_argument exception if any of the input pair vectors have less than two entries </dd>
+<dd>
+This function will throw an invaid_argument exception if all of the input pair vectors do not have the same bin size. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input_vector</td><td>is the input pair vector data from the processor calling the function. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pair vector that is the average of all input histograms from each processor, when called on processor 0. </dd>
+<dd>
+An empty vector when called on other processors. </dd></dl>
+
+</div>
+</div>
 <a id="acb87c0ce18e46b80e482ab257345f70c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acb87c0ce18e46b80e482ab257345f70c">&#9670;&nbsp;</a></span>MPI_calculateProbHistAvg()</h2>
 
@@ -1159,7 +1194,10 @@ template&lt;typename T &gt; </div>
 
 <p>Uses MPI to calculate the average probability histogram from separate histograms coming from different processors. </p>
 <p>Each processor calls this function and sends an input histogram. Each input histogram must have the same bin size.</p>
-<p>Upon function return, processor 0 receives the average probabiliy histogram and all of the other processors receive an empty probability histogram. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Upon function return, processor 0 receives the average probability histogram and all of the other processors receive an empty probability histogram. The range of the final pair vector is automatically sized to contain the data from of all input pair vectors. </p><dl class="section warning"><dt>Warning</dt><dd>This function will throw an invalid_argument exception if any of the input histograms have less than two entries </dd>
+<dd>
+This function will throw an invaid_argument exception if all of the input histograms do not have the same bin size. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input_hist</td><td>is the input histogram data from the processor calling the function. </td></tr>
   </table>
@@ -1500,7 +1538,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>This template function efficienctly removes the duplicate entries from an input vector. </p>
+<p>This template function efficiently removes the duplicate entries from an input vector. </p>
 <p>This algorithm allow efficient removal of duplicate vector objects when &gt; or &lt; comparison operators do not exist. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">vec</td><td>is the input vector to be operated on. </td></tr>
@@ -1526,7 +1564,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Removes all spaces and ta characters in a string. </p>
+<p>Removes all spaces and tab characters in a string. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">str</td><td>is the input string </td></tr>
@@ -1589,7 +1627,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the input string is "true". </dd>
 <dd>
-flase if the input string is "flase". </dd></dl>
+false if the input string is "false". </dd></dl>
 
 </div>
 </div>
@@ -1710,8 +1748,8 @@ template&lt;typename T , typename A &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a7da01aab47adc940e19891e5979e3b72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7da01aab47adc940e19891e5979e3b72">&#9670;&nbsp;</a></span>Current_version</h2>
+<a id="a91f4a916d9235dfa664004930666c9fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91f4a916d9235dfa664004930666c9fa">&#9670;&nbsp;</a></span>Current_version</h2>
 
 <div class="memitem">
 <div class="memproto">

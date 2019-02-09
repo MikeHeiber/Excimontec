@@ -17,6 +17,7 @@ var _utils_8cpp =
     [ "createGaussianDOSVector", "_utils_8cpp.html#a224863c8dd449fa501d07c5b0cfc07a1", null ],
     [ "integrateData", "_utils_8cpp.html#a0b0f0e2e47c9dbe650e4f736c80883c3", null ],
     [ "interpolateData", "_utils_8cpp.html#a04c980223b98303984f9c722356101eb", null ],
+    [ "MPI_calculatePairVectorAvg", "_utils_8cpp.html#ac59934977c80ff0ef20e4108ed0e859a", null ],
     [ "MPI_calculateProbHistAvg", "_utils_8cpp.html#acb87c0ce18e46b80e482ab257345f70c", null ],
     [ "MPI_calculateVectorAvg", "_utils_8cpp.html#ad022d008e8635c1285b9b2ca300bd5b6", null ],
     [ "MPI_calculateVectorSum", "_utils_8cpp.html#aa1b88bbdb7d17543f266c0ec41bfc3b8", null ],
