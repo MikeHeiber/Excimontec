@@ -56,11 +56,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp - Added a simple command line status message at the beginning of all test cases
 - test.cpp (SteadyTransportTests) - Tests comparing the energies calculated with and without Coulomb interactions and relative positions of the equilibration and transport energies
 - test.cpp - (SteadyTransportTests) - Test to check that phase restriction disabling increases the number of available sites for creating the initial polarons in donor-acceptor blends
-- test.cpp - (SteadyTransportTests) - New tests to check the peak position of the DOS and DOOS from the very low field test
+- test.cpp - (SteadyTransportTests) - New tests to check the peak position of the DOS and DOOS data from the very low field test
 - test.cpp (SteadyTransportTests) - New tests to check the transport energy calculated during a medium electric field test condition
 - test.cpp (SteadyTransportTests) - New test to check the relative position of the transport energy and the donor HOMO during the medium electric field test
 - test.cpp (SteadyTransportTests) - New test to check the absolute position of the transport energy
 - test.cpp (SteadyTransportTests) - New test for transport in a random donor-acceptor blend and check for the relative change in transport energy position relative to the neat donor architecture
+- test.cpp (SteadyTransportTests) - New test checking that the simulation works when phase restriction in enabled with a random blend
+- test.cpp (SteadyTransportTests) - New test checking the magnitude of the current density
+- test.cpp (ToFTests) - New test checking the hole extraction map output
+
+
 
 ### Changed
 - KMC_Lattice - KMC_Lattice submodule to v2.1.0-beta.1
@@ -93,9 +98,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp - All tests to route command line output to a test_log.txt file instead of cluttering the command line making it easier to see the test results
 - test.cpp (EnergiesImportTests) - Tests of the new exportEnergies function checking the absolute value of the exported electron and hole site energies
 - test.cpp (ExcitonDynamicsTests) - Increased the range of the transient to get a more accurate assessment of the equilibrium energy position
+- test.cpp (LoggingTests) - Adjusted parameters to promote additional mechanisms to occur including RISC and exciton recombination
 - test.cpp (SteadyTransportTests) - Test of the energy values to compare to absolute energy values including the HOMO energy
 - test.cpp (SteadyTransportTests) - Very low field test to make it more accurate and a little bit faster by decreasing the internal potential, lattice size, and Coulomb cutoff radius
 - test.cpp (SteadyTransportTests) - Medium field test by reducing the number of iterations to make the test faster
+- test.cpp (SteadyTransportTests) - Adjusted parameters of the medium field mobility test to increase the accuracy of the test and reduced the pass threshold
 
 ### Removed
 - docs - Markdown files from the generated documentation

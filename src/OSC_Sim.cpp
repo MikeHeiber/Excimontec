@@ -2422,7 +2422,7 @@ namespace Excimontec {
 			average_displacement += item.calculateDisplacement(3);
 		}
 		average_displacement *= (lattice.getUnitSize()*1e-7 / holes.size());
-		return 1000 * Elementary_charge*(abs(average_displacement) / (getTime() - Steady_equilibration_time)) / getVolume();
+		return 1000 * Elementary_charge*(abs(average_displacement) / (getTime() - Steady_equilibration_time)) * (N_holes / getVolume());
 	}
 
 	vector<std::pair<double, double>> OSC_Sim::getSteadyDOOS() const {

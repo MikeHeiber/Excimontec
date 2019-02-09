@@ -685,12 +685,18 @@ namespace OSC_SimTests {
 		params.Triplet_lifetime_donor = 1e-7;
 		params.Triplet_lifetime_acceptor = 1e-7;
 		params.Enable_FRET_triplet_annihilation = true;
+		params.R_triplet_hopping_donor = 1e10;
+		params.R_triplet_hopping_acceptor = 1e10;
 		params.R_exciton_exciton_annihilation_donor = 1e14;
 		params.R_exciton_exciton_annihilation_acceptor = 1e14;
 		params.R_exciton_polaron_annihilation_donor = 1e14;
 		params.R_exciton_polaron_annihilation_acceptor = 1e14;
 		params.R_exciton_isc_donor = 1e11;
 		params.R_exciton_isc_acceptor = 1e11;
+		params.R_exciton_risc_donor = 1e11;
+		params.R_exciton_risc_acceptor = 1e11;
+		params.E_exciton_ST_donor = 0.1;
+		params.E_exciton_ST_acceptor = 0.1;
 		params.R_polaron_hopping_donor = 1e10;
 		params.R_polaron_hopping_acceptor = 1e10;
 		params.R_polaron_recombination = 1e11;
@@ -700,9 +706,9 @@ namespace OSC_SimTests {
 		params.Exciton_generation_rate_acceptor = 1e26;
 		params.Internal_potential = -0.5;
 		EXPECT_TRUE(sim.init(params, 0));
-		// Execute 1000 events and save events executed
+		// Execute 5000 events and save events executed
 		vector<string> event_types;
-		for (int i = 0; i < 3000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			sim.executeNextEvent();
 			event_types.push_back(sim.getPreviousEventType());
 		}
@@ -1298,6 +1304,11 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params.Enable_phase_restriction = false;
 		EXPECT_TRUE(sim.init(params, 0));
+		// Check that there is no error with phase restriction when the carrier density is low
+		sim = OSC_Sim();
+		params.Enable_phase_restriction = true;
+		params.Steady_carrier_density = 1e15;
+		EXPECT_TRUE(sim.init(params, 0));
 		// Steady transport test without disorder
 		sim = OSC_Sim();
 		params = params_default;
@@ -1305,10 +1316,11 @@ namespace OSC_SimTests {
 		params.Params_lattice.Width = 200;
 		params.Params_lattice.Height = 200;
 		params.Coulomb_cutoff = 100;
-		params.Internal_potential = -4.0;
+		params.Internal_potential = -2.0;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_steady_transport_test = true;
-		params.N_equilibration_events = 50000;
+		params.Steady_carrier_density = 4e15;
+		params.N_equilibration_events = 10000;
 		params.N_tests = 500000;
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
@@ -1325,7 +1337,9 @@ namespace OSC_SimTests {
 		double rate_constant = params.R_polaron_hopping_donor*exp(-2.0*params.Polaron_localization_donor);
 		double dim = 3.0;
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
-		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1.5e-1*expected_mobility);
+		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1e-1*expected_mobility);
+		double expected_current_density = 1000 * Elementary_charge * expected_mobility*(sim.getN_holes_created()/sim.getVolume())*abs(sim.getInternalField());
+		EXPECT_NEAR(expected_current_density, sim.getSteadyCurrentDensity(), 1e-1*expected_current_density);
 		// Steady transport test with Gaussian disorder at very low electric field
 		sim = OSC_Sim();
 		params = params_default;
@@ -1360,9 +1374,19 @@ namespace OSC_SimTests {
 		auto DOS_data = sim.getSteadyDOS();
 		// Check the DOS peak
 		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);// Check the DOS
+		// Check the DOS w/ Coulomb potential
+		DOS_data = sim.getSteadyDOS_Coulomb();
+		// Check the DOS peak
+		peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
 		// Check the DOOS
 		auto DOOS_data = sim.getSteadyDOOS();
+		// Check the DOOS peak
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
+		// Check the DOOS w/ Coulomb potential
+		DOOS_data = sim.getSteadyDOOS_Coulomb();
 		// Check the DOOS peak
 		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
@@ -1571,7 +1595,7 @@ namespace OSC_SimTests {
 		// Check sign of transient electron velocity data
 		velocities = sim.getToFTransientVelocities();
 		EXPECT_GT(velocities[0], 0);
-		// Check charge extraction map output
+		// Check electron extraction map output
 		auto vec = sim.getChargeExtractionMap(false);
 		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
 		stringstream ss(vec[1]);
@@ -1579,6 +1603,16 @@ namespace OSC_SimTests {
 		getline(ss, val, ',');
 		EXPECT_EQ(val, "0");
 		getline(ss, val, ',');
+		EXPECT_EQ(val, "0");
+		// Check hole extraction map output
+		vec = sim.getChargeExtractionMap(false);
+		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
+		stringstream ss2(vec[1]);
+		getline(ss2, val, ',');
+		EXPECT_EQ(val, "0");
+		getline(ss2, val, ',');
+		EXPECT_EQ(val, "0");
+		getline(ss2, val, ',');
 		EXPECT_EQ(val, "0");
 	}
 
