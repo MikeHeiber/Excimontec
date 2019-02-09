@@ -54,18 +54,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README.md - Information about new DOS and DOOS data files generated during the steady transport test
 - README.md - Examples about what the custom site energies import feature can be used for.
 - test.cpp - Added a simple command line status message at the beginning of all test cases
+- test.cpp (SteadyTransportTests) - Tests checking the output of the transport and equilibration energies when the steady transport test has not been run
 - test.cpp (SteadyTransportTests) - Tests comparing the energies calculated with and without Coulomb interactions and relative positions of the equilibration and transport energies
 - test.cpp - (SteadyTransportTests) - Test to check that phase restriction disabling increases the number of available sites for creating the initial polarons in donor-acceptor blends
-- test.cpp - (SteadyTransportTests) - New tests to check the peak position of the DOS and DOOS data from the very low field test
-- test.cpp (SteadyTransportTests) - New tests to check the transport energy calculated during a medium electric field test condition
-- test.cpp (SteadyTransportTests) - New test to check the relative position of the transport energy and the donor HOMO during the medium electric field test
-- test.cpp (SteadyTransportTests) - New test to check the absolute position of the transport energy
-- test.cpp (SteadyTransportTests) - New test for transport in a random donor-acceptor blend and check for the relative change in transport energy position relative to the neat donor architecture
-- test.cpp (SteadyTransportTests) - New test checking that the simulation works when phase restriction in enabled with a random blend
-- test.cpp (SteadyTransportTests) - New test checking the magnitude of the current density
-- test.cpp (ToFTests) - New test checking the hole extraction map output
-
-
+- test.cpp - (SteadyTransportTests) - Tests to check the peak position of the DOS and DOOS data from the very low field test
+- test.cpp (SteadyTransportTests) - Tests to check the transport energy calculated during a medium electric field test condition
+- test.cpp (SteadyTransportTests) - Test to check the relative position of the transport energy and the donor HOMO during the medium electric field test
+- test.cpp (SteadyTransportTests) - Test to check the absolute position of the transport energy
+- test.cpp (SteadyTransportTests) - Test for transport in a random donor-acceptor blend and check for the relative change in transport energy position relative to the neat donor architecture
+- test.cpp (SteadyTransportTests) - Test checking that the simulation works when phase restriction in enabled with a random blend
+- test.cpp (SteadyTransportTests) - Test checking the magnitude of the current density
+- test.cpp (ToFTests) - Test checking the hole extraction map output
 
 ### Changed
 - KMC_Lattice - KMC_Lattice submodule to v2.1.0-beta.1

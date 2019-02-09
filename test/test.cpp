@@ -1325,6 +1325,8 @@ namespace OSC_SimTests {
 		// Check output of steady transport energies when the simulation has not been run
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy_Coulomb()));
+		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy_Coulomb()));
 		// Run the simulation
 		EXPECT_TRUE(sim.init(params, 0));
 		while (!sim.checkFinished()) {
@@ -1338,7 +1340,7 @@ namespace OSC_SimTests {
 		double dim = 3.0;
 		double expected_mobility = (rate_constant*1e-14) * (2.0 / 3.0) * (tgamma((dim + 1.0) / 2.0) / tgamma(dim / 2.0)) * (1 / (K_b*params.Temperature));
 		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1e-1*expected_mobility);
-		double expected_current_density = 1000 * Elementary_charge * expected_mobility*(sim.getN_holes_created()/sim.getVolume())*abs(sim.getInternalField());
+		double expected_current_density = 1000 * Elementary_charge * expected_mobility*(sim.getN_holes_created() / sim.getVolume())*abs(sim.getInternalField());
 		EXPECT_NEAR(expected_current_density, sim.getSteadyCurrentDensity(), 1e-1*expected_current_density);
 		// Steady transport test with Gaussian disorder at very low electric field
 		sim = OSC_Sim();
@@ -1605,15 +1607,9 @@ namespace OSC_SimTests {
 		getline(ss, val, ',');
 		EXPECT_EQ(val, "0");
 		// Check hole extraction map output
-		vec = sim.getChargeExtractionMap(false);
+		vec = sim.getChargeExtractionMap(true);
 		EXPECT_EQ(vec[0], "X-Position,Y-Position,Extraction Probability");
-		stringstream ss2(vec[1]);
-		getline(ss2, val, ',');
-		EXPECT_EQ(val, "0");
-		getline(ss2, val, ',');
-		EXPECT_EQ(val, "0");
-		getline(ss2, val, ',');
-		EXPECT_EQ(val, "0");
+		EXPECT_EQ(vec[1], "0,0,0");
 	}
 
 	TEST_F(OSC_SimTest, InterfacialEnergyShiftTests) {
