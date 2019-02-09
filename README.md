@@ -35,7 +35,7 @@ If you would like to contribute to the development of this project, please see t
 
 ## Current Status
 
-The current release, [Excimontec v1.0.0-rc.2](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.0](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+The current release, [Excimontec v1.0.0-rc.2](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
 All features that are to be included in v1.0 are now implemented and have undergone significant testing. 
 However, there may still be bugs that need to be fixed, so please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 

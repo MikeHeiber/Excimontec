@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 --------------------------------------------------------------------------------------------------------------------------------
 
-## [Unreleased]
+## [v1.0.0-rc.2]- 2019-02-09 - Steady State Charge Transport Test Update
 
 ### Added
 - .gitignore - Numerous ignore statements to ignore files generated during build and test operations and from Microsoft Visual Studio
@@ -93,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Polaron - Nested derived Polaron event classes into the Polaron class
 - README.md - Replaced version badges with text links
 - README.md - Updated description of steady transport test feature
-- README.md - Updated current release status info for KMC_Lattice
+- README.md - Updated current release status info for KMC_Lattice to v2.1
 - test.cpp - All tests to route command line output to a test_log.txt file instead of cluttering the command line making it easier to see the test results
 - test.cpp (EnergiesImportTests) - Tests of the new exportEnergies function checking the absolute value of the exported electron and hole site energies
 - test.cpp (ExcitonDynamicsTests) - Increased the range of the transient to get a more accurate assessment of the equilibrium energy position
