@@ -13,8 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test.cpp (SteadyTransportTests) - tests to check the integral of the DOS and DOOS with and without including Coulomb interactions
 
 ### Changed
+- main.cpp - Version string to v1.0.0-rc.3
 - OSC_Sim (updateSteadyData) - To increment the new DOS and DOOS sampling counters and removed calculation of the DOS because the DOS is does not change during the simulation when not including Coulomb interactions
 - OSC_Sim (getSteadyDOS) - Function is not longer const
+- parameters_default.txt - Version string to v1.0.0-rc.3
 
 ### Removed
 
