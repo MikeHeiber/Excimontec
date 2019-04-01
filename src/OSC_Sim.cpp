@@ -2444,11 +2444,11 @@ namespace Excimontec {
 	}
 
 	vector<std::pair<double, double>> OSC_Sim::getSteadyDOS() {
+		steady_DOS.clear();
 		for (long int i = 0; i < lattice.getNumSites(); i++) {
 			double energy;
 			auto site_coords = lattice.getSiteCoords(i);
 			if (lattice.isOccupied(site_coords)) {
-				auto it = getPolaronIt((*lattice.getSiteIt(site_coords))->getObjectPtr());
 				if (getSiteType(site_coords) == 1) {
 					energy = params.Homo_donor + getSiteEnergy(site_coords);
 				}
