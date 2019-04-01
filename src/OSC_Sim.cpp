@@ -2429,7 +2429,7 @@ namespace Excimontec {
 		auto hist = steady_DOOS;
 		// Normalize histogram counts to produce density
 		for (auto& item : hist) {
-			item.second /= ((params.N_tests / Steady_hops_per_DOOS_sample) + 1)*lattice.getVolume()*DOS_bin_size;
+			item.second /= Steady_DOOS_sampling_counter * lattice.getVolume()*DOS_bin_size;
 		}
 		return hist;
 	}
@@ -2438,16 +2438,38 @@ namespace Excimontec {
 		auto hist = steady_DOOS_Coulomb;
 		// Normalize histogram counts to produce density
 		for (auto& item : hist) {
-			item.second /= ((params.N_tests / Steady_hops_per_DOOS_sample) + 1)*lattice.getVolume()*DOS_bin_size;
+			item.second /= Steady_DOOS_sampling_counter * lattice.getVolume()*DOS_bin_size;
 		}
 		return hist;
 	}
 
-	vector<std::pair<double, double>> OSC_Sim::getSteadyDOS() const {
+	vector<std::pair<double, double>> OSC_Sim::getSteadyDOS() {
+		for (long int i = 0; i < lattice.getNumSites(); i++) {
+			double energy;
+			auto site_coords = lattice.getSiteCoords(i);
+			if (lattice.isOccupied(site_coords)) {
+				auto it = getPolaronIt((*lattice.getSiteIt(site_coords))->getObjectPtr());
+				if (getSiteType(site_coords) == 1) {
+					energy = params.Homo_donor + getSiteEnergy(site_coords);
+				}
+				else {
+					energy = params.Homo_acceptor + getSiteEnergy(site_coords);
+				}
+			}
+			else {
+				if (getSiteType(site_coords) == 1) {
+					energy = params.Homo_donor + getSiteEnergy(site_coords);
+				}
+				else {
+					energy = params.Homo_acceptor + getSiteEnergy(site_coords);
+				}
+			}
+			updateSteadyDOS(steady_DOS, energy);
+		}
 		auto hist = steady_DOS;
 		// Normalize histogram counts to produce density
 		for (auto& item : hist) {
-			item.second /= ((params.N_tests / Steady_hops_per_DOS_sample) + 1)*lattice.getVolume()*DOS_bin_size;
+			item.second /= lattice.getVolume()*DOS_bin_size;
 		}
 		return hist;
 	}
@@ -2456,7 +2478,7 @@ namespace Excimontec {
 		auto hist = steady_DOS_Coulomb;
 		// Normalize histogram counts to produce density
 		for (auto& item : hist) {
-			item.second /= (((params.N_tests / Steady_hops_per_DOS_sample) + 1))*lattice.getVolume()*DOS_bin_size;
+			item.second /= Steady_DOS_sampling_counter * lattice.getVolume()*DOS_bin_size;
 		}
 		return hist;
 	}
@@ -2901,39 +2923,33 @@ namespace Excimontec {
 					Steady_equilibration_energy_sum += energy;
 					Steady_equilibration_energy_sum_Coulomb += energy_C;
 				}
+				Steady_DOOS_sampling_counter++;
 			}
 			// Sample the density of states
 			if ((N_events_executed - params.N_equilibration_events) % Steady_hops_per_DOS_sample == 0) {
 				for (long int i = 0; i < lattice.getNumSites(); i++) {
-					double energy;
 					double energy_C;
 					auto site_coords = lattice.getSiteCoords(i);
 					if (lattice.isOccupied(site_coords)) {
 						auto it = getPolaronIt((*lattice.getSiteIt(site_coords))->getObjectPtr());
 						if (getSiteType(site_coords) == 1) {
-							energy = params.Homo_donor + getSiteEnergy(site_coords);
 							energy_C = params.Homo_donor + getSiteEnergy(site_coords) + calculateCoulomb(it, site_coords);
 						}
 						else {
-							energy = params.Homo_acceptor + getSiteEnergy(site_coords);
 							energy_C = params.Homo_acceptor + getSiteEnergy(site_coords) + calculateCoulomb(it, site_coords);
 						}
-						updateSteadyDOS(steady_DOS, energy);
-						updateSteadyDOS(steady_DOS_Coulomb, energy_C);
 					}
 					else {
 						if (getSiteType(site_coords) == 1) {
-							energy = params.Homo_donor + getSiteEnergy(site_coords);
 							energy_C = params.Homo_donor + getSiteEnergy(site_coords) + calculateCoulomb(true, site_coords);
 						}
 						else {
-							energy = params.Homo_acceptor + getSiteEnergy(site_coords);
 							energy_C = params.Homo_acceptor + getSiteEnergy(site_coords) + calculateCoulomb(true, site_coords);
 						}
-						updateSteadyDOS(steady_DOS, energy);
-						updateSteadyDOS(steady_DOS_Coulomb, energy_C);
 					}
+					updateSteadyDOS(steady_DOS_Coulomb, energy_C);
 				}
+				Steady_DOS_sampling_counter++;
 			}
 		}
 	}
@@ -2976,7 +2992,7 @@ namespace Excimontec {
 		}
 		// Calculate start of data range
 		double min_val = smallest_bin_int * DOS_bin_size - 0.5*DOS_bin_size;
-		// Add to state_energy to histogram
+		// Add the state_energy to histogram
 		int index = (int)floor((state_energy - min_val) / DOS_bin_size);
 		density_of_states[index].second += 1.0;
 		return;

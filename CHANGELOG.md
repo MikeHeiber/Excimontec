@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 --------------------------------------------------------------------------------------------------------------------------------
 
+## [v1.0.0-rc.3]- 2019-04-01 - Density of States Integration Bugfix
+
+### Added
+- OSC_Sim - Steady_DOS_sampling_count and Steady_DOOS_sampling_counter to keep track of how many times the DOS and DOOS are sampled during the simulation
+- test.cpp (SteadyTransportTests) - tests to check the integral of the DOS and DOOS with and without including Coulomb interactions
+
+### Changed
+- OSC_Sim (updateSteadyData) - To increment the new DOS and DOOS sampling counters and removed calculation of the DOS because the DOS is does not change during the simulation when not including Coulomb interactions
+- OSC_Sim (getSteadyDOS) - Function is not longer const
+
+### Removed
+
+### Fixed
+- main.cpp - Output of density of states and density of occupied states data to have the correct units
+- OSC_Sim (getSteadyDOOS) - To use the new sampling counter to avoid errors averaging over multiple samplings
+- OSC_Sim (getSteadyDOOS_Coulomb) - To use the new sampling counter to avoid errors averaging over multiple samplings
+- OSC_Sim (getSteadyDOS) - To calculate the DOS using only one sample at call time because the DOS (without Coulomb) does not change during the simulation
+- OSC_Sim (getSteadyDOS_Coulomb) - To use the new sampling counter to avoid errors averaging over multiple samplings
+
+
 ## [v1.0.0-rc.2]- 2019-02-09 - Steady State Charge Transport Test Update
 
 ### Added

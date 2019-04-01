@@ -602,25 +602,25 @@ int main(int argc, char *argv[]) {
 		if (procid == 0) {
 			// Output the DOOS and DOS data
 			ofstream doos_file1("DOOS_data.txt");
-			doos_file1 << "Energy (eV),Density (cm^-3)\n";
+			doos_file1 << "Energy (eV),Density (cm^-3 eV^-1)\n";
 			for (auto& item : doos_avg1) {
 				doos_file1 << item.first << "," << item.second << "\n";
 			}
 			doos_file1.close();
 			ofstream doos_file2("DOOS_Coulomb_data.txt");
-			doos_file2 << "Energy (eV),Density (cm^-3)\n";
+			doos_file2 << "Energy (eV),Density (cm^-3 eV^-1)\n";
 			for (auto& item : doos_avg2) {
 				doos_file2 << item.first << "," << item.second << "\n";
 			}
 			doos_file2.close();
 			ofstream dos_file1("DOS_data.txt");
-			dos_file1 << "Energy (eV),Density (cm^-3)\n";
+			dos_file1 << "Energy (eV),Density (cm^-3 eV^-1)\n";
 			for (auto& item : dos_avg1) {
 				dos_file1 << item.first << "," << item.second << "\n";
 			}
 			dos_file1.close();
 			ofstream dos_file2("DOS_Coulomb_data.txt");
-			dos_file2 << "Energy (eV),Density (cm^-3)\n";
+			dos_file2 << "Energy (eV),Density (cm^-3 eV^-1)\n";
 			for (auto& item : dos_avg2) {
 				dos_file2 << item.first << "," << item.second << "\n";
 			}

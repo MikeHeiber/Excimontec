@@ -299,7 +299,7 @@ namespace Excimontec {
 
 		//! \brief Gets the density of states calculated during the steady state charge transport test.
 		//! \return A pair vector where the first value is the state energy and the second in the density of states.
-		std::vector<std::pair<double, double>> getSteadyDOS() const;
+		std::vector<std::pair<double, double>> getSteadyDOS();
 
 		//! \brief Gets the density of states calculated during the steady state charge transport test.
 		// This function calculates the state energies including the Coulomb potential due to interactions between the polarons.
@@ -557,6 +557,8 @@ namespace Excimontec {
 		std::vector<int> transient_hole_counts;
 		int Steady_hops_per_DOS_sample = 1000000;
 		int Steady_hops_per_DOOS_sample = 1000;
+		int Steady_DOS_sampling_counter = 0;
+		int Steady_DOOS_sampling_counter = 0;
 		double DOS_bin_size = 1e-2;
 		double Steady_equilibration_time = 0.0;
 		double Steady_equilibration_energy_sum = 0.0;
