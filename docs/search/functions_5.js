@@ -73,7 +73,7 @@ var searchData=
   ['getsteadycurrentdensity',['getSteadyCurrentDensity',['../class_excimontec_1_1_o_s_c___sim.html#a1e2d85af55f9898fc4beaea3c09b2ab2',1,'Excimontec::OSC_Sim']]],
   ['getsteadydoos',['getSteadyDOOS',['../class_excimontec_1_1_o_s_c___sim.html#a502194201bd4e045760149bd006112c4',1,'Excimontec::OSC_Sim']]],
   ['getsteadydoos_5fcoulomb',['getSteadyDOOS_Coulomb',['../class_excimontec_1_1_o_s_c___sim.html#a7bba196811f642f683570240ceb77e62',1,'Excimontec::OSC_Sim']]],
-  ['getsteadydos',['getSteadyDOS',['../class_excimontec_1_1_o_s_c___sim.html#a6440b290be26622c04ea89cf7293575b',1,'Excimontec::OSC_Sim']]],
+  ['getsteadydos',['getSteadyDOS',['../class_excimontec_1_1_o_s_c___sim.html#a15e362e4b5b2c065e29f1cdf36235784',1,'Excimontec::OSC_Sim']]],
   ['getsteadydos_5fcoulomb',['getSteadyDOS_Coulomb',['../class_excimontec_1_1_o_s_c___sim.html#ad819d76bf42693993bb392c48327ebf6',1,'Excimontec::OSC_Sim']]],
   ['getsteadyequilibrationenergy',['getSteadyEquilibrationEnergy',['../class_excimontec_1_1_o_s_c___sim.html#a451e3ea3667f84d6841ad91355a618df',1,'Excimontec::OSC_Sim']]],
   ['getsteadyequilibrationenergy_5fcoulomb',['getSteadyEquilibrationEnergy_Coulomb',['../class_excimontec_1_1_o_s_c___sim.html#ab726ddf220bbef11061b802df50c0188',1,'Excimontec::OSC_Sim']]],
