@@ -1376,22 +1376,31 @@ namespace OSC_SimTests {
 		auto DOS_data = sim.getSteadyDOS();
 		// Check the DOS peak
 		double peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
-		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);// Check the DOS
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
+		// Check the DOS integral
+		double expected_DOS = 1.0 / intpow(params.Params_lattice.Unit_size*1e-7, 3);
+		EXPECT_NEAR(expected_DOS, integrateData(DOS_data), 1e-2*expected_DOS);
 		// Check the DOS w/ Coulomb potential
 		DOS_data = sim.getSteadyDOS_Coulomb();
 		// Check the DOS peak
 		peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2*params.Homo_donor);
+		// Check the DOS integral
+		EXPECT_NEAR(expected_DOS, integrateData(DOS_data), 1e-2*expected_DOS);
 		// Check the DOOS
 		auto DOOS_data = sim.getSteadyDOOS();
 		// Check the DOOS peak
 		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
+		// Check the DOOS integral
+		EXPECT_NEAR(params.Steady_carrier_density, integrateData(DOOS_data), 5e-2*params.Steady_carrier_density);
 		// Check the DOOS w/ Coulomb potential
 		DOOS_data = sim.getSteadyDOOS_Coulomb();
 		// Check the DOOS peak
 		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double>& a, pair<double, double>& b) {return (a.second < b.second); })).first;
 		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
+		// Check the DOOS integral
+		EXPECT_NEAR(params.Steady_carrier_density, integrateData(DOOS_data), 5e-2*params.Steady_carrier_density);
 		// Steady transport test with Gaussian disorder at medium field
 		sim = OSC_Sim();
 		params = params_default;

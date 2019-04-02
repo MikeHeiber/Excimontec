@@ -58,7 +58,7 @@ var class_excimontec_1_1_o_s_c___sim =
     [ "getSteadyCurrentDensity", "class_excimontec_1_1_o_s_c___sim.html#a1e2d85af55f9898fc4beaea3c09b2ab2", null ],
     [ "getSteadyDOOS", "class_excimontec_1_1_o_s_c___sim.html#a502194201bd4e045760149bd006112c4", null ],
     [ "getSteadyDOOS_Coulomb", "class_excimontec_1_1_o_s_c___sim.html#a7bba196811f642f683570240ceb77e62", null ],
-    [ "getSteadyDOS", "class_excimontec_1_1_o_s_c___sim.html#a6440b290be26622c04ea89cf7293575b", null ],
+    [ "getSteadyDOS", "class_excimontec_1_1_o_s_c___sim.html#a15e362e4b5b2c065e29f1cdf36235784", null ],
     [ "getSteadyDOS_Coulomb", "class_excimontec_1_1_o_s_c___sim.html#ad819d76bf42693993bb392c48327ebf6", null ],
     [ "getSteadyEquilibrationEnergy", "class_excimontec_1_1_o_s_c___sim.html#a451e3ea3667f84d6841ad91355a618df", null ],
     [ "getSteadyEquilibrationEnergy_Coulomb", "class_excimontec_1_1_o_s_c___sim.html#ab726ddf220bbef11061b802df50c0188", null ],
