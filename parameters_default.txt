@@ -6,7 +6,7 @@ true //Enable_selective_recalc
 4 //Recalc_cutoff (nm) (must not be less than any of the event cutoffs)
 false //Enable_full_recalc
 --------------------------------------------------------------
-## Simulation Parameters
+## Lattice Parameters
 true //Enable_periodic_x
 true //Enable_periodic_y
 true //Enable_periodic_z
@@ -104,7 +104,7 @@ false //Enable_marcus
 false //Enable_gaussian_polaron_delocalization
 1.0 //Polaron_delocalization_length (nm)
 --------------------------------------------------------------
-## Lattice Site Parameters
+## Site Energy Parameters
 5.5 //Homo_donor (eV)
 3.5 //Lumo_donor (eV)
 6.0 //Homo_acceptor (eV)
@@ -126,7 +126,7 @@ false //Enable_interfacial_energy_shift
 false //Enable_import_energies
 energies.txt //Energies_import_filename
 --------------------------------------------------------------
-## Coulomb Interaction Parameters
+## Electrostatic Interaction Parameters
 3.5 //Dielectric_constant (relative permittivity)
 true //Enable_Coulomb_maximum (sets cutoff to 1/2 the smallest lattice dimension)
 false //Enable_Coulomb_cutoff
