@@ -34,8 +34,17 @@
 x64*
 *.sln
 packages*
+
+# Generated Test Files
 test/energies.txt
 test/log.txt
 test/parameters_misspell*
 test/status.txt
 test/test_log.txt
+
+# Uncompressed example data files
+user_manual/example_data/Dynamics_test_data/set*/*/
+user_manual/example_data/Exciton_diffusion_test_data/set*/*/
+user_manual/example_data/IQE_test_data/set*/*/
+user_manual/example_data/Steady_transport_test_data/set*/*/
+user_manual/example_data/ToF_test_data/set*/*/

@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 --------------------------------------------------------------------------------------------------------------------------------
 
+## [Unreleased]
+
+### Added
+- User_Manual.pdf - Added user manual PDF to the root directory including detailed description of the models implemented in the code, examples for each type of simulation test, and installation instructions
+- docs/User_Manual.pdf - Added copy of user manual to the docs directory for easy viewing on the web
+- user_manual - directory with source files for the user manual including all of the simulation output data used for the examples
+
+### Changed
+- README.md - Replaced detailed installation and build instructions with link to new user manual
+
+### Removed
+
+
+### Fixed
+
 ## [v1.0.0-rc.3]- 2019-04-01 - Density of States Integration Bugfix
 
 ### Added
