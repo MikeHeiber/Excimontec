@@ -14,7 +14,7 @@ As a result, there have been large barriers to entry for new researchers and a l
 Excimontec represents an honest effort to bring the community together around a well-tested, optimized, reliable, and accessible open-source tool for performing KMC simulations of organic electronic devices. 
 The software is being developed in modern C++ and is optimized for efficient execution on high performance computing clusters using MPI. 
 This software package uses object-oriented design and extends the [KMC_Lattice](https://github.com/MikeHeiber/KMC_Lattice) framework. 
-If you would like to contribute to the development of this project, please see the [contributing instructions](./CONTRIBUTING.md).
+If you would like to contribute to the development of this project, please see the [contributing instructions](CONTRIBUTING.md).
 
 #### Major Features:
 - Adjustable periodic boundary conditions in all three directions allow users to perform 1D, 2D, or 3D simulations.
@@ -81,7 +81,7 @@ If your system uses another compiler, you will need to edit the makefile and def
 If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. 
 For development and preliminary simulation tests, sometimes it is more efficient to run on your own workstation instead of an HPC system. 
 
-For detailed installation instructions, please see the [User Manual](https://mikeheiber.github.io/Excimontec/User_Manual.pdf).
+For detailed installation instructions, please see the [User Manual](https://mikeheiber.github.io/Excimontec/User_Manual.pdf#page=13).
 
 Please report any build or testing errors in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 

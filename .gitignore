@@ -28,12 +28,10 @@
 *.out
 *.app
 
-# Visual Studio files
-*.vcxproj*
-.vs*
-x64*
-*.sln
-packages*
+# Generated Visual Studio Files
+msvc/2019/.vs
+msvc/2019/x64*
+msvc/2019/Win32*
 
 # Generated Test Files
 test/energies.txt

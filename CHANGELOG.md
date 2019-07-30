@@ -10,14 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - User_Manual.pdf - Added user manual PDF to the root directory including detailed description of the models implemented in the code, examples for each type of simulation test, and installation instructions
-- docs/User_Manual.pdf - Added copy of user manual to the docs directory for easy viewing on the web
+- docs/User_Manual.pdf - Added copy of user manual to the docs directory for easy linking and viewing on the web
 - user_manual - directory with source files for the user manual including all of the simulation output data used for the examples
+- msvc - directory with Microsoft Visual studio solution and project files for building Excimontec on Windows
 
 ### Changed
 - README.md - Replaced detailed installation and build instructions with link to new user manual
+- makefile - Updated googletest directory to the one located within the KMC_Lattice submodule
+- .gitignore - Ignore statements for Microsoft Visual Studio files to not ignore the solution and project files but still ignore the build directories
 
 ### Removed
-
+- googletest - Duplicate googletest submodule with the intent to use the googletest submodule already within the KMC_Lattice submodule
+- .gitmodules - The googletest submodule entry
 
 ### Fixed
 
@@ -41,7 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (getSteadyDOOS_Coulomb) - To use the new sampling counter to avoid errors averaging over multiple samplings
 - OSC_Sim (getSteadyDOS) - To calculate the DOS using only one sample at call time because the DOS (without Coulomb) does not change during the simulation
 - OSC_Sim (getSteadyDOS_Coulomb) - To use the new sampling counter to avoid errors averaging over multiple samplings
-
 
 ## [v1.0.0-rc.2]- 2019-02-09 - Steady State Charge Transport Test Update
 
