@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs/User_Manual.pdf - Added copy of user manual to the docs directory for easy linking and viewing on the web
 - user_manual - directory with source files for the user manual including all of the simulation output data used for the examples
 - msvc - directory with Microsoft Visual studio solution and project files for building Excimontec on Windows
+- README.md - Recommended reading, citation information, and acknowledgement sections
 
 ### Changed
 - README.md - Replaced detailed installation and build instructions with link to new user manual
+- README.md - Reorganized sections to be more useful for new users
 - makefile - Updated googletest directory to the one located within the KMC_Lattice submodule
 - .gitignore - Ignore statements for Microsoft Visual Studio files to not ignore the solution and project files but still ignore the build directories
 

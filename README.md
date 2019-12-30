@@ -109,9 +109,9 @@ This work will soon be submitted to the Journal of Open Source Software, and the
 
 In addition, please also cite the DOI for the specific version that you used from [Zenodo.org](https://zenodo.org/search?page=1&size=20&q=conceptrecid:%22595806%22&sort=-version&all_versions=True).
 
-## Additional Reading List
+## Recommended Reading
 
-Below are some recommended resources to learn about KMC modeling of organic electronic devices.
+Below are some recommended resources for starting to learn about KMC modeling of organic electronic devices:
 
 [M. C. Heiber, A. Wagenpfahl, and C. Deibel, "Advances in Modeling the Physics of Disordered Organic Electronic Devices" In *Handbook of Organic Materials for Electronic and Photonic Devices*, Woodhead Publishing Series in Electronic and Optical Materials, edited by O. Ostroverkhova (Woodhead Publishing, 2019) 2nd Ed., Chap. 10.](https://doi.org/10.1016/B978-0-08-102284-9.00010-3) [[ResearchGate]](https://www.researchgate.net/publication/329625990_Advances_in_Modeling_the_Physics_of_Disordered_Organic_Electronic_Devices)
 
@@ -123,7 +123,7 @@ Below are some recommended resources to learn about KMC modeling of organic elec
 
 ## Development Status
 
-The current release, [Excimontec v1.0.0-rc.2](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+The current release, [Excimontec v1.0.0-rc.4](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
 All features that are to be included in v1.0 are now implemented and have undergone significant testing. 
 However, there may still be bugs that need to be fixed, so please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 
@@ -147,3 +147,7 @@ Code is being tested using [googletest](https://github.com/google/googletest) wi
 ## For Software Developers
 
 Public API documentation for the Excimontec package can be viewed [here](https://mikeheiber.github.io/Excimontec/).
+
+## Acknowledgments
+Thank you to Dr. Dean M. DeLongchamp at NIST for providing access to computing resources that have supported the development of v1.0. 
+Development of v1.0 has been primarily supported by financial assistance award 70NANB14H012 from U.S. Department of Commerce, National Institute of Standards and Technology as part of the Center for Hierarchical Materials Design (CHiMaD).
