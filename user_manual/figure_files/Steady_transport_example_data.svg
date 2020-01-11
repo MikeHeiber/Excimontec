@@ -1,0 +1,3676 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16.5cm"
+   height="6.5cm"
+   viewBox="0 0 165 64.999998"
+   version="1.1"
+   id="svg5575"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="Steady_transport_example_data.svg">
+  <defs
+     id="defs5569" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="337.62308"
+     inkscape:cy="104.88765"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="cm"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5572">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-232.00002)">
+    <g
+       id="g7856"
+       transform="matrix(0.03307291,0,0,0.03307291,72.8258,231.88316)"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel">
+      <g
+         id="g7276"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7280"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7278"
+           points="362.5,42 362.5,1705 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7282"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7286"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7284"
+           points="2781.5,42 2781.5,1705 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7288"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7292"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7290"
+           points="2787,1705.5 2717,1705.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7294"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7298"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7296"
+           points="357,1705.5 427,1705.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7300"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7304"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,1640)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7302"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7308"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,1640)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7306"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">16</text>
+      </g>
+      <g
+         id="g7310"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7314"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7312"
+           points="2787,1441.5 2717,1441.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7316"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7320"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7318"
+           points="357,1441.5 427,1441.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7322"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7326"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,1376)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7324"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7330"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,1376)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7328"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">17</text>
+      </g>
+      <g
+         id="g7332"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7336"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7334"
+           points="2787,1177.5 2717,1177.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7338"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7342"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7340"
+           points="357,1177.5 427,1177.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7344"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7348"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,1112)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7346"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7352"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,1112)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7350"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">18</text>
+      </g>
+      <g
+         id="g7354"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7358"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7356"
+           points="2787,913.5 2717,913.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7360"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7364"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7362"
+           points="357,913.5 427,913.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7366"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7370"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,848)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7368"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7374"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,848)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7372"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">19</text>
+      </g>
+      <g
+         id="g7376"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7380"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7378"
+           points="2787,649.5 2717,649.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7382"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7386"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7384"
+           points="357,649.5 427,649.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7388"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7392"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,584)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7390"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7396"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,584)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7394"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">20</text>
+      </g>
+      <g
+         id="g7398"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7402"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7400"
+           points="2787,385.5 2717,385.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7404"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7408"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7406"
+           points="357,385.5 427,385.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7410"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7414"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,320)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7412"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7418"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,320)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7416"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">21</text>
+      </g>
+      <g
+         id="g7420"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7424"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7422"
+           points="2787,121.5 2717,121.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7426"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7430"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7428"
+           points="357,121.5 427,121.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7432"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7436"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(166,56)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7434"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g7440"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(166,56)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7438"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">22</text>
+      </g>
+      <g
+         id="g7442"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7446"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,744.5,744.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7444"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">Density of Hole States (cm</text>
+      </g>
+      <g
+         id="g7450"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="rotate(-90,744.5,744.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7448"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="1008"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">-3</text>
+      </g>
+      <g
+         id="g7454"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,744.5,744.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7452"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="1061"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">ev</text>
+      </g>
+      <g
+         id="g7458"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="rotate(-90,744.5,744.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7456"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="1151"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">-1</text>
+      </g>
+      <g
+         id="g7462"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,744.5,744.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7460"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="1204"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">)</text>
+      </g>
+      <g
+         id="g7464"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7468"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7466"
+           points="362,1705.5 2781,1705.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7470"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7474"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7472"
+           points="362,42.5 2781,42.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7476"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7480"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7478"
+           points="2595.5,37 2595.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7482"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7486"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7484"
+           points="2595.5,1711 2595.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7488"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7492"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(2536,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7490"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">6.4</text>
+      </g>
+      <g
+         id="g7494"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7498"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7496"
+           points="2223.5,37 2223.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7500"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7504"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7502"
+           points="2223.5,1711 2223.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7506"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7510"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(2164,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7508"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">6.2</text>
+      </g>
+      <g
+         id="g7512"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7516"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7514"
+           points="1851.5,37 1851.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7518"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7522"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7520"
+           points="1851.5,1711 1851.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7524"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7528"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1792,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7526"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">6.0</text>
+      </g>
+      <g
+         id="g7530"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7534"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7532"
+           points="1478.5,37 1478.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7536"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7540"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7538"
+           points="1478.5,1711 1478.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7542"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7546"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1419,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7544"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">5.8</text>
+      </g>
+      <g
+         id="g7548"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7552"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7550"
+           points="1106.5,37 1106.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7554"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7558"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7556"
+           points="1106.5,1711 1106.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7560"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7564"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1047,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7562"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">5.6</text>
+      </g>
+      <g
+         id="g7566"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7570"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7568"
+           points="734.5,37 734.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7572"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7576"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7574"
+           points="734.5,1711 734.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7578"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7582"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(675,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7580"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">5.4</text>
+      </g>
+      <g
+         id="g7584"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7588"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7586"
+           points="362.5,37 362.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7590"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7594"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7592"
+           points="362.5,1711 362.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7596"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7600"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(303,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7598"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">5.2</text>
+      </g>
+      <g
+         id="g7602"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7606"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1346,1875)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7604"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">Energy (eV)</text>
+      </g>
+      <g
+         id="g7608"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7610"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7612"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7616"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#0000ff;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1">
+        <path
+           id="path7614"
+           d="m 479,1705 13,-26 19,-26 18,-25 19,-24 19,-21 18,-17 19,-15 19,-14 18,-10 19,-9 18,-5 19,-2 19,-2 18,3 19,1 18,4 19,8 19,9 18,10 19,13 18,13 19,18 19,19 18,20 19,25 18,27 16,26"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7618"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7620"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7622"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7626"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#000000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1">
+        <path
+           id="path7624"
+           d="m 375,1705 6,-72 v 72"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7628"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7630"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7634"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#000000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1">
+        <path
+           id="path7632"
+           d="m 418,1705 v -114 l 18,-38 19,-165 19,-48 18,-90 19,-70 18,-67 19,-63 19,-70 18,-61 19,-63 19,-53 18,-56 19,-52 18,-49 19,-47 19,-44 18,-42 19,-40 18,-36 19,-35 19,-32 18,-29 19,-27 18,-24 19,-22 19,-20 18,-16 19,-14 18,-13 19,-9 19,-7 18,-4 19,-2 18,1 19,3 19,5 18,8 19,11 19,12 18,16 19,18 18,20 19,22 19,25 18,27 19,30 18,32 19,34 19,36 18,38 19,41 18,42 19,44 19,45 18,48 19,46 18,48 19,46 19,47 18,40 19,43 18,32 19,30 19,35 18,24 19,21 19,21 18,17 19,12 18,17 19,15 19,-3 18,19 19,10 18,11 19,3 19,21 18,26 19,9 18,34 19,2 19,48 18,-3 19,29 18,43 19,76 19,-53 18,67 19,36 19,90 v 5"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7636"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7638"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7640"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7644"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#cc0000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1">
+        <path
+           id="path7642"
+           d="m 613,1705 10,-15 18,-25 19,-22 18,-20 19,-21 19,-14 18,-13 19,-14 18,-13 19,-10 19,-9 18,-7 19,-5 18,-4 19,-1 19,2 18,1 19,6 18,7 19,11 19,13 18,15 19,19 18,21 19,22 19,24 18,27 13,25"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7646"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7648"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7650"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7654"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#0000ff;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-dasharray:64, 64;stroke-dashoffset:0;stroke-opacity:1">
+        <path
+           id="path7652"
+           d="M 721,1705 V 1177"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7656"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7658"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7660"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7664"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#0000ff;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-dasharray:21, 21;stroke-dashoffset:0;stroke-opacity:1">
+        <path
+           id="path7662"
+           d="M 891,1705 V 1177"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7666"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7668"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7670"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7674"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#cc0000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-dasharray:64, 64;stroke-dashoffset:0;stroke-opacity:1">
+        <path
+           id="path7672"
+           d="M 863,1705 V 1177"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7676"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7678"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7680"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7684"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#cc0000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-dasharray:21, 21;stroke-dashoffset:0;stroke-opacity:1">
+        <path
+           id="path7682"
+           d="M 954,1705 V 1177"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7686"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7688"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7690"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7694"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#000000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-dasharray:64, 64;stroke-dashoffset:0;stroke-opacity:1">
+        <path
+           id="path7692"
+           d="M 616,1705 V 1177"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g7696"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g7698"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7700"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7702"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7706"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7704"
+           points="13,51.5 169,51.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7708"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7712"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7710"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> All States</text>
+      </g>
+      <g
+         id="g7714"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7718"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-dasharray:64, 64;stroke-dashoffset:0;stroke-opacity:1">
+        <polyline
+           id="polyline7716"
+           points="13,181.5 169,181.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7720"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7724"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7722"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="206"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> E</text>
+      </g>
+      <g
+         id="g7728"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7726"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="226"
+           x="263"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">HOMO</text>
+      </g>
+      <g
+         id="g7732"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7730"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="206"
+           x="449"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> - σ</text>
+      </g>
+      <g
+         id="g7736"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7734"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="149"
+           x="577"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">2</text>
+      </g>
+      <g
+         id="g7740"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7738"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="206"
+           x="610"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">/k</text>
+      </g>
+      <g
+         id="g7744"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7742"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="226"
+           x="678"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">b</text>
+      </g>
+      <g
+         id="g7748"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7746"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="206"
+           x="711"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">T</text>
+      </g>
+      <g
+         id="g7752"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7750"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="350"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">F</text>
+      </g>
+      <g
+         id="g7756"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7754"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="293"
+           x="52"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1/2</text>
+      </g>
+      <g
+         id="g7760"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7758"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="350"
+           x="135"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> = 400 (V/cm)</text>
+      </g>
+      <g
+         id="g7764"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7762"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="293"
+           x="650"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1/2</text>
+      </g>
+      <g
+         id="g7766"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7770"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7768"
+           points="13,421.5 169,421.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7772"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7776"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7774"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="446"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> Occupied States</text>
+      </g>
+      <g
+         id="g7778"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7782"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-dasharray:64, 64;stroke-dashoffset:0;stroke-opacity:1">
+        <polyline
+           id="polyline7780"
+           points="13,517.5 169,517.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7784"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7788"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7786"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="542"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> Equilibration energy</text>
+      </g>
+      <g
+         id="g7790"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7794"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-dasharray:21, 21;stroke-dashoffset:0;stroke-opacity:1">
+        <polyline
+           id="polyline7792"
+           points="13,613.5 169,613.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7796"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7800"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7798"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="638"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> Transport energy</text>
+      </g>
+      <g
+         id="g7804"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7802"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="768"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">F</text>
+      </g>
+      <g
+         id="g7808"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7806"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="711"
+           x="52"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1/2</text>
+      </g>
+      <g
+         id="g7812"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7810"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="768"
+           x="135"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> = 1000 (V/cm)</text>
+      </g>
+      <g
+         id="g7816"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7814"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="711"
+           x="697"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1/2</text>
+      </g>
+      <g
+         id="g7818"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7822"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline7820"
+           points="13,839.5 169,839.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7824"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7828"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7826"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="864"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> Occupied States</text>
+      </g>
+      <g
+         id="g7830"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7834"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-dasharray:64, 64;stroke-dashoffset:0;stroke-opacity:1">
+        <polyline
+           id="polyline7832"
+           points="13,935.5 169,935.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7836"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7840"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7838"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="960"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> Equilibration energy</text>
+      </g>
+      <g
+         id="g7842"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7846"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:21;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-dasharray:21, 21;stroke-dashoffset:0;stroke-opacity:1">
+        <polyline
+           id="polyline7844"
+           points="13,1031.5 169,1031.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g7848"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#cc0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g7852"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1730,125)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text7850"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="1056"
+           x="182"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> Transport energy</text>
+      </g>
+      <g
+         id="g7854"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-0.31178114"
+       y="234.6803"
+       id="text10945"><tspan
+         sodipodi:role="line"
+         id="tspan10943"
+         x="-0.31178114"
+         y="234.6803"
+         style="stroke-width:0.26458332">(a)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="71.665833"
+       y="234.6803"
+       id="text10949"><tspan
+         sodipodi:role="line"
+         id="tspan10947"
+         x="71.665833"
+         y="234.6803"
+         style="stroke-width:0.26458332">(b)</tspan></text>
+    <g
+       id="g11791"
+       transform="matrix(0.03307292,0,0,0.03307292,0.73173825,231.88314)"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel">
+      <g
+         id="g11381"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11385"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11383"
+           points="330.5,42 330.5,1705 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11387"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11391"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11389"
+           points="1993.5,42 1993.5,1705 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11393"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11397"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11395"
+           points="1999,1705.5 1959,1705.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11399"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11403"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11401"
+           points="325,1705.5 365,1705.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11405"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11409"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,1672)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11407"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">7</text>
+      </g>
+      <g
+         id="g11411"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11415"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11413"
+           points="1999,1609.5 1959,1609.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11417"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11421"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11419"
+           points="325,1609.5 365,1609.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11423"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11427"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,1576)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11425"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">8</text>
+      </g>
+      <g
+         id="g11429"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11433"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11431"
+           points="1999,1523.5 1959,1523.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11435"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11439"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11437"
+           points="325,1523.5 365,1523.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11441"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11445"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,1490)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11443"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">9</text>
+      </g>
+      <g
+         id="g11447"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11451"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11449"
+           points="1999,1447.5 1929,1447.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11453"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11457"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11455"
+           points="325,1447.5 395,1447.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11459"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11463"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(135,1382)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11461"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">10</text>
+      </g>
+      <g
+         id="g11467"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(135,1382)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11465"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="94"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">-3</text>
+      </g>
+      <g
+         id="g11469"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11473"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11471"
+           points="1999,947.5 1959,947.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11475"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11479"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11477"
+           points="325,947.5 365,947.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11481"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11485"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,914)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11483"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">2</text>
+      </g>
+      <g
+         id="g11487"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11491"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11489"
+           points="1999,654.5 1959,654.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11493"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11497"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11495"
+           points="325,654.5 365,654.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11499"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11503"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,621)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11501"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">3</text>
+      </g>
+      <g
+         id="g11505"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11509"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11507"
+           points="1999,446.5 1959,446.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11511"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11515"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11513"
+           points="325,446.5 365,446.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11517"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11521"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,413)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11519"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">4</text>
+      </g>
+      <g
+         id="g11523"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11527"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11525"
+           points="1999,285.5 1959,285.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11529"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11533"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11531"
+           points="325,285.5 365,285.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11535"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11539"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,252)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11537"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">5</text>
+      </g>
+      <g
+         id="g11541"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11545"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11543"
+           points="1999,153.5 1959,153.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11547"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11551"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11549"
+           points="325,153.5 365,153.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11553"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11557"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,120)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11555"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">6</text>
+      </g>
+      <g
+         id="g11559"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11563"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11561"
+           points="1999,42.5 1959,42.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11565"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11569"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11567"
+           points="325,42.5 365,42.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11571"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11575"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(282,9)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11573"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">7</text>
+      </g>
+      <g
+         id="g11577"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11581"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11579"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">Hole Mobility (cm</text>
+      </g>
+      <g
+         id="g11585"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11583"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="652"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">2</text>
+      </g>
+      <g
+         id="g11589"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11587"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="685"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">V</text>
+      </g>
+      <g
+         id="g11593"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11591"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="743"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">-1</text>
+      </g>
+      <g
+         id="g11597"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11595"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="796"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">s</text>
+      </g>
+      <g
+         id="g11601"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11599"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="839"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">-1</text>
+      </g>
+      <g
+         id="g11605"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="rotate(-90,666.5,666.5)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11603"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="892"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">)</text>
+      </g>
+      <g
+         id="g11607"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11611"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11609"
+           points="330,1705.5 1993,1705.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11613"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11617"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11615"
+           points="330,42.5 1993,42.5 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11619"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11623"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11621"
+           points="1993.5,37 1993.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11625"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11629"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11627"
+           points="1993.5,1711 1993.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11631"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11635"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1899,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11633"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1000</text>
+      </g>
+      <g
+         id="g11637"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11641"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11639"
+           points="1716.5,37 1716.5,77 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11643"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11647"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11645"
+           points="1716.5,1711 1716.5,1671 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11649"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11653"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11651"
+           points="1439.5,37 1439.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11655"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11659"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11657"
+           points="1439.5,1711 1439.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11661"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11665"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(1369,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11663"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">800</text>
+      </g>
+      <g
+         id="g11667"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11671"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11669"
+           points="1162.5,37 1162.5,77 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11673"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11677"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11675"
+           points="1162.5,1711 1162.5,1671 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11679"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11683"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11681"
+           points="884.5,37 884.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11685"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11689"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11687"
+           points="884.5,1711 884.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11691"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11695"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(814,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11693"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">600</text>
+      </g>
+      <g
+         id="g11697"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11701"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11699"
+           points="607.5,37 607.5,77 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11703"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11707"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11705"
+           points="607.5,1711 607.5,1671 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11709"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11713"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11711"
+           points="330.5,37 330.5,107 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11715"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11719"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:11;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <polyline
+           id="polyline11717"
+           points="330.5,1711 330.5,1641 "
+           style="vector-effect:none;fill:none" />
+      </g>
+      <g
+         id="g11721"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11725"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(260,1734)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11723"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="76"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">400</text>
+      </g>
+      <g
+         id="g11727"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11731"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(646,1841)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11729"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="0"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">Electric Field, F</text>
+      </g>
+      <g
+         id="g11735"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(646,1841)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11733"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="588"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1/2</text>
+      </g>
+      <g
+         id="g11739"
+         font-style="normal"
+         font-weight="400"
+         font-size="85"
+         transform="translate(646,1841)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11737"
+           font-style="normal"
+           font-weight="400"
+           font-size="85"
+           y="110"
+           x="671"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:85px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none"> (V/cm)</text>
+      </g>
+      <g
+         id="g11743"
+         font-style="normal"
+         font-weight="400"
+         font-size="60"
+         transform="translate(646,1841)"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <text
+           id="text11741"
+           font-style="normal"
+           font-weight="400"
+           font-size="60"
+           y="53"
+           x="947"
+           xml:space="preserve"
+           style="font-style:normal;font-weight:400;font-size:60px;font-family:Arial;fill:#000000;fill-opacity:1;stroke:none">1/2</text>
+      </g>
+      <g
+         id="g11745"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11747"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11749"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0032cc;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g11753"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:none;stroke:#0032cc;stroke-width:21;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1">
+        <path
+           id="path11751"
+           d="m 330,1504 277,-87 277,-122 278,-145 277,-138 277,-107 277,-59"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11755"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#0032cc;stroke-width:1;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1" />
+      <g
+         id="g11757"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11761"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11759"
+           d="m 309,1504 c 0,-11.6 9.402,-21 21,-21 11.598,0 21,9.4 21,21 0,11.6 -9.402,21 -21,21 -11.598,0 -21,-9.4 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11765"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11763"
+           d="m 586,1417 c 0,-11.6 9.402,-21 21,-21 11.598,0 21,9.4 21,21 0,11.6 -9.402,21 -21,21 -11.598,0 -21,-9.4 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11769"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11767"
+           d="m 863,1295 c 0,-11.6 9.402,-21 21,-21 11.598,0 21,9.4 21,21 0,11.6 -9.402,21 -21,21 -11.598,0 -21,-9.4 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11773"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11771"
+           d="m 1141,1150 c 0,-11.6 9.4,-21 21,-21 11.6,0 21,9.4 21,21 0,11.6 -9.4,21 -21,21 -11.6,0 -21,-9.4 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11777"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11775"
+           d="m 1418,1012 c 0,-11.6 9.4,-21 21,-21 11.6,0 21,9.4 21,21 0,11.6 -9.4,21 -21,21 -11.6,0 -21,-9.4 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11781"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11779"
+           d="m 1695,905 c 0,-11.598 9.4,-21 21,-21 11.6,0 21,9.402 21,21 0,11.598 -9.4,21 -21,21 -11.6,0 -21,-9.402 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11785"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1">
+        <path
+           id="path11783"
+           d="m 1972,846 c 0,-11.598 9.4,-21 21,-21 11.6,0 21,9.402 21,21 0,11.598 -9.4,21 -21,21 -11.6,0 -21,-9.402 -21,-21"
+           inkscape:connector-curvature="0"
+           style="vector-effect:none;fill-rule:nonzero" />
+      </g>
+      <g
+         id="g11787"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+      <g
+         id="g11789"
+         font-style="normal"
+         font-weight="400"
+         font-size="104"
+         stroke-miterlimit="4.97494"
+         style="font-style:normal;font-weight:400;font-size:104px;font-family:'MS Shell Dlg 2';fill:#0032cc;fill-opacity:1;stroke:#0032cc;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4.97493982;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>
