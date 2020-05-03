@@ -9,16 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- User_Manual.pdf - Added user manual PDF to the root directory including detailed description of the models implemented in the code, examples for each type of simulation test, and installation instructions
-- docs/User_Manual.pdf - Added copy of user manual to the docs directory for easy linking and viewing on the web
-- user_manual - directory with source files for the user manual including all of the simulation output data used for the examples
-- msvc - directory with Microsoft Visual studio solution and project files for building Excimontec on Windows
-- README.md - Recommended reading, citation information, and acknowledgement sections
+- User_Manual.pdf - User manual PDF to the root directory including examples for each type of simulation test, a detailed description of the models implemented in the code and their parameters, and installation instructions
+- docs/User_Manual.pdf - Copy of user manual to the docs directory for easy linking and viewing on the web
+- user_manual - Directory with source files for the user manual including all of the simulation output data used for the examples
+- msvc - Directory with Microsoft Visual studio solution and project files for building Excimontec on Windows
+- README.md - Tecommended reading, citation information, and acknowledgement sections
 
 ### Changed
 - README.md - Replaced detailed installation and build instructions with link to new user manual
 - README.md - Reorganized sections to be more useful for new users
+- main.cpp - Version string to v1.0.0-rc.4
 - makefile - Updated googletest directory to the one located within the KMC_Lattice submodule
+- parameters_default.txt - Version string to v1.0.0
 - .gitignore - Ignore statements for Microsoft Visual Studio files to not ignore the solution and project files but still ignore the build directories
 
 ### Removed
@@ -31,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - OSC_Sim - Steady_DOS_sampling_count and Steady_DOOS_sampling_counter to keep track of how many times the DOS and DOOS are sampled during the simulation
-- test.cpp (SteadyTransportTests) - tests to check the integral of the DOS and DOOS with and without including Coulomb interactions
+- test.cpp (SteadyTransportTests) - Tests to check the integral of the DOS and DOOS with and without including Coulomb interactions
 
 ### Changed
 - main.cpp - Version string to v1.0.0-rc.3
