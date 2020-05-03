@@ -82,7 +82,7 @@ Excimontec will create a number of different output files depending which test i
 - ToF_average_transients.txt -- When performing a time-of-flight charge transport test, calculated current transients, mobility relaxation transients, and energy relaxation transients will be output to this file.
 - ToF_transit_time_hist.txt -- When performing a time-of-flight charge transport test, the resulting polaron transit time probability histogram will be output to this file.
 - ToF_results.txt -- When performing a time-of-flight charge transport test, the resulting quantitative results are put into this parsable delimited results file.
-- Charge_extraction_map#.txt -- When performing a time-of-flight or IQE test, the x-y locations where charges are extracted from the lattice are saving into this map file.
+- Charge_extraction_map#.txt -- When performing a time-of-flight or IQE test, the x-y locations where charges are extracted from the lattice are saved into this map file.
 - DOS_correlation_data#.txt -- When a correlated density of states model is enabled, data showing the statistical correlation of site energies vs. distance is output into this file.
 - DOS_data.txt - When performing a steady state charge transport test, the density of states distribution is calculated and output to this file.
 - DOS_Coulomb_data.txt - When performing a steady state charge transport test, the density of states distribution, where the site energies include the Coulomb potential from the polarons, is calculated and output to this file.
