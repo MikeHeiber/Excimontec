@@ -42,8 +42,7 @@ before_install:
     - if [[ "$TARGET" = test_coverage ]]; then pip install --user cpp-coveralls; fi
     
 script:
-    - if [[ "$TARGET" = test_coverage ]]; then ./configure --enable-gcov '\-lp'; fi
     - make -j10 $TARGET
     - travis_wait 30 ./test/Excimontec_tests.exe
-    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --gcov-options '\-lp'; fi
+    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --exclude "googletest/*" --gcov-options '\-lp'; fi
     - if [[ "$TARGET" = test ]]; then make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt; fi
