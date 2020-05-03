@@ -12,9 +12,9 @@ compiler:
     - gcc
     
 env:
-    - OPTIONS="GCC_VERSION=4 && MPI=openmpi && TARGET=test_coverage"
-    - OPTIONS="GCC_VERSION=4 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=4 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test_coverage"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test"
     - OPTIONS="GCC_VERSION=5 && MPI=mpich2 && TARGET=test"
     - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test"
     - OPTIONS="GCC_VERSION=6 && MPI=mpich2 && TARGET=test"
