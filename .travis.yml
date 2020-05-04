@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 Michael C. Heiber
+# Copyright (c) 2017-2020 Michael C. Heiber
 # This source file is part of the Excimontec project, which is subject to the MIT License.
 # For more information, see the LICENSE file that accompanies this software.
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -7,17 +7,12 @@
 language: cpp
 os: linux
 dist: trusty
-sudo: required
 
 compiler:
     - gcc
     
 env:
-    - OPTIONS="GCC_VERSION=4.7 && MPI=openmpi && TARGET=test_coverage"
-    - OPTIONS="GCC_VERSION=4.7 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=4.7 && MPI=openmpi && TARGET=test"
-    - OPTIONS="GCC_VERSION=4.8 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=4.8 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test_coverage"
     - OPTIONS="GCC_VERSION=4.9 && MPI=mpich2 && TARGET=test"
     - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test"
     - OPTIONS="GCC_VERSION=5 && MPI=mpich2 && TARGET=test"
@@ -28,6 +23,8 @@ env:
     - OPTIONS="GCC_VERSION=7 && MPI=openmpi && TARGET=test"
     - OPTIONS="GCC_VERSION=8 && MPI=mpich2 && TARGET=test"
     - OPTIONS="GCC_VERSION=8 && MPI=openmpi && TARGET=test"
+    - OPTIONS="GCC_VERSION=9 && MPI=mpich2 && TARGET=test"
+    - OPTIONS="GCC_VERSION=9 && MPI=openmpi && TARGET=test"
          
 before_install:
     - eval "${OPTIONS}"
@@ -44,5 +41,5 @@ before_install:
 script:
     - make -j10 $TARGET
     - travis_wait 30 ./test/Excimontec_tests.exe
-    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --exclude "googletest/*" --gcov-options '\-lp'; fi
+    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --gcov-options '\-lp'; fi
     - if [[ "$TARGET" = test ]]; then make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt; fi

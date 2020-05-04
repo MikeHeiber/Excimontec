@@ -45,7 +45,7 @@ src/Polaron.o : src/Polaron.cpp src/Polaron.h KMC_Lattice/libKMC.a
 ifndef FLAGS
 	$(error Valid compiler not detected.)
 endif
-GTEST_DIR = googletest/googletest
+GTEST_DIR = KMC_Lattice/googletest/googletest
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)

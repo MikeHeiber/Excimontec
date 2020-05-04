@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 Michael C. Heiber
+// Copyright (c) 2017-2020 Michael C. Heiber
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -18,7 +18,7 @@ using namespace Excimontec;
 using namespace KMC_Lattice;
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0.0-rc.3";
+	string version = "v1.0.0-rc.4";
 	// Parameters
 	bool End_sim = false;
 	// File declaration

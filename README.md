@@ -14,7 +14,10 @@ As a result, there have been large barriers to entry for new researchers and a l
 Excimontec represents an honest effort to bring the community together around a well-tested, optimized, reliable, and accessible open-source tool for performing KMC simulations of organic electronic devices. 
 The software is being developed in modern C++ and is optimized for efficient execution on high performance computing clusters using MPI. 
 This software package uses object-oriented design and extends the [KMC_Lattice](https://github.com/MikeHeiber/KMC_Lattice) framework. 
-If you would like to contribute to the development of this project, please see the [contributing instructions](./CONTRIBUTING.md).
+If you would like to contribute to the development of this project, please see the [contributing instructions](CONTRIBUTING.md).
+
+Major releases and other significant developments will be announced on the Excimontec: General News mailing list. If you are interested in keeping up to date with the latest developments, please subscribe at the following link:
+[Subscribe Here](http://eepurl.com/dis9AT)
 
 #### Major Features:
 - Adjustable periodic boundary conditions in all three directions allow users to perform 1D, 2D, or 3D simulations.
@@ -33,39 +36,7 @@ If you would like to contribute to the development of this project, please see t
 - Charge carrier delocalization can be modeled with a spherical Gaussian delocalization model.
 - Choose between several KMC algorithms (first reaction method, selective recalculation method, or full recalculation method).
 
-## Current Status
-
-The current release, [Excimontec v1.0.0-rc.2](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
-All features that are to be included in v1.0 are now implemented and have undergone significant testing. 
-However, there may still be bugs that need to be fixed, so please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
-Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 
-
-Major releases and other significant developments will be announced on the Excimontec: General News mailing list. If you are interested in keeping up to date with the development and application of this tool, please subscribe at the following link:
-[Subscribe Here](http://eepurl.com/dis9AT)
-
-#### Continuous Integration and Testing Status:
-
-Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) v14.04 with the [GCC compiler](https://gcc.gnu.org/) (versions 4.7, 4.8, 4.9, 5, 6, 7, and 8) and on both [Open MPI](http://www.open-mpi.org/) v1.6.5 and [MPICH](http://www.mpich.org/) v3.04 using [Travis CI](https://travis-ci.com/).
-
-| Branch | Status |
-| :------: | ------ |
-| Master | [![Build Status](https://img.shields.io/travis/MikeHeiber/Excimontec/master.svg?style=for-the-badge)](https://travis-ci.org/MikeHeiber/Excimontec) |
-| Development | [![Build Status](https://img.shields.io/travis/MikeHeiber/Excimontec/development.svg?style=for-the-badge)](https://travis-ci.org/MikeHeiber/Excimontec) |
-
-Code is being tested using [googletest](https://github.com/google/googletest) with test coverage assessment by [Coveralls](https://coveralls.io/).
-
-| Branch | Status |
-| :------: | ------ |
-| Master | [![Coveralls github branch](https://img.shields.io/coveralls/github/MikeHeiber/Excimontec/master.svg?style=for-the-badge)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=master) |
-| Development | [![Coveralls github branch](https://img.shields.io/coveralls/github/MikeHeiber/Excimontec/development.svg?style=for-the-badge)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=development) |
-
-## Contact
-
-If you would like some help in using or customizing the tool for your research, please contact me (heiber@mailaps.org) to discuss a collaboration. 
-You can check out my research using this tool and other work on [Researchgate](https://www.researchgate.net/profile/Michael_Heiber).
-
-Have a quick question or want to chat about Excimontec?  Join the discussion on Gitter: [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=for-the-badge)
-](https://gitter.im/Excimontec)
+For more details and examples of each type of simulation test, please see the [User Manual](https://mikeheiber.github.io/Excimontec/User_Manual.pdf)
 
 ## How to try Excimontec?
 
@@ -75,40 +46,13 @@ This software tool uses [Message Passing Interface (MPI)](https://computing.llnl
 As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excimontec executable must be built on your specific system. 
 We cannot provide pre-built binaries for your system. 
 Contact your HPC admin to determine the protocols for building MPI applications on your HPC system. 
-In many cases, the HPC system will already be configured for you, and the package comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/) or the [PGI compiler](https://www.pgroup.com/). 
+In many cases, the HPC system will already be configured for you, and Excimontec comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/) or the [PGI compiler](https://www.pgroup.com/).
+If your system uses another compiler, you will need to edit the makefile and define your own compiler options.
 
 If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. 
 For development and preliminary simulation tests, sometimes it is more efficient to run on your own workstation instead of an HPC system. 
-More information about common MPI packages can be found here:
-- Open MPI, http://www.open-mpi.org/
-- MPICH, http://www.mpich.org/
-- MVAPICH, http://mvapich.cse.ohio-state.edu/
 
-Once you have an MPI library installed, to build Excimontec, first copy the Excimontec directory to your machine. 
-On Linux this can be done using the command,
-
-```git clone --recurse-submodules https://github.com/MikeHeiber/Excimontec```
-
-Then set Excimontec as your working directory,
-
-```cd Excimontec```
-
-and finally build the software package with the default makefile.
-
-```make```
-
-In the default makefile, compilation flags have been set for the GCC and PGI compilers. 
-If you are using another compiler, you will need to edit the makefile and define your own compiler options.
-Once the normal build is successful, you should test Excimontec on your own hardware using the unit and system tests provided before you use the tool. 
-Build the testing executable by running
-
-```make test```
-
-Once the test build is complete, run the test suite.
-
-```./test/Excimontec_tests.exe```
-
-On Windows, one can configure Microsoft Visual Studio with Microsoft MPI to also build and run this software, by following [these instructions](https://blogs.technet.microsoft.com/windowshpc/2015/02/02/how-to-compile-and-run-a-simple-ms-mpi-program/).
+For detailed installation instructions, please see the [User Manual](https://mikeheiber.github.io/Excimontec/User_Manual.pdf#page=13).
 
 Please report any build or testing errors in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 
@@ -138,7 +82,7 @@ Excimontec will create a number of different output files depending which test i
 - ToF_average_transients.txt -- When performing a time-of-flight charge transport test, calculated current transients, mobility relaxation transients, and energy relaxation transients will be output to this file.
 - ToF_transit_time_hist.txt -- When performing a time-of-flight charge transport test, the resulting polaron transit time probability histogram will be output to this file.
 - ToF_results.txt -- When performing a time-of-flight charge transport test, the resulting quantitative results are put into this parsable delimited results file.
-- Charge_extraction_map#.txt -- When performing a time-of-flight or IQE test, the x-y locations where charges are extracted from the lattice are saving into this map file.
+- Charge_extraction_map#.txt -- When performing a time-of-flight or IQE test, the x-y locations where charges are extracted from the lattice are saved into this map file.
 - DOS_correlation_data#.txt -- When a correlated density of states model is enabled, data showing the statistical correlation of site energies vs. distance is output into this file.
 - DOS_data.txt - When performing a steady state charge transport test, the density of states distribution is calculated and output to this file.
 - DOS_Coulomb_data.txt - When performing a steady state charge transport test, the density of states distribution, where the site energies include the Coulomb potential from the polarons, is calculated and output to this file.
@@ -150,6 +94,60 @@ Excimontec will create a number of different output files depending which test i
 For [Igor Pro](https://www.wavemetrics.com/) users, I am developing an open-source procedures package for loading, analyzing, and plotting data from Excimontec simulations called [Excimontec_Analysis](https://github.com/MikeHeiber/Excimontec_Analysis). 
 This is a good starting point for managing the data generated by Excimontec, and the Igor Pro scripting environment provides a nice playground where users can perform more advanced data analysis as needed.
 
+## Contact
+
+If you would like some help in using or customizing the tool for your research, please contact me (heiber@mailaps.org) to discuss a collaboration. 
+You can check out my research using this tool and other work on [Researchgate](https://www.researchgate.net/profile/Michael_Heiber).
+
+Have a quick question or want to chat about Excimontec?  Join the discussion on Gitter: [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=for-the-badge)
+](https://gitter.im/Excimontec)
+
+## Citing This Work
+
+This work will soon be submitted to the Journal of Open Source Software, and the citation will be provided here once published.
+<!-- [M. C. Heiber, J. Open Source Software **X**, XXXX (2019).](https://doi.org/) [[ResearchGate]](https://www.researchgate.net/) -->
+
+In addition, please also cite the DOI for the specific version that you used from [Zenodo.org](https://zenodo.org/search?page=1&size=20&q=conceptrecid:%22595806%22&sort=-version&all_versions=True).
+
+## Recommended Reading
+
+Below are some recommended resources for starting to learn about KMC modeling of organic electronic devices:
+
+[M. C. Heiber, A. Wagenpfahl, and C. Deibel, "Advances in Modeling the Physics of Disordered Organic Electronic Devices" In *Handbook of Organic Materials for Electronic and Photonic Devices*, Woodhead Publishing Series in Electronic and Optical Materials, edited by O. Ostroverkhova (Woodhead Publishing, 2019) 2nd Ed., Chap. 10.](https://doi.org/10.1016/B978-0-08-102284-9.00010-3) [[ResearchGate]](https://www.researchgate.net/publication/329625990_Advances_in_Modeling_the_Physics_of_Disordered_Organic_Electronic_Devices)
+
+[C. Groves, "Simulating Charge Transport in Organic Semiconductors and Devices: A Review" Rep. Prog. Phys. **80**, 026502 (2017).](http://dx.doi.org/10.1088/1361-6633/80/2/026502)[[ResearchGate]](https://www.researchgate.net/publication/311743859_Simulating_charge_transport_in_organic_semiconductors_and_devices_A_review)
+
+[S. D. Baranovskii, "Theoretical description of charge transport in disordered organic semiconductors" Phys. Status Solidi B. **3** 487 (2014).](https://doi.org/10.1002/pssb.201350339)
+
+[C. Groves, "Developing Understanding of Organic Photovoltaic Devices: Kinetic Monte Carlo Models of Geminate and Non-geminate Recombination, Charge Transport and Charge Extraction" Energy Environ. Sci. **6**, 32020 (2013).](https://doi.org/10.1039/c3ee41621f)[[ResearchGate]](https://www.researchgate.net/publication/260303139_Developing_Understanding_of_Organic_Photovoltaic_Devices_Kinetic_Monte_Carlo_Models_of_Charge_Recombination_Transport_and_Extraction)
+
+## Development Status
+
+The current release, [Excimontec v1.0.0-rc.4](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+All features that are to be included in v1.0 are now implemented and have undergone significant testing. 
+However, there may still be bugs that need to be fixed, so please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
+Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 
+
+#### Continuous Integration and Testing Status:
+
+Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) v14.04 with the [GCC compiler](https://gcc.gnu.org/) (versions 4.9, 5, 6, 7, 8, and 9) and on both [Open MPI](http://www.open-mpi.org/) v1.6 and [MPICH](http://www.mpich.org/) v3.0 using [Travis CI](https://travis-ci.com/).
+
+| Branch | Status |
+| :------: | ------ |
+| Master | [![Build Status](https://img.shields.io/travis/MikeHeiber/Excimontec/master.svg?style=for-the-badge)](https://travis-ci.org/MikeHeiber/Excimontec) |
+| Development | [![Build Status](https://img.shields.io/travis/MikeHeiber/Excimontec/development.svg?style=for-the-badge)](https://travis-ci.org/MikeHeiber/Excimontec) |
+
+Code is being tested using [googletest](https://github.com/google/googletest) with test coverage assessment by [Coveralls](https://coveralls.io/).
+
+| Branch | Status |
+| :------: | ------ |
+| Master | [![Coveralls github branch](https://img.shields.io/coveralls/github/MikeHeiber/Excimontec/master.svg?style=for-the-badge)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=master) |
+| Development | [![Coveralls github branch](https://img.shields.io/coveralls/github/MikeHeiber/Excimontec/development.svg?style=for-the-badge)](https://coveralls.io/github/MikeHeiber/Excimontec?branch=development) |
+
 ## For Software Developers
 
-Public API documentation for the Excimontec package is still under development and can be viewed [here](https://mikeheiber.github.io/Excimontec/).
+Public API documentation for the Excimontec package can be viewed [here](https://mikeheiber.github.io/Excimontec/).
+
+## Acknowledgments
+Thank you to Dr. Dean M. DeLongchamp at NIST for providing access to computing resources that have supported the development of v1.0. 
+Development of v1.0 has been primarily supported by financial assistance award 70NANB14H012 from U.S. Department of Commerce, National Institute of Standards and Technology as part of the Center for Hierarchical Materials Design (CHiMaD).
