@@ -41,5 +41,5 @@ before_install:
 script:
     - make -j10 $TARGET
     - travis_wait 30 ./test/Excimontec_tests.exe
-    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --gcov-options '\-lp' --skip-ssl-verify; fi
+    - if [[ "$TARGET" = test_coverage ]]; then coveralls --include src --gcov-options '\-lp'; fi
     - if [[ "$TARGET" = test ]]; then make -j10 && mpiexec -n 4 ./Excimontec.exe parameters_default.txt; fi
