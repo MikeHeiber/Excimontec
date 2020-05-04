@@ -130,7 +130,7 @@ Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and 
 
 #### Continuous Integration and Testing Status:
 
-Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) v14.04 with the [GCC compiler](https://gcc.gnu.org/) (versions 4.7, 4.8, 4.9, 5, 6, 7, and 8) and on both [Open MPI](http://www.open-mpi.org/) v1.6.5 and [MPICH](http://www.mpich.org/) v3.04 using [Travis CI](https://travis-ci.com/).
+Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) v14.04 with the [GCC compiler](https://gcc.gnu.org/) (versions 4.9, 5, 6, 7, 8, and 9) and on both [Open MPI](http://www.open-mpi.org/) v1.6 and [MPICH](http://www.mpich.org/) v3.0 using [Travis CI](https://travis-ci.com/).
 
 | Branch | Status |
 | :------: | ------ |
