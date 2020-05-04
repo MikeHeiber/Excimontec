@@ -13,19 +13,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs/User_Manual.pdf - Copy of user manual to the docs directory for easy linking and viewing on the web
 - user_manual - Directory with source files for the user manual including all of the simulation output data used for the examples
 - msvc - Directory with Microsoft Visual studio solution and project files for building Excimontec on Windows
-- README.md - Tecommended reading, citation information, and acknowledgement sections
+- README.md - Recommended reading, citation information, and acknowledgement sections
 
 ### Changed
 - README.md - Replaced detailed installation and build instructions with link to new user manual
 - README.md - Reorganized sections to be more useful for new users
+- README.md - Updated information about Travis CI testing configuration
 - main.cpp - Version string to v1.0.0-rc.4
+- main.cpp - Updated copyright statement years
 - makefile - Updated googletest directory to the one located within the KMC_Lattice submodule
 - parameters_default.txt - Version string to v1.0.0
+- parameters_default.txt - Parameter section headings
 - .gitignore - Ignore statements for Microsoft Visual Studio files to not ignore the solution and project files but still ignore the build directories
+- .travis.yml - Updated copyright statement years
+- .travis.yml - Updating testing config by removing testing of GCC v4.7 and v4.8 and added testing of GCC v9
 
 ### Removed
 - googletest - Duplicate googletest submodule with the intent to use the googletest submodule already within the KMC_Lattice submodule
 - .gitmodules - The googletest submodule entry
+- .travis.yml - Coveralls exlcude statement for the googletest directory
+- .travis.yml - sudo statement because it is no longer used by Travis CI
 
 ### Fixed
 
