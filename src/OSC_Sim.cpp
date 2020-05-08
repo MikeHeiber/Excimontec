@@ -14,7 +14,7 @@ namespace Excimontec {
 
 	OSC_Sim::~OSC_Sim() {}
 
-	bool OSC_Sim::init(const Parameters& params_in, const int id) {
+	bool OSC_Sim::init(const Parameters& params_in, const int id, const int rand_seed) {
 		// Reset error status
 		Error_found = false;
 		// Check parameters for errors
@@ -26,7 +26,7 @@ namespace Excimontec {
 		}
 		bool success;
 		// Set parameters of Simulation base class
-		Simulation::init(params_in, id);
+		Simulation::init(params_in, id, rand_seed);
 		// Initialize parameters object
 		params = params_in;
 		// Initialize derived parameters
@@ -1792,7 +1792,7 @@ namespace Excimontec {
 	}
 
 	void OSC_Sim::exportEnergies(std::string filename) {
-		ofstream outfile(filename);
+		ofstream outfile(filename + to_string(getId()) + ".txt");
 		outfile << lattice.getLength() << endl;
 		outfile << lattice.getWidth() << endl;
 		outfile << lattice.getHeight() << endl;
@@ -1807,7 +1807,7 @@ namespace Excimontec {
 	}
 
 	void OSC_Sim::exportEnergies(std::string filename, bool charge) {
-		ofstream outfile(filename);
+		ofstream outfile(filename + to_string(getId()) + ".txt");
 		outfile << lattice.getLength() << endl;
 		outfile << lattice.getWidth() << endl;
 		outfile << lattice.getHeight() << endl;
@@ -1846,7 +1846,39 @@ namespace Excimontec {
 		generateExciton(coords, true, 0);
 		return coords;
 	}
-
+	
+	void OSC_Sim::exportOccupancy(std::string filename) {
+        // filename includes thread id and nr of iterations
+		ofstream outfile(filename);
+		outfile << lattice.getLength() << endl;
+		outfile << lattice.getWidth() << endl;
+		outfile << lattice.getHeight() << endl;
+		for (int x = 0; x < lattice.getLength(); x++) {
+			for (int y = 0; y < lattice.getWidth(); y++) {
+				for (int z = 0; z < lattice.getHeight(); z++) {
+					//check whether the site is occupied
+					if (lattice.isOccupied(Coords(x, y, z))) {
+						auto object_ptr = (*lattice.getSiteIt(Coords(x, y, z)))->getObjectPtr();
+						//write a number to the outfile: 1 for electrons, 2 for holes, 3 for excitons.
+						if (object_ptr->getObjectType().compare(Polaron::object_type) == 0) {
+							outfile << static_cast<Polaron*>(object_ptr)->getCharge() +1 << "\n";
+						}
+						else{
+							outfile << 3 << "\n";
+						}
+                    }
+					//if the site is unoccupied write a 0
+					else {
+						outfile << 0 << "\n";
+                    }
+                }
+            }
+        }
+        outfile.close();
+    }
+		
+	
+	
 	void OSC_Sim::generateExciton(const KMC_Lattice::Coords& coords, const bool spin, int tag) {
 		if (tag == 0) {
 			tag = N_excitons_created + 1;
@@ -1988,74 +2020,143 @@ namespace Excimontec {
 	}
 
 	void OSC_Sim::generateSteadyPolarons() {
-		// Check to make sure there are enough possible sites
-		int N_polarons = round_int(params.Steady_carrier_density*lattice.getVolume());
-		cout << getId() << ": Creating " << N_polarons << " polarons for the steady charge transport simulation..." << endl;
-		if (params.Enable_phase_restriction && N_donor_sites < N_polarons) {
-			cout << "Error! " << N_polarons << " donor sites were not available to place the initial steady transport test hole polarons." << endl;
-			setErrorMessage("Steady transport test hole polarons could not be created.");
-			Error_found = true;
-			return;
-		}
-		// If there is no disorder, generate the hole polarons on random sites
-		// Randomly select from the total possible sites
-		if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
-			// Construct a vector of coordinates for all possible sites
-			vector<Coords> coords_vec;
-			if (params.Enable_phase_restriction) {
-				coords_vec.reserve(N_donor_sites);
+		if (params.Enable_import_occupancies) {
+			ifstream infile(params.Occupancies_import_filename + to_string(getId()) + ".txt");
+			// Check if energies file exists and is accessible
+			if (!infile.good()) {
+				cout << getId() << ": Error opening site occupancy file for importing." << endl;
+				setErrorMessage("Occupancy file could not be opened for importing.");
+				Error_found = true;
+				infile.close();
+				return;
 			}
-			else {
-				coords_vec.reserve(sites.size());
+			// Copy all fine lines into a string vector
+			string line;
+			vector<string> lines;
+			while (getline(infile, line)) {
+				lines.push_back(line);
 			}
-			for (long int i = 0; i < (long int)sites.size(); i++) {
-				auto coords = lattice.getSiteCoords(i);
-				if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
-					continue;
+			// Check that the file contains at least 3 lines for the lattice dimensions
+			int length = -1;
+			int width = -1;
+			int height = -1;
+			if (lines.size() > 3) {
+				// Read in the lattice dimensions
+				length = stoi(lines[0]);
+				width = stoi(lines[1]);
+				height = stoi(lines[2]);
+			}
+			// Check that valid lattice dimensions were read from the file
+			if (length <= 0 || width <= 0 || height <= 0) {
+				cout << getId() << ": Error importing the site Occupancies, lattice dimensions imported from file are not valid." << endl;
+				setErrorMessage("Error importing the site Occupancies, lattice dimensions imported from file are not valid.");
+				Error_found = true;
+				return;
+			}
+			// Check that the lattice dimensions in the file match the size of the lattice
+			if (length != lattice.getLength() || width != lattice.getWidth() || height != lattice.getHeight()) {
+				cout << getId() << ": Error importing the site Occupancies, dimensions in file do not match the lattice dimensions." << endl;
+				setErrorMessage("Error importing the site Occupancies, dimensions in file do not match the lattice dimensions.");
+				Error_found = true;
+				return;
+			}
+			// Check that the number of read lines corresponds to the correct number of lattice sites
+			if ((int)lines.size() != (length*width*height + 3)) {
+				cout << getId() << ": Error importing the site Occupancies" << endl;
+				setErrorMessage("Error importing the site Occupancies file");
+				Error_found = true;
+				return;
+			}
+			int i = 3;
+			for (int x = 0; x < length; x++) {
+				for (int y = 0; y < width; y++) {
+					for (int z = 0; z < height; z++) {
+						lattice.clearOccupancy(Coords(x, y, z));
+						int occupancy = stoi(lines[i]);
+						if (occupancy == 1) {
+							generateElectron(Coords(x, y, z),0);
+						}
+						else if (occupancy == 2) {
+							generateHole(Coords(x, y, z),0);	
+						}
+						else if (occupancy == 3) {
+							generateExciton(Coords(x, y, z),0);
+						}
+						i++;
+					}
 				}
-				coords_vec.push_back(coords);
-			}
-			shuffle(coords_vec.begin(), coords_vec.end(), generator);
-			// Resize the vector to only keep the appropriate number of sites
-			coords_vec.resize(N_polarons);
-			for (auto& item : coords_vec) {
-				generateHole(item);
 			}
 		}
-		// If there is disorder, create polarons by filling up the DOS
 		else {
-			// Construct a vector of coordinates for all possible sites
-			vector<Coords> site_data;
-			if (params.Enable_phase_restriction) {
-				site_data.reserve(N_donor_sites);
+			// Check to make sure there are enough possible sites
+			int N_polarons = round_int(params.Steady_carrier_density*lattice.getVolume());
+			cout << getId() << ": Creating " << N_polarons << " polarons for the steady charge transport simulation..." << endl;
+			if (params.Enable_phase_restriction && N_donor_sites < N_polarons) {
+				cout << "Error! " << N_polarons << " donor sites were not available to place the initial steady transport test hole polarons." << endl;
+				setErrorMessage("Steady transport test hole polarons could not be created.");
+				Error_found = true;
+				return;
 			}
-			else {
-				site_data.reserve(sites.size());
-			}
-			for (long int i = 0; i < (long int)sites.size(); i++) {
-				auto coords = lattice.getSiteCoords(i);
-				if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
-					continue;
-				}
-				site_data.push_back(coords);
-			}
-			// Sort subrange of coords vect based on the site energy at the coords
-			partial_sort(site_data.begin(), site_data.begin() + N_polarons, site_data.end(), [this](const Coords& a, const Coords& b) -> bool {
-				if (getSiteType(a) == getSiteType(b)) {
-					return (getSiteEnergy(a) < getSiteEnergy(b));
-				}
-				else if (getSiteType(a) == 1) {
-					return ((params.Homo_donor + getSiteEnergy(a)) < (params.Homo_acceptor + getSiteEnergy(b)));
+			// If there is no disorder, generate the hole polarons on random sites
+			// Randomly select from the total possible sites
+			if (!params.Enable_gaussian_dos && !params.Enable_exponential_dos) {
+				// Construct a vector of coordinates for all possible sites
+				vector<Coords> coords_vec;
+				if (params.Enable_phase_restriction) {
+					coords_vec.reserve(N_donor_sites);
 				}
 				else {
-					return ((params.Homo_acceptor + getSiteEnergy(a)) < (params.Homo_donor + getSiteEnergy(b)));
+					coords_vec.reserve(sites.size());
 				}
-			});
-			// Resize vector to only keep the lowest energy sites
-			site_data.resize(N_polarons);
-			// Generate the polarons in the selected sites
-			for (auto const &item : site_data) {
-				generateHole(item);
+				for (long int i = 0; i < (long int)sites.size(); i++) {
+					auto coords = lattice.getSiteCoords(i);
+					if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
+						continue;
+					}
+					coords_vec.push_back(coords);
+				}
+				shuffle(coords_vec.begin(), coords_vec.end(), generator);
+				// Resize the vector to only keep the appropriate number of sites
+				coords_vec.resize(N_polarons);
+				for (auto& item : coords_vec) {
+					generateHole(item);
+				}
+			}
+			// If there is disorder, create polarons by filling up the DOS
+			else {
+				// Construct a vector of coordinates for all possible sites
+				vector<Coords> site_data;
+				if (params.Enable_phase_restriction) {
+					site_data.reserve(N_donor_sites);
+				}
+				else {
+					site_data.reserve(sites.size());
+				}
+				for (long int i = 0; i < (long int)sites.size(); i++) {
+					auto coords = lattice.getSiteCoords(i);
+					if (params.Enable_phase_restriction && getSiteType(coords) == 2) {
+						continue;
+					}
+					site_data.push_back(coords);
+				}
+				// Sort subrange of coords vect based on the site energy at the coords
+				partial_sort(site_data.begin(), site_data.begin() + N_polarons, site_data.end(), [this](const Coords& a, const Coords& b) -> bool {
+					if (getSiteType(a) == getSiteType(b)) {
+						return (getSiteEnergy(a) < getSiteEnergy(b));
+					}
+					else if (getSiteType(a) == 1) {
+						return ((params.Homo_donor + getSiteEnergy(a)) < (params.Homo_acceptor + getSiteEnergy(b)));
+					}
+					else {
+						return ((params.Homo_acceptor + getSiteEnergy(a)) < (params.Homo_donor + getSiteEnergy(b)));
+					}
+				});
+				// Resize vector to only keep the lowest energy sites
+				site_data.resize(N_polarons);
+				// Generate the polarons in the selected sites
+				for (auto const &item : site_data) {
+					generateHole(item);
+				}
 			}
 		}
 		// Calculate events for all polarons created
@@ -2786,7 +2887,7 @@ namespace Excimontec {
 			}
 		}
 		if (params.Enable_import_energies) {
-			ifstream infile(params.Energies_import_filename);
+			ifstream infile(params.Energies_import_filename + to_string(getId()) + ".txt");
 			// Check if energies file exists and is accessible
 			if (!infile.good()) {
 				cout << getId() << ": Error opening site energies file for importing." << endl;
@@ -2854,7 +2955,6 @@ namespace Excimontec {
 					}
 				}
 			}
-
 		}
 	}
 

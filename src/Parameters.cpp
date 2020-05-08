@@ -303,6 +303,11 @@ namespace Excimontec {
 			cout << "Error! When importing site energies from a file, a valid filename must be provided." << endl;
 			return false;
 		}
+        if (Output_interval < 1) {
+            cout << "Error! Output interval is smaller than 1." << endl;
+            return false;
+        }
+        
 		// Check Coulomb interaction parameters
 		if (!(Coulomb_cutoff > 0)) {
 			cout << "Error! The Coulomb cutoff radius must be greater than zero." << endl;
@@ -801,7 +806,7 @@ namespace Excimontec {
 		i++;
 		Energy_shift_acceptor = atof(stringvars[i].c_str());
 		i++;
-		//enable_import_energies
+		//Enable_import_energies
 		try {
 			Enable_import_energies = str2bool(stringvars[i]);
 		}
@@ -812,6 +817,55 @@ namespace Excimontec {
 		}
 		i++;
 		Energies_import_filename = stringvars[i];
+		i++;
+
+		//Enable_export_energies
+		try {
+			Enable_export_energies = str2bool(stringvars[i]);
+		}
+		catch (invalid_argument& exception) {
+			cout << exception.what() << endl;
+			cout << "Error setting the export site energies options" << endl;
+			Error_found = true;
+		}
+		i++;
+		Energies_export_filename = stringvars[i];
+		i++;
+
+		//Enable_import_occupancies
+		try {
+			Enable_import_occupancies = str2bool(stringvars[i]);
+		}
+		catch (invalid_argument& exception) {
+			cout << exception.what() << endl;
+			cout << "Error setting the import site occupancies options" << endl;
+			Error_found = true;
+		}
+		i++;
+		Occupancies_import_filename = stringvars[i];
+		i++;        
+		//Enable_export_occupancies
+		try {
+			Enable_export_occupancies = str2bool(stringvars[i]);
+		}
+		catch (invalid_argument& exception) {
+			cout << exception.what() << endl;
+			cout << "Error setting the export site occupancies options" << endl;
+			Error_found = true;
+		}
+		i++;
+		try {
+			Keep_only_newest_occupancy = str2bool(stringvars[i]);
+		}
+		catch (invalid_argument& exception) {
+			cout << exception.what() << endl;
+			cout << "Error setting the keep only newest option" << endl;
+			Error_found = true;
+        }
+        i++;
+        Output_interval = atoi(stringvars[i].c_str());
+        i++;
+		Occupancies_export_filename = stringvars[i];
 		i++;
 		// Coulomb Calculation Parameters
 		Dielectric_donor = atof(stringvars[i].c_str());

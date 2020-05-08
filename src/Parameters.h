@@ -346,8 +346,32 @@ namespace Excimontec {
 		//! Specifies whether or not to import the site energies from a text file.
 		bool Enable_import_energies;
 
+		//! Specifies whether or not to import the site occupancies from a text file.
+		bool Enable_import_occupancies;
+
+		//! Specifies whether or not to export the site energies from a text file.
+		bool Enable_export_energies;
+
+        //! Specifies whether or not to export the site occupancies from a text file.
+		bool Enable_export_occupancies;
+
+        //! Specifies whether only the newest occupancie file, or all of them are kept.
+        bool Keep_only_newest_occupancy;
+
+        //! Specifies the interval between two occupancie exports in number of events.
+        int Output_interval;
+
 		//! The name of site energy text file to be imported.
 		std::string Energies_import_filename;
+
+		//! The name of site occupancies text file to be imported.
+		std::string Occupancies_import_filename;
+
+		//! The name of site energy text file to be exported.
+		std::string Energies_export_filename;
+
+		//! The name of site occupancies text file to be exported.
+		std::string Occupancies_export_filename;
 
 		// Coulomb Calculation Parameters ------------------------------------------------------------------------------
 
