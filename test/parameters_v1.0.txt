@@ -1,4 +1,4 @@
-## Parameters for Excimontec v1.1.0
+## Parameters for Excimontec v1.0.0
 --------------------------------------------------------------
 ## Kinetic Monte Carlo Algorithm Parameters
 false //Enable_FRM
@@ -55,7 +55,6 @@ false //Enable_dynamics_extraction
 false //Enable_steady_transport_test
 1e15 //Steady_carrier_density (cm^-3)
 10000 //N_equilibration_events
-10000 //State_saving_interval
 --------------------------------------------------------------
 ## Exciton Parameters
 1e22 //Exciton_generation_rate_donor (cm^-3 s^-1)
@@ -125,7 +124,7 @@ false //Enable_interfacial_energy_shift
 0.0 //Energy_shift_donor (eV) 
 0.0 //Energy_shift_acceptor (eV)
 false //Enable_import_energies
-site_energies_#.txt //Energies_import_format
+energies.txt //Energies_import_filename
 --------------------------------------------------------------
 ## Electrostatic Interaction Parameters
 3.5 //Dielectric_constant (relative permittivity)

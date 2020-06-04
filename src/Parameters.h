@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 Michael C. Heiber
+// Copyright (c) 2017-2020 Michael C. Heiber and contributors
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -9,6 +9,8 @@
 #include "Lattice.h"
 #include "Parameters_Simulation.h"
 #include "Utils.h"
+#include "Version.h"
+#include <ctime>
 
 namespace Excimontec {
 
@@ -148,17 +150,26 @@ namespace Excimontec {
 		//! steady state charge transport test.
 		bool Enable_state_data_output = true;
 
+		//! Defines how frequently the simulation will save the state of steady transport test during the equilibration phase.
+		int State_saving_interval = 10000;
+
+		//! Specifies whether or not to resume the steady transport test from a previously generated state file.
+		bool Enable_resume_stt = false;
+
+		//! Defines the naming format for the steady transport test equilibration state files.
+		std::string STT_state_file_format = "STT_equilibration_state";
+
 		// Exciton Parameters ------------------------------------------------------------------------------------
 		// These parameters define the properties of the excitons used by the various simulation tests.
 
 		//! Defines the exciton generation rate on the donor sites is units of cm^-3 s^-3.
-		double Exciton_generation_rate_donor; 
+		double Exciton_generation_rate_donor;
 
 		//! Defines the exciton generation rate on the acceptor sites is units of cm^-3 s^-3.
 		double Exciton_generation_rate_acceptor;
 
 		//! Defines the singlet exciton lifetime when on the donor sites in units of seconds.
-		double Singlet_lifetime_donor; 
+		double Singlet_lifetime_donor;
 
 		//! Defines the singlet exciton lifetime when on the acceptor sites in units of seconds.
 		double Singlet_lifetime_acceptor;
@@ -171,7 +182,7 @@ namespace Excimontec {
 
 		//! Defines the singlet exciton hopping rate prefactor when on the donor sites in units of s^-1.
 		double R_singlet_hopping_donor;
-		
+
 		//! Defines the singlet exciton hopping rate prefactor when on the acceptor sites in units of s^-1.
 		double R_singlet_hopping_acceptor;
 
@@ -183,13 +194,13 @@ namespace Excimontec {
 
 		//! Defines the triplet exciton hopping rate prefactor when on the donor sites in units of s^-1.
 		double R_triplet_hopping_donor;
-		
+
 		//! Defines the triplet exciton hopping rate prefactor when on the acceptor sites in units of s^-1.
 		double R_triplet_hopping_acceptor;
 
 		//! Defines the triplet exciton localization parameter when on the donor sites in units of nm^-1.
 		double Triplet_localization_donor;
-		
+
 		//! Defines the triplet exciton localization parameter when on the acceptor sites in units of nm^-1.
 		double Triplet_localization_acceptor;
 
@@ -228,10 +239,10 @@ namespace Excimontec {
 
 		//! Defines the intersystem crossing (singlet to triplet) rate constant of excitons on donor sites in units of s^-1.
 		double R_exciton_isc_donor;
-		
+
 		//! Defines the intersystem crossing (singlet to triplet) rate constant of excitons on acceptor sites in units of s^-1.
 		double R_exciton_isc_acceptor;
-		
+
 		//! Defines the reverse intersystem crossing (triplet to singlet) rate constant of excitons on donor sites in units of s^-1.
 		double R_exciton_risc_donor;
 
@@ -240,7 +251,7 @@ namespace Excimontec {
 
 		//! Defines the potential energy difference between singlet and triplet exciton states on donor sites in units of eV.
 		double E_exciton_ST_donor;
-		
+
 		//! Defines the potential energy difference between singlet and triplet exciton states on acceptor sites in units of eV.
 		double E_exciton_ST_acceptor;
 
@@ -252,7 +263,7 @@ namespace Excimontec {
 
 		//! Defines the polaron hopping rate prefactor of polarons on donor sites in units of s^-1.
 		double R_polaron_hopping_donor;
-		
+
 		//! Defines the polaron hopping rate prefactor of polarons on acceptor sites in units of s^-1.
 		double R_polaron_hopping_acceptor;
 
@@ -346,32 +357,14 @@ namespace Excimontec {
 		//! Specifies whether or not to import the site energies from a text file.
 		bool Enable_import_energies;
 
-		//! Specifies whether or not to import the site occupancies from a text file.
-		bool Enable_import_occupancies;
+		//! The naming format of the site energy text files to be imported.
+		std::string Energies_import_format = "site_energies_#.txt";
 
 		//! Specifies whether or not to export the site energies from a text file.
 		bool Enable_export_energies;
 
-        //! Specifies whether or not to export the site occupancies from a text file.
-		bool Enable_export_occupancies;
-
-        //! Specifies whether only the newest occupancie file, or all of them are kept.
-        bool Keep_only_newest_occupancy;
-
-        //! Specifies the interval between two occupancie exports in number of events.
-        int Output_interval;
-
-		//! The name of site energy text file to be imported.
-		std::string Energies_import_filename;
-
-		//! The name of site occupancies text file to be imported.
-		std::string Occupancies_import_filename;
-
-		//! The name of site energy text file to be exported.
-		std::string Energies_export_filename;
-
-		//! The name of site occupancies text file to be exported.
-		std::string Occupancies_export_filename;
+		//! The naming format of site energy text files to be exported.
+		std::string Energies_export_format = "site_energies_#.txt";
 
 		// Coulomb Calculation Parameters ------------------------------------------------------------------------------
 
@@ -384,6 +377,20 @@ namespace Excimontec {
 		//! Defines the cutoff radius for Coulomb interactions in units of nm.
 		int Coulomb_cutoff;
 
+		// Additional Parameters ---------------------------------------------------------------------------------------
+
+		//! Defines ID number of the process that will run the simulation.
+		int Proc_ID = 0;
+
+		//! The name of the current simulation version.
+		std::string Version_str;
+
+		//! Defines the number used to seed the random number generator in the Simulation class.
+		int Generator_seed = 0;
+
+		//! The name of the parameter file to import and parse.
+		std::string Parameters_filename = "parameters_default.txt";
+
 		// Functions ---------------------------------------------------------------------------------------------------
 
 		//! \brief Checks the validity of the current parameter values.
@@ -391,11 +398,17 @@ namespace Excimontec {
 		//! \return false if any of the parameter values are invalid.
 		bool checkParameters() const;
 
-		//! \brief Imports the values for all parameters by parsing the input filestream.
-		//! \param inputfile is an opened input filestream pointing to a valid parameter text file.
+		//! \brief Imports the values for all parameters by parsing the previously set parameter file.
 		//! \return true if the parameters are successfully imported.
 		//! \return false if there is an error trying to import the parameters.
-		bool importParameters(std::ifstream& inputfile);
+		bool importParameters();
+
+		//! \brief Parses the command line arguments and sets some of the parameters accordingly.
+		//! \param argc is the number of arguments in the arguments array.
+		//! \param argv is an array of character pointers that point to each argument.
+		//! \return true if the command line arguments are successfully parsed.
+		//! \return false if there is an error during command line parsing.
+		bool parseCommandLineArguments(int argc, char* argv[]);
 
 	private:
 

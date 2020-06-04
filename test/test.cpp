@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 Michael C. Heiber
+// Copyright (c) 2017-2020 Michael C. Heiber and contributors
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -71,6 +71,7 @@ namespace OSC_SimTests {
 			params_default.Enable_steady_transport_test = false;
 			params_default.Steady_carrier_density = 1e15;
 			params_default.N_equilibration_events = 100000;
+			params_default.STT_state_file_format = "./test/STT_equilibration_state";
 			// Exciton Parameters
 			params_default.Exciton_generation_rate_donor = 1e18;
 			params_default.Exciton_generation_rate_acceptor = 1e18;
@@ -137,7 +138,8 @@ namespace OSC_SimTests {
 			params_default.Energy_shift_donor = 0.0;
 			params_default.Energy_shift_acceptor = 0.0;
 			params_default.Enable_import_energies = false;
-			params_default.Energies_import_filename = "energies.txt";
+			params_default.Energies_import_format = "./test/site_energies_#.txt";
+			params_default.Energies_export_format = "./test/site_energies_#.txt";
 			// Coulomb Calculation Parameters
 			params_default.Dielectric_donor = 3.5;
 			params_default.Dielectric_acceptor = 3.5;
@@ -145,22 +147,143 @@ namespace OSC_SimTests {
 		}
 	};
 
+	TEST_F(OSC_SimTest, ParseArgumentsTests) {
+		cout << "Starting OSC_SimTest.ParseArgumentsTests..." << endl;
+		sim = OSC_Sim();
+		Parameters params;
+		// test basic args
+		int argc = 2;
+		char* argv1[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt"
+		};
+		EXPECT_TRUE(params.parseCommandLineArguments(argc, argv1));
+		EXPECT_FALSE(params.Enable_logging);
+		EXPECT_FALSE(params.Enable_resume_stt);
+		// test missing parameters arg
+		argc = 1;
+		char* argv2[] = {
+			(char*)"Excimontec.exe",
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv2));
+		// test undefined arg
+		argc = 3;
+		char* argv3[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-undefined_option"
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv3));
+		// test valid seed
+		argc = 4;
+		char* argv4[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-seed",
+			(char*)"100"
+		};
+		EXPECT_TRUE(params.parseCommandLineArguments(argc, argv4));
+		EXPECT_EQ(params.Generator_seed, 100);
+		// test invalid seed
+		argc = 4;
+		char* argv5[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-seed",
+			(char*)"not_an_int"
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv5));
+		// test missing seed
+		argc = 3;
+		char* argv6[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-seed",
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv6));
+		// test seed out of range
+		argc = 4;
+		char* argv7[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-seed",
+			(char*)"123456789012345"
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv7));
+		// test valid resume stt
+		argc = 3;
+		char* argv8[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-resume_stt",
+		};
+		EXPECT_TRUE(params.parseCommandLineArguments(argc, argv8));
+		EXPECT_TRUE(params.Enable_resume_stt);
+		// test valid all
+		argc = 5;
+		char* argv9[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-seed",
+			(char*)"100",
+			(char*)"-resume_stt",
+		};
+		EXPECT_TRUE(params.parseCommandLineArguments(argc, argv9));
+		EXPECT_EQ(params.Generator_seed, 100);
+		EXPECT_TRUE(params.Enable_resume_stt);
+		// test command line arguments order
+		argc = 5;
+		char* argv10[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-resume_stt",
+			(char*)"-seed",
+			(char*)"100",
+		};
+		EXPECT_TRUE(params.parseCommandLineArguments(argc, argv10));
+		EXPECT_EQ(params.Generator_seed, 100);
+		EXPECT_TRUE(params.Enable_resume_stt);
+		// test only seed missing
+		argc = 4;
+		char* argv11[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-resume_stt",
+			(char*)"-seed",
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv11));
+		// test only seed error
+		argc = 5;
+		char* argv12[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-resume_stt",
+			(char*)"-seed",
+			(char*)"not_an_int"
+		};
+		EXPECT_FALSE(params.parseCommandLineArguments(argc, argv12));
+		// test valid logging
+		argc = 3;
+		char* argv13[] = {
+			(char*)"Excimontec.exe",
+			(char*)"parameters_default.txt",
+			(char*)"-enable_logging",
+		};
+		EXPECT_TRUE(params.parseCommandLineArguments(argc, argv13));
+		EXPECT_TRUE(params.Enable_logging);
+
+	}
+
 	TEST_F(OSC_SimTest, ParameterTests) {
 		cout << "Starting OSC_SimTest.ParameterTests..." << endl;
 		sim = OSC_Sim();
 		Parameters params;
-		params.Enable_logging = false;
-		// Check that importing an uninitialized ifstream throws an exception
-		ifstream uninitialized_ifstream;
-		EXPECT_THROW(params.importParameters(uninitialized_ifstream), invalid_argument);
-		// Check that importing a closed parameter file throws an exception
-		ifstream closed_file("parameters_default.txt");
-		closed_file.close();
-		EXPECT_THROW(params.importParameters(closed_file), invalid_argument);
 		// Check that the default parameters file can be loaded and are valid
-		ifstream params_file("parameters_default.txt");
-		EXPECT_TRUE(params.importParameters(params_file));
-		params_file.close();
+		EXPECT_TRUE(params.importParameters());
+		EXPECT_TRUE(params.checkParameters());
+		// Check that parameter file from v1.0 can be loaded and is valid
+		params.Parameters_filename = "./test/parameters_v1.0.txt";
+		EXPECT_TRUE(params.importParameters());
 		EXPECT_TRUE(params.checkParameters());
 		// Check parameter files with typos in boolean values to check conversion of string to bool
 		ifstream params_file2("parameters_default.txt");
@@ -178,9 +301,8 @@ namespace OSC_SimTests {
 				// Save file data vector to a new parameter file
 				outputVectorToFile(file_data, "./test/parameters_misspell_1.txt");
 				// Try to open and import new parameter file with misspelled true
-				ifstream params_file3("./test/parameters_misspell_1.txt");
-				EXPECT_FALSE(params.importParameters(params_file3));
-				params_file3.close();
+				params.Parameters_filename = "./test/parameters_misspell_1.txt";
+				EXPECT_FALSE(params.importParameters());
 				// Reset misspelled tue back to true
 				item.replace(item.find("tue"), 3, "true");
 			}
@@ -191,9 +313,8 @@ namespace OSC_SimTests {
 				// Save file data vector to a new parameter file
 				outputVectorToFile(file_data, "./test/parameters_misspell_2.txt");
 				// Try to open and import new parameter file with misspelled false
-				ifstream params_file4("./test/parameters_misspell_2.txt");
-				EXPECT_FALSE(params.importParameters(params_file4));
-				params_file4.close();
+				params.Parameters_filename = "./test/parameters_misspell_2.txt";
+				EXPECT_FALSE(params.importParameters());
 				// Reset misspelled fase back to false
 				item.replace(item.find("fase"), 4, "false");
 			}
@@ -201,30 +322,30 @@ namespace OSC_SimTests {
 		// Check invalid lattice parameters 
 		params = params_default;
 		params.Params_lattice.Length = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check invalid Parameters_Simulation parameters 
 		params = params_default;
 		params.Temperature = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check that default parameters are valid
-		EXPECT_TRUE(sim.init(params_default, 0));
+		EXPECT_TRUE(sim.init(params_default));
 		// Check various invalid parameter sets
 		params = params_default;
 		// Check that a device architecture is defined
 		params.Enable_neat = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for multiple enabled morphologies
 		params = params_default;
 		params.Enable_neat = true;
 		params.Enable_random_blend = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for valid bilayer thicknesses
 		params = params_default;
 		params.Enable_neat = false;
 		params.Enable_bilayer = true;
 		params.Thickness_donor = 20;
 		params.Thickness_acceptor = 20;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check recalculation radius when using the selective recalc method
 		params.Recalc_cutoff = 1;
 		params.FRET_cutoff = 2;
@@ -235,50 +356,50 @@ namespace OSC_SimTests {
 		params.FRET_cutoff = 1;
 		params.Exciton_dissociation_cutoff = 2;
 		params.Polaron_hopping_cutoff = 1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params.Recalc_cutoff = 1;
 		params.FRET_cutoff = 1;
 		params.Exciton_dissociation_cutoff = 1;
 		params.Polaron_hopping_cutoff = 2;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for multiple enabled tests
 		params = params_default;
 		params.Enable_dynamics_test = true;
 		params.Enable_exciton_diffusion_test = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for no tests enabled
 		params.Enable_dynamics_test = false;
 		params.Enable_exciton_diffusion_test = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for invalid test duration
 		params.Enable_exciton_diffusion_test = true;
 		params.N_tests = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for valid ToF test options
 		// Check valid parameters
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_ToF_test = true;
 		params.Params_lattice.Enable_periodic_z = false;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check for invalid z boundary conditions
 		params.Params_lattice.Enable_periodic_z = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for invalid morphology
 		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_bilayer = true;
 		params.Enable_neat = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for valid placement option
 		params.Enable_neat = true;
 		params.Enable_bilayer = false;
 		params.Enable_ToF_random_placement = false;
 		params.Enable_ToF_energy_placement = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for invalid polaron type
 		params.Enable_ToF_random_placement = true;
 		params.ToF_polaron_type = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for valid IQE test options
 		// Check valid parameters
 		params = params_default;
@@ -287,15 +408,15 @@ namespace OSC_SimTests {
 		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_neat = false;
 		params.Enable_bilayer = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check invalid boundary conditions
 		params.Params_lattice.Enable_periodic_z = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check invalid device architecture
 		params.Enable_bilayer = false;
 		params.Params_lattice.Enable_periodic_z = false;
 		params.Enable_neat = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for valid Dynamics test options
 		params = params_default;
 		params.Enable_exciton_diffusion_test = false;
@@ -304,163 +425,164 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_extraction = false;
 		params.Params_lattice.Enable_periodic_z = false;
 		params.Internal_potential = -1.0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for dynamics extraction test and z boundary conditions
 		params.Enable_dynamics_extraction = true;
 		params.Params_lattice.Enable_periodic_z = true;
 		params.Internal_potential = -1.0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for steady transport test and z boundary conditions
 		params.Enable_dynamics_test = false;
 		params.Enable_steady_transport_test = true;
 		params.Params_lattice.Enable_periodic_z = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for steady transport test and internal potential
 		params.Params_lattice.Enable_periodic_z = true;
 		params.Internal_potential = 0.0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for steady transport test and steady carrier density
 		params.Internal_potential = -1.0;
 		params.Steady_carrier_density = 0.0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params.Steady_carrier_density = 1.0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for steady transport test and N_equilibration_events
 		params.Steady_carrier_density = 1e15;
 		params.N_equilibration_events = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for steady transport test and neat
 		params.N_equilibration_events = 100;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check for steady transport test and bilayer
 		params.Enable_neat = false;
 		params.Enable_bilayer = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check for steady transport test and random blend
 		params.Enable_bilayer = false;
 		params.Enable_random_blend = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check exciton parameter values
 		params = params_default;
 		params.Exciton_generation_rate_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Singlet_lifetime_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Triplet_lifetime_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_singlet_hopping_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Singlet_localization_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_triplet_hopping_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Triplet_localization_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_exciton_exciton_annihilation_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_exciton_polaron_annihilation_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.FRET_cutoff = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.E_exciton_binding_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_exciton_dissociation_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Exciton_dissociation_cutoff = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_exciton_isc_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_exciton_risc_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.E_exciton_ST_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check polaron parameter values
 		params = params_default;
 		params.R_polaron_hopping_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Polaron_localization_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Enable_miller_abrahams = true;
 		params.Enable_marcus = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Enable_miller_abrahams = false;
 		params.Enable_marcus = false;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Reorganization_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.R_polaron_recombination = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Polaron_hopping_cutoff = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Polaron_delocalization_length = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
+		cout << "Checking site energy parameters" << endl;
 		// Check lattice site parameters
 		params = params_default;
 		params.Homo_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Lumo_acceptor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Enable_exponential_dos = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Enable_exponential_dos = true;
 		params.Energy_urbach_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check enabled correlated disorder without specifying a DOS model
 		params = params_default;
 		params.Enable_gaussian_dos = false;
 		params.Enable_correlated_disorder = true;
 		params.Enable_gaussian_kernel = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check enabled correlated disorder with exponential DOS model
 		params = params_default;
 		params.Enable_gaussian_dos = false;
 		params.Enable_exponential_dos = true;
 		params.Enable_correlated_disorder = true;
 		params.Enable_gaussian_kernel = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check correlated disorder correlation length minimum
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Enable_correlated_disorder = true;
 		params.Disorder_correlation_length = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check correlated disorder correlation length maximum
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Enable_correlated_disorder = true;
 		params.Enable_gaussian_kernel = true;
 		params.Disorder_correlation_length = 2.5;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check correlated disorder with different disorders
 		params = params_default;
 		params.Enable_neat = false;
@@ -471,41 +593,41 @@ namespace OSC_SimTests {
 		params.Disorder_correlation_length = 1.0;
 		params.Energy_stdev_donor = 0.05;
 		params.Energy_stdev_acceptor = 0.025;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check correlated disorder power kernel exponent value
 		params = params_default;
 		params.Enable_gaussian_dos = true;
 		params.Enable_correlated_disorder = true;
 		params.Enable_power_kernel = true;
 		params.Power_kernel_exponent = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params.Power_kernel_exponent = -3;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check invalid interfacial energy shift params
 		params = params_default;
 		params.Enable_interfacial_energy_shift = true;
 		params.Energy_shift_donor = -1;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check invalid energy import conditions
-		// Check missing filename
+		// Check missing filename format
 		params = params_default;
 		params.Enable_import_energies = true;
-		params.Energies_import_filename = "";
-		EXPECT_FALSE(sim.init(params, 0));
+		params.Energies_import_format = "";
+		EXPECT_FALSE(sim.init(params));
 		// Check conflicting options
-		params.Energies_import_filename = "energies.txt";
+		params.Energies_import_format = "site_energies_#.txt";
 		params.Enable_gaussian_dos = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params.Enable_gaussian_dos = false;
 		params.Enable_interfacial_energy_shift = true;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Coulomb calculation options
 		params = params_default;
 		params.Dielectric_donor = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params = params_default;
 		params.Coulomb_cutoff = 0;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 	}
 
 	TEST_F(OSC_SimTest, SetupTests) {
@@ -513,8 +635,16 @@ namespace OSC_SimTests {
 		// Check default parameters
 		sim = OSC_Sim();
 		auto params = params_default;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		EXPECT_EQ(params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height*1e-21, sim.getVolume());
+		// Check random number generator seeding
+		params.Generator_seed = 100;
+		EXPECT_TRUE(sim.init(params));
+		auto num1 = sim.rand01();
+		OSC_Sim sim2 = OSC_Sim();
+		EXPECT_TRUE(sim2.init(params));
+		auto num2 = sim2.rand01();
+		EXPECT_DOUBLE_EQ(num1, num2);
 	}
 
 	TEST_F(OSC_SimTest, GetSiteTests) {
@@ -522,7 +652,7 @@ namespace OSC_SimTests {
 		// Get site energy
 		sim = OSC_Sim();
 		auto params = params_default;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check valid coords
 		// Default parameters have no disorder, so site energies should all be zero.
 		EXPECT_DOUBLE_EQ(0.0, sim.getSiteEnergy(Coords(0, 0, 0)));
@@ -535,7 +665,7 @@ namespace OSC_SimTests {
 		// Reset simulation object
 		sim = OSC_Sim();
 		params = params_default;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check valid coords
 		// Default parameters use a neat morphology, so all sites should be donor (type=1).
 		EXPECT_EQ(1, sim.getSiteType(Coords(0, 0, 0)));
@@ -555,7 +685,7 @@ namespace OSC_SimTests {
 		params.Enable_exciton_diffusion_test = false;
 		params.Enable_IQE_test = true;
 		params.Params_lattice.Enable_periodic_z = false;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Create triplet exciton
 		sim.createExciton(Coords(10, 10, 10), false);
 		// redirect cout to status file
@@ -616,35 +746,35 @@ namespace OSC_SimTests {
 		EXPECT_EQ(lines[7], "0: Hole 1 is at 10,10,50.");
 		// Check attempt to create exciton on invalid Coords
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		sim.createExciton(Coords(-1, 0, 0), true);
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Exciton cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
 		// Check attempt to create electron on invalid Coords
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		sim.createElectron(Coords(0, params.Params_lattice.Width + 1, 0));
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Electron cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
 		// Check attempt to create hole on invalid Coords
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		sim.createHole(Coords(0, 0, params.Params_lattice.Height + 1));
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Hole cannot be generated because the input coordinates are invalid.", sim.getErrorMessage());
 		// Check attempt to create electron on invalid site type
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		sim.createElectron(Coords(10, 10, 50));
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
 		EXPECT_EQ("Electron cannot be generated on a donor site.", sim.getErrorMessage());
 		// Check attempt to create hole on invalid Coords
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		sim.createHole(Coords(10, 10, 49));
 		EXPECT_TRUE(sim.getErrorStatus());
 		EXPECT_TRUE(sim.checkFinished());
@@ -655,14 +785,14 @@ namespace OSC_SimTests {
 		params.Params_lattice.Width = 1;
 		params.Params_lattice.Height = 1;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Create first exciton that fills the lattice
 		sim.createExciton(false);
 		// Try to create another exciton
 		sim.createExciton(false);
 		EXPECT_TRUE(sim.getErrorStatus());
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Create first exciton that fills the lattice
 		sim.createExciton(false);
 		// Try to create another exciton
@@ -705,7 +835,7 @@ namespace OSC_SimTests {
 		params.Exciton_generation_rate_donor = 1e26;
 		params.Exciton_generation_rate_acceptor = 1e26;
 		params.Internal_potential = -0.5;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Execute 5000 events and save events executed
 		vector<string> event_types;
 		for (int i = 0; i < 5000; i++) {
@@ -734,7 +864,7 @@ namespace OSC_SimTests {
 		}
 	}
 
-	TEST_F(OSC_SimTest, EnergiesImportTests) {
+	TEST_F(OSC_SimTest, EnergiesExportImportTests) {
 		cout << "Starting OSC_SimTest.EnergiesImportTests..." << endl;
 		// Create sample energies file
 		sim = OSC_Sim();
@@ -747,32 +877,69 @@ namespace OSC_SimTests {
 		params.Thickness_donor = 15;
 		params.Thickness_acceptor = 15;
 		params.Enable_gaussian_dos = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		double energies_stdev1 = vector_stdev(sim.getSiteEnergies(1));
-		sim.exportEnergies("./test/energies.txt");
+		// Export relative energies
+		sim.exportEnergies("./test/site_energies_0.txt");
 		// Test valid import operation
 		sim = OSC_Sim();
 		params.Enable_gaussian_dos = false;
 		params.Enable_import_energies = true;
-		params.Energies_import_filename = "./test/energies.txt";
-		EXPECT_TRUE(sim.init(params, 0));
+		params.Energies_import_format = "./test/site_energies_#.txt";
+		EXPECT_TRUE(sim.init(params));
 		// Check imported energies
 		auto site_energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0, vector_avg(site_energies), 5e-3);
 		EXPECT_NEAR(energies_stdev1, vector_stdev(site_energies), 1e-4);
+		// Test missing energies file
+		params.Enable_gaussian_dos = false;
+		params.Enable_import_energies = true;
+		params.Energies_import_format = "missing_file_#.txt";
+		EXPECT_FALSE(sim.init(params));
+		// Load site energy file data
+		ifstream energies_file("./test/site_energies_0.txt");
+		vector<string> file_data_original;
+		string line;
+		while (getline(energies_file, line)) {
+			file_data_original.push_back(line);
+		}
+		// Test energies file with missing data
+		auto file_data = file_data_original;
+		file_data.pop_back();
+		file_data.pop_back();
+		file_data.pop_back();
+		outputVectorToFile(file_data, "./test/site_energies_missing_data_0.txt");
+		params.Energies_import_format = "./test/site_energies_missing_data_#.txt";
+		EXPECT_FALSE(sim.init(params));
+		// Test energy file with no dimensions
+		file_data = file_data_original;
+		file_data.erase(file_data.begin());
+		file_data.erase(file_data.begin());
+		file_data.erase(file_data.begin());
+		outputVectorToFile(file_data, "./test/site_energies_missing_dims_0.txt");
+		params.Energies_import_format = "./test/site_energies_missing_dims_#.txt";
+		EXPECT_FALSE(sim.init(params));
+		// Test energy file with improper dimensions
+		params.Params_lattice.Length = 50;
+		params.Params_lattice.Width = 50;
+		params.Params_lattice.Height = 30;
+		params.Energies_import_format = "./test/site_energies_#.txt";
+		EXPECT_FALSE(sim.init(params));
 		// Test export of electron energies
 		sim = OSC_Sim();
 		params.Enable_import_energies = false;
 		params.Enable_gaussian_dos = true;
-		EXPECT_TRUE(sim.init(params, 0));
-		sim.exportEnergies("./test/energies.txt", false);
-		ifstream infile("./test/energies.txt");
+		EXPECT_TRUE(sim.init(params));
+		sim.exportEnergies("./test/site_energies_0.txt", false, false);
+		ifstream infile("./test/site_energies_0.txt");
 		int i = 0;
 		site_energies.clear();
 		int num_sites = params.Params_lattice.Length*params.Params_lattice.Width*params.Params_lattice.Height;
 		site_energies.reserve(num_sites);
-		string line;
 		while (getline(infile, line)) {
+			if (line[0] == '#') {
+				continue;
+			}
 			if (i > 2) {
 				site_energies.push_back(stod(line));
 			}
@@ -782,12 +949,15 @@ namespace OSC_SimTests {
 		EXPECT_EQ(num_sites, (int)site_energies.size());
 		EXPECT_NEAR((params.Lumo_donor + params.Lumo_acceptor) / 2.0, vector_avg(site_energies), 1e-2*params.Lumo_donor);
 		// Check hole energies
-		sim.exportEnergies("./test/energies.txt", true);
-		ifstream infile2("./test/energies.txt");
+		sim.exportEnergies("./test/site_energies_0.txt", false, true);
+		ifstream infile2("./test/site_energies_0.txt");
 		i = 0;
 		site_energies.clear();
 		site_energies.reserve(num_sites);
 		while (getline(infile2, line)) {
+			if (line[0] == '#') {
+				continue;
+			}
 			if (i > 2) {
 				site_energies.push_back(stod(line));
 			}
@@ -796,23 +966,6 @@ namespace OSC_SimTests {
 		infile2.close();
 		EXPECT_EQ(num_sites, (int)site_energies.size());
 		EXPECT_NEAR((params.Homo_donor + params.Homo_acceptor) / 2.0, vector_avg(site_energies), 1e-2*params.Homo_donor);
-		// Test missing energies file
-		params.Enable_gaussian_dos = false;
-		params.Enable_import_energies = true;
-		params.Energies_import_filename = "energies.txt";
-		EXPECT_FALSE(sim.init(params, 0));
-		// Test energies file with missing data
-		params.Energies_import_filename = "./test/energies_missing_data.txt";
-		EXPECT_FALSE(sim.init(params, 0));
-		// Test energy file with no dimensions
-		params.Energies_import_filename = "./test/energies_missing_dims.txt";
-		EXPECT_FALSE(sim.init(params, 0));
-		// Test energy file with improper dimensions
-		params.Params_lattice.Length = 50;
-		params.Params_lattice.Width = 50;
-		params.Params_lattice.Height = 30;
-		params.Energies_import_filename = "./test/energies.txt";
-		EXPECT_FALSE(sim.init(params, 0));
 	}
 
 	TEST_F(OSC_SimTest, MorphologyImportTests) {
@@ -827,41 +980,41 @@ namespace OSC_SimTests {
 		params.Params_lattice.Height = 50;
 		// Test incorrect filename
 		params.Morphology_filename = "./test/test_morphology123.txt";
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Test incorrect dimensions
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v4-0_compressed.txt";
 		params.Params_lattice.Height = 100;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		params.Params_lattice.Height = 50;
 		// Test correct import of v3.2 compressed
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v3-2_compressed.txt";
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Test correct import of v3.2 uncompressed
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v3-2_uncompressed.txt";
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Test correct import of v4.0 compressed
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v4-0_compressed.txt";
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Test correct import of v4.0 uncompressed
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v4-0_uncompressed.txt";
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Test behavior when there is missing data
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_v4-0_missing_data.txt";
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Test behavior when there is no header line
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_no_version.txt";
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Test behavior when the version is too old
 		sim = OSC_Sim();
 		params.Morphology_filename = "./test/morphology_old_version.txt";
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 	}
 
 	TEST_F(OSC_SimTest, ChargeDynamicsTests) {
@@ -879,7 +1032,7 @@ namespace OSC_SimTests {
 		params.R_singlet_hopping_donor = 1e12;
 		params.R_singlet_hopping_acceptor = 1e12;
 		params.N_tests = 5000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -916,7 +1069,7 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_test = true;
 		params.Dynamics_transient_end = 1e-9;
 		params.N_tests = 2000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -936,7 +1089,7 @@ namespace OSC_SimTests {
 		params.Enable_dynamics_test = true;
 		params.R_exciton_isc_donor = 1e16;
 		params.N_tests = 2000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -962,7 +1115,7 @@ namespace OSC_SimTests {
 		params.Dynamics_initial_exciton_conc = 2e15;
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -992,7 +1145,7 @@ namespace OSC_SimTests {
 		params.Dynamics_transient_end = 1e-7;
 		params.N_tests = 500;
 		params.Enable_gaussian_dos = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1009,7 +1162,7 @@ namespace OSC_SimTests {
 		params.Dynamics_initial_exciton_conc = 1e17;
 		params.Dynamics_transient_end = 1e-7;
 		params.N_tests = 100;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1022,7 +1175,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		auto params = params_default;
 		params.N_tests = 5000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		bool success;
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
@@ -1055,7 +1208,7 @@ namespace OSC_SimTests {
 		params = params_default;
 		params.R_exciton_isc_donor = 1e16;
 		params.N_tests = 5000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1082,7 +1235,7 @@ namespace OSC_SimTests {
 		params = params_default;
 		params.N_tests = 2000;
 		params.Enable_gaussian_dos = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1098,7 +1251,7 @@ namespace OSC_SimTests {
 		params = params_default;
 		params.N_tests = 2000;
 		params.Enable_exponential_dos = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1136,7 +1289,7 @@ namespace OSC_SimTests {
 		bool success;
 		// Baseline bilayer IQE test
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check internal field
 		EXPECT_EQ(params.Internal_potential / (params.Params_lattice.Height*1e-7), sim.getInternalField());
 		while (!sim.checkFinished()) {
@@ -1151,7 +1304,7 @@ namespace OSC_SimTests {
 		// Check for field activated charge separation
 		params.Internal_potential = -2.0;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1167,7 +1320,7 @@ namespace OSC_SimTests {
 		params.Internal_potential = -1.0;
 		params.Temperature = 350;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1184,7 +1337,7 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_polaron_delocalization = true;
 		params.Polaron_delocalization_length = 2.0;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1200,7 +1353,7 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_polaron_delocalization = false;
 		params.R_polaron_recombination = 1e9;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1218,7 +1371,7 @@ namespace OSC_SimTests {
 		params.Homo_acceptor = params.Homo_donor + 0.1;
 		params.Lumo_acceptor = params.Lumo_acceptor + 0.1;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1255,7 +1408,7 @@ namespace OSC_SimTests {
 		params.Internal_potential = -1.0;
 		params.N_tests = 1000;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1270,7 +1423,7 @@ namespace OSC_SimTests {
 		params.Exciton_generation_rate_donor = 1e25;
 		params.Exciton_generation_rate_donor = 1e25;
 		sim = OSC_Sim();
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			success = sim.executeNextEvent();
 			EXPECT_TRUE(success);
@@ -1299,16 +1452,16 @@ namespace OSC_SimTests {
 		params.Enable_steady_transport_test = true;
 		params.Enable_phase_restriction = true;
 		params.Steady_carrier_density = 1e18;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Check that there is no error without phase restriction
 		sim = OSC_Sim();
 		params.Enable_phase_restriction = false;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check that there is no error with phase restriction when the carrier density is low
 		sim = OSC_Sim();
 		params.Enable_phase_restriction = true;
 		params.Steady_carrier_density = 1e15;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Steady transport test without disorder
 		sim = OSC_Sim();
 		params = params_default;
@@ -1328,7 +1481,7 @@ namespace OSC_SimTests {
 		EXPECT_TRUE(std::isnan(sim.getSteadyEquilibrationEnergy_Coulomb()));
 		EXPECT_TRUE(std::isnan(sim.getSteadyTransportEnergy_Coulomb()));
 		// Run the simulation
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1342,7 +1495,9 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(expected_mobility, sim.getSteadyMobility(), 1.5e-1*expected_mobility);
 		double expected_current_density = 1000 * Elementary_charge * expected_mobility*(sim.getN_holes_created() / sim.getVolume())*abs(sim.getInternalField());
 		EXPECT_NEAR(expected_current_density, sim.getSteadyCurrentDensity(), 1.5e-1*expected_current_density);
+		//
 		// Steady transport test with Gaussian disorder at very low electric field
+		//
 		sim = OSC_Sim();
 		params = params_default;
 		params.Params_lattice.Length = 350;
@@ -1359,7 +1514,7 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		// Initialize the test
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check that at least 10 holes have been created
 		EXPECT_GT(sim.getN_holes_created(), 10);
 		// Run the simulation
@@ -1401,7 +1556,112 @@ namespace OSC_SimTests {
 		EXPECT_NEAR(peak_position, expected_energy, 1e-2*params.Homo_donor);
 		// Check the DOOS integral
 		EXPECT_NEAR(params.Steady_carrier_density, integrateData(DOOS_data), 5e-2*params.Steady_carrier_density);
+		//
+		// Check results from a resumed simulation after equilibration
+		//
+		sim = OSC_Sim();
+		params.Enable_resume_stt = true;
+		// Initialize the test
+		EXPECT_TRUE(sim.init(params));
+		// Check that equilibration has already been completed
+		EXPECT_EQ(sim.getN_events_executed(), params.N_equilibration_events);
+		// Check that at least 10 holes have been created
+		EXPECT_GT(sim.getN_holes_created(), 10);
+		// Run the simulation
+		while (!sim.checkFinished()) {
+			EXPECT_TRUE(sim.executeNextEvent());
+		}
+		// Check the steady state energies
+		expected_energy = params.Homo_donor - intpow(params.Energy_stdev_donor, 2) / (K_b * params.Temperature);
+		// At low carrier density energies calculated with and without Coulomb interactions should be almost equal
+		// Check equilibration energies w/ and w/o Coulomb potential
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy(), 1e-2* abs(expected_energy));
+		EXPECT_NEAR(expected_energy, sim.getSteadyEquilibrationEnergy_Coulomb(), 1e-2* abs(expected_energy));
+		// Check the DOS
+		DOS_data = sim.getSteadyDOS();
+		// Check the DOS peak
+		peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double> & a, pair<double, double> & b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2* params.Homo_donor);
+		// Check the DOS integral
+		expected_DOS = 1.0 / intpow(params.Params_lattice.Unit_size * 1e-7, 3);
+		EXPECT_NEAR(expected_DOS, integrateData(DOS_data), 1e-2* expected_DOS);
+		// Check the DOS w/ Coulomb potential
+		DOS_data = sim.getSteadyDOS_Coulomb();
+		// Check the DOS peak
+		peak_position = (*max_element(DOS_data.begin(), DOS_data.end(), [](pair<double, double> & a, pair<double, double> & b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, params.Homo_donor, 1e-2* params.Homo_donor);
+		// Check the DOS integral
+		EXPECT_NEAR(expected_DOS, integrateData(DOS_data), 1e-2* expected_DOS);
+		// Check the DOOS
+		DOOS_data = sim.getSteadyDOOS();
+		// Check the DOOS peak
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double> & a, pair<double, double> & b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, expected_energy, 1e-2* params.Homo_donor);
+		// Check the DOOS integral
+		EXPECT_NEAR(params.Steady_carrier_density, integrateData(DOOS_data), 5e-2* params.Steady_carrier_density);
+		// Check the DOOS w/ Coulomb potential
+		DOOS_data = sim.getSteadyDOOS_Coulomb();
+		// Check the DOOS peak
+		peak_position = (*max_element(DOOS_data.begin(), DOOS_data.end(), [](pair<double, double> & a, pair<double, double> & b) {return (a.second < b.second); })).first;
+		EXPECT_NEAR(peak_position, expected_energy, 1e-2* params.Homo_donor);
+		// Check the DOOS integral
+		EXPECT_NEAR(params.Steady_carrier_density, integrateData(DOOS_data), 5e-2* params.Steady_carrier_density);
+		//
+		// Check invald resume cases
+		//
+		ifstream state_file(params.STT_state_file_format+"_0_latest.txt");
+		vector<string> file_data_original;
+		string line;
+		while (getline(state_file, line)) {
+			file_data_original.push_back(line);
+		}
+		state_file.close();
+		// Check missing state file
+		EXPECT_FALSE(sim.checkSTTStateFile("STT_state_file.txt"));
+		// Check state file with invalid time data
+		auto file_data = file_data_original;
+		file_data[0] = "a";
+		string state_filename = "./test/STT_invalid_time_state_0_latest.txt";
+		outputVectorToFile(file_data, state_filename);
+		EXPECT_FALSE(sim.checkSTTStateFile(state_filename));
+		// Check state file with invalid N_events_executed data
+		file_data = file_data_original;
+		file_data[1] = "a";
+		state_filename = "./test/STT_invalid_events_state_0_latest.txt";
+		outputVectorToFile(file_data, state_filename);
+		EXPECT_FALSE(sim.checkSTTStateFile(state_filename));
+		// Check state file without occupancy data
+		file_data = file_data_original;
+		file_data.pop_back();
+		state_filename = "./test/STT_missing_data_state_0_latest.txt";
+		outputVectorToFile(file_data, state_filename);
+		EXPECT_FALSE(sim.checkSTTStateFile(state_filename));
+		// Check invalid lattice dims
+		file_data = file_data_original;
+		file_data[2] = "a";
+		state_filename = "./test/STT_invalid_dim_state_0_latest.txt";
+		outputVectorToFile(file_data, state_filename);
+		EXPECT_FALSE(sim.checkSTTStateFile(state_filename));
+		// Check negative lattice dim
+		file_data = file_data_original;
+		file_data[2] = "-10";
+		state_filename = "./test/STT_negative_dim_state_0_latest.txt";
+		outputVectorToFile(file_data, state_filename);
+		EXPECT_FALSE(sim.checkSTTStateFile(state_filename));
+		// Check mismatching lattice dims
+		file_data = file_data_original;
+		file_data[2] = "250";
+		state_filename = "./test/STT_mismatch_dim_state_0_latest.txt";
+		outputVectorToFile(file_data, state_filename);
+		EXPECT_FALSE(sim.checkSTTStateFile(state_filename));
+		// Check missing site energies file
+		sim = OSC_Sim();
+		params.Energies_import_format = "sites_#.txt";
+		EXPECT_FALSE(sim.init(params));
+		params.Energies_import_format = params_default.Energies_import_format;
+		//
 		// Steady transport test with Gaussian disorder at medium field
+		//
 		sim = OSC_Sim();
 		params = params_default;
 		params.Params_lattice.Length = 300;
@@ -1418,7 +1678,7 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.075;
 		// Initialize the test
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check that at least 10 holes have been created
 		EXPECT_GT(sim.getN_holes_created(), 10);
 		// Run the simulation
@@ -1450,7 +1710,7 @@ namespace OSC_SimTests {
 		params.Homo_acceptor = 5.1;
 		params.Lumo_acceptor = 3.1;
 		// Initialize the test
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		// Check that at least 10 holes have been created
 		EXPECT_GT(sim.getN_holes_created(), 10);
 		// Run the simulation
@@ -1474,7 +1734,7 @@ namespace OSC_SimTests {
 		params.Acceptor_conc = 0.9999;
 		params.Internal_potential = -1.0;
 		params.ToF_initial_polarons = 1000;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Hole ToF test
 		sim = OSC_Sim();
 		params = params_default;
@@ -1484,7 +1744,7 @@ namespace OSC_SimTests {
 		params.Enable_ToF_test = true;
 		params.Params_lattice.Height = 200;
 		params.N_tests = 1000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1515,7 +1775,7 @@ namespace OSC_SimTests {
 		sim = OSC_Sim();
 		params.Enable_miller_abrahams = false;
 		params.Enable_marcus = true;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1536,7 +1796,7 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_dos = true;
 		params.Params_lattice.Height = 400;
 		params.N_tests = 1000;
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1563,7 +1823,7 @@ namespace OSC_SimTests {
 		params.Enable_ToF_random_placement = false;
 		params.Enable_ToF_energy_placement = true;
 		params.ToF_placement_energy = -intpow(params.Energy_stdev_donor, 2) / (K_b*params.Temperature);
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1588,13 +1848,13 @@ namespace OSC_SimTests {
 		params.ToF_polaron_type = false;
 		params.Params_lattice.Height = 200;
 		params.N_tests = 1000;
-		EXPECT_FALSE(sim.init(params, 0));
+		EXPECT_FALSE(sim.init(params));
 		// Electron ToF test on random blend should work
 		sim = OSC_Sim();
 		params.Enable_neat = false;
 		params.Enable_random_blend = true;
 		params.Acceptor_conc = 0.99; // Dilute blend should behave like a neat electron transport material
-		EXPECT_TRUE(sim.init(params, 0));
+		EXPECT_TRUE(sim.init(params));
 		while (!sim.checkFinished()) {
 			EXPECT_TRUE(sim.executeNextEvent());
 		}
@@ -1637,7 +1897,7 @@ namespace OSC_SimTests {
 		params.Enable_interfacial_energy_shift = true;
 		params.Energy_shift_donor = 0.01;
 		params.Energy_shift_acceptor = 0.01;
-		sim.init(params, 0);
+		sim.init(params);
 		float expected_energy = (float)params.Energy_shift_donor + ((float)params.Energy_shift_donor * 4.0f / sqrt(2.0f)) + ((float)params.Energy_shift_donor * 4.0f / sqrt(3.0f));
 		EXPECT_FLOAT_EQ(expected_energy, sim.getSiteEnergy(Coords(params.Params_lattice.Length / 2, params.Params_lattice.Width / 2, params.Params_lattice.Height / 2)));
 		// Test energy shift on bilayer with energetic disorder
@@ -1645,7 +1905,7 @@ namespace OSC_SimTests {
 		params.Enable_gaussian_dos = true;
 		params.Energy_stdev_donor = 0.05;
 		params.Energy_stdev_acceptor = 0.05;
-		sim.init(params, 0);
+		sim.init(params);
 		vector<float> energies;
 		for (int x = 0; x < params.Params_lattice.Length; x++) {
 			for (int y = 0; y < params.Params_lattice.Width; y++) {
@@ -1671,7 +1931,7 @@ namespace OSC_SimTests {
 		params.Params_lattice.Width = 40;
 		params.Params_lattice.Height = 40;
 		params.Disorder_correlation_length = 1.1;
-		sim.init(params, 0);
+		sim.init(params);
 		auto energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
 		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
@@ -1684,7 +1944,7 @@ namespace OSC_SimTests {
 		params.Params_lattice.Width = 40;
 		params.Params_lattice.Height = 40;
 		params.Disorder_correlation_length = 1.3;
-		sim.init(params, 0);
+		sim.init(params);
 		energies = sim.getSiteEnergies(1);
 		EXPECT_NEAR(0.0, vector_avg(energies), 5e-3);
 		EXPECT_NEAR(0.05, vector_stdev(energies), 1e-3);
