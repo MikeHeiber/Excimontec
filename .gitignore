@@ -34,11 +34,12 @@ msvc/2019/x64*
 msvc/2019/Win32*
 
 # Generated Test Files
-test/energies.txt
+test/site_energies*
 test/log.txt
 test/parameters_misspell*
 test/status.txt
 test/test_log.txt
+test/STT*
 
 # Uncompressed example data files
 user_manual/example_data/Dynamics_test_data/set*/*/

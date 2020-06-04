@@ -1,28 +1,27 @@
-// Copyright (c) 2017-2020 Michael C. Heiber
+// Copyright (c) 2017-2020 Michael C. Heiber and contributors
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
 #include "OSC_Sim.h"
 #include "Parameters.h"
-#include <mpi.h>
+#include <ctime>
 #include <fstream>
+#include <functional>
 #include <iostream>
+#include <mpi.h>
 #include <string>
 #include <vector>
-#include <ctime>
-#include <functional>
 
 using namespace std;
 using namespace Excimontec;
 using namespace KMC_Lattice;
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0.0-rc.4";
+	string version = "v1.1.0-beta.1";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
-	ifstream parameterfile;
 	ofstream logfile;
 	ofstream resultsfile;
 	ofstream analysisfile;
@@ -30,7 +29,6 @@ int main(int argc, char *argv[]) {
 	string logfilename;
 	Parameters params;
 	int nproc = 1;
-	int procid = 0;
 	int elapsedtime;
 	time_t time_start, time_end;
 	bool success;
@@ -41,53 +39,31 @@ int main(int argc, char *argv[]) {
 	char error_found = (char)0;
 	// Start timer
 	time_start = time(NULL);
-	// Check command line arguments
-	if (argc < 2) {
-		cout << "Error! You must input the parameter file name as a command line argument." << endl;
+	// Initialize mpi options
+	cout << "Initializing MPI options... ";
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &nproc);
+	MPI_Comm_rank(MPI_COMM_WORLD, &params.Proc_ID);
+	cout << params.Proc_ID << ": MPI initialization complete!" << endl;
+	// Initialize error monitoring vectors
+	proc_finished.assign(nproc, false);
+	error_status_vec.assign(nproc, false);
+	error_messages.assign(nproc, "");
+	// Parse command line arguments
+	success = params.parseCommandLineArguments(argc, argv);
+	if (!success) {
 		return 0;
 	}
-	// Check for command line enabled logging
-	// Set default
-	params.Enable_logging = false;
-	if (argc == 3) {
-		string argument(argv[2]);
-		if (argument.compare("-enable_logging") == 0) {
-			params.Enable_logging = true;
-		}
-		else {
-			cout << "Error! Invalid command line argument." << endl;
-			return 0;
-		}
-	}
-	// Check for too many command line arguments
-	if (argc > 3) {
-		cout << "Error! Too many command line arguments." << endl;
-		return 0;
-	}
-	// Import parameters and options from parameter file and command line arguments
+	// Import parameters and options from the parameter file
 	cout << "Loading input parameters from file... " << endl;
-	parameterfile.open(argv[1], ifstream::in);
-	if (!parameterfile.good()) {
-		cout << "Error loading parameter file.  Program will now exit." << endl;
-		return 0;
-	}
-	success = params.importParameters(parameterfile);
-	parameterfile.close();
+	success = params.importParameters();
 	if (!success) {
 		cout << "Error importing parameters from parameter file.  Program will now exit." << endl;
 		return 0;
 	}
 	cout << "Parameter loading complete!" << endl;
-	// Initialize mpi options
-	cout << "Initializing MPI options... ";
-	MPI_Init(&argc, &argv);
-	MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-	MPI_Comm_rank(MPI_COMM_WORLD, &procid);
-	cout << procid << ": MPI initialization complete!" << endl;
-	// Initialize error monitoring vectors
-	proc_finished.assign(nproc, false);
-	error_status_vec.assign(nproc, false);
-	error_messages.assign(nproc, "");
+	// Set other misc parameters
+	params.Version_str = version;
 	// Morphology set import handling
 	if (params.Enable_import_morphology_set && params.N_test_morphologies > nproc) {
 		cout << "Error! The number of requested processors cannot be less than the number of morphologies tested." << endl;
@@ -101,8 +77,8 @@ int main(int argc, char *argv[]) {
 	}
 	if (params.Enable_import_morphology_set) {
 		int* selected_morphologies = new int[nproc];
-		if (procid == 0) {
-			default_random_engine generator((int)time(0));
+		if (params.Proc_ID == 0) {
+			default_random_engine generator(params.Generator_seed);
 			vector<int> morphology_set_original(params.N_test_morphologies);
 			vector<int> morphology_set;
 			// Select morphologies from the morphology set
@@ -132,51 +108,51 @@ int main(int argc, char *argv[]) {
 		int pos = (int)params.Morphology_set_format.find("#");
 		string prefix = params.Morphology_set_format.substr(0, pos);
 		string suffix = params.Morphology_set_format.substr(pos + 1);
-		cout << procid << ": Morphology " << selected_morphologies[procid] << " selected." << endl;
-		params.Morphology_filename = prefix + to_string(selected_morphologies[procid]) + suffix;
-		cout << procid << ": " << params.Morphology_filename << " selected." << endl;
+		cout << params.Proc_ID << ": Morphology " << selected_morphologies[params.Proc_ID] << " selected." << endl;
+		params.Morphology_filename = prefix + to_string(selected_morphologies[params.Proc_ID]) + suffix;
+		cout << params.Proc_ID << ": " << params.Morphology_filename << " selected." << endl;
 		// Cleanup
 		delete[] selected_morphologies;
 	}
 	// Setup file output
-	cout << procid << ": Creating output files..." << endl;
+	cout << params.Proc_ID << ": Creating output files..." << endl;
 	if (params.Enable_logging) {
-		logfilename = "log" + to_string(procid) + ".txt";
+		logfilename = "log" + to_string(params.Proc_ID) + ".txt";
 		logfile.open(logfilename);
 	}
 	params.Logfile = &logfile;
 	// Initialize Simulation
-	cout << procid << ": Initializing simulation " << procid << "..." << endl;
+	cout << params.Proc_ID << ": Initializing simulation " << params.Proc_ID << "..." << endl;
 	OSC_Sim sim;
-	success = sim.init(params, procid);
+	success = sim.init(params);
 	if (!success) {
-		cout << procid << ": Initialization failed, simulation will now terminate." << endl;
+		cout << params.Proc_ID << ": Initialization failed, simulation will now terminate." << endl;
 		return 0;
 	}
-	cout << procid << ": Simulation initialization complete" << endl;
+	cout << params.Proc_ID << ": Simulation initialization complete" << endl;
 	if (params.Enable_exciton_diffusion_test) {
-		cout << procid << ": Starting exciton diffusion test..." << endl;
+		cout << params.Proc_ID << ": Starting exciton diffusion test..." << endl;
 	}
 	else if (params.Enable_dynamics_test) {
-		cout << procid << ": Starting dynamics test..." << endl;
+		cout << params.Proc_ID << ": Starting dynamics test..." << endl;
 	}
 	else if (params.Enable_ToF_test) {
-		cout << procid << ": Starting time-of-flight charge transport test..." << endl;
+		cout << params.Proc_ID << ": Starting time-of-flight charge transport test..." << endl;
 	}
 	else if (params.Enable_IQE_test) {
-		cout << procid << ": Starting internal quantum efficiency test..." << endl;
+		cout << params.Proc_ID << ": Starting internal quantum efficiency test..." << endl;
 	}
 	else if (params.Enable_steady_transport_test) {
-		cout << procid << ": Starting steady state charge transport test..." << endl;
+		cout << params.Proc_ID << ": Starting steady state charge transport test..." << endl;
 	}
 	// Begin Simulation loop
-	// Simulation ends for all procs with procid >0 when End_sim is true
+	// Simulation ends for all procs with params.Proc_ID >0 when End_sim is true
 	// Proc 0 only ends when End_sim is true and all_finished is true
-	while (!End_sim || (procid == 0 && !all_finished)) {
+	while (!End_sim || (params.Proc_ID == 0 && !all_finished)) {
 		if (!End_sim) {
 			success = sim.executeNextEvent();
 			if (!success) {
-				cout << procid << ": Event execution failed, simulation will now terminate." << endl;
+				cout << params.Proc_ID << ": Event execution failed, simulation will now terminate." << endl;
 			}
 			End_sim = sim.checkFinished();
 		}
@@ -188,7 +164,7 @@ int main(int argc, char *argv[]) {
 			char msg_length;
 			for (int i = 1; i < nproc; i++) {
 				// Send status messages to proc 0
-				if (procid == i) {
+				if (params.Proc_ID == i) {
 					finished_status = End_sim ? (char)1 : (char)0;
 					error_status = !success ? (char)1 : (char)0;
 					MPI_Send(&error_status, 1, MPI_CHAR, 0, i, MPI_COMM_WORLD);
@@ -202,7 +178,7 @@ int main(int argc, char *argv[]) {
 					MPI_Send(&finished_status, 1, MPI_CHAR, 0, i, MPI_COMM_WORLD);
 				}
 				// Receive messages from any processors not previously finished
-				if (procid == 0 && !proc_finished[i]) {
+				if (params.Proc_ID == 0 && !proc_finished[i]) {
 					// Receive error status message
 					MPI_Recv(&error_status, 1, MPI_CHAR, i, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 					error_status_vec[i] = (error_status == (char)1) ? true : false;
@@ -225,10 +201,10 @@ int main(int argc, char *argv[]) {
 			}
 			// Send error status from proc 0 to all unfinished procs
 			for (int i = 1; i < nproc; i++) {
-				if (procid == 0) {
+				if (params.Proc_ID == 0) {
 					MPI_Send(&error_found, 1, MPI_CHAR, i, i, MPI_COMM_WORLD);
 				}
-				if (procid == i && !proc_finished[i]) {
+				if (params.Proc_ID == i && !proc_finished[i]) {
 					MPI_Recv(&error_found, 1, MPI_CHAR, 0, i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 				}
 			}
@@ -240,7 +216,7 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 			// Update completion status
-			if (procid == 0) {
+			if (params.Proc_ID == 0) {
 				all_finished = true;
 				for (int i = 0; i < nproc; i++) {
 					if (!proc_finished[i]) {
@@ -265,16 +241,16 @@ int main(int argc, char *argv[]) {
 	if (params.Enable_logging) {
 		logfile.close();
 	}
-	cout << procid << ": Simulation finished." << endl;
+	cout << params.Proc_ID << ": Simulation finished." << endl;
 	time_end = time(NULL);
 	elapsedtime = (int)difftime(time_end, time_start);
 	// Output disorder correlation information if correlated disorder is enabled
 	if (params.Enable_correlated_disorder) {
 		auto dos_correlation_data = sim.getDOSCorrelationData();
-		outputVectorToFile(dos_correlation_data, "DOS_correlation_data" + to_string(procid) + ".txt");
+		outputVectorToFile(dos_correlation_data, "DOS_correlation_data" + to_string(params.Proc_ID) + ".txt");
 	}
 	// Output result summary for each processor
-	resultsfile.open("results" + to_string(procid) + ".txt");
+	resultsfile.open("results" + to_string(params.Proc_ID) + ".txt");
 	resultsfile << "Excimontec " << version << " Results:\n";
 	resultsfile << "Calculation time elapsed is " << (double)elapsedtime / 60 << " minutes.\n";
 	resultsfile << sim.getTime() << " seconds have been simulated.\n";
@@ -287,9 +263,9 @@ int main(int argc, char *argv[]) {
 		if (params.Enable_exciton_diffusion_test) {
 			resultsfile << "Exciton diffusion test results:\n";
 			resultsfile << sim.getN_excitons_created() << " excitons have been created.\n";
-			resultsfile << "Exciton diffusion length is " << vector_avg(sim.getExcitonDiffusionData()) << " ± " << vector_stdev(sim.getExcitonDiffusionData()) << " nm.\n";
-			resultsfile << "Exciton hop distance is " << vector_avg(sim.getExcitonHopLengthData()) << " ± " << vector_stdev(sim.getExcitonHopLengthData()) << " nm.\n";
-			resultsfile << "Exciton lifetime is " << vector_avg(sim.getExcitonLifetimeData()) << " ± " << vector_stdev(sim.getExcitonLifetimeData()) << " s.\n";
+			resultsfile << "Exciton diffusion length is " << vector_avg(sim.getExcitonDiffusionData()) << " ï¿½ " << vector_stdev(sim.getExcitonDiffusionData()) << " nm.\n";
+			resultsfile << "Exciton hop distance is " << vector_avg(sim.getExcitonHopLengthData()) << " ï¿½ " << vector_stdev(sim.getExcitonHopLengthData()) << " nm.\n";
+			resultsfile << "Exciton lifetime is " << vector_avg(sim.getExcitonLifetimeData()) << " ï¿½ " << vector_stdev(sim.getExcitonLifetimeData()) << " s.\n";
 		}
 		else if (params.Enable_ToF_test) {
 			resultsfile << "Time-of-flight charge transport test results:\n";
@@ -299,8 +275,8 @@ int main(int argc, char *argv[]) {
 			else {
 				resultsfile << sim.getN_holes_collected() << " of " << sim.getN_holes_created() << " holes have been collected.\n";
 			}
-			resultsfile << "Transit time is " << vector_avg(sim.getTransitTimeData()) << " ± " << vector_stdev(sim.getTransitTimeData()) << " s.\n";
-			resultsfile << "Charge carrier mobility is " << vector_avg(sim.calculateMobilityData(sim.getTransitTimeData())) << " ± " << vector_stdev(sim.calculateMobilityData(sim.getTransitTimeData())) << " cm^2 V^-1 s^-1.\n";
+			resultsfile << "Transit time is " << vector_avg(sim.getTransitTimeData()) << " ï¿½ " << vector_stdev(sim.getTransitTimeData()) << " s.\n";
+			resultsfile << "Charge carrier mobility is " << vector_avg(sim.calculateMobilityData(sim.getTransitTimeData())) << " ï¿½ " << vector_stdev(sim.calculateMobilityData(sim.getTransitTimeData())) << " cm^2 V^-1 s^-1.\n";
 		}
 		if (params.Enable_dynamics_test) {
 			resultsfile << "Dynamics test results:\n";
@@ -347,15 +323,15 @@ int main(int argc, char *argv[]) {
 	// Output charge extraction map data
 	if (success && params.Enable_extraction_map_output && (params.Enable_ToF_test || params.Enable_IQE_test)) {
 		if (params.Enable_ToF_test) {
-			string filename = "Charge_extraction_map" + to_string(procid) + ".txt";
+			string filename = "Charge_extraction_map" + to_string(params.Proc_ID) + ".txt";
 			vector<string> extraction_data = sim.getChargeExtractionMap(params.ToF_polaron_type);
 			outputVectorToFile(extraction_data, filename);
 		}
 		if (params.Enable_IQE_test) {
-			string filename = "Electron_extraction_map" + to_string(procid) + ".txt";
+			string filename = "Electron_extraction_map" + to_string(params.Proc_ID) + ".txt";
 			vector<string> extraction_data = sim.getChargeExtractionMap(false);
 			outputVectorToFile(extraction_data, filename);
-			filename = "Hole_extraction_map" + to_string(procid) + ".txt";
+			filename = "Hole_extraction_map" + to_string(params.Proc_ID) + ".txt";
 			extraction_data = sim.getChargeExtractionMap(true);
 			outputVectorToFile(extraction_data, filename);
 		}
@@ -363,7 +339,7 @@ int main(int argc, char *argv[]) {
 	// Output overall analysis results from all processors
 	int elapsedtime_sum;
 	MPI_Reduce(&elapsedtime, &elapsedtime_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-	if (procid == 0) {
+	if (params.Proc_ID == 0) {
 		analysisfile.open("analysis_summary.txt");
 		analysisfile << "Excimontec " << version << " Results Summary:\n";
 		analysisfile << "Simulation was performed on " << nproc << " processors.\n";
@@ -384,12 +360,12 @@ int main(int argc, char *argv[]) {
 		exciton_diffusion_data = MPI_gatherVectors(sim.getExcitonDiffusionData());
 		exciton_hop_length_data = MPI_gatherVectors(sim.getExcitonHopLengthData());
 		exciton_lifetime_data = MPI_gatherVectors(sim.getExcitonLifetimeData());
-		if (procid == 0) {
+		if (params.Proc_ID == 0) {
 			analysisfile << "Overall exciton diffusion test results:\n";
 			analysisfile << nproc * (sim.getN_singlet_excitons_recombined() + sim.getN_triplet_excitons_recombined()) << " total excitons tested." << endl;
-			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ± " << vector_stdev(exciton_diffusion_data) << " nm.\n";
-			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params.Params_lattice.Unit_size << " ± " << sqrt(vector_stdev(exciton_hop_length_data))*params.Params_lattice.Unit_size << " nm.\n";
-			analysisfile << "Exciton lifetime is " << vector_avg(exciton_lifetime_data) << " ± " << vector_stdev(exciton_lifetime_data) << " s.\n";
+			analysisfile << "Exciton diffusion length is " << vector_avg(exciton_diffusion_data) << " ï¿½ " << vector_stdev(exciton_diffusion_data) << " nm.\n";
+			analysisfile << "Exciton hop distance is " << sqrt(vector_avg(exciton_hop_length_data))*params.Params_lattice.Unit_size << " ï¿½ " << sqrt(vector_stdev(exciton_hop_length_data))*params.Params_lattice.Unit_size << " nm.\n";
+			analysisfile << "Exciton lifetime is " << vector_avg(exciton_lifetime_data) << " ï¿½ " << vector_stdev(exciton_lifetime_data) << " s.\n";
 		}
 	}
 	if (error_found == (char)0 && params.Enable_ToF_test) {
@@ -404,7 +380,7 @@ int main(int argc, char *argv[]) {
 		vector<double> energies = MPI_calculateVectorSum(sim.getToFTransientEnergies());
 		vector<double> velocities = MPI_calculateVectorSum(sim.getToFTransientVelocities());
 		vector<double> times = sim.getToFTransientTimes();
-		if (procid == 0) {
+		if (params.Proc_ID == 0) {
 			// ToF main results output
 			vector<double> mobility_data_all = sim.calculateMobilityData(transit_times_all);
 			double electric_field = fabs(sim.getInternalField());
@@ -448,8 +424,8 @@ int main(int argc, char *argv[]) {
 				analysisfile << nproc * sim.getN_holes_collected() << " total holes collected out of " << transit_attempts_total << " total attempts.\n";
 			}
 
-			analysisfile << "Transit time is " << vector_avg(transit_times_all) << " ± " << vector_stdev(transit_times_all) << " s.\n";
-			analysisfile << "Charge carrier mobility is " << vector_avg(mobility_data_all) << " ± " << vector_stdev(mobility_data_all) << " cm^2 V^-1 s^-1.\n";
+			analysisfile << "Transit time is " << vector_avg(transit_times_all) << " ï¿½ " << vector_stdev(transit_times_all) << " s.\n";
+			analysisfile << "Charge carrier mobility is " << vector_avg(mobility_data_all) << " ï¿½ " << vector_stdev(mobility_data_all) << " cm^2 V^-1 s^-1.\n";
 		}
 	}
 	if (error_found == (char)0 && params.Enable_dynamics_test) {
@@ -467,7 +443,7 @@ int main(int argc, char *argv[]) {
 		vector<double> exciton_msdv = MPI_calculateVectorSum(sim.getDynamicsExcitonMSDV());
 		vector<double> electron_msdv = MPI_calculateVectorSum(sim.getDynamicsElectronMSDV());
 		vector<double> hole_msdv = MPI_calculateVectorSum(sim.getDynamicsHoleMSDV());
-		if (procid == 0) {
+		if (params.Proc_ID == 0) {
 			ofstream transientfile;
 			transientfile.open("dynamics_average_transients.txt");
 			transientfile << "Time (s),Singlet Exciton Density (cm^-3),Triplet Exciton Density (cm^-3),Electron Density (cm^-3),Hole Density (cm^-3)";
@@ -554,16 +530,16 @@ int main(int argc, char *argv[]) {
 		int holes_collected = sim.getN_holes_collected();
 		int holes_collected_total;
 		MPI_Reduce(&holes_collected, &holes_collected_total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-		if (procid == 0 && params.Enable_dynamics_test) {
+		if (params.Proc_ID == 0 && params.Enable_dynamics_test) {
 			analysisfile << "Overall dynamics test results:\n";
 		}
-		if (procid == 0 && params.Enable_IQE_test) {
+		if (params.Proc_ID == 0 && params.Enable_IQE_test) {
 			analysisfile << "Overall internal quantum efficiency test results:\n";
 		}
-		if (procid == 0 && params.Enable_exciton_diffusion_test) {
+		if (params.Proc_ID == 0 && params.Enable_exciton_diffusion_test) {
 			analysisfile << "Overall exciton mechanism statistics:\n";
 		}
-		if (procid == 0) {
+		if (params.Proc_ID == 0) {
 			analysisfile << excitons_created_total << " total excitons have been created.\n";
 			analysisfile << excitons_created_donor_total << " excitons were created on donor sites.\n";
 			analysisfile << excitons_created_acceptor_total << " excitons were created on acceptor sites.\n";
@@ -581,7 +557,7 @@ int main(int argc, char *argv[]) {
 				analysisfile << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_dissociated_total) << "% of total photogenerated charges were extracted.\n";
 			}
 		}
-		if (procid == 0 && params.Enable_IQE_test) {
+		if (params.Proc_ID == 0 && params.Enable_IQE_test) {
 			analysisfile << "IQE = " << 100 * (double)(electrons_collected_total + holes_collected_total) / (2 * (double)excitons_created_total) << "% with an internal potential of " << params.Internal_potential << " V." << endl;
 		}
 	}
@@ -599,7 +575,7 @@ int main(int argc, char *argv[]) {
 		auto transport_energies1 = MPI_gatherValues(sim.getSteadyTransportEnergy());
 		auto transport_energies2 = MPI_gatherValues(sim.getSteadyTransportEnergy_Coulomb());
 		// Output overall results from all procs
-		if (procid == 0) {
+		if (params.Proc_ID == 0) {
 			// Output the DOOS and DOS data
 			ofstream doos_file1("DOOS_data.txt");
 			doos_file1 << "Energy (eV),Density (cm^-3 eV^-1)\n";
@@ -631,12 +607,12 @@ int main(int argc, char *argv[]) {
 			analysisfile << "Temperature = " << sim.getTemp() << " K.\n";
 			analysisfile << "Charge carrier density = " << params.Steady_carrier_density << " cm^-3.\n";
 			analysisfile << "Electric field = " << fabs(sim.getInternalField()) << " V cm^-1.\n\n";
-			analysisfile << "Current density = " << vector_avg(current_densities) << " ± " << vector_stdev(current_densities) << " mA cm^-2.\n";
-			analysisfile << "Charge carrier mobility = " << vector_avg(mobilities) << " ± " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
-			analysisfile << "Equilibration energy (without Coulomb potential) = " << vector_avg(equilibration_energies1) << " ± " << vector_stdev(equilibration_energies1) << " eV.\n";
-			analysisfile << "Equilibration energy (with Coulomb potential) = " << vector_avg(equilibration_energies2) << " ± " << vector_stdev(equilibration_energies2) << " eV.\n";
-			analysisfile << "Transport energy (without Coulomb potential) = " << vector_avg(transport_energies1) << " ± " << vector_stdev(transport_energies1) << " eV.\n";
-			analysisfile << "Transport energy (with Coulomb potential) = " << vector_avg(transport_energies2) << " ± " << vector_stdev(transport_energies2) << " eV.\n\n";
+			analysisfile << "Current density = " << vector_avg(current_densities) << " ï¿½ " << vector_stdev(current_densities) << " mA cm^-2.\n";
+			analysisfile << "Charge carrier mobility = " << vector_avg(mobilities) << " ï¿½ " << vector_stdev(mobilities) << " cm^2 V^-1 s^-1.\n";
+			analysisfile << "Equilibration energy (without Coulomb potential) = " << vector_avg(equilibration_energies1) << " ï¿½ " << vector_stdev(equilibration_energies1) << " eV.\n";
+			analysisfile << "Equilibration energy (with Coulomb potential) = " << vector_avg(equilibration_energies2) << " ï¿½ " << vector_stdev(equilibration_energies2) << " eV.\n";
+			analysisfile << "Transport energy (without Coulomb potential) = " << vector_avg(transport_energies1) << " ï¿½ " << vector_stdev(transport_energies1) << " eV.\n";
+			analysisfile << "Transport energy (with Coulomb potential) = " << vector_avg(transport_energies2) << " ï¿½ " << vector_stdev(transport_energies2) << " eV.\n\n";
 			analysisfile << "CSV formatted results:\n";
 			analysisfile << "Temperature (K),Charge Carrier Density (cm^-3),Electric Field (V cm^-1),";
 			analysisfile << "Current Density Avg. (mA cm^-2),Current Density Stdev. (mA cm^-2),Mobility Avg. (cm^2 V^-1 cm^-1),Mobility Stdev. (cm^2 V^-1 cm^-1),";
@@ -648,7 +624,7 @@ int main(int argc, char *argv[]) {
 			analysisfile << vector_avg(transport_energies1) << "," << vector_stdev(transport_energies1) << "," << vector_avg(transport_energies2) << "," << vector_stdev(transport_energies2) << endl;
 		}
 	}
-	if (procid == 0) {
+	if (params.Proc_ID == 0) {
 		analysisfile.close();
 	}
 	MPI_Barrier(MPI_COMM_WORLD);

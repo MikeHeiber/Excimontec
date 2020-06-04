@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 Michael C. Heiber
+// Copyright (c) 2017-2020 Michael C. Heiber and contributors
 // This source file is part of the Excimontec project, which is subject to the MIT License.
 // For more information, see the LICENSE file that accompanies this software.
 // The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -139,6 +139,10 @@ namespace Excimontec {
 		}
 		if (Enable_steady_transport_test && Enable_bilayer) {
 			cout << "Error! When running a steady transport test, the bilayer device architecture cannot be used." << endl;
+			return false;
+		}
+		if (State_saving_interval < 10) {
+			cout << "Error! Steady transport test state saving interval must not be less than 10." << endl;
 			return false;
 		}
 		// Check exciton parameters
@@ -299,8 +303,8 @@ namespace Excimontec {
 			cout << "Error! When importing site energies from a file, the interfacial energy shift model must not be enabled." << endl;
 			return false;
 		}
-		if (Enable_import_energies && (int)Energies_import_filename.size() == 0) {
-			cout << "Error! When importing site energies from a file, a valid filename must be provided." << endl;
+		if (Enable_import_energies && (int)Energies_import_format.size() == 0) {
+			cout << "Error! When importing site energies from a file, a valid file naming format must be provided." << endl;
 			return false;
 		}
 		// Check Coulomb interaction parameters
@@ -315,17 +319,33 @@ namespace Excimontec {
 		return true;
 	}
 
-	bool Parameters::importParameters(ifstream& inputfile) {
+	bool Parameters::importParameters() {
+		// open the parameter file
+		ifstream parameterfile;
+		parameterfile.open(Parameters_filename, ifstream::in);
+		if (!parameterfile.good()) {
+			cout << "Error loading parameter file.  Program will now exit." << endl;
+			return false;
+		}
+		// load and parse the lines of the file
 		string line;
 		string var;
 		size_t pos;
 		vector<string> stringvars;
 		bool Error_found = false;
-		if (!inputfile.is_open() || !inputfile) {
+		if (!parameterfile.is_open() || !parameterfile) {
 			throw invalid_argument("Error importing parameter file because ifstream cannot read the parameter file.");
 		}
-		while (inputfile.good()) {
-			getline(inputfile, line);
+		// get paramterfile version from first line comment
+		Version params_version;
+		if (parameterfile.good()) {
+			getline(parameterfile, line);
+			pos = line.find_first_of("v", 0);
+			params_version = Version(line.substr(pos + 1));
+			cout << params_version.getVersionStr();
+		}
+		while (parameterfile.good()) {
+			getline(parameterfile, line);
 			if ((line.substr(0, 2)).compare("--") != 0 && (line.substr(0, 2)).compare("##") != 0 && line.compare("") != 0) {
 				pos = line.find_first_of("/", 0);
 				var = line.substr(0, pos);
@@ -333,6 +353,9 @@ namespace Excimontec {
 				stringvars.push_back(var);
 			}
 		}
+		// close parameter file
+		parameterfile.close();
+		// Assign the line values to the appropriate variables
 		int i = 0;
 		// KMC Algorithm Parameters
 		try {
@@ -591,6 +614,10 @@ namespace Excimontec {
 		i++;
 		N_equilibration_events = atoi(stringvars[i].c_str());
 		i++;
+		if (params_version >= Version("1.1.0")) {
+			State_saving_interval = atoi(stringvars[i].c_str());
+			i++;
+		}
 		// Exciton Parameters
 		Exciton_generation_rate_donor = atof(stringvars[i].c_str());
 		i++;
@@ -801,7 +828,7 @@ namespace Excimontec {
 		i++;
 		Energy_shift_acceptor = atof(stringvars[i].c_str());
 		i++;
-		//enable_import_energies
+		//Enable_import_energies
 		try {
 			Enable_import_energies = str2bool(stringvars[i]);
 		}
@@ -811,7 +838,7 @@ namespace Excimontec {
 			Error_found = true;
 		}
 		i++;
-		Energies_import_filename = stringvars[i];
+		Energies_import_format = stringvars[i];
 		i++;
 		// Coulomb Calculation Parameters
 		Dielectric_donor = atof(stringvars[i].c_str());
@@ -860,4 +887,65 @@ namespace Excimontec {
 		return true;
 	}
 
+	bool Parameters::parseCommandLineArguments(int argc, char* argv[]) {
+		// Count number of command line parameters above the standard two
+		int accounted_cmd_pars = 2;
+		// Check command line arguments
+		if (argc < 2) {
+			cout << "Error! You must input the parameter file name as a command line argument." << endl;
+			return false;
+		}
+		else {
+			// Parse parameter file name
+			Parameters_filename = argv[1];
+			// Set default seed
+			Generator_seed = (int)time(0) * (Proc_ID + 1);
+			for (int idx = 2; idx < argc; idx++) {
+				string argument = argv[idx];
+				// Check for command line enabled logging
+				if (argument.compare("-enable_logging") == 0) {
+					Enable_logging = true;
+					accounted_cmd_pars += 1;
+				}
+				// Check for command line seed setting
+				else if (argument.compare("-seed") == 0) {
+					if (argc > idx + 1) {
+						try {
+							Generator_seed = stoi(argv[idx + 1]);
+						}
+						catch (invalid_argument & exception) {
+							cout << "Error! Invalid seed given." << endl;
+							cout << exception.what() << endl;
+							return false;
+						}
+						catch (out_of_range & exception) {
+							cout << "Error! Input seed out of range." << endl;
+							cout << exception.what() << endl;
+							return false;
+						}
+						accounted_cmd_pars += 2;
+						idx++;
+					}
+					else {
+						cout << "Error! No seed argument provided." << endl;
+						return false;
+					}
+				}
+				else if (argument.compare("-resume_stt") == 0) {
+					Enable_resume_stt = true;
+					accounted_cmd_pars++;
+				}
+				else {
+					cout << "Error! invalid command line arguments." << endl;
+					return false;
+				}
+			}
+		}
+		// Check for too many command line arguments
+		if (argc != accounted_cmd_pars) {
+			cout << "Error! invalid command line arguments." << endl;
+			return false;
+		}
+		return true;
+	}
 }
