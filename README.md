@@ -1,5 +1,5 @@
 <!---
-# Copyright (c) 2017-2019 Michael C. Heiber
+# Copyright (c) 2017-2020 Michael C. Heiber
 # This source file is part of the Excimontec project, which is subject to the MIT License.
 # For more information, see the LICENSE file that accompanies this software.
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
@@ -46,7 +46,7 @@ This software tool uses [Message Passing Interface (MPI)](https://computing.llnl
 As a result, using Excimontec requires that an MPI library is pre-installed on your system, and the final Excimontec executable must be built on your specific system. 
 We cannot provide pre-built binaries for your system. 
 Contact your HPC admin to determine the protocols for building MPI applications on your HPC system. 
-In many cases, the HPC system will already be configured for you, and Excimontec comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/) or the [PGI compiler](https://www.pgroup.com/).
+In many cases, the HPC system will already be configured for you, and Excimontec comes with a default makefile that can be used with the [GCC compiler](https://gcc.gnu.org/), the [PGI compiler](https://www.pgroup.com/), or the [clang compiler](https://clang.llvm.org/).
 If your system uses another compiler, you will need to edit the makefile and define your own compiler options.
 
 If you wish, you can also install MPI on your own personal workstation and then build Excimontec there as well. 
@@ -130,7 +130,7 @@ Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and 
 
 #### Continuous Integration and Testing Status:
 
-Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) v14.04 with the [GCC compiler](https://gcc.gnu.org/) (versions 4.9, 5, 6, 7, 8, and 9) and on both [Open MPI](http://www.open-mpi.org/) v1.6 and [MPICH](http://www.mpich.org/) v3.0 using [Travis CI](https://travis-ci.com/).
+Excimontec is currently being tested on [Ubuntu](https://www.ubuntu.com/) (v16.04 and v18.04) with the [GCC compiler](https://gcc.gnu.org/) (v5, v6, v7, v8, and v9) the [clang compiler](https://clang.llvm.org/) (v7) and on both [Open MPI](http://www.open-mpi.org/) (v1.10.2) and [MPICH](http://www.mpich.org/) (v3.2 and v3.3) using [Travis CI](https://travis-ci.com/).
 
 | Branch | Status |
 | :------: | ------ |
