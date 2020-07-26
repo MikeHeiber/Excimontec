@@ -13,7 +13,7 @@ matrix:
       dist: xenial
       compiler: gcc
       env:
-        - OPTIONS="GCC_VERSION=5.4.0 && MPI=openmpi && TARGET=test_coverage"
+        - OPTIONS="GCC_VERSION=default && MPI=openmpi && TARGET=test_coverage"
     - os: linux
       dist: xenial
       compiler: gcc
@@ -43,12 +43,12 @@ matrix:
       dist: xenial
       compiler: gcc
       env:
-        - OPTIONS="GCC_VERSION=5.4.0 && MPI=mpich && TARGET=test"
+        - OPTIONS="GCC_VERSION=default && MPI=mpich && TARGET=test"
     - os: linux
       dist: bionic
       compiler: gcc
       env:
-        - OPTIONS="GCC_VERSION=7.4.0 && MPI=mpich && TARGET=test"
+        - OPTIONS="GCC_VERSION=default && MPI=mpich && TARGET=test"
     - os: linux
       dist: xenial
       compiler: clang
@@ -64,16 +64,16 @@ before_install:
     - eval "${OPTIONS}"
     - |
       if [ $TRAVIS_COMPILER == gcc ]; then
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get update -qq
-        sudo apt-get install -qq gcc-$GCC_VERSION g++-$GCC_VERSION -y
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$GCC_VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$GCC_VERSION
-        sudo update-alternatives --config gcc
-        gcc --version
+        if [ $GCC_VERSION != default ]; then
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update -qq
+          sudo apt-get install -qq g++-$GCC_VERSION -y
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-$GCC_VERSION 50
+          g++ --version
+        fi
       fi
     - |
       if [ $TRAVIS_COMPILER == clang ]; then
-        sudo apt install clang -y
         export OMPI_CXX=clang++
         export CXX=clang++
       fi
