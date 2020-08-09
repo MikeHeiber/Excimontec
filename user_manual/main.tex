@@ -46,7 +46,7 @@ The software is written in modern C++ and is optimized for efficient pleasingly 
 This software package uses object-oriented design and extends the KMC\_Lattice framework.\cite{heiber2019joss} 
 It is also designed to work with the Ising\_OPV software tool for creating and importing bulk heterojunction morphologies.\cite{heiber2018joss}
 
-\section{Simulation Tests}
+\section{Simulation Tests and Their Parameters}
 
 Excimontec is designed to allow users to select and run a particular simulation test with a specific set of input parameters.
 Currently there are five different simulations tests available:
@@ -57,13 +57,52 @@ Currently there are five different simulations tests available:
     \item Dynamics Test
     \item Steady State Charge Transport Test
 \end{enumerate}
-Choice of a particular test and the input parameters is made within the parameter file that is then passed as an input argument to the program.
+Choosing a particular test and setting the input parameters is made within the parameter file that is then passed as an input argument to the program.
 An example parameter file (parameters\_default.txt) is provided in the root repository directory to be used as a starting point for customization.
-A valid parameter file has strict formatting rules, so users should simply copy the default parameter file and then modify the values as needed.
+
+A single parameter file is used to run the KMC simulation test for a single set of parameters.
+To do parameter sweeps, one must create separate parameter files for each condition and then run separate simulations for each.
+While this can be tedious when manually creating and modifying the parameter files, shell scripts can be used to quickly create a series of parameter files for a parameter sweep, and simulation job arrays can be used to submit all of the simulations in a parameter sweep and group the individual simulations together.
+
+The parameter file has a fixed format and the program parses the parameter values in a set order to define the internal variables specified in the comments that follow each value.
+The comments starting with "//" that trail each parameter definition are ignored by the parser and are simply provided to inform the user of what each line represents and give information about the expected data type or other restrictions.
+Moving variable definitions to different positions in the file will cause an error or incorrect assignment of parameter values.
+Parameter sections headings that begin with "\#\#" and hyphen line breaks are ignored by the parser. 
 The program should generate an error message if you accidentally mess up the formatting or enter an invalid value for any of the parameters.
 
-Below, the basics of each simulation test are explained and several examples of the types of physical phenomena that can be simulated are provided.
-If you have further questions about the capabilities and options for any of the simulation tests, please post a question in \href{https://github.com/MikeHeiber/Excimontec/issues}{Issues section} on the Github website.
+The Test Parameters section of the parameters file is used to chose a particular simulation test and set any options specific for each test. In the subsections below, the basics of each simulation test are explained and several examples of the types of physical phenomena that can be simulated are provided.
+If you have further questions about the capabilities and options for any of the simulation tests, please post a question in \href{https://github.com/MikeHeiber/Excimontec/issues}{Issues section} on the GitHub website.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+Test Parameters & \\
+\hline
+N\_tests & \\
+Enable\_exciton\_diffusion\_test & \\
+Enable\_ToF\_test & \\
+ToF\_polaron\_type & \\
+ToF\_initial\_polarons & \\
+Enable\_ToF\_random\_placement & \\
+Enable\_ToF\_energy\_placement & \\
+ToF\_placement\_energy & \\
+ToF\_transient\_start (s) & \\
+ToF\_transient\_end (s) & \\
+ToF\_pnts\_per\_decade & \\
+Enable\_IQE\_test & \\
+IQE\_time\_cutoff (s) & \\
+Enable\_extraction\_map\_output & \\
+Enable\_dynamics\_test & \\
+Enable\_dynamics\_extraction & \\
+Dynamics\_initial\_exciton\_conc (cm$^{-3}$) & \\
+Dynamics\_transient\_start (s) & \\
+Dynamics\_transient\_end (s) & \\
+Dynamics\_pnts\_per\_decade & \\
+Enable\_steady\_transport\_test & \\
+Steady\_carrier\_density (cm$^{-3}$) & \\
+N\_equilibration\_events & \\
+\end{tabular}
+\end{center}
 
 \subsection{Exciton Diffusion Test}
 
@@ -92,9 +131,10 @@ ToF experiments have been widely used to probe the fundamental charge transport 
 Whereas the experiment is limited in that information can only be extracted from analysis of the current transient, KMC simulations of the same test can provide much more detailed information.
 
 To perform this test, one must turn on the Enable\_ToF\_test option.
-The ToF test simulates the transport of an ultrathin sheet of charge carriers (electrons or holes) through the lattice.
+The ToF test simulates the transport of an ultrathin sheet of charge carriers (electrons or holes) through the lattice, and the carrier type is set using the ToF\_polaron\_type parameter.
 The number of charge carriers in the sheet is set by the ToF\_initial\_polarons parameter, and they hop through the lattice under the influence of the defined Internal\_potential until they are extracted at the opposite side.
-The transit time of each extracted charge carrier is recorded, and any charge carriers stuck in the lattice longer than the specified ToF\_transient\_end cutoff time are removed from lattice and not included in the collection of transit times.
+Transient data is recorded starting at the time defined by ToF\_transient\_start until ToF\_transient\_end at an interval specific by ToF\_pnts\_per\_decade.
+The transit time of each extracted charge carrier is recorded, and any charge carriers stuck in the lattice longer than the ToF\_transient\_end cutoff time are removed from lattice and not included in the collection of transit times.
 The process is repeated until the total number of carriers simulated equals the N\_tests parameter.
 The simulation is performed independently on each processor, and the results are aggregated and averaged at the end.
 In addition to an average transit time and mobility, the simulation provides the current density transient, charge carrier density transient, average occupation energy transient, average mobility transient, and transit time probability histogram.
@@ -141,6 +181,8 @@ One can also explore many other dependencies such as temperature, energetic diso
     \label{fig:IQE_example}
 \end{figure}
 
+For more detailed analysis, one can produce charge extraction maps to probe for fluctuations charge extraction across the area of the film that may arise due to energetic fluctuations from the correlated disorder model or morphological features in a bulk heterojunction film by turning on the Enable\_extraction\_map\_output option.
+
 \subsection{Dynamics Test}
 
 Another popular type of experiment is a pump-probe experiment, where a laser pulse (pump) creates an initial population of excitons in the film that then evolves over time.
@@ -148,7 +190,9 @@ Experimentally, the probe can be electrical or optical, but ideally one would li
 The Excimontec dynamics test provides a wide variety of information about how the singlet exciton, triplet exciton, electron, and hole populations change over time.
 
 The dynamics test is selected by turning on the Enable\_dynamics\_test option and begins by creating the initial excitons randomly throughout the lattice until reaching the concentration specified by the Dynamics\_initial\_exciton\_conc parameter.
-The excitons are then allowed to diffuse, dissociate, or recombine as they will, and the simulation is terminated once all of the excitons and charge carriers have disappeared from the lattice or once the Dynamics\_transient\_end cutoff time has been reached.
+The excitons are then allowed to diffuse, dissociate, or recombine as they will, and transient data is recorded starting at the time defined by Dynamics\_transient\_start until Dynamics\_transient\_end at an interval specific by Dynamics\_pnts\_per\_decade.
+Polaron extraction at the top and bottom electrodes can be enabled using the Enable\_dynamics\_extraction option. 
+The simulation is terminated once all of the excitons and charge carriers have disappeared from the lattice or once the Dynamics\_transient\_end cutoff time has been reached.
 The cycle is then repeated until the total number of excitons tested equals the N\_tests parameter.
 The simulation is performed independently on each processor, and the results are aggregated and averaged at the end.
 
@@ -174,7 +218,7 @@ While the time of flight charge transport test is a good way to study transient 
 The steady state transport test is designed to probe hole transport in a neat donor material or in donor-acceptor blends.
 Transport in doped semiconductors can also be simulated using the custom density of states import feature.
 
-The test begins by creating holes randomly on donor sites until reaching the Steady\_carrier\_density value defined in the parameter file.
+This test chosen using the Enable\_steady\_transport\_test parameter and begins by creating holes randomly on donor sites until reaching the Steady\_carrier\_density value defined in the parameter file.
 The simulation then enters the equilibration phase where holes are allowed to undergo hopping events under the applied bias specified by the Internal\_potential parameter until the number of executed events equals the N\_equilibration\_events parameter value.
 The simulation then enters the measurement phase and holes continue hopping until the number of events executed in the measurement phase equals the N\_tests parameter.
 Periodic z-direction boundaries must be used and allow charge carriers to continue hoping indefinitely under the applied bias.
@@ -201,12 +245,10 @@ The steady state charge transport test allows users to probe the complex impacts
     \label{fig:steady_transport_example}
 \end{figure}
 
-\section{Simulation Parameters and Model Details}
+\section{Other Simulation Parameters and Model Details}
 
-Specifying which simulation test to run, which device architecture to simulate on, which mechanism models to use, and all of the electronic materials properties and parameters is done using the parameter file.
-A single parameter file is used to run the KMC simulation test for a single set of parameters.
-To do parameter sweeps, one must create separate parameter files for each condition and then run separate simulations for each.
-While this can be tedious when manually creating and modifying the parameter files, shell scripts can be used to quickly create a series of parameter files for a parameter sweep, and simulation job arrays can be used to submit all of the simulations in a parameter sweep and group the individual simulations together.
+Specifying which device architecture to simulate on, which mechanism models to use, and all of the electronic materials properties and parameters is done using other sections of the parameter file.
+
 This part of the user manual will go through each section of the parameter file and explain what each input parameter is used for.
 
 \subsection{KMC Algorithm Parameters}\label{sub:KMC_algorithms}
@@ -242,16 +284,51 @@ With the BKL algorithm, the event queue remains relatively small since only one 
 
 \subsubsection{Event Recalculation}
 
+The KMC algorithm section of the parameter file allows the user to choose from several different algorithms for event recalculation.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+KMC Algorithm Parameters & \\
+\hline
+Enable\_FRM & \\
+Enable\_selective\_recalc & \\
+Recalc\_cutoff (nm) & $r_{\text{recalc}}$ \\
+Enable\_full\_recalc & \\
+\hline
+\end{tabular}
+\end{center}
+
+When the standard first-reaction method is enabled, as discussed previously, only events for directly affected objects in the simulation are recalculated.
 However, polarons specifically have long-range electrostatic interactions with each other, and their events are not truly independent from each other.
 The motion of one or several polarons modifies the electrostatic potential landscape, which should have an impact on the next event of other nearby polarons. 
 When using the first-reaction method, this effect is ignored to save computing time. 
-If one wants to check the significance of this simplifying assumption, the full recalculation algorithm is also implemented and can be enabled in the parameter file. 
+If one wants to check the significance of this simplifying assumption, the full recalculation algorithm can be enabled. 
 With the full recalculation method, all events for all excitons and polarons are recalculated after each iteration of the simulation, thereby ensuring that the next event takes into full consideration all changes to the system.
 
-As an alternative, a selective recalculation method is also implemented that allows users to selectively update the events of all objects near the previous event within a user defined recalculation cutoff radius ($r_\text{recalc}$).\cite{heiber2012jcp} 
-By choosing the optimal recalculation cutoff radius in the parameter file, users can ensure that there is minimal impact from the simplifying assumptions of the first-reaction method, while also saving considerable computational time relative to the full recalculation method.
+As an alternative, a selective recalculation method is also available, which allows users to selectively update the events of all objects near the previous event within a user defined recalculation cutoff radius ($r_\text{recalc}$).\cite{heiber2012jcp} 
+By choosing the optimal recalculation cutoff radius, users can ensure that there is minimal impact from the simplifying assumptions of the first-reaction method, while also saving considerable computational time relative to the full recalculation method.
 
 \subsection{Lattice Parameters}
+
+The Lattice section of the parameter file is where the user defines the general simulation environment.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+Lattice Parameters & \\
+\hline
+Enable\_periodic\_x & \\
+Enable\_periodic\_y & \\
+Enable\_periodic\_z & \\
+Length ($a$) & $L$ \\
+Width ($a$) & $W$ \\
+Height ($a$) & $H$ \\
+Unit\_size (nm) & $a$ \\
+Temperature (K) & $T$  \\
+Internal\_potential (V) & $V_\text{int}$ \\
+\end{tabular}
+\end{center}
 
 The simulation volume is a cuboid shape and users must identify the dimension in the x, y, and z dimensions, which are the length ($L$), width ($W$), and height ($H$), respectively.
 In addition to the lattice size, users can set boundary conditions as either hard boundaries or periodic boundaries. 
@@ -263,18 +340,65 @@ Finally, the internal potential parameter ($V_\text{int}$) determines the voltag
 
 \subsection{Device Architecture Parameters}
 
-Users can choose from a number of difference device architectures for the simulation box.
+The Device Architecture section allows users to choose from a number of difference device architectures for the simulation box.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+Device Architecture Parameter & \\
+\hline
+Enable\_neat & \\
+Enable\_bilayer & \\
+Thickness\_donor (a) & \\
+Thickness\_acceptor (a) & \\
+Enable\_random\_blend & \\
+Acceptor\_conc (vol frac) & \\
+Enable\_import\_morphology\_single & \\
+Morphology\_filename & \\
+Enable\_import\_morphology\_set & \\
+Morphology\_set\_format & \\
+N\_test\_morphologies & \\
+N\_morphology\_set\_size & \\
+\end{tabular}
+\end{center}
+
 One can implement a single neat material simulation that takes on the specified donor materials properties.
 One can create a donor-acceptor bilayer structure and specify the thickness of each sub-layer.
 One can use a random donor-acceptor blend in which sites in the lattice are randomly assigned as acceptor sites until reaching the specified acceptor concentration.
 Instead of using one of these simple built-in device architecture models, users can also import donor-acceptor morphologies as a single morphology that will be used for all simulations or a set of morphologies that will randomly assigned to each simulation. 
 In particular, the morphology import feature is designed to allow users to import bulk heterojunction morphologies created using the Ising\_OPV simulation tool.\cite{heiber2018joss}
 However, any morphology conforming to the Ising\_OPV morphology file format can be imported.
+When importing a set of morphologies, one must specify how many of the morphologies to test from the set and the total number of morphologies in the set.
 
-\subsection{Exciton Mechanisms and Parameters}
+\subsection{Exciton Parameters and Mechanisms}
 
-Here, we describe each of the exciton mechanisms currently implemented and their associated parameters.
+The Exciton Parameters section contains all parameters used by the exciton physics models. Below, each of the exciton mechanisms currently implemented and their associated parameters are detailed.
 For most parameters, the parameter file allows users to specify different values for the donor and acceptor sites even though explicitly defined separate variables for each are not shown below.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+Exciton Parameters & \\
+ \hline
+Exciton\_generation\_ rate (cm$^{-3}$ s$^{-1}$) & G \\
+Singlet\_lifetime (s) & $\tau_\text{sx}$  \\
+Triplet\_lifetime (s) & $\tau_\text{tx}$ \\
+R\_singlet\_hopping (nm$^6$ s$^{-1}$) & $R_{0,\text{sxh}}$ \\
+Singlet\_localization (nm$^{-1}$) & $\gamma_\text{s}$ \\
+R\_triplet\_hopping (s$^{-1}$) & $R_{0,\text{txh}}$ \\
+Triplet\_localization (nm$^{-1}$) & $\gamma_\text{t}$ \\
+Enable\_FRET\_triplet\_annihilation & \\
+R\_exciton\_exciton\_annihilation (nm$^{6}$ s$^{-1}$ or s$^{-1}$) & $R_{0,\text{xxa}}$\\
+R\_exciton\_polaron\_annihilation (nm$^{6}$ s$^{-1}$ or s$^{-1}$) & $R_{0,\text{xpa}}$ \\ 
+FRET\_cutoff (nm) & $r_{\text{FRET,cut}}$ \\
+E\_exciton\_binding (eV) & $E_\text{B}$ \\
+R\_exciton\_dissociation (s$^{-1}$) & $R_{0,\text{xd}}$ \\
+Exciton\_dissociation\_cutoff (nm) & $r_{\text{xd,cut}}$ \\
+R\_exciton\_isc (s$^{-1}$) & $R_{\text{isc}}$ \\
+R\_exciton\_risc (s$^{-1}$) & $R_{0,\text{risc}}$ \\
+E\_exciton\_ST (eV) & $\Delta E_\text{ST}$ \\
+\end{tabular}
+\end{center}
 
 \subsubsection{Exciton Generation}
 
@@ -441,16 +565,36 @@ $$R_\text{txr} = \frac{1}{\tau_\text{tx}},$$
 where $\tau_\text{tx}$ is the triplet exciton lifetime.
 Since the ground state has a singlet spin state, triplet recombination to the ground state is a spin forbidden transition and will often be much slower than for singlet excitons.
 
-\subsection{Polaron Mechanisms and Parameters}
+\subsection{Polaron Parameters and Mechanisms}
 
-Here, we describe each of the polaron (electron or hole) mechanisms currently implemented and their associated parameters.
-For most parameters, the parameter file allows users to specify different values for the donor and acceptor sites even though explicitly defined separate variables are not shown for each below.
+The Polaron Parameters section contains all parameters used by the polaron physics models.
+Blow, each of the polaron (electron or hole) mechanisms currently implemented and their associated parameters are detailed.
+For most parameters, the parameter file allows users to specify different values for the donor and acceptor sites even though explicitly defined separate variables for each are not shown below.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+Polaron Parameters & \\
+\hline
+Enable\_phase\_restriction & \\
+R\_polaron\_hopping (s$^{-1}$) & $R_{0,\text{ph}}$ \\
+Polaron\_localization (nm$^{-1}$) & $\gamma_\text{p}$ \\
+Enable\_miller\_abrahams & \\
+Enable\_marcus & \\
+Reorganization (eV) & $\lambda$ \\
+R\_polaron\_recombination (s$^{-1}$) & $R_{0,\text{pr}}$ \\
+Polaron\_hopping\_cutoff (nm) & $r_{\text{ph,cut}}$ \\
+Enable\_gaussian\_polaron\_delocalization
+Polaron\_delocalization\_length (nm) & $\sigma_\text{p}$ \\
+\end{tabular}
+\end{center}
 
 \subsubsection{Polaron Hopping}
 
 Polarons can hop between sites on the lattice, and Excimontec implements two options for polaron hopping models, the Miller-Abrahams phonon-assisted tunneling model\cite{miller1960pr} and a simplified Marcus model \cite{marcus1956jcp} that implements a polaronic mechanism.
 In the parameter file, users must choose which model to use in their simulation.
-Regardless of the model used, hopping events are calculated for all destination sites within the polaron hopping cutoff radius, $r_{\text{ph,cut}}$.
+Regardless of the model used, hopping events are calculated for all available destination sites within the polaron hopping cutoff radius, $r_{\text{ph,cut}}$.
+Users can restrict holes to donor sites and electrons to acceptor sites using the Enable\_phase\_restriction parameter.
 
 \subsubsection*{\textbf{Miller-Abrahams Model:}}
 
@@ -476,7 +620,7 @@ The rate for the polaron recombination event is defined,
 $$R_{\text{pr},ij} = R_{0,\text{pr}} \exp{\left(- 2 \gamma_{\text{p}} d_{ij} \right)},$$
 where $R_{0,\text{pr}}$ is the polaron recombination prefactor.
 
-\subsection{Polaron Extraction}
+\subsubsection{Polaron Extraction}
 
 For simulation tests where polarons are extracted at assumed electrode contacts at the top and bottom of the lattice (steady state transport test and dynamics test), when polarons arrive near the contacts, a polaron extraction event is enabled. 
 The electrode contacts are assumed to be blocking for the opposite carrier type but allow barrier-less extraction of the proper carrier types.  
@@ -490,21 +634,48 @@ where $d_{i}$ is the shortest distance between the polaron and the electrode int
 \subsection{Site Energy Parameters}
 
 Organic semiconductors are typically energetically disordered materials in which fluctuations in the molecular environment cause the molecular electronic state energies to vary from molecule to molecule or from segment to segment in a polymer.
-The simplest and most common model to capture this phenomena is the well-known Gaussian disorder model, in which there are random fluctuations in site energies.\cite{baessler1993pssb}
+The Site Energy Parameters section allows users to control the energetic disorder model used in the simulation.
+For most parameters, the parameter file allows users to specify different values for the donor and acceptor sites even though explicitly defined separate variables for each are not shown below.
+
+\begin{center}
+\begin{tabular}{ l l }
+\hline
+Site Energy Parameters & \\
+\hline
+Homo (eV) & $E_\text{HOMO}$ \\
+Lumo (eV) & $E_\text{LUMO}$  \\
+Enable\_gaussian\_dos & \\
+Energy\_stdev (eV) & $\sigma$ \\
+Enable\_exponential\_dos & \\
+Energy\_urbach (eV) & $E_\text{U}$ \\
+Enable\_correlated\_disorder & \\
+Disorder\_correlation\_length (nm) & $\xi_\text{d}$ \\ 
+Enable\_gaussian\_kernel & \\
+Enable\_power\_kernel & \\
+Power\_kernel\_exponent & $p$ \\
+Enable\_interfacial\_energy\_shift & \\
+Energy\_shift (eV) & \\
+Enable\_import\_energies & \\
+Energies\_import\_filename & \\
+\end{tabular}
+\end{center}
+
+The simplest and most common model to capture disorder is the well-known Gaussian disorder model, in which there are random fluctuations in site energies.\cite{baessler1993pssb}
 Later work demonstrated that in some systems, energetic disorder is not completely random but spatially correlated.\cite{gartstein1995cpl,novikov1998prl}
 In some materials, it has also been demonstrated that device behavior is better described using low energy tail states with an exponential distribution.\cite{vissenberg1998prb,nelson2003prb,mackenzie2011jpcc}
 With Excimontec, users can choose from several different energetic disorder models described below.
 However, even more complex density of states distributions with or without correlations could also be possible, so users can also import custom site energies from a text file if desired.
-In all cases, the mean of the distribution is set to zero and a single energy is relative to the zero mean is assigned to each site.
-This keep memory usage low and allows large lattice sizes to be simulated, but the simplifying assumption here is that energies for electron and hole polaron states on the same site are correlated.
+In each of these cases, the median of the density of states is given by the HOMO and LUMO energies defined for the donor and acceptor sites. 
+And in all cases, a single energy is assigned to each site that is relative to the HOMO and LUMO.
+This keep memory usage low and allows larger lattice sizes to be simulated, but the simplifying assumption here is that energies for HOMO and LUMO states on the same site are correlated.
 
 \subsubsection{Uncorrelated Gaussian Disorder Model}
 
-Uncorrelated Gaussian disorder is implemented by simply drawing each site energy from a Gaussian (normal) distribution with a mean value of 0 and a specified standard deviation ($\sigma$) also often called the energetic disorder parameter. 
+When the the uncorrelated Gaussian disorder model is enabled, it is implemented by simply drawing each site energy from a Gaussian (normal) distribution with a mean value of 0 and a specified standard deviation ($\sigma$) also often called the energetic disorder parameter. 
 
 \subsubsection{Correlated Gaussian Disorder Models}
 
-The original correlated disorder model explained the origin of the correlations to be due to interactions of the polaron with randomly oriented dipoles.
+The original correlated disorder model explained the origin of the correlations to be due to interactions of the polaron with randomly oriented dipoles.\cite{gartstein1995cpl,novikov1998prl}
 However, there can be other causes of correlations, such as correlations in molecular spacing or orientation that impart differences in the correlation function.\cite{kordt2014jctc}  
 To modify both the length scale of the correlation and the functional form of the correlation decay, a kernel algorithm is implemented, similar to work done previously by \citeauthor{gartstein1995cpl}.\cite{gartstein1995cpl}
 There are currently three kernel models to choose from, a Gaussian kernel and power kernel with an exponent of -1  or -2.
@@ -534,77 +705,57 @@ Figure \ref{fig:exponential_dos} shows an example of the hybrid exponential-Gaus
     \label{fig:exponential_dos}
 \end{figure}
 
+\subsubsection{Interfacial Energy Model}
+
+In addition to the effects captured by the other models, it has also been found that sites near the donor-acceptor interface can have shifted energy levels that form an interfacial energy cascade.\cite{jamieson2012cs} 
+To model this, a simple phenomenological model is implemented here where the energy shift depends on the purity of a given region of material. 
+The assumption here is that the presence of the dissimilar material (molecules) acts as a defect that disrupts the favorable interactions between molecules in the neat material and reduces the energetic stabilization of the local electronic states. 
+As a result, for every lattice site, a site energy is assigned from the density of states distribution of the pure material, and this energy is then shifted by an amount ($\Delta E_{\text{s},i}$), where
+\begin{equation}
+\Delta E_{\text{s},i} = N_{1,i} \epsilon_\text{s} + N_{2,i} \frac{\epsilon_\text{s}}{\sqrt{2}} + N_{3,i} \frac{\epsilon_\text{s}}{\sqrt{3}}.
+\end{equation}
+Here, $N_{1,i}$ is the number of dissimilar first-nearest neighbors around site $i$, $N_{2,i}$ is the number of dissimilar second-nearest neighbors around site $i$, and $N_{3,i}$ is the number of dissimilar third-nearest neighbors around site $i$, and $\epsilon_\text{s}$ is the energy shift parameter. 
+As a result, the site energy is shifted depending on the number if dissimilar neighbors in a distance normalized fashion, where the dissimilar sites farther away have less of an impact. 
+
 \subsection{Electrostatic Interaction Parameters}
+
+\begin{center}
+\begin{tabular}{ l l }
+Electrostatic Interaction Parameters & \\
+\hline
+Dielectric\_constant & $\epsilon$ \\
+Enable\_Coulomb\_maximum & \\
+Enable\_Coulomb\_cutoff & \\
+Coulomb\_cutoff (nm) & $r_{\text{C,cut}}$ \\
+\end{tabular}
+\end{center}
 
 Electrostatic interactions between polarons are an important factor in determining polaron recombination rates\cite{heiber2016prb} and transport behavior\cite{vanderholst2011prb}.
 Users can set the dielectric constant ($\epsilon$), which acts to screen these interactions.
 Coulomb interactions are included between each polaron pair as long as their separation distance is less than the Coulomb cutoff radius ($r_{\text{C,cut}}$).
-The Coulomb cutoff radius can be explicitly defined in the parameter file or it can be set to dynamically scale with the size of the lattice.
+The Coulomb cutoff radius can be explicitly defined in the parameter file or it can be set to dynamically scale with the size of the lattice by setting it to half the smallest dimension via turning on the Enable\_Coulomb\_maximum parameter.
 It is not recommended to set the cutoff radius to be larger than half of the smallest dimension in order to prevent double counting interactions with the same polaron across the periodic boundaries.
 
-\subsection{Input Physical Parameter List}
-
-\begin{center}
-\begin{tabular}{ c l l }
-\hline
- & KMC Algorithm Parameters & \\
- \hline
-$r_{\text{recalc}}$ & event recalculation cutoff radius & (nm) \\
-\hline
- & Lattice Parameters & \\
-\hline
-$L$ & lattice length (x-dimension size) & ($a$) \\
-$W$ & lattice width (y-dimension size) & ($a$) \\
-$H$ & lattice height (z-dimension size) & ($a$) \\
-$a$ & lattice unit size & (nm) \\
-$T$ & temperature & (K) \\
-$V_\text{int}$ & internal voltage & (V) \\
-\hline
-& Site Parameters & \\
-\hline
-$E_\text{HOMO}$ & highest occupied molecular orbital energy & (eV) \\
-$E_\text{LUMO}$ & lowest unoccupied molecular orbital energy & (eV) \\
-$E_\text{U}$ & exponential DOS Urbach energy & (eV) \\
-$\epsilon$ & dielectric constant & (unitless) \\
-$\sigma$ & Gaussian DOS standard deviation & (eV) \\
-\hline
- & Exciton Parameters & \\
- \hline
-$E_\text{B}$ & exciton binding energy & (eV) \\
-$G$ & singlet exciton generation rate & (cm$^{-3}$ s$^{-1}$) \\
-$R_{0,\text{risc}}$ & reverse intersystem crossing rate prefactor & (s$^{-1}$) \\
-$R_{0,\text{sxh}}$ & singlet exciton hopping rate prefactor & (nm$^6$ s$^{-1}$) \\
-$R_{0,\text{txh}}$ & triplet exciton hopping rate prefactor & (s$^{-1}$) \\
-$R_{0,\text{xd}}$ & exciton dissociation rate prefactor & (s$^{-1}$) \\
-$R_{0,\text{xxa}}$ & exciton-exciton annihilation rate prefactor & (nm$^{6}$ s$^{-1}$ or s$^{-1}$) \\
-$R_{0,\text{xpa}}$ & exciton-polaron annihilation rate prefactor & (nm$^{6}$ s$^{-1}$ or s$^{-1}$) \\ 
-$R_{\text{isc}}$ & intersystem crossing rate & (s$^{-1}$) \\
-$r_{\text{FRET,cut}}$ & FRET cutoff radius & (nm) \\
-$r_{\text{xd,cut}}$ & exciton dissociation cutoff radius & (nm) \\
-$\gamma_\text{s}$ & singlet exciton localization parameter & (nm$^{-1}$) \\
-$\gamma_\text{t}$ & triplet exciton localization parameter & (nm$^{-1}$) \\
-$\Delta E_\text{ST}$ & singlet-triplet splitting energy & (eV) \\
-$\tau_\text{sx}$ & singlet exciton lifetime & (s) \\
-$\tau_\text{tx}$ & triplet exciton lifetime & (s) \\
-\hline
- & Polaron Parameters & \\
- \hline
- $R_{0,\text{ph}}$ & polaron hopping rate prefactor & (s$^{-1}$) \\
-$R_{0,\text{pr}}$ & polaron recombination rate prefactor & (s$^{-1}$) \\
-$r_{\text{C,cut}}$ & Coulomb cutoff radius & (nm) \\
-$r_{\text{ph,cut}}$ & polaron hopping cutoff radius & (nm) \\
-$\gamma_\text{p}$ & polaron localization parameter & (nm$^{-1}$) \\
-$\lambda$ & reorganization energy & (eV) \\
-$\sigma_\text{p}$ & Gaussian polaron delocalization
-length & (nm) \\
-\end{tabular}
-\end{center}
-
 \section{Program Installation}
+
+To install Excimontec, you must compile the executable from the source code on your machine.
+Detailed instructions are provided below for Windows and Ubuntu Linux operating systems.
+Once compilation is finished the executable is created in the root repository directory be default and can then be copied to another simulation job directory if desired.
 
 \subsection{Linux (Ubuntu)}
 
 \begin{enumerate}
+
+\item Update the packages list:
+\begin{minted}{shell}
+sudo apt update
+\end{minted}
+
+\item Install the GCC compiler and GNU Make:
+\begin{minted}{shell}
+sudo apt-get install build-essential
+\end{minted}
+
 \item Install Open MPI:
 \begin{minted}{shell}
 sudo apt-get -y install -qq openmpi-bin libopenmpi-dev
