@@ -1,12 +1,17 @@
-# Copyright (c) 2017-2019 Michael C. Heiber
 # This source file is part of the Excimontec project, which is subject to the MIT License.
+# Copyright (c) 2017-2020 Michael C. Heiber
 # For more information, see the LICENSE file that accompanies this software.
 # The Excimontec project can be found on Github at https://github.com/MikeHeiber/Excimontec
 
-ifeq ($(lastword $(subst /, ,$(CXX))),g++)
+COMPILER := $(shell mpicxx -show | awk '{print $$1}')
+$(info COMPILER is $(COMPILER))
+ifeq ($(shell echo $(COMPILER) | head -c 3), g++)
 	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc -IKMC_Lattice/src
 endif
-ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
+ifeq ($(COMPILER), clang++)
+	FLAGS += -Wall -Wextra -O3 -std=c++11 -I. -Isrc -IKMC_Lattice/src
+	endif
+ifeq ($(COMPILER), pgc++)
 	FLAGS += -O2 -Minform=warn -fastsse -Mvect -std=c++11 -Mdalign -Munroll -Mipa=fast -Kieee -m64 -I. -Isrc -IKMC_Lattice/src
 endif
 
@@ -49,10 +54,13 @@ GTEST_DIR = KMC_Lattice/googletest/googletest
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
-ifeq ($(lastword $(subst /, ,$(CXX))),g++)
+ifeq ($(shell echo $(COMPILER) | head -c 3), g++)
 	GTEST_FLAGS = -isystem $(GTEST_DIR)/include -pthread
 endif
-ifeq ($(lastword $(subst /, ,$(CXX))),pgc++)
+ifeq ($(COMPILER), clang++)
+	GTEST_FLAGS = -isystem $(GTEST_DIR)/include -pthread
+endif
+ifeq ($(COMPILER), pgc++)
 	GTEST_FLAGS = -I$(GTEST_DIR)/include
 endif
 

@@ -6,35 +6,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 --------------------------------------------------------------------------------------------------------------------------------
 
-## [Unreleased]
+## [v1.0.0] - 2020-08-29 - First Official Release
 
 ### Added
-- User_Manual.pdf - User manual PDF to the root directory including examples for each type of simulation test, a detailed description of the models implemented in the code and their parameters, and installation instructions
+- .travis.yml - Build matrix entries and corresponding script code for testing clang compiler
 - docs/User_Manual.pdf - Copy of user manual to the docs directory for easy linking and viewing on the web
-- user_manual - Directory with source files for the user manual including all of the simulation output data used for the examples
+- makefile - Detection of versioned g++ compilers
+- makefile - Detection of clang compiler and setting the compiler flags
 - msvc - Directory with Microsoft Visual studio solution and project files for building Excimontec on Windows
+- paper/paper.md - short paper describing Excimontec for publication in JOSS
+- paper/paper.bib - Bibtex reference information for the JOSS paper
 - README.md - Recommended reading, citation information, and acknowledgement sections
+- README.md - Information about clang compiler support
+- User_Manual.pdf - User manual PDF to the root directory including examples for each type of simulation test, a detailed description of the input parameters and the phyiscal models implemented in the code, and detailed installation instructions
+- user_manual - Directory with source files for the user manual including all of the simulation output data used for the examples
 
 ### Changed
-- README.md - Replaced detailed installation and build instructions with link to new user manual
-- README.md - Reorganized sections to be more useful for new users
-- README.md - Updated information about Travis CI testing configuration
-- main.cpp - Version string to v1.0.0-rc.4
-- main.cpp - Updated copyright statement years
-- makefile - Updated googletest directory to the one located within the KMC_Lattice submodule
-- parameters_default.txt - Version string to v1.0.0
-- parameters_default.txt - Parameter section headings
 - .gitignore - Ignore statements for Microsoft Visual Studio files to not ignore the solution and project files but still ignore the build directories
 - .travis.yml - Updated copyright statement years
 - .travis.yml - Updating testing config by removing testing of GCC v4.7 and v4.8 and added testing of GCC v9
+- KMC_Lattice - KMC_Lattice submodule to v2.1.0
+- LICENSE - Updated copyright statement years
+- main.cpp - Version string to v1.0.0
+- main.cpp - Updated copyright statement years
+- makefile - Updated googletest directory to the one located within the KMC_Lattice submodule
+- makefile - Updated copyright statement years
+- makefile - Updated how the underlying compiler is detected now using 'mpicxx -show'
+- parameters_default.txt - Version string to v1.0.0
+- parameters_default.txt - Parameter section headings
+- README.md - Replaced detailed installation and build instructions with link to new user manual
+- README.md - Reorganized sections to be more useful for new users
+- README.md - Updated information about Travis CI testing configuration
+- README.md - Updated copyright statement years
 
 ### Removed
-- googletest - Duplicate googletest submodule with the intent to use the googletest submodule already within the KMC_Lattice submodule
+- .travis.yml - Build matrix entries for testing GCC 4.x
+- .travis.yml - Build matrix entries for mpich with GCC 6 and 8
 - .gitmodules - The googletest submodule entry
 - .travis.yml - Coveralls exlcude statement for the googletest directory
 - .travis.yml - sudo statement because it is no longer used by Travis CI
+- googletest - Duplicate googletest submodule with the intent to use the googletest submodule already within the KMC_Lattice submodule
 
 ### Fixed
+- .travis.yml - Changed Linux build matrix entries to use xenial or bionic instead of trusty to fix code coverage reporting error
 
 ## [v1.0.0-rc.3]- 2019-04-01 - Density of States Integration Bugfix
 
@@ -47,8 +61,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSC_Sim (updateSteadyData) - To increment the new DOS and DOOS sampling counters and removed calculation of the DOS because the DOS is does not change during the simulation when not including Coulomb interactions
 - OSC_Sim (getSteadyDOS) - Function is not longer const
 - parameters_default.txt - Version string to v1.0.0-rc.3
-
-### Removed
 
 ### Fixed
 - main.cpp - Output of density of states and density of occupied states data to have the correct units

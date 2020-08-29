@@ -5,36 +5,79 @@
 # Travis CI continuous integration build script
 
 language: cpp
-os: linux
-dist: trusty
+sudo: required
 
-compiler:
-    - gcc
-    
-env:
-    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test_coverage"
-    - OPTIONS="GCC_VERSION=4.9 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=4.9 && MPI=openmpi && TARGET=test"
-    - OPTIONS="GCC_VERSION=5 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test"
-    - OPTIONS="GCC_VERSION=6 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=6 && MPI=openmpi && TARGET=test"
-    - OPTIONS="GCC_VERSION=7 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=7 && MPI=openmpi && TARGET=test"
-    - OPTIONS="GCC_VERSION=8 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=8 && MPI=openmpi && TARGET=test"
-    - OPTIONS="GCC_VERSION=9 && MPI=mpich2 && TARGET=test"
-    - OPTIONS="GCC_VERSION=9 && MPI=openmpi && TARGET=test"
-         
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=default && MPI=openmpi && TARGET=test_coverage"
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=5 && MPI=openmpi && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=6 && MPI=openmpi && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=7 && MPI=openmpi && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=8 && MPI=openmpi && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=9 && MPI=openmpi && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=default && MPI=mpich && TARGET=test"
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      env:
+        - OPTIONS="GCC_VERSION=default && MPI=mpich && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: clang
+      env:
+        - OPTIONS="MPI=openmpi && TARGET=test"
+    - os: linux
+      dist: xenial
+      compiler: clang
+      env:
+        - OPTIONS="MPI=mpich && TARGET=test"
+
 before_install:
     - eval "${OPTIONS}"
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq gcc-$GCC_VERSION g++-$GCC_VERSION -y
-    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$GCC_VERSION 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$GCC_VERSION
-    - sudo update-alternatives --config gcc
-    - gcc --version
-    - if [[ "$MPI" = mpich2 ]]; then sudo apt-get -y install -qq mpich2 libmpich2-dev; fi
+    - |
+      if [ $TRAVIS_COMPILER == gcc ]; then
+        if [ $GCC_VERSION != default ]; then
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update -qq
+          sudo apt-get install -qq g++-$GCC_VERSION -y
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-$GCC_VERSION 50
+          g++ --version
+        fi
+      fi
+    - |
+      if [ $TRAVIS_COMPILER == clang ]; then
+        export OMPI_CXX=clang++
+        export CXX=clang++
+      fi
+    - if [[ "$MPI" = mpich ]]; then sudo apt-get -y install -qq mpich libmpich-dev; fi
     - if [[ "$MPI" = openmpi ]]; then sudo apt-get -y install -qq openmpi-bin libopenmpi-dev; fi
     - if [[ "$TARGET" = test_coverage ]]; then pip install --user cpp-coveralls; fi
     
