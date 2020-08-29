@@ -18,7 +18,7 @@ using namespace Excimontec;
 using namespace KMC_Lattice;
 
 int main(int argc, char *argv[]) {
-	string version = "v1.0.0-rc.4";
+	string version = "v1.0.0";
 	// Parameters
 	bool End_sim = false;
 	// File declaration
