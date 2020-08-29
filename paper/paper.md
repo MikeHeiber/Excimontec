@@ -31,7 +31,7 @@ As a result, there have been large barriers to entry for new researchers and a l
 
 ``Excimontec`` is designed to be a well-tested, optimized, reliable, and accessible open-source tool for performing KMC simulations of organic electronic devices. 
 v1.0 has a particular focus on organic photovoltaic device modeling and can utilize complex bulk heterojunction morphologies generated using the ``Ising_OPV`` tool.[@heiber2018joss]
-v1.0 comes with five different simulation tests: exciton diffusion, time-of-flight charge transport, internal quantum efficient, dynamics, and steady state charge transport. 
+v1.0 comes with five different simulation tests: exciton diffusion, time-of-flight charge transport, internal quantum efficiency, dynamics, and steady state charge transport. 
 See the user manual for a more in-depth description each simulation test, including some examples of what each test can be used for. 
 The software has been developed in modern C++ and is optimized for efficient execution on high performance computing clusters using MPI. 
 This software package uses object-oriented design and extends the ``KMC_Lattice`` framework.[@heiber2019joss] 
