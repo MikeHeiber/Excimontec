@@ -104,8 +104,7 @@ Have a quick question or want to chat about Excimontec?  Join the discussion on 
 
 ## Citing This Work
 
-This work will soon be submitted to the Journal of Open Source Software, and the citation will be provided here once published.
-<!-- [M. C. Heiber, J. Open Source Software **X**, XXXX (2019).](https://doi.org/) [[ResearchGate]](https://www.researchgate.net/) -->
+[M. C. Heiber, J. Open Source Software **5**, 2307 (2020).](https://doi.org/10.21105/joss.02307) [[ResearchGate]](https://www.researchgate.net/publication/344141654_Excimontec_v10_An_Open-Source_Software_Tool_for_Kinetic_Monte_Carlo_Simulations_of_Organic_Electronic_Devices)
 
 In addition, please also cite the DOI for the specific version that you used from [Zenodo.org](https://zenodo.org/search?page=1&size=20&q=conceptrecid:%22595806%22&sort=-version&all_versions=True).
 

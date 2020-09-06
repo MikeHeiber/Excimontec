@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 --------------------------------------------------------------------------------------------------------------------------------
 
+## [Unreleased]
+
+### Added
+- paper.bib - Citation details for Zenodo archive of v1.0.0
+- README.md - Citation details for JOSS paper
+
+### Fixed
+- paper.md - A few typos and formatting issues
+
+### 
+
 ## [v1.0.0] - 2020-08-29 - First Official Release
 
 ### Added
