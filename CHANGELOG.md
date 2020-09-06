@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - paper.bib - Citation details for Zenodo archive of v1.0.0
 - README.md - Citation details for JOSS paper
 
+
+### Changed
+- README.md - Updated Development Status section
+
 ### Fixed
 - paper.md - A few typos and formatting issues
 
