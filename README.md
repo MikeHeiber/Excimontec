@@ -104,8 +104,7 @@ Have a quick question or want to chat about Excimontec?  Join the discussion on 
 
 ## Citing This Work
 
-This work will soon be submitted to the Journal of Open Source Software, and the citation will be provided here once published.
-<!-- [M. C. Heiber, J. Open Source Software **X**, XXXX (2019).](https://doi.org/) [[ResearchGate]](https://www.researchgate.net/) -->
+[M. C. Heiber, J. Open Source Software **5**, 2307 (2020).](https://doi.org/10.21105/joss.02307) [[ResearchGate]](https://www.researchgate.net/publication/344141654_Excimontec_v10_An_Open-Source_Software_Tool_for_Kinetic_Monte_Carlo_Simulations_of_Organic_Electronic_Devices)
 
 In addition, please also cite the DOI for the specific version that you used from [Zenodo.org](https://zenodo.org/search?page=1&size=20&q=conceptrecid:%22595806%22&sort=-version&all_versions=True).
 
@@ -123,9 +122,8 @@ Below are some recommended resources for starting to learn about KMC modeling of
 
 ## Development Status
 
-The current release, [Excimontec v1.0.0-rc.4](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
-All features that are to be included in v1.0 are now implemented and have undergone significant testing. 
-However, there may still be bugs that need to be fixed, so please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
+The current release, [Excimontec v1.0.0](https://github.com/MikeHeiber/Excimontec/releases), is built with [KMC_Lattice v2.1](https://github.com/MikeHeiber/KMC_Lattice/releases) and allows the user to perform several simulation tests relevant for OPV and OLED devices. 
+Please report any bugs or submit feature requests in the [Issues](https://github.com/MikeHeiber/Excimontec/issues) section. 
 Please see the [Changelog](CHANGELOG.md) for a detailed listing of previous and upcoming changes. 
 
 #### Continuous Integration and Testing Status:
