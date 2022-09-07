@@ -47,6 +47,11 @@ user_manual/example_data/IQE_test_data/set*/*/
 user_manual/example_data/Steady_transport_test_data/set*/*/
 user_manual/example_data/ToF_test_data/set*/*/
 
-# VSCode Stuff
+# VSCode
 .DS_Store
 .vscode/settings.json
+
+# Python Package Related
+interface/build
+interface/exm.egg-info
+*.pyc
