@@ -46,3 +46,7 @@ user_manual/example_data/Exciton_diffusion_test_data/set*/*/
 user_manual/example_data/IQE_test_data/set*/*/
 user_manual/example_data/Steady_transport_test_data/set*/*/
 user_manual/example_data/ToF_test_data/set*/*/
+
+# VSCode Stuff
+.DS_Store
+.vscode/settings.json
