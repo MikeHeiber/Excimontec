@@ -9,7 +9,7 @@ class Project(object):
 	EXMPATH = "/Users/benn-m/Documents/Code/Solar_Software/developing_Exm/Excimontec"
 	DEFAULT = f"{EXMPATH}/parameters_default.txt"
 	EXE = f"{EXMPATH}/Excimontec.exe"
-	def __init__(self,project_name,param_dicts,default_name = DEFAULT,overwrite=False):
+	def __init__(self,project_name,folder_names,param_dicts,default_name = DEFAULT,overwrite=False):
 		"""Updates default parameters with given list
 		of paramater dictionaries, with key commented 
 		parameter name and single values """
@@ -24,13 +24,30 @@ class Project(object):
 			raise(FileNotFoundError)
 		self.overwrite = overwrite
 		self.project_name = project_name
-		self.f_names = []
-		self.names = [] 
+		try:
+			os.mkdir(f"{self.project_name}")
+		except FileExistsError:
+			if self.overwrite:
+				shutil.rmtree(f"{self.project_name}")
+				os.mkdir(f"{self.project_name}")
+			else:
+				ow = input(f'Overwrite {self.project_name}? [Y/n]')
+				if ow.lower() == 'y':
+					print(f'Overwriting {self.project_name}.')
+					shutil.rmtree(f"{self.project_name}")
+					os.mkdir(f"{self.project_name}")
+				else: 
+					print('Leaving Data Alone.')
+					raise FileExistsError
+		self.f_names = folder_names
 		self.n_sim = len(param_dicts)
-		for i,pd in enumerate(param_dicts):
-			cf = self.construct_folder(pd,i)
+		if len(self.f_names) != len(param_dicts):
+			print("The number of file names should equal the number of parameter\
+				dictionaries. ")
+		for pd,f_name in zip(param_dicts,folder_names):
+			cf = self.construct_folder(pd,f_name)
 
-	def construct_folder(self,param_dict,num):
+	def construct_folder(self,param_dict,f_name):
 		self.current_params = self.default.copy()
 		for key in param_dict.keys():		
 			matches = [(ind,line) for ind,line in enumerate(self.default) if key in line]
@@ -44,18 +61,9 @@ class Project(object):
 				ind,line = matches[0]
 				val = param_dict[key]
 				self.current_params[ind] = self.replace_rc(line,val)
-		f_name = self.project_name+'_'+str(num)
-		self.f_names.append(f_name)
-		try:
-			os.mkdir(f_name)
-		except FileExistsError:
-			if not self.overwrite:
-				ow = input(f'Overwrite {f_name}? [Y/n]')
-				if ow.lower() != 'y':
-					return 2
-			shutil.rmtree(f_name)
-			os.mkdir(f_name)
-		self.write_parameter_file(f'./{f_name}')
+		os.mkdir(f"{self.project_name}/{f_name}")
+		self.write_parameter_file(f'{self.project_name}/{f_name}')
+		return 0
 		
 
 	def write_parameter_file(self,location):
@@ -71,27 +79,28 @@ class Project(object):
 	def run(self,exe_loc = EXE,cores=4):
 		for f_name in self.f_names:
 			# os.chdir(f'./{f_name}')
-			os.chdir(f_name)
+			os.chdir(f'{self.project_name}/{f_name}')
 			args = f'mpiexec -n {cores} {exe_loc} ./parameters.txt'
 			print(f'{args=}')
 			subprocess.run(args,shell=True)
-		os.chdir(self.home)
+			os.chdir(self.home)
 
 
 class Analyzer(object):
 
-	def __init__(self,project_name,param_dicts,f_names):
+	def __init__(self,project_name,param_dicts,f_names,csv =False):
 		self.project_name = project_name
 		self.param_dicts = param_dicts
 		self.f_names = f_names
 		self.load_summaries()
-		self.get_results()
+		if csv:
+			self.get_results()
 		self.n_sims = len(param_dicts)
 
 	def load_summaries(self):
 		self.summaries = {} 
 		for f_name in self.f_names:
-			f = open(f'./{f_name}/analysis_summary.txt',encoding='ISO-8859-1')
+			f = open(f'{self.project_name}/{f_name}/analysis_summary.txt',encoding='ISO-8859-1')
 			contents = [line.strip()[:-1] for line in f.readlines()]
 			self.summaries[f_name] = contents.copy()
 			f.close()
@@ -101,10 +110,10 @@ class Analyzer(object):
 		matches = [(ind,line) for ind,line in enumerate(summary) if 'Exciton diffusion length is ' in line]
 		if len(matches)==0:
 			print(f"Couldn't find phrase {phrase},check spelling.")
-			return 1
+			return None,None
 		elif len(matches)>1:
 			print(f"Found multiple matches for {phrase}: use a more specific phrase name.")
-			return 1
+			return None,None
 		else:
 			ind,line = matches[0]
 		is_loc = line.index('is ')
@@ -113,7 +122,7 @@ class Analyzer(object):
 		end = nm_loc-1
 		quantity = line[start:end]
 		value = float(quantity[:quantity.index(' ')])
-		error = float(quantity[quantity.index(' ')+3:])
+		error = float(quantity[quantity.index(' ')+5:])
 		return value,error
 		# print(f'{line=}')
 		# print(f'{quantity=}')
@@ -156,7 +165,6 @@ class Analyzer(object):
 		df = pd.DataFrame(values.reshape(1,15),columns=names)
 		# print(f'{values=}')
 		# print(f'{names=}')
-
 		return df 
 
 	def get_results(self):
@@ -174,7 +182,6 @@ class Analyzer(object):
 			sigmas[i] = self.param_dicts[i]['Energy_stdev_donor']
 		ax.errorbar(sigmas,values,yerr=errors,label='Neat \n $R_{0,sh}=3.4*10^{11}$',capsize=10,color='b')
 		ax.plot(sigmas,values,"b-o")
-
 		ax.legend()
 
 
