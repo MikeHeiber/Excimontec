@@ -55,3 +55,6 @@ user_manual/example_data/ToF_test_data/set*/*/
 interface/build
 interface/exm.egg-info
 *.pyc
+
+# Tutorials 
+tutorials/data/*
