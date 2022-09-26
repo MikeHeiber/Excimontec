@@ -52,6 +52,7 @@ user_manual/example_data/ToF_test_data/set*/*/
 .vscode/settings.json
 
 # Python Package Related
+venv
 interface/build
 interface/exm.egg-info
 *.pyc

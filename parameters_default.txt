@@ -55,6 +55,7 @@ false //Enable_dynamics_extraction
 false //Enable_steady_transport_test
 1e15 //Steady_carrier_density (cm^-3)
 10000 //N_equilibration_events
+false //Enable_light_dynamics_test
 --------------------------------------------------------------
 ## Exciton Parameters
 1e22 //Exciton_generation_rate_donor (cm^-3 s^-1)

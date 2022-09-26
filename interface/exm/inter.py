@@ -13,6 +13,7 @@ class Project(object):
 		"""Updates default parameters with given list
 		of paramater dictionaries, with key commented 
 		parameter name and single values """
+		self.home = os.getcwd()
 		try:
 			f = open(default_name,'r')
 			self.default = [line.strip() for line in f.readlines()]
@@ -71,11 +72,10 @@ class Project(object):
 		for f_name in self.f_names:
 			# os.chdir(f'./{f_name}')
 			os.chdir(f_name)
-			print(os.getcwd())
 			args = f'mpiexec -n {cores} {exe_loc} ./parameters.txt'
 			print(f'{args=}')
 			subprocess.run(args,shell=True)
-			os.chdir('..')
+		os.chdir(self.home)
 
 
 class Analyzer(object):
